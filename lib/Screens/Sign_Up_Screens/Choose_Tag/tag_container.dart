@@ -7,7 +7,7 @@ import 'package:tumbler/Screens/Sign_Up_Screens/Choose_Tag/add_your_own_tag.dart
 class TagContainer extends StatefulWidget {
   int? index;
 
-  TagContainer({@required this.index}):super();
+  TagContainer({Key? key, @required this.index}) : super(key: key);
 
   @override
   State<TagContainer> createState() => _TagContainerState();
@@ -33,8 +33,10 @@ class _TagContainerState extends State<TagContainer> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => pressed(
-          context.read<FollowedTags>().followedTags!.contains(tagsNames[widget.index!])),
+      onTap: () => pressed(context
+          .read<FollowedTags>()
+          .followedTags!
+          .contains(tagsNames[widget.index!])),
       child: Stack(
         children: [
           Container(

@@ -34,6 +34,8 @@ dependencies:
   google_fonts: ^2.1.0
   provider: ^6.0.1
   flutter_native_splash:
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
