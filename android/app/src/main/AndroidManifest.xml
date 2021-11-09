@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tumlr">
    <application
-        android:label="tumlr"
+        android:label="tumbler"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
