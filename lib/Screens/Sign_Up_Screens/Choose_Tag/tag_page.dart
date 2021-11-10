@@ -14,12 +14,12 @@ class TagSelect extends StatefulWidget {
 
 class _TagSelectState extends State<TagSelect> {
   Widget appBar() {
-    if (Provider.of<FollowedTags>(context).followedTags!.length < 5)
+    if (Provider.of<FollowedTags>(context).followedTags.length < 5)
       return Center(
           child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          "Pick ${5 - Provider.of<FollowedTags>(context).followedTags!.length}",
+          "Pick ${5 - Provider.of<FollowedTags>(context).followedTags.length}",
           style: const TextStyle(
             fontSize: 15,
             color: Colors.grey,
