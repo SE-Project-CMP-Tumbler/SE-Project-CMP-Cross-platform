@@ -12,7 +12,6 @@ final List<Color> tagsColors = [
 
 final List<String> tagsNames = [
   "Choose Your Own Tag",
-  "Trending",
   "Art",
   "Writing",
   "Books & Libraries",

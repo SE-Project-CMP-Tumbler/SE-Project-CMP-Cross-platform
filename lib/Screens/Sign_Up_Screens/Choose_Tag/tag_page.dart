@@ -47,53 +47,55 @@ class _TagSelectState extends State<TagSelect> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: appBackgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color.fromRGBO(0, 21, 42, 1),
-        actions: [
-          appBar(),
-        ],
-      ),
-      body: SingleChildScrollView(
-        physics: const ScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(10, 5, 0, 10),
-              child: Text(
-                "What do you like?",
-                style: TextStyle(
-                    fontSize: 27, color: Color.fromRGBO(200, 209, 216, 1)),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(10, 5, 0, 10),
-              child: Text(
-                "Whatever you're into, you'll find it here. Follow some of the tags below to start filling your dashboard with thing you love.",
-                style: TextStyle(
-                  fontSize: 19,
-                  color: Color.fromRGBO(97, 111, 127, 1),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: appBackgroundColor,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: const Color.fromRGBO(0, 21, 42, 1),
+          actions: [
+            appBar(),
+          ],
+        ),
+        body: SingleChildScrollView(
+          physics: const ScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(10, 5, 0, 10),
+                child: Text(
+                  "What do you like?",
+                  style: TextStyle(
+                      fontSize: 27, color: Color.fromRGBO(200, 209, 216, 1)),
                 ),
               ),
-            ),
-            GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              itemCount: tagsNames.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
+              const Padding(
+                padding: EdgeInsets.fromLTRB(10, 5, 0, 10),
+                child: Text(
+                  "Whatever you're into, you'll find it here. Follow some of the tags below to start filling your dashboard with thing you love.",
+                  style: TextStyle(
+                    fontSize: 19,
+                    color: Color.fromRGBO(97, 111, 127, 1),
+                  ),
+                ),
               ),
-              itemBuilder: (context, i) {
-                return TagContainer(index: i);
-              },
-            ),
-          ],
+              GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                itemCount: tagsNames.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                ),
+                itemBuilder: (context, i) {
+                  return TagContainer(index: i);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
