@@ -1,5 +1,5 @@
 class Api {
-  final String _GetTrendingTags = "GET/tag/trendng";
+  final String _getTrendingTags = "GET/tag/trending";
 
   List<String> getTrendingTags() {
     return ["Hi", "Hello"];
