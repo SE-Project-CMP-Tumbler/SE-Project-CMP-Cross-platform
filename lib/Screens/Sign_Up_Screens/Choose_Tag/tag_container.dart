@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tumbler/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
-import 'package:tumbler/Providers/followed_tags_sign_up.dart';
-import 'package:tumbler/Screens/Sign_Up_Screens/Choose_Tag/add_your_own_tag.dart';
+import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
+import '/Providers/followed_tags_sign_up.dart';
+import '/Screens/Sign_Up_Screens/Choose_Tag/add_your_own_tag.dart';
 
 class TagContainer extends StatefulWidget {
   final int index;

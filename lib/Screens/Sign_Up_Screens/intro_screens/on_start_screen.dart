@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gif_view/gif_view.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tumbler/Constants/colors.dart';
-import 'package:tumbler/Constants/ui_styles.dart';
+import '/Constants/colors.dart';
+import '/Constants/ui_styles.dart';
 
 class OnStart extends StatefulWidget {
   const OnStart({Key? key}) : super(key: key);
