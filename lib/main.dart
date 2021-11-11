@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '/Screens/intro_screens/on_start_screen.dart';
 import '/Providers/followed_tags_sign_up.dart';
-import 'Screens/Sign_Up_Screens/intro_screens/on_start_screen.dart';
 
 void main() => runApp(MyApp());
 

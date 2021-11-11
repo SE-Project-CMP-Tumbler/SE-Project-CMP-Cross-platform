@@ -52,7 +52,7 @@ class _TagSelectState extends State<TagSelect> {
         backgroundColor: appBackgroundColor,
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: const Color.fromRGBO(0, 21, 42, 1),
+          backgroundColor: appBackgroundColor,
           actions: [
             appBar(),
           ],
