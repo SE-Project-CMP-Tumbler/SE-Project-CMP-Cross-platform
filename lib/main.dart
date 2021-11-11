@@ -1,23 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tumbler/Providers/followed_tags_sign_up.dart';
-import 'package:tumbler/Screens/Sign_Up_Screens/Choose_Tag/tag_page.dart';
+import './Widgets/Post/post_out_view.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MaterialApp(
+      theme: ThemeData.dark().copyWith(
+        accentColor: Colors.amberAccent,
+      ),
+      home: HomePage())
+      
+      
+      );
+}
 
-class MyApp extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => FollowedTags(),
-      child: const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: TagSelect(),
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text("Tumblr"),
       ),
+      body: ListView(
+        children: const [
+          PostOutView(),
+          PostOutView(),
+          PostOutView(),
+          PostOutView(),
+          PostOutView(),
+          PostOutView(),
+          PostOutView(),
+          PostOutView(),
+          PostOutView(),
+          PostOutView(),
+          PostOutView(),
+        ]
+      )
+      
     );
-    /**
-        return const MaterialApp(
-        home: OnStart(),
-        );**/
   }
 }
