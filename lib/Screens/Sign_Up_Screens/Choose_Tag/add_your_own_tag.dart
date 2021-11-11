@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tumbler/Constants/colors.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '/Methods/api.dart';
 import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
 import '/Providers/followed_tags_sign_up.dart';
@@ -15,10 +16,28 @@ class _AddYourOwnTagState extends State<AddYourOwnTag> {
   late GlobalKey<FormState> _formKey;
   late List<String> _trending;
 
+  void initializeTrending() async {
+    List<String> temp = await Api().getTrendingTags();
+    setState(() => _trending = temp);
+
+    // but still not working perfectly
+    if (_trending.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "Failed to get Trending",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _trending = Api().getTrendingTags();
+    _trending = [];
+    initializeTrending();
     _controller = TextEditingController();
     _formKey = GlobalKey<FormState>();
   }

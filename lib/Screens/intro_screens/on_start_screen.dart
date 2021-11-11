@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:gif_view/gif_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/Screens/Sign_Up_Screens/get_age.dart';
-import '/Screens/Sign_Up_Screens/Choose_Tag/tag_page.dart';
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
 
@@ -315,7 +314,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                 Navigator.of(context).push(
                                                     MaterialPageRoute(
                                                         builder: (cxt) =>
-                                                            const TagSelect()));
+                                                            GetAge()));
                                               });
                                             },
                                             child: const Text(
@@ -339,7 +338,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (cxt) =>
-                                                          const TagSelect()));
+                                                          GetAge()));
                                             },
                                             child: const Text(
                                               'Log in with Google',
