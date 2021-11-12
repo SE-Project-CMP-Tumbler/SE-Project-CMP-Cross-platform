@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
+import 'package:tumbler/Constants/ui_styles.dart';
+import 'package:tumbler/Screens/Sign_Up_Screens/register.dart';
+
 import '/Constants/colors.dart';
 import '/Providers/followed_tags_sign_up.dart';
 import '/Screens/Sign_Up_Screens/Choose_Tag/tag_container.dart';
+import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
 
 class TagSelect extends StatefulWidget {
   const TagSelect({Key? key}) : super(key: key);
@@ -30,6 +33,8 @@ class _TagSelectState extends State<TagSelect> {
       return TextButton(
         onPressed: () {
           // Call Api Function to add all the chosen tags to his profile
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => const Register()));
         },
         child: const Center(
             child: Padding(
@@ -62,22 +67,18 @@ class _TagSelectState extends State<TagSelect> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(10, 5, 0, 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 5, 0, 10),
                 child: Text(
                   "What do you like?",
-                  style: TextStyle(
-                      fontSize: 27, color: Color.fromRGBO(200, 209, 216, 1)),
+                  style: titleTextStyle,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(10, 5, 0, 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 5, 0, 10),
                 child: Text(
                   "Whatever you're into, you'll find it here. Follow some of the tags below to start filling your dashboard with thing you love.",
-                  style: TextStyle(
-                    fontSize: 19,
-                    color: Color.fromRGBO(97, 111, 127, 1),
-                  ),
+                  style: subTitleTextStyle,
                 ),
               ),
               GridView.builder(

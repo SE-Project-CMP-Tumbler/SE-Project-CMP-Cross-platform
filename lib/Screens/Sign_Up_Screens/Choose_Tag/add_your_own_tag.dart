@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tumbler/Constants/colors.dart';
 import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tumbler/Constants/colors.dart';
+import 'package:tumbler/Constants/ui_styles.dart';
+
 import '/Methods/api.dart';
-import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
 import '/Providers/followed_tags_sign_up.dart';
+import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
 
 class AddYourOwnTag extends StatefulWidget {
   @override
@@ -19,18 +20,6 @@ class _AddYourOwnTagState extends State<AddYourOwnTag> {
   void initializeTrending() async {
     List<String> temp = await Api().getTrendingTags();
     setState(() => _trending = temp);
-
-    // but still not working perfectly
-    if (_trending.isEmpty) {
-      Fluttertoast.showToast(
-          msg: "Failed to get Trending",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
   }
 
   @override
@@ -85,22 +74,18 @@ class _AddYourOwnTagState extends State<AddYourOwnTag> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 "Pick your own topics",
-                style: TextStyle(
-                    fontSize: 27, color: Color.fromRGBO(200, 209, 216, 1)),
+                style: titleTextStyle,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Text(
                 "Didn't find what you wanted? Add it below",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Color.fromRGBO(97, 111, 127, 1),
-                ),
+                style: subTitleTextStyle,
               ),
             ),
             Container(

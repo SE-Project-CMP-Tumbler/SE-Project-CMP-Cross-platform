@@ -1,4 +1,7 @@
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
@@ -6,7 +9,19 @@ class Api {
   final String _getTrendingTags = "GET/tag/trending";
 
   Future<List<String>> getTrendingTags() async {
-    http.Response response = await http.get(Uri.parse(mockHost));
+    http.Response response = await http
+        .get(Uri.parse(mockHost))
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      Fluttertoast.showToast(
+          msg: "Failed to get Trending",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return http.Response("", 404);
+    });
 
     List<String> result = [];
     if (response.statusCode == 200) {

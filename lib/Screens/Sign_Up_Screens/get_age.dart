@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tumbler/Constants/ui_styles.dart';
 import '/Models/users.dart';
 import '/Screens/Sign_Up_Screens/Choose_Tag/tag_page.dart';
 import '/Constants/colors.dart';
@@ -75,12 +76,15 @@ class _GetAgeState extends State<GetAge> {
                             : "Please Enter age between 13 and 130"
                         : "Please Enter a Valid Number",
                     controller: _controller,
+                    autofocus: true,
                     onChanged: (s) => setState(() {}),
                     keyboardType: TextInputType.number,
                     cursorColor: Colors.blue,
                     style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                        hintStyle: TextStyle(color: Colors.white30),
+                    decoration: InputDecoration(
+                        enabledBorder: formEnabledFieldBorderStyle,
+                        focusedBorder: formFocusedFieldBorderStyle,
+                        hintStyle: const TextStyle(color: Colors.white30),
                         hintText: 'How old are you?'),
                   ),
                 ),
