@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
-import '/Models/users.dart';
+import '/Screens/Log_In_Screens/forget_password.dart';
 
-class Register extends StatefulWidget {
-  const Register({Key? key}) : super(key: key);
+class LogIN extends StatefulWidget {
+  const LogIN({Key? key}) : super(key: key);
 
   @override
-  _RegisterState createState() => _RegisterState();
+  _LogINState createState() => _LogINState();
 }
 
-class _RegisterState extends State<Register> {
-  late TextEditingController _nameController;
+class _LogINState extends State<LogIN> {
   late TextEditingController _passController;
   late TextEditingController _emailController;
   late GlobalKey<FormState> _formKey;
@@ -21,7 +20,6 @@ class _RegisterState extends State<Register> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
     _passController = TextEditingController();
     _emailController = TextEditingController();
     _formKey = GlobalKey<FormState>();
@@ -29,7 +27,6 @@ class _RegisterState extends State<Register> {
 
   @override
   void dispose() {
-    _nameController.dispose();
     _passController.dispose();
     _emailController.dispose();
     super.dispose();
@@ -91,29 +88,6 @@ class _RegisterState extends State<Register> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: TextFormField(
-              controller: _nameController,
-              onChanged: (s) => setState(() {}),
-              keyboardType: TextInputType.emailAddress,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                enabledBorder: formEnabledFieldBorderStyle,
-                focusedBorder: formFocusedFieldBorderStyle,
-                hintStyle: const TextStyle(color: Colors.white30),
-                hintText: 'Name',
-                suffixIcon: _nameController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () =>
-                            setState(() => _nameController.clear()),
-                        color: Colors.white30,
-                      )
-                    : null,
-              ),
-            ),
-          )
         ],
       ),
     );
@@ -123,24 +97,27 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     AppBar appBar = AppBar(
       backgroundColor: appBackgroundColor,
+      title: const Image(
+        image: AssetImage('assets/images/logo_letter.png'),
+        height: 45,
+      ),
+      centerTitle: true,
       actions: [
         TextButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              User.name = _nameController.text;
-              User.email = _emailController.text;
-              // call api function to register
+              // call api function to log in
+              // User.email = _emailController.text;
             }
           },
           child: Center(
               child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Done",
+              "Log In",
               style: TextStyle(
                 fontSize: 15,
-                color: (_nameController.text.isEmpty ||
-                        _emailController.text.isEmpty ||
+                color: (_emailController.text.isEmpty ||
                         _passController.text.isEmpty)
                     ? Colors.blue.withOpacity(0.5)
                     : Colors.blue,
@@ -162,67 +139,29 @@ class _RegisterState extends State<Register> {
                 MediaQuery.of(context).padding.vertical,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  "What Should we call you?",
-                  style: titleTextStyle,
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 75, vertical: 10),
-                  child: Text(
-                    "You'll need a name to make your own posts, customize your blog, and message people.",
-                    style: subTitleTextStyle,
-                    textAlign: TextAlign.justify,
-                  ),
-                ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: form(),
                 ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Text(
-                          "Already have an account?",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 19,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            // show dialog
-                          },
-                          child: const Text(
-                            "Log in",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 19,
-                              fontWeight: FontWeight.w300,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Privacy dashboard",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 19,
-                            fontWeight: FontWeight.w300,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                        const SizedBox(height: 20)
-                      ],
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ForgetPassWord(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Forget Password",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 19,
+                      fontWeight: FontWeight.w300,
+                      decoration: TextDecoration.underline,
                     ),
                   ),
                 ),

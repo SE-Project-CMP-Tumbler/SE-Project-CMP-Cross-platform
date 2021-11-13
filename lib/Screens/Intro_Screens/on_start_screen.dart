@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gif_view/gif_view.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '/Screens/Sign_Up_Screens/get_age.dart';
+
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
+import '/Screens/Log_In_Screens/log_in.dart';
+import '/Screens/Sign_Up_Screens/get_age.dart';
 
 class OnStart extends StatefulWidget {
   const OnStart({Key? key}) : super(key: key);
@@ -314,7 +316,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                 Navigator.of(context).push(
                                                     MaterialPageRoute(
                                                         builder: (cxt) =>
-                                                            GetAge()));
+                                                            const LogIN()));
                                               });
                                             },
                                             child: const Text(
@@ -338,7 +340,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (cxt) =>
-                                                          GetAge()));
+                                                          const LogIN()));
                                             },
                                             child: const Text(
                                               'Log in with Google',

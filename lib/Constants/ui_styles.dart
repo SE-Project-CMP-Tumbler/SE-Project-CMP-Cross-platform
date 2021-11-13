@@ -24,6 +24,8 @@ InputBorder formEnabledFieldBorderStyle = const UnderlineInputBorder(
       BorderSide(color: Colors.white30, width: 1, style: BorderStyle.solid),
 );
 InputBorder formFocusedFieldBorderStyle = const UnderlineInputBorder(
-  borderSide:
-      BorderSide(color: Colors.black, width: 1, style: BorderStyle.solid),
+  borderSide: BorderSide(
+      color: Colors.black,
+      width: 1,
+      style: BorderStyle.solid), // color should be as theme
 );

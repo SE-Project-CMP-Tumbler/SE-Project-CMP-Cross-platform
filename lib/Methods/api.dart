@@ -25,9 +25,8 @@ class Api {
 
     List<String> result = [];
     if (response.statusCode == 200) {
-      var body = jsonDecode(response.body);
-      for (var item in body["response"]["tags"])
-        result.add(item["tag_description"]);
+      var body = jsonDecode(response.body)["response"]["tags"] as List;
+      result.addAll(body.map((e) => e["tag_description"]));
     }
 
     return result;

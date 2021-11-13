@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tumbler/Constants/ui_styles.dart';
-import 'package:tumbler/Screens/Sign_Up_Screens/register.dart';
 
 import '/Constants/colors.dart';
+import '/Constants/ui_styles.dart';
 import '/Providers/followed_tags_sign_up.dart';
 import '/Screens/Sign_Up_Screens/Choose_Tag/tag_container.dart';
 import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
+import '/Screens/Sign_Up_Screens/register.dart';
 
 class TagSelect extends StatefulWidget {
   const TagSelect({Key? key}) : super(key: key);
