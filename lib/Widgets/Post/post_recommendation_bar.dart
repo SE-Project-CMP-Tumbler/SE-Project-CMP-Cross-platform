@@ -18,45 +18,43 @@ class PostRecommendationBar extends StatefulWidget {
 }
 
 class _PostRecommendationBarState extends State<PostRecommendationBar> {
-  String _recommendationsString = "";
+  List<TextSpan> textSpans = <TextSpan>[];
 
   @override
   void initState() {
     super.initState();
-
-    List<String> hastagedList =
-        widget._recommedations.map((rec) => "#$rec").toList();
-    _recommendationsString = hastagedList.join(" ");
+    textSpans = widget._recommedations
+        .map((word) => TextSpan(
+              text: "#$word ",
+              style: TextStyle(
+                color: Colors.grey[600],
+              ),
+            ))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      padding: const EdgeInsets.all(5),
+      color: Colors.black12,
       height: 60,
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 5, right: 5),
-            child: Text(
-              "Recommended",
-              style: TextStyle(
-                  color: Colors.green.withOpacity(1),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  fontFamily: "assets/fonts/OpenSans/OpenSans"),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              _recommendationsString,
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
-            ),
-          ),
-        ],
-      ),
+      child: Row(children: [
+        Expanded(
+          child: RichText(
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              text: TextSpan(
+                text: 'Recommended ',
+                style: TextStyle(
+                    color: Colors.green.withOpacity(1),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontFamily: "assets/fonts/OpenSans/OpenSans"),
+                children: textSpans,
+              )),
+        )
+      ]),
     );
   }
 }

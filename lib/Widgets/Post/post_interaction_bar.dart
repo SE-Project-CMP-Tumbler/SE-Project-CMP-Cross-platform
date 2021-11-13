@@ -11,7 +11,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: Colors.black12,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -27,19 +27,19 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             const IconButton(
                 onPressed: null,
                 icon: Icon(
-                  Icons.favorite,
-                  color: Colors.grey,
-                )),
-            const IconButton(
-                onPressed: null,
-                icon: Icon(
-                  Icons.comment,
-                  color: Colors.grey,
-                )),
-            const IconButton(
-                onPressed: null,
-                icon: Icon(
                   Icons.share,
+                  color: Colors.grey,
+                )),
+            const IconButton(
+                onPressed: null,
+                icon: Icon(
+                  Icons.repeat,
+                  color: Colors.grey,
+                )),
+            const IconButton(
+                onPressed: null,
+                icon: Icon(
+                  Icons.favorite_border_outlined,
                   color: Colors.grey,
                 )),
           ],

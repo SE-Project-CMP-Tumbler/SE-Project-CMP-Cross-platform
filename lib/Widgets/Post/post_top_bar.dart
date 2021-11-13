@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import './post_personal_avatar.dart';
 
 class PostTopBar extends StatefulWidget {
-  const PostTopBar({Key? key}) : super(key: key);
+  Function showEditPostBottomSheet;
+   PostTopBar({
+    Key? key,
+    required this.showEditPostBottomSheet,
+  }) : super(key: key);
 
   @override
   _PostTopBarState createState() => _PostTopBarState();
@@ -10,9 +15,8 @@ class PostTopBar extends StatefulWidget {
 class _PostTopBarState extends State<PostTopBar> {
   @override
   Widget build(BuildContext context) {
-    
     return Container(
-      color: Colors.black,
+      color: Colors.black12,
       height: 60,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -39,43 +43,15 @@ class _PostTopBarState extends State<PostTopBar> {
           Expanded(
               child: Container(
             alignment: Alignment.centerRight,
-            child: const IconButton(
-              onPressed: null,
+            child:  IconButton(
+              onPressed: ()=>widget.showEditPostBottomSheet(context),
               icon: Icon(
                 Icons.more_vert,
-                color: Colors.amber,
+                color: Colors.grey,
               ),
             ),
           ))
         ],
-      ),
-    );
-  }
-}
-
-class PersonAvatar extends StatefulWidget {
-  const PersonAvatar({Key? key}) : super(key: key);
-
-  @override
-  _PersonAvatarState createState() => _PersonAvatarState();
-}
-
-class _PersonAvatarState extends State<PersonAvatar> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10.0), //or 15.0
-          child: Container(
-            height: 40.0,
-            width: 40.0,
-            child: Image.network(
-                "https://www.techinn.com/f/13806/138068257/hasbro-marvel-legends-iron-man-electronic-helmet.jpg"),
-          ),
-        ),
       ),
     );
   }
