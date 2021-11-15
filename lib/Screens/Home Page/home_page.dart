@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../../Widgets/general_widgets/nav_bar.dart';
@@ -23,15 +24,9 @@ void showEditPostBottomSheet(BuildContext ctx) {
             TextButton(
                 onPressed: () {},
                 child: const Text("This particular post isn't for me")),
-            TextButton(
-                onPressed: () {},
-                child: const Text("Copy post")),
-            TextButton(
-                onPressed: () {},
-                child: const Text("Report post")),
-            TextButton(
-                onPressed: () {},
-                child: const Text("hmmmmmmmmmm...")),
+            TextButton(onPressed: () {}, child: const Text("Copy post")),
+            TextButton(onPressed: () {}, child: const Text("Report post")),
+            TextButton(onPressed: () {}, child: const Text("hmmmmmmmmmm...")),
           ],
         ),
       );
@@ -96,27 +91,32 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView(children: [
-                PostOutView(
-                  showEditPostBottomSheet: showEditPostBottomSheet,
-                ),
-               const Divider(
-                  color: Colors.black87,
-                  height: 5,
-                ),
-                PostOutView(
-                  showEditPostBottomSheet: showEditPostBottomSheet,
-                ),
-               const Divider(
-                  color: Colors.black87,
-                  height: 5,
-                ),
-              ]),
-            ),
-          ],
+        body: RefreshIndicator(
+          onRefresh: () async{
+            Future.delayed(Duration.zero).then((_) {});
+          },
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(children: [
+                  PostOutView(
+                    showEditPostBottomSheet: showEditPostBottomSheet,
+                  ),
+                  const Divider(
+                    color: Colors.black87,
+                    height: 5,
+                  ),
+                  PostOutView(
+                    showEditPostBottomSheet: showEditPostBottomSheet,
+                  ),
+                  const Divider(
+                    color: Colors.black87,
+                    height: 5,
+                  ),
+                ]),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: NavBar(_navBarIndex),

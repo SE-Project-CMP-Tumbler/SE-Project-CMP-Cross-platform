@@ -3,8 +3,8 @@ class Post {
   String postBody = "";
   String postStatus = "";
   String blogId = "";
-  String blogUsername = "";
-  String postYype = "";
+  String blogUserName = "";
+  String postType = "";
   String blogAvatar = "";
   String blogAvatarShape = "";
   String blogTitle = "";
@@ -15,8 +15,8 @@ class Post {
       required this.postBody,
       required this.postStatus,
       required this.blogId,
-      required this.blogUsername,
-      required this.postYype,
+      required this.blogUserName,
+      required this.postType,
       required this.blogAvatar,
       required this.blogAvatarShape,
       required this.blogTitle,
