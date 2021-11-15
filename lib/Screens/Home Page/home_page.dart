@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import '../../Widgets/general_widgets/nav_bar.dart';
-import '../../Widgets/Post/post_out_view.dart';
+import '../../Widgets/Post/post_overview.dart';
 
 enum HomeSection {
   following,
@@ -20,18 +20,18 @@ void showEditPostBottomSheet(BuildContext ctx) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FlatButton(
+            TextButton(
                 onPressed: () {},
-                child: Text("This particular post isn't for me")),
-            FlatButton(
+                child: const Text("This particular post isn't for me")),
+            TextButton(
                 onPressed: () {},
-                child: Text("This particular post isn't for me")),
-            FlatButton(
+                child: const Text("Copy post")),
+            TextButton(
                 onPressed: () {},
-                child: Text("This particular post isn't for me")),
-            FlatButton(
+                child: const Text("Report post")),
+            TextButton(
                 onPressed: () {},
-                child: Text("This particular post isn't for me")),
+                child: const Text("hmmmmmmmmmm...")),
           ],
         ),
       );
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
             titleSpacing: 0,
             title: Row(
               children: [
-                FlatButton(
+                TextButton(
                     onPressed: changeSection,
                     child: Text("Following",
                         style: TextStyle(
@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                                 ? Colors.blue
                                 : Colors.grey,
                             fontSize: 17))),
-                FlatButton(
+                TextButton(
                     onPressed: changeSection,
                     child: Text("Stuff for you",
                         style: TextStyle(
@@ -103,14 +103,14 @@ class _HomePageState extends State<HomePage> {
                 PostOutView(
                   showEditPostBottomSheet: showEditPostBottomSheet,
                 ),
-                Divider(
+               const Divider(
                   color: Colors.black87,
                   height: 5,
                 ),
                 PostOutView(
                   showEditPostBottomSheet: showEditPostBottomSheet,
                 ),
-                Divider(
+               const Divider(
                   color: Colors.black87,
                   height: 5,
                 ),
