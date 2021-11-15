@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
+import '/Methods/api.dart';
 import '/Models/users.dart';
+import '/Screens/Log_In_Screens/log_in.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -125,11 +128,33 @@ class _RegisterState extends State<Register> {
       backgroundColor: appBackgroundColor,
       actions: [
         TextButton(
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              User.name = _nameController.text;
-              User.email = _emailController.text;
-              // call api function to register
+              Map<String, dynamic> response = await Api().register(
+                  _nameController.text,
+                  _passController.text,
+                  _emailController.text,
+                  User.age);
+
+              // we should check other errors such as 404,500
+
+              if (response.isNotEmpty) {
+                User.name = response["blog_username"];
+                User.email = response["email"];
+                User.token = response["access_token"];
+                User.id = response["id"];
+                User.blogAvatar = response["blog_avatar"];
+                // Navigate to Home Page
+              } else {
+                Fluttertoast.showToast(
+                    msg: "Failed To Register",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+              }
             }
           },
           child: Center(
@@ -200,7 +225,8 @@ class _RegisterState extends State<Register> {
                         ),
                         TextButton(
                           onPressed: () {
-                            // show dialog
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const LogIN()));
                           },
                           child: const Text(
                             "Log in",

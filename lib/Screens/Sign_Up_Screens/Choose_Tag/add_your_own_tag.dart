@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '/Constants/colors.dart';
@@ -20,6 +21,17 @@ class _AddYourOwnTagState extends State<AddYourOwnTag> {
   void initializeTrending() async {
     List<String> temp = await Api().getTrendingTags();
     setState(() => _trending = temp);
+    if (_trending.isEmpty) {
+      // we should check other errors such as 404,500
+      Fluttertoast.showToast(
+          msg: "Failed To Connect To The Server",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
   }
 
   @override

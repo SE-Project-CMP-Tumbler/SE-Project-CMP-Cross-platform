@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tumbler/Methods/api.dart';
+import 'package:tumbler/Models/users.dart';
 
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
@@ -104,10 +107,29 @@ class _LogINState extends State<LogIN> {
       centerTitle: true,
       actions: [
         TextButton(
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              // call api function to log in
-              // User.email = _emailController.text;
+              Map<String, dynamic> response = await Api()
+                  .signIn(_emailController.text, _passController.text);
+
+              // we should check other errors such as 404,500
+              if (response.isNotEmpty) {
+                User.name = response["blog_username"];
+                User.email = response["email"];
+                User.token = response["access_token"];
+                User.id = response["id"];
+                User.blogAvatar = response["blog_avatar"];
+                // Navigate to Home Page
+              } else {
+                Fluttertoast.showToast(
+                    msg: "Failed To Log In",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+              }
             }
           },
           child: Center(

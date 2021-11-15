@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tumbler/Methods/api.dart';
+
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
 
@@ -13,6 +16,7 @@ class ForgetPassWord extends StatefulWidget {
 class _ForgetPassWordState extends State<ForgetPassWord> {
   late TextEditingController _emailController;
   late GlobalKey<FormState> _formKey;
+  bool firstHomePage = true;
 
   @override
   void initState() {
@@ -41,9 +45,23 @@ class _ForgetPassWordState extends State<ForgetPassWord> {
           centerTitle: true,
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  // call api function to send forget password email
+                  bool response =
+                      await Api().forgetPassword(_emailController.text);
+
+                  // we should check other errors such as 404,500
+                  if (response)
+                    setState(() => firstHomePage = false);
+                  else
+                    Fluttertoast.showToast(
+                        msg: "Failed To Sent a Request",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
                 }
               },
               child: Center(
@@ -62,59 +80,96 @@ class _ForgetPassWordState extends State<ForgetPassWord> {
             )
           ],
         ),
-        body: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Forget your password? It happens.",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                "We'll send you a link to reset it.",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              Form(
-                key: _formKey,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: TextFormField(
-                    validator: (s) => s!.contains(RegExp(
-                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))
-                        ? null
-                        : "Please Enter a Valid Email",
-                    controller: _emailController,
-                    onChanged: (s) => setState(() {}),
-                    keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      enabledBorder: formEnabledFieldBorderStyle,
-                      focusedBorder: formFocusedFieldBorderStyle,
-                      hintStyle: const TextStyle(color: Colors.white30),
-                      hintText: 'Email',
-                      suffixIcon: _emailController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () =>
-                                  setState(() => _emailController.clear()),
-                              color: Colors.white30,
-                            )
-                          : null,
+        body: firstHomePage
+            ? Container(
+                alignment: Alignment.center,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Forget your password? It happens.",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
                     ),
+                    const Text(
+                      "We'll send you a link to reset it.",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: TextFormField(
+                          validator: (s) => s!.contains(RegExp(
+                                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))
+                              ? null
+                              : "Please Enter a Valid Email",
+                          controller: _emailController,
+                          onChanged: (s) => setState(() {}),
+                          keyboardType: TextInputType.emailAddress,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            enabledBorder: formEnabledFieldBorderStyle,
+                            focusedBorder: formFocusedFieldBorderStyle,
+                            hintStyle: const TextStyle(color: Colors.white30),
+                            hintText: 'Email',
+                            suffixIcon: _emailController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: () => setState(
+                                        () => _emailController.clear()),
+                                    color: Colors.white30,
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Okay, we just sent you a password reset email\n',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                          fontSize: 22,
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                            '\nDid\'t get it? Check your spam folder. If it\'s not there, follow the tips in ',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 17,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'our help docs.',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }
