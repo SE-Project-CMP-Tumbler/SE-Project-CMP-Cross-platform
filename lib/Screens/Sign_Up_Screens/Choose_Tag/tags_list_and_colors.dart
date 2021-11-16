@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 final List<Color> tagsColors = [
-  const Color.fromRGBO(0, 184, 184, 1),
-  const Color.fromRGBO(124, 92, 92, 1),
-  const Color.fromRGBO(255, 98, 98, 1),
-  const Color.fromRGBO(255, 73, 73, 1),
-  const Color.fromRGBO(255, 138, 138, 1),
-  const Color.fromRGBO(232, 215, 215, 1),
-  const Color.fromRGBO(0, 207, 207, 1),
+  const Color.fromRGBO(0, 70, 122, 1),
+  const Color.fromRGBO(106, 77, 217, 1),
+  const Color.fromRGBO(139, 0, 9104, 1),
+  const Color.fromRGBO(166, 0, 2, 1),
+  const Color.fromRGBO(112, 29, 0, 1),
+  const Color.fromRGBO(42, 31, 1, 1),
+  const Color.fromRGBO(0, 69, 0, 1),
 ];
 
 final List<String> tagsNames = [

@@ -35,6 +35,7 @@ dependencies:
   provider: ^6.0.1
   http: ^0.13.4
   fluttertoast: ^8.0.8
+  auto_size_text: ^3.0.0
   flutter_native_splash:
 
 

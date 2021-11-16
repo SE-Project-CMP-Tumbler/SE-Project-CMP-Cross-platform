@@ -1,8 +1,10 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
+
 import '/Providers/followed_tags_sign_up.dart';
 import '/Screens/Sign_Up_Screens/Choose_Tag/add_your_own_tag.dart';
+import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
 
 class TagContainer extends StatefulWidget {
   final int index;
@@ -24,7 +26,6 @@ class _TagContainerState extends State<TagContainer> {
             .addFollowTag(tagsNames[widget.index]);
       }
     } else {
-      // Add Your own tag
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => AddYourOwnTag()));
     }
@@ -44,21 +45,22 @@ class _TagContainerState extends State<TagContainer> {
               padding: const EdgeInsets.all(8.0),
               child: Align(
                 alignment: Alignment.bottomLeft,
-                child: Text(
+                child: AutoSizeText(
                   tagsNames[widget.index],
+                  wrapWords: false,
                   style: const TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
             ),
             decoration: (widget.index == 0)
                 ? BoxDecoration(
-                    color: Colors.transparent,
-                    border: Border.all(color: Colors.white, width: 1),
-                    borderRadius: const BorderRadius.all(Radius.circular(20)))
+                color: Colors.transparent,
+                border: Border.all(color: Colors.white, width: 1),
+                borderRadius: const BorderRadius.all(Radius.circular(20)))
                 : BoxDecoration(
-                    color: tagsColors[widget.index % tagsColors.length],
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  ),
+              color: tagsColors[widget.index % tagsColors.length],
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+            ),
           ),
           if (Provider.of<FollowedTags>(context)
               .followedTags
