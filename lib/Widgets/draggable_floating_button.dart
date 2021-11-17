@@ -158,8 +158,8 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
 
   AnimatedPositioned buildAnimatedPositioned(Color bgColor, int index, Widget child ) {
     return AnimatedPositioned(
-        curve: Curves.easeOutBack,
-        duration: Duration(milliseconds: (index+1)*(index+1)*55-index*200+50),
+        curve: Curves.fastLinearToSlowEaseIn,
+        duration: Duration(milliseconds: (index+5)*(index+1)*60-index*300+50),
         left:_offset.dx,
         top: _offset.dy,
         child: FloatingActionButton(
