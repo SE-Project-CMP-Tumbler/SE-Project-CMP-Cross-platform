@@ -5,7 +5,7 @@ import 'package:gif_view/gif_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tumbler/Constants/colors.dart';
 import 'package:tumbler/Constants/ui_styles.dart';
-
+import 'dart:io';
 class OnStart extends StatefulWidget {
   const OnStart({Key? key}) : super(key: key);
 
@@ -17,11 +17,12 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
   int _currentPage = 0;
   bool isClicked = false;
   int _currentButtonSet = 1;
-
   @override
   Widget build(BuildContext context) {
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
+    //TODO:: change this if we decided to build ios app
+    bool isAndroid = Theme.of(context).platform == TargetPlatform.android;
     return WillPopScope(
       onWillPop: () {
         setState(() {
@@ -66,7 +67,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                       imageUrl: 'assets/images/intro_2.gif',
                       title: 'Follow Tumblrs that\nspark your interests.',
                       poster: 'Posted by bleedgfx',
-                      gifView: true,
+                      gifView: isAndroid,
                     ),
                     CarouselItemBuilder(
                       width: _width,
@@ -162,6 +163,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                         Expanded(
                           flex: 3,
                           child: Stack(alignment: Alignment.center, children: [
+
                             AnimatedPositioned(
                               duration: const Duration(milliseconds: 400),
                               left: 0,
@@ -184,12 +186,17 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               vertical: 2),
                                           child: ElevatedButton(
                                               onPressed: () {
+                                                if(_currentButtonSet==1)
+                                                  {
                                                 setState(() {
                                                   isClicked = true;
-                                                  _currentButtonSet =
-                                                      2; //signUp options
+                                                  _currentButtonSet = 2; //signUp options
                                                 });
-                                              },
+                                                  //logic of the function here
+
+                                                  }
+
+                                                  },
                                               child: const Text(
                                                 'Sign up',
                                                 textScaleFactor: 1.3,
@@ -207,11 +214,14 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               vertical: 2),
                                           child: ElevatedButton(
                                               onPressed: () {
-                                                setState(() {
-                                                  _currentButtonSet =
-                                                      3; //login options
-                                                });
-                                              },
+                                                if(_currentButtonSet==1) {
+                                                  setState(() {
+                                                    _currentButtonSet =
+                                                    3; //login options
+                                                  });
+                                                  //logic of the function here
+                                                }
+                                                },
                                               child: const Text(
                                                 'Log in',
                                                 textScaleFactor: 1.3,
@@ -246,7 +256,12 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               vertical: 2),
                                           child: ElevatedButton(
                                               onPressed: () {
-                                                setState(() {});
+                                                if(_currentButtonSet==2)
+                                                {
+                                                  //logic of the function here
+
+                                                }
+
                                               },
                                               child: const Text(
                                                 'Sign up with email',
@@ -264,7 +279,13 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               horizontal: _width / 7,
                                               vertical: 2),
                                           child: ElevatedButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                if(_currentButtonSet==2)
+                                                {
+                                                  //logic of the function here
+
+                                                }
+                                              },
                                               child: const Text(
                                                 'Sign up with Google',
                                                 textScaleFactor: 1.3,
@@ -299,7 +320,11 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               vertical: 2),
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              setState(() {});
+                                              if(_currentButtonSet==3)
+                                              {
+                                                //logic of the function here
+
+                                              }
                                             },
                                             child: const Text(
                                               'Log in with email',
@@ -318,7 +343,13 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               horizontal: _width / 7,
                                               vertical: 2),
                                           child: ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              if(_currentButtonSet==3)
+                                              {
+                                                //logic of the function here
+
+                                              }
+                                            },
                                             child: const Text(
                                               'Log in with Google',
                                               textScaleFactor: 1.3,
