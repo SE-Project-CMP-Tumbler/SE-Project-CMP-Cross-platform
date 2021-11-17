@@ -64,7 +64,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                     CarouselItemBuilder(
                       width: _width,
                       height: _height,
-                      imageUrl: 'assets/images/intro_2.gif',
+                      imageUrl: isAndroid?'assets/images/intro_2.gif':'assets/images/intro_2_delayed.gif',
                       title: 'Follow Tumblrs that\nspark your interests.',
                       poster: 'Posted by bleedgfx',
                       gifView: isAndroid,
