@@ -30,11 +30,28 @@ void showEditPostBottomSheet(BuildContext ctx) {
           children: [
             TextButton(
                 onPressed: () {},
-                child: const Text("Report sensitive content")),
-            TextButton(onPressed: () {}, child: const Text("Repost spam")),
+                child: const Text(
+                  "Report sensitive content",
+                  style: TextStyle(color: Colors.white),
+                )),
             TextButton(
-                onPressed: () {}, child: const Text("Report something else")),
-            TextButton(onPressed: () {}, child: const Text("Copy link")),
+                onPressed: () {},
+                child: const Text(
+                  "Repost spam",
+                  style: TextStyle(color: Colors.white),
+                )),
+            TextButton(
+                onPressed: () {},
+                child: const Text(
+                  "Report something else",
+                  style: TextStyle(color: Colors.white),
+                )),
+            TextButton(
+                onPressed: () {},
+                child: const Text(
+                  "Copy link",
+                  style: TextStyle(color: Colors.white),
+                )),
           ],
         ),
       );
@@ -49,7 +66,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _navBarIndex = 0;
   Enum section = HomeSection.following;
   bool _isLoading = false;
@@ -74,6 +91,21 @@ class _HomePageState extends State<HomePage> {
   //   super.initState();
   // }
 
+  late AnimationController animationController;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    animationController.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    animationController =
+        AnimationController(duration: new Duration(seconds: 2), vsync: this);
+    animationController.repeat();
+  }
   @override
   void didChangeDependencies() {
     if (!_isInit) {
@@ -81,7 +113,7 @@ class _HomePageState extends State<HomePage> {
         _isLoading = true;
       });
       Provider.of<Posts>(context).fetchAndSetPosts().then((_) {
-        posts = Provider.of<Posts>(context,listen: false).homePosts;/////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WHY FALSE IS NEEDED TO WORK????
+        posts = Provider.of<Posts>(context, listen: false).homePosts;
         _isLoading = false;
       });
     }
@@ -135,24 +167,31 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
-        body: RefreshIndicator(
-          onRefresh: () async {
-            Future.delayed(Duration.zero).then((_) {});
-          },
-          child: Column(
-            children: [
-              Expanded(
-                  child: ListView.builder(
-                itemBuilder: (ctx, index) {
-                  return PostOutView(
-                      showEditPostBottomSheet: showEditPostBottomSheet,
-                      post: posts[index]);
+        body: _isLoading
+            ?  Center(
+                child: CircularProgressIndicator(
+                   valueColor: animationController
+              .drive(ColorTween(begin: Colors.blueAccent, end: Colors.red)),
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: () async {
+                  Future.delayed(Duration.zero).then((_) {});
                 },
-                itemCount: posts.length,
-              )),
-            ],
-          ),
-        ),
+                child: Column(
+                  children: [
+                    Expanded(
+                        child: ListView.builder(
+                      itemBuilder: (ctx, index) {
+                        return PostOutView(
+                            showEditPostBottomSheet: showEditPostBottomSheet,
+                            post: posts[index]);
+                      },
+                      itemCount: posts.length,
+                    )),
+                  ],
+                ),
+              ),
       ),
       bottomNavigationBar: NavBar(_navBarIndex),
       floatingActionButton: FloatingActionButton(
