@@ -1,9 +1,16 @@
 import 'dart:ui';
+import 'dart:convert';
 import 'dart:async';
 
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../Widgets/general_widgets/nav_bar.dart';
 import '../../Widgets/Post/post_overview.dart';
+import 'package:provider/provider.dart';
+import "../../Providers/posts.dart";
+import '../../Models/post.dart';
 
 enum HomeSection {
   following,
@@ -23,10 +30,11 @@ void showEditPostBottomSheet(BuildContext ctx) {
           children: [
             TextButton(
                 onPressed: () {},
-                child: const Text("This particular post isn't for me")),
-            TextButton(onPressed: () {}, child: const Text("Copy post")),
-            TextButton(onPressed: () {}, child: const Text("Report post")),
-            TextButton(onPressed: () {}, child: const Text("hmmmmmmmmmm...")),
+                child: const Text("Report sensitive content")),
+            TextButton(onPressed: () {}, child: const Text("Repost spam")),
+            TextButton(
+                onPressed: () {}, child: const Text("Report something else")),
+            TextButton(onPressed: () {}, child: const Text("Copy link")),
           ],
         ),
       );
@@ -44,6 +52,42 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _navBarIndex = 0;
   Enum section = HomeSection.following;
+  bool _isLoading = false;
+  bool _isInit = false;
+
+  List<Post> posts = [];
+
+// Data injection (for testing purposes)
+  // @override
+  // void initState() {
+  //   http.post(
+  //       Uri.parse(
+  //           "https://mock-back-default-rtdb.firebaseio.com/homePost.json"),
+  //       body: json.encode({
+  //         'postUserName': 'Iron Man 5',
+  //         'postBody': "https://pbs.twimg.com/media/EiC-uBVX0AEfEIY.jpg",
+  //         'isFavorite': true,
+  //         'postAvatar':
+  //             "https://www.techinn.com/f/13806/138068257/hasbro-marvel-legends-iron-man-electronic-helmet.jpg",
+  //         'notesNum': 2062,
+  //       }));
+  //   super.initState();
+  // }
+
+  @override
+  void didChangeDependencies() {
+    if (!_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Posts>(context).fetchAndSetPosts().then((_) {
+        posts = Provider.of<Posts>(context,listen: false).homePosts;/////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WHY FALSE IS NEEDED TO WORK????
+        _isLoading = false;
+      });
+    }
+    _isInit = true;
+    super.didChangeDependencies();
+  }
 
   void changeSection() {
     setState(() {
@@ -92,29 +136,20 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         body: RefreshIndicator(
-          onRefresh: () async{
+          onRefresh: () async {
             Future.delayed(Duration.zero).then((_) {});
           },
           child: Column(
             children: [
               Expanded(
-                child: ListView(children: [
-                  PostOutView(
-                    showEditPostBottomSheet: showEditPostBottomSheet,
-                  ),
-                  const Divider(
-                    color: Colors.black87,
-                    height: 5,
-                  ),
-                  PostOutView(
-                    showEditPostBottomSheet: showEditPostBottomSheet,
-                  ),
-                  const Divider(
-                    color: Colors.black87,
-                    height: 5,
-                  ),
-                ]),
-              ),
+                  child: ListView.builder(
+                itemBuilder: (ctx, index) {
+                  return PostOutView(
+                      showEditPostBottomSheet: showEditPostBottomSheet,
+                      post: posts[index]);
+                },
+                itemCount: posts.length,
+              )),
             ],
           ),
         ),

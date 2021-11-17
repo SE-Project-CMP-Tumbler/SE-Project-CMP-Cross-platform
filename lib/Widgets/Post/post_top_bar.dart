@@ -3,9 +3,13 @@ import './post_personal_avatar.dart';
 
 class PostTopBar extends StatefulWidget {
   Function showEditPostBottomSheet;
-   PostTopBar({
+  String avatarPhotoLink;
+  String name;
+  PostTopBar({
     Key? key,
     required this.showEditPostBottomSheet,
+    required this.avatarPhotoLink,
+    required this.name,
   }) : super(key: key);
 
   @override
@@ -21,9 +25,9 @@ class _PostTopBarState extends State<PostTopBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          PersonAvatar(),
-          const Text(
-            "IRON MAN",
+          PersonAvatar(avatarPhotoLink:widget.avatarPhotoLink,),
+           Text(
+            widget.name,
             style: TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -43,8 +47,8 @@ class _PostTopBarState extends State<PostTopBar> {
           Expanded(
               child: Container(
             alignment: Alignment.centerRight,
-            child:  IconButton(
-              onPressed: ()=>widget.showEditPostBottomSheet(context),
+            child: IconButton(
+              onPressed: () => widget.showEditPostBottomSheet(context),
               icon: Icon(
                 Icons.more_vert,
                 color: Colors.grey,
