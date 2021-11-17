@@ -106,6 +106,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         AnimationController(duration: new Duration(seconds: 2), vsync: this);
     animationController.repeat();
   }
+
   @override
   void didChangeDependencies() {
     if (!_isInit) {
@@ -133,75 +134,90 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            floating: true,
-            snap: true,
-            backgroundColor: Colors.black87,
-            leading: Image.asset(
-              'assets/images/tumblr-24.png',
-            ),
-            titleSpacing: 0,
-            title: Row(
-              children: [
-                TextButton(
-                    onPressed: changeSection,
-                    child: Text("Following",
-                        style: TextStyle(
-                            color: (section == HomeSection.following)
-                                ? Colors.blue
-                                : Colors.grey,
-                            fontSize: 17))),
-                TextButton(
-                    onPressed: changeSection,
-                    child: Text("Stuff for you",
-                        style: TextStyle(
-                            color: (section == HomeSection.stuffForYou)
-                                ? Colors.blue
-                                : Colors.grey,
-                            fontSize: 17)))
-              ],
-            ),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: NestedScrollView(
+          floatHeaderSlivers: true,
+          controller: ScrollController(
+            initialScrollOffset: 0.0,
           ),
-        ],
-        body: _isLoading
-            ?  Center(
-                child: CircularProgressIndicator(
-                   valueColor: animationController
-              .drive(ColorTween(begin: Colors.blueAccent, end: Colors.red)),
-                ),
-              )
-            : RefreshIndicator(
-                onRefresh: () async {
-                  Future.delayed(Duration.zero).then((_) {});
-                },
-                child: Column(
-                  children: [
-                    Expanded(
-                        child: ListView.builder(
-                      itemBuilder: (ctx, index) {
-                        return PostOutView(
-                            showEditPostBottomSheet: showEditPostBottomSheet,
-                            post: posts[index]);
-                      },
-                      itemCount: posts.length,
-                    )),
-                  ],
-                ),
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              floating: true,
+              snap: true,
+              backgroundColor: Color.fromRGBO(0, 25, 53, 1),
+              leading: Image.asset(
+                'assets/images/tumblr-24.png',
               ),
-      ),
-      bottomNavigationBar: NavBar(_navBarIndex),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(
-          Icons.mode_edit_outline_outlined,
-          color: Colors.white,
-          size: 30,
+              titleSpacing: 0,
+              title: Row(
+                children: [
+                  TextButton(
+                      onPressed: changeSection,
+                      child: Text("Following",
+                          style: TextStyle(
+                              color: (section == HomeSection.following)
+                                  ? Colors.blue
+                                  : Colors.grey,
+                              fontSize: 17))),
+                  TextButton(
+                      onPressed: changeSection,
+                      child: Text("Stuff for you",
+                          style: TextStyle(
+                              color: (section == HomeSection.stuffForYou)
+                                  ? Colors.blue
+                                  : Colors.grey,
+                              fontSize: 17)))
+                ],
+              ),
+            ),
+          ],
+          body: _isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: animationController.drive(
+                        ColorTween(begin: Colors.blueAccent, end: Colors.red)),
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    Future.delayed(Duration.zero).then((_) {});
+                  },
+                  child: Column(
+                    children: [
+                      Expanded(
+                          child: ListView.builder(
+                        itemBuilder: (ctx, index) {
+                          return Column(
+                            children: [
+                              PostOutView(
+                                  showEditPostBottomSheet:
+                                      showEditPostBottomSheet,
+                                  post: posts[index]),
+                              Container(
+                                height: 10,
+                                color: const Color.fromRGBO(0, 25, 53, 1),
+                              )
+                            ],
+                          );
+                        },
+                        itemCount: posts.length,
+                      )),
+                    ],
+                  ),
+                ),
         ),
-        backgroundColor: Colors.blue,
+        bottomNavigationBar: NavBar(_navBarIndex),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(
+            Icons.mode_edit_outline_outlined,
+            color: Colors.white,
+            size: 30,
+          ),
+          backgroundColor: Colors.blue,
+        ),
       ),
     );
   }

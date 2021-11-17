@@ -37,7 +37,7 @@ class _PostRecommendationBarState extends State<PostRecommendationBar> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(5),
-      color: Colors.black12,
+      color: Colors.white,
       height: 60,
       child: Row(children: [
         Expanded(

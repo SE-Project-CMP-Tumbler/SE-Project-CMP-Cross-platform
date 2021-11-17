@@ -12,16 +12,18 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black12,
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
             Expanded(
               child: Text(
-                '\${widget.notesNum} notes',
+                '${widget.notesNum} notes',
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: Colors.black87,
                 ),
               ),
             ),
@@ -29,19 +31,19 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 onPressed: null,
                 icon: Icon(
                   Icons.share,
-                  color: Colors.grey,
+                  color: Colors.black,
                 )),
             const IconButton(
                 onPressed: null,
                 icon: Icon(
                   Icons.repeat,
-                  color: Colors.grey,
+                  color: Colors.black,
                 )),
             const IconButton(
                 onPressed: null,
                 icon: Icon(
                   Icons.favorite_border_outlined,
-                  color: Colors.grey,
+                  color: Colors.black,
                 )),
           ],
         ),

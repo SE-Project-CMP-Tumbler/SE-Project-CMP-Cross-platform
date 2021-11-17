@@ -17,7 +17,7 @@ class NavBar extends StatelessWidget {
         BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Colors.black87),
+            backgroundColor: Color.fromRGBO(0, 25, 53, 1)),
         BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'search',

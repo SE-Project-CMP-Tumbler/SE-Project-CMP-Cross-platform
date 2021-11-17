@@ -20,16 +20,18 @@ class _PostTopBarState extends State<PostTopBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black12,
+      color: Colors.white,
       height: 60,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          PersonAvatar(avatarPhotoLink:widget.avatarPhotoLink,),
-           Text(
+          PersonAvatar(
+            avatarPhotoLink: widget.avatarPhotoLink,
+          ),
+          Text(
             widget.name,
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black87,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -51,7 +53,7 @@ class _PostTopBarState extends State<PostTopBar> {
               onPressed: () => widget.showEditPostBottomSheet(context),
               icon: Icon(
                 Icons.more_vert,
-                color: Colors.grey,
+                color: Colors.black87,
               ),
             ),
           ))
