@@ -1,14 +1,11 @@
 import 'dart:ui';
-import 'dart:convert';
 import 'dart:async';
 
-import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Widgets/general_widgets/nav_bar.dart';
 import '../../Widgets/Post/post_overview.dart';
-import 'package:provider/provider.dart';
 import "../../Providers/posts.dart";
 import '../../Models/post.dart';
 
@@ -72,6 +69,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool _isLoading = false;
   bool _isInit = false;
 
+
   List<Post> posts = [];
 
   late AnimationController animationController;
@@ -88,6 +86,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     animationController =
         AnimationController(duration: new Duration(seconds: 2), vsync: this);
     animationController.repeat();
+  }
+
+  Future<void> refreshHome(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+     Provider.of<Posts>(context,listen: false).fetchAndSetPosts().then((_) {
+        posts = Provider.of<Posts>(context, listen: false).homePosts;
+        _isLoading = false;
+      });
   }
 
   @override
@@ -129,7 +137,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             SliverAppBar(
               floating: true,
               snap: true,
-              backgroundColor: Color.fromRGBO(0, 25, 53, 1),
+              backgroundColor: const Color.fromRGBO(0, 25, 53, 1),
               leading: Image.asset(
                 'assets/images/tumblr-24.png',
               ),
@@ -164,9 +172,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 )
               : RefreshIndicator(
-                  onRefresh: () async {
-                    Future.delayed(Duration.zero).then((_) {});
-                  },
+                  onRefresh: ()=>refreshHome(context),
                   child: Column(
                     children: [
                       Expanded(
