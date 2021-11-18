@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'dart:async';
 
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Widgets/general_widgets/nav_bar.dart';
 import '../../Widgets/Post/post_overview.dart';
 import "../../Providers/posts.dart";
 import '../../Models/post.dart';
+import '../../Widgets/home_page_appbar.dart';
 
 enum HomeSection {
   following,
@@ -69,13 +69,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool _isLoading = false;
   bool _isInit = false;
 
-
   List<Post> posts = [];
 
   late AnimationController animationController;
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     animationController.dispose();
   }
@@ -92,10 +90,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {
       _isLoading = true;
     });
-     Provider.of<Posts>(context,listen: false).fetchAndSetPosts().then((_) {
-        posts = Provider.of<Posts>(context, listen: false).homePosts;
-        _isLoading = false;
-      });
+    Provider.of<Posts>(context, listen: false).fetchAndSetPosts().then((_) {
+      posts = Provider.of<Posts>(context, listen: false).homePosts;
+      _isLoading = false;
+    });
   }
 
   @override
@@ -120,6 +118,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       } else {
         section = HomeSection.following;
       }
+      print('we r changign section now');
     });
   }
 
@@ -134,35 +133,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             initialScrollOffset: 0.0,
           ),
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverAppBar(
-              floating: true,
-              snap: true,
-              backgroundColor: const Color.fromRGBO(0, 25, 53, 1),
-              leading: Image.asset(
-                'assets/images/tumblr-24.png',
-              ),
-              titleSpacing: 0,
-              title: Row(
-                children: [
-                  TextButton(
-                      onPressed: changeSection,
-                      child: Text("Following",
-                          style: TextStyle(
-                              color: (section == HomeSection.following)
-                                  ? Colors.blue
-                                  : Colors.grey,
-                              fontSize: 17))),
-                  TextButton(
-                      onPressed: changeSection,
-                      child: Text("Stuff for you",
-                          style: TextStyle(
-                              color: (section == HomeSection.stuffForYou)
-                                  ? Colors.blue
-                                  : Colors.grey,
-                              fontSize: 17)))
-                ],
-              ),
-            ),
+            HomePageAppBar(
+              section: section,
+              changeSection: changeSection,
+            )
           ],
           body: _isLoading
               ? Center(
@@ -172,7 +146,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 )
               : RefreshIndicator(
-                  onRefresh: ()=>refreshHome(context),
+                  onRefresh: () => refreshHome(context),
                   child: Column(
                     children: [
                       Expanded(
