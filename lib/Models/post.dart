@@ -1,25 +1,28 @@
 // THIS MODEL IS NOT FINAL .  IT IS CREATED FOR TESTING PURPOSES.
+import 'package:intl/intl.dart';
+
 class Post {
-  String postId = " ";
-  String postBody = "";
-  //String postStatus = "";
-  bool isFavorite = false;
-  //String blogId = "";
-  //String blogUserName = "";
-  String postUserName = "";
-  String postType = "";
-  String postAvatar = "";
-  //String blogAvatarShape = "";
-  //String blogTitle = "";
-  String postTime = "";
-  int notesNum = 0;
+  int postId;
+  String postBody;
+  String postStatus;
+  String postType;
+  int blogId;
+  String blogUsername;
+  String blogAvatar;
+  String blogAvatarShape;
+  String blogTitle;
+  String postTime;
 
   Post({
-    required this.postId,
-    required this.postBody,
-    required this.isFavorite,
-    required this.postUserName,
-    required this.postAvatar,
-    required this.notesNum,
+   required this.postId,
+   required this.postBody,
+   required this.postStatus,
+   required this.postType,
+   required this.blogId,
+   required this.blogUsername,
+   required this.blogAvatar,
+   required this.blogAvatarShape,
+   required this.blogTitle,
+   required this.postTime,
   });
 }

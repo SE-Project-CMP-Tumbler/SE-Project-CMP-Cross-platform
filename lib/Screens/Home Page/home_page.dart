@@ -74,23 +74,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   List<Post> posts = [];
 
-// Data injection (for testing purposes)
-  // @override
-  // void initState() {
-  //   http.post(
-  //       Uri.parse(
-  //           "https://mock-back-default-rtdb.firebaseio.com/homePost.json"),
-  //       body: json.encode({
-  //         'postUserName': 'Iron Man 5',
-  //         'postBody': "https://pbs.twimg.com/media/EiC-uBVX0AEfEIY.jpg",
-  //         'isFavorite': true,
-  //         'postAvatar':
-  //             "https://www.techinn.com/f/13806/138068257/hasbro-marvel-legends-iron-man-electronic-helmet.jpg",
-  //         'notesNum': 2062,
-  //       }));
-  //   super.initState();
-  // }
-
   late AnimationController animationController;
   @override
   void dispose() {
