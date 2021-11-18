@@ -12,6 +12,9 @@ class Post {
   String blogAvatarShape;
   String blogTitle;
   String postTime;
+  List<dynamic> likes=[];
+  List<dynamic> reblogs=[];
+  List<dynamic> replies=[];
 
   Post({
    required this.postId,
@@ -24,5 +27,8 @@ class Post {
    required this.blogAvatarShape,
    required this.blogTitle,
    required this.postTime,
+   this.likes= const [],
+   this.reblogs = const[],
+   this.replies = const[],
   });
 }

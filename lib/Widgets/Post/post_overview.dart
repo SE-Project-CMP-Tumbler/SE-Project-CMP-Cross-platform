@@ -36,7 +36,7 @@ class _PostOutViewState extends State<PostOutView> {
             // height: 300,
           ),
           PostRecommendationBar(),
-          PostInteractionBar(notesNum: 12345678,)
+          PostInteractionBar(notesNum: widget.post.likes.length +widget.post.reblogs.length+widget.post.replies.length,)
         ],
       ),
     );

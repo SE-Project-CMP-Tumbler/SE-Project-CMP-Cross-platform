@@ -36,6 +36,16 @@ class Posts with ChangeNotifier {
           ));
         }
       });
+      print(_homePosts);
+      for (int i = 0; i < _homePosts.length; i++) {
+        final res = await http.get(Uri.parse(
+            "https://mock-back-default-rtdb.firebaseio.com/notes/${_homePosts[i].postId}.json"));
+        final Map<String, dynamic> notes = json.decode(res.body);
+
+        _homePosts[i].likes = notes.values.single['response']['likes'];
+        _homePosts[i].reblogs = notes.values.single['response']['reblogs'];
+        _homePosts[i].replies = notes.values.single['response']['replies'];
+      }
 
       print(_homePosts);
       notifyListeners();
