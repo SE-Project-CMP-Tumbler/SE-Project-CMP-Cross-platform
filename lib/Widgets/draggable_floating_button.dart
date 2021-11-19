@@ -55,7 +55,7 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
         );
       });
     } catch (e) {
-      print('catch: $e');
+      //print('catch: $e');
     }
   }
 
@@ -124,7 +124,6 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
         top: _offset.dy,
         child: Listener(
           onPointerSignal: (PointerSignalEvent pointerSignalEvent){
-            print('signal');
           },
           onPointerMove: (PointerMoveEvent pointerMoveEvent) {
             _updatePosition(pointerMoveEvent);
@@ -133,14 +132,12 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
             });
           },
           onPointerUp: (PointerUpEvent pointerUpEvent) {
-            print('onPointerUp');
             if (_isDragging) {
               _resetPosition();
               setState(() {
                 _isDragging = false;
               });
             } else {
-              print('onPointerUp');
             }
           },
 

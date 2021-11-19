@@ -2,56 +2,65 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tumbler/Constants/colors.dart';
-import 'dart:math' as _math;
 
 import 'package:tumbler/Widgets/draggable_floating_button.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
-  
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
+class _MainScreenState extends State<MainScreen>
+    with SingleTickerProviderStateMixin {
 
-class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin{
-  //state variables 'll be defined here
+  // state variables 'll be defined here
   TabController? tabController;
-  int selectedIndex=0;
-  DateTime? _callbackTimestamp;
-  double fButtonDx=20;
-  double fButtonDy=20;
+  int selectedIndex = 0;
+  double fButtonDx = 20;
+  double fButtonDy = 20;
   final GlobalKey _parentKey = GlobalKey();
-    @override
+
+  @override
   void initState() {
     super.initState();
     tabController = TabController(length: 4, vsync: this);
   }
+
   @override
   void dispose() {
     super.dispose();
     tabController!.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-    double _width= MediaQuery.of(context).size.width;
-    double _height= MediaQuery.of(context).size.height;
+    double _width = MediaQuery.of(context).size.width;
+    double _height = MediaQuery.of(context).size.height;
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         type: BottomNavigationBarType.fixed,
         items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_filled,size: 30),
-        label: '',
-        ),
-          BottomNavigationBarItem(icon: Icon(Icons.search_rounded,size: 30),
-            label: '',
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_filled, size: 30),
+            label: 'Home',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble,size: 30),
-            label: '',
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search_rounded, size: 30),
+            label: 'Search',
           ),
-          BottomNavigationBarItem(icon: Icon(CupertinoIcons.person_solid,size: 30,),
-            label: '',
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble, size: 30),
+            label: 'Activity',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              CupertinoIcons.person_solid,
+              size: 30,
+            ),
+            label: 'Profile',
           ),
         ],
         showUnselectedLabels: false,
@@ -68,42 +77,56 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
             physics: const NeverScrollableScrollPhysics(),
             controller: tabController,
             children: [
-              //replace this with home page
-              Container(color: appBackgroundColor,
-              child: const Center(child: Text('THIS IS HOME'),)),
-              //replace this with search page
-              Container(color: appBackgroundColor,
-                child:const Center(child: Text('THIS IS Search'),)),
-              //replace this with chat Page
-              Container(color: appBackgroundColor,
-                child: const Center(child: Text('THIS IS Chat')),),
-              //replace this with profile page
-              Container(color: appBackgroundColor,
-                child: const Center(child: Text('THIS IS Profile'),)),
-
+              // TODO: Replace this with home page
+              Container(
+                  color: appBackgroundColor,
+                  child: const Center(
+                    child: Text('THIS IS HOME'),
+                  )),
+              // TODO: Replace this with search page
+              Container(
+                  color: appBackgroundColor,
+                  child: const Center(
+                    child: Text('THIS IS SEARCH'),
+                  )),
+              // TODO: Replace this with chat Page
+              Container(
+                color: appBackgroundColor,
+                child: const Center(child: Text('THIS IS CHAT')),
+              ),
+              // TODO: Replace this with profile page
+              Container(
+                  color: appBackgroundColor,
+                  child: const Center(
+                    child: Text('THIS IS PROFILE'),
+                  )),
             ],
           ),
-
-          selectedIndex==0 ||selectedIndex==3? DraggableFloatingActionButton(
-            duration: const Duration(milliseconds: 100),
-            child: Image.asset('assets/images/create_post.png', color: Colors.white,width: 25.0,),
-            initialOffset: Offset(_width-70, _height-150),
-            parentKey: _parentKey,
-            onPressed: () {
-
-            },
-          ):Container(),
+          selectedIndex == 0 || selectedIndex == 3
+              ? DraggableFloatingActionButton(
+                  duration: const Duration(milliseconds: 100),
+                  child: Image.asset(
+                    'assets/images/create_post.png',
+                    color: Colors.white,
+                    width: 25.0,
+                  ),
+                  initialOffset: Offset(_width - 70, _height - 150),
+                  parentKey: _parentKey,
+                  onPressed: () {
+                    // TODO: Navigate to Add Post Page
+                  },
+                )
+              : Container(),
         ],
       ),
     );
   }
+
   //all state functions will be declared here
-  void onTabClicked(int index)
-  {
+  void onTabClicked(int index) {
     setState(() {
       selectedIndex = index;
-      tabController!.index= selectedIndex;
+      tabController!.index = selectedIndex;
     });
   }
-
 }

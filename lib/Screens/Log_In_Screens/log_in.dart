@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:tumbler/Methods/api.dart';
-import 'package:tumbler/Models/users.dart';
 
+import '/Methods/api.dart';
+import '/Models/users.dart';
+import '/Screens/main_screen.dart';
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
 import '/Screens/Log_In_Screens/forget_password.dart';
@@ -118,7 +119,9 @@ class _LogINState extends State<LogIN> {
                 User.id = response["response"]["id"];
                 User.blogAvatar = response["response"]["blog_avatar"];
                 User.accessToken = response["response"]["access_token"];
-                // TODO: Navigate to Home Page
+
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const MainScreen()));
               } else {
                 Fluttertoast.showToast(
                   msg: response["meta"]["msg"],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '/Screens/main_screen.dart';
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
 import '/Methods/api.dart';
@@ -142,7 +143,9 @@ class _RegisterState extends State<Register> {
                 User.id = response["response"]["id"];
                 User.blogAvatar = response["response"]["blog_avatar"];
                 User.accessToken = response["response"]["access_token"];
-                // TODO: Navigate to Home Page
+
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const MainScreen()));
               } else {
                 Fluttertoast.showToast(
                   msg: response["meta"]["msg"],
