@@ -33,9 +33,8 @@ class _PostOutViewState extends State<PostOutView> {
           Container(
             child:HtmlView(htmlData: widget.post.postBody),
             width: double.infinity,
-            // height: 300,
           ),
-          PostRecommendationBar(),
+          //PostRecommendationBar(),
           PostInteractionBar(notesNum: widget.post.likes.length +widget.post.reblogs.length+widget.post.replies.length,)
         ],
       ),

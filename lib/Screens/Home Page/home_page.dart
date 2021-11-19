@@ -16,6 +16,22 @@ enum HomeSection {
   stuffForYou,
 }
 
+Future<void> fetchingPostsErrorHandler(BuildContext context,String mess) async {
+  showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+            title: const Text("An error occurred"),
+            content:  Text(mess),
+            actions: [
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                  child: const Text('Okay'))
+            ],
+          ));
+}
+
 void showEditPostBottomSheet(BuildContext ctx) {
   showModalBottomSheet<dynamic>(
     isScrollControlled: true,
@@ -95,6 +111,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Provider.of<Posts>(context, listen: false).fetchAndSetPosts().then((_) {
       posts = Provider.of<Posts>(context, listen: false).homePosts;
       _isLoading = false;
+    }).catchError((error) {
+      fetchingPostsErrorHandler(context,error.toString());
     });
   }
 
@@ -107,6 +125,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       Provider.of<Posts>(context).fetchAndSetPosts().then((_) {
         posts = Provider.of<Posts>(context, listen: false).homePosts;
         _isLoading = false;
+      }).catchError((error) {
+        fetchingPostsErrorHandler(context,error.toString());
       });
     }
     _isInit = true;
@@ -132,7 +152,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         body: Center(
           child: Container(
             color: Colors.white,
-            width: (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform==TargetPlatform.linux|| defaultTargetPlatform==TargetPlatform.macOS)
+            width: (defaultTargetPlatform == TargetPlatform.windows ||
+                    defaultTargetPlatform == TargetPlatform.linux ||
+                    defaultTargetPlatform == TargetPlatform.macOS)
                 ? MediaQuery.of(context).size.width * (2 / 3)
                 : double.infinity,
             child: NestedScrollView(

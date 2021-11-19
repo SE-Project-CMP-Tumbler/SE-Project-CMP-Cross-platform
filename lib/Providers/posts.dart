@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+import '../Models/http_requests_exceptions.dart';
 
 import '../Models/post.dart';
 
@@ -14,11 +14,17 @@ class Posts with ChangeNotifier {
 
   Future<void> fetchAndSetPosts() async {
     try {
-      final response = await http.get(Uri.parse(
-          "https://mock-back-default-rtdb.firebaseio.com/radar.json"));
+      final response = await http.get(
+          Uri.parse("https://mock-back-default-rtdb.firebaseio.com/rada.json"));
 
       _homePosts.clear();
       Map<String, dynamic> res = json.decode(response.body);
+
+      if (res.values.single['meta']['status'] == "401")
+        throw HttpException("You are not authorized");
+      else if (res.values.single['meta']['status'] == "404")
+        throw HttpException("Not Found!");
+
       res.forEach((id, data) {
         List<dynamic> postsList = data['response']['posts'];
         for (var i = 0; i < postsList.length; i++) {
@@ -36,11 +42,17 @@ class Posts with ChangeNotifier {
           ));
         }
       });
+
       print(_homePosts);
+
       for (int i = 0; i < _homePosts.length; i++) {
         final res = await http.get(Uri.parse(
             "https://mock-back-default-rtdb.firebaseio.com/notes/${_homePosts[i].postId}.json"));
+
         final Map<String, dynamic> notes = json.decode(res.body);
+
+        if (notes.values.single['meta']['status'] == "404")
+          throw HttpException("Not Found!");
 
         _homePosts[i].likes = notes.values.single['response']['likes'];
         _homePosts[i].reblogs = notes.values.single['response']['reblogs'];
@@ -49,9 +61,9 @@ class Posts with ChangeNotifier {
 
       print(_homePosts);
       notifyListeners();
-    } on Exception catch (error) {
+    } catch (error) {
       print(error);
-      throw error;
+      throw HttpException("Something went wrong");
     }
   }
 }
