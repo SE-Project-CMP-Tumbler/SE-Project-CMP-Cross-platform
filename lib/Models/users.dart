@@ -3,6 +3,6 @@ class User {
   static String email = "";
   static String id = "";
   static String name = "";
-  static String token = "";
   static String blogAvatar = "";
+  static String accessToken = "";
 }

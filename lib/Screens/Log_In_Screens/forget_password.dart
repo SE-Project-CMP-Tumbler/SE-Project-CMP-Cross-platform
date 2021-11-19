@@ -47,15 +47,14 @@ class _ForgetPassWordState extends State<ForgetPassWord> {
             TextButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  bool response =
+                  Map<String, dynamic> response =
                       await Api().forgetPassword(_emailController.text);
 
-                  // we should check other errors such as 404,500
-                  if (response)
+                  if (response["meta"]["status"] == "200")
                     setState(() => firstHomePage = false);
                   else
                     Fluttertoast.showToast(
-                        msg: "Failed To Sent a Request",
+                        msg: response["meta"]["msg"],
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 1,

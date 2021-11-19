@@ -19,18 +19,20 @@ class _AddYourOwnTagState extends State<AddYourOwnTag> {
   late List<String> _trending;
 
   void initializeTrending() async {
-    List<String> temp = await Api().getTrendingTags();
-    setState(() => _trending = temp);
-    if (_trending.isEmpty) {
-      // we should check other errors such as 404,500
+    Map<String, dynamic> response = await Api().getTrendingTags();
+
+    if (response["meta"]["status"] == "200") {
+      var json = response["response"]["tags"] as List<dynamic>;
+      setState(() => _trending.addAll(json.map((e) => e["tag_description"])));
+    } else {
       Fluttertoast.showToast(
-          msg: "Failed To Connect To The Server",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 16.0);
+        msg: response["meta"]["msg"],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 

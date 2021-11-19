@@ -130,30 +130,28 @@ class _RegisterState extends State<Register> {
         TextButton(
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              Map<String, dynamic> response = await Api().register(
+              Map<String, dynamic> response = await Api().signUp(
                   _nameController.text,
                   _passController.text,
                   _emailController.text,
                   User.age);
 
-              // we should check other errors such as 404,500
-
-              if (response.isNotEmpty) {
-                User.name = response["blog_username"];
-                User.email = response["email"];
-                User.token = response["access_token"];
-                User.id = response["id"];
-                User.blogAvatar = response["blog_avatar"];
-                // Navigate to Home Page
+              if (response["meta"]["status"] == "200") {
+                User.name = response["response"]["blog_username"];
+                User.email = response["response"]["email"];
+                User.id = response["response"]["id"];
+                User.blogAvatar = response["response"]["blog_avatar"];
+                User.accessToken = response["response"]["access_token"];
+                // TODO: Navigate to Home Page
               } else {
                 Fluttertoast.showToast(
-                    msg: "Failed To Register",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.black,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
+                  msg: response["meta"]["msg"],
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.TOP,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0,
+                );
               }
             }
           },
