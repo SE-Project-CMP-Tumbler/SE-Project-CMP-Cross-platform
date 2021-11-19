@@ -39,6 +39,7 @@ dependencies:
   flutter_widget_from_html: ^0.8.2
   video_player: ^2.2.7
   chewie:
+  font_awesome_flutter: ^9.2.0
   flutter_native_splash:
 
 
@@ -75,6 +76,7 @@ flutter:
     - assets/images/capital_letter.png
     - assets/images/quote.png
     - assets/images/intro_2_delayed.gif
+    - assets/images/create_tumblr.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
