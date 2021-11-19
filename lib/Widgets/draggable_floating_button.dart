@@ -55,7 +55,8 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
         );
       });
     } catch (e) {
-      //print('catch: $e');
+      // ignore: avoid_print
+      print(e.toString());
     }
   }
 
@@ -145,6 +146,7 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
             onPressed: widget.onPressed,
             key: _key,
             child: widget.child,
+            backgroundColor: floatingButtonColor,
           ),
         ),
       ),
