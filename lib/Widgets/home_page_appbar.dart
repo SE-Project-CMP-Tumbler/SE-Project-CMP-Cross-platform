@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-
 enum HomeSection {
   following,
   stuffForYou,
 }
 
-
 class HomePageAppBar extends StatelessWidget {
   Function changeSection;
   Enum section;
 
-   HomePageAppBar({Key? key, required this.changeSection,required this.section}) : super(key: key);
+  HomePageAppBar({Key? key, required this.changeSection, required this.section})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       floating: true,
+      stretch: true,
       snap: true,
       backgroundColor: const Color.fromRGBO(0, 25, 53, 1),
       leading: Image.asset(
@@ -26,7 +26,7 @@ class HomePageAppBar extends StatelessWidget {
       title: Row(
         children: [
           TextButton(
-              onPressed: ()=>changeSection(),
+              onPressed: () => changeSection(),
               child: Text("Following",
                   style: TextStyle(
                       color: (section.index == HomeSection.following.index)
@@ -34,7 +34,7 @@ class HomePageAppBar extends StatelessWidget {
                           : Colors.grey,
                       fontSize: 17))),
           TextButton(
-              onPressed: ()=>changeSection(),
+              onPressed: () => changeSection(),
               child: Text("Stuff for you",
                   style: TextStyle(
                       color: (section.index == HomeSection.stuffForYou.index)

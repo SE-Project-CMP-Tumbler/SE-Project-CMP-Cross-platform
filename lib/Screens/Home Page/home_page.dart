@@ -1,5 +1,7 @@
 import 'dart:ui';
+import 'dart:io';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -126,50 +128,58 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
-        body: NestedScrollView(
-          floatHeaderSlivers: true,
-          controller: ScrollController(
-            initialScrollOffset: 0.0,
-          ),
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            HomePageAppBar(
-              section: section,
-              changeSection: changeSection,
-            )
-          ],
-          body: _isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    valueColor: animationController.drive(
-                        ColorTween(begin: Colors.blueAccent, end: Colors.red)),
-                  ),
+        backgroundColor: const Color.fromRGBO(0, 25, 53, 1),
+        body: Center(
+          child: Container(
+            color: Colors.white,
+            width: (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform==TargetPlatform.linux|| defaultTargetPlatform==TargetPlatform.macOS)
+                ? MediaQuery.of(context).size.width * (2 / 3)
+                : double.infinity,
+            child: NestedScrollView(
+              floatHeaderSlivers: true,
+              controller: ScrollController(
+                initialScrollOffset: 0.0,
+              ),
+              headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                HomePageAppBar(
+                  section: section,
+                  changeSection: changeSection,
                 )
-              : RefreshIndicator(
-                  onRefresh: () => refreshHome(context),
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: ListView.builder(
-                        itemBuilder: (ctx, index) {
-                          return Column(
-                            children: [
-                              PostOutView(
-                                  showEditPostBottomSheet:
-                                      showEditPostBottomSheet,
-                                  post: posts[index]),
-                              Container(
-                                height: 10,
-                                color: const Color.fromRGBO(0, 25, 53, 1),
-                              )
-                            ],
-                          );
-                        },
-                        itemCount: posts.length,
-                      )),
-                    ],
-                  ),
-                ),
+              ],
+              body: _isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        valueColor: animationController.drive(ColorTween(
+                            begin: Colors.blueAccent, end: Colors.red)),
+                      ),
+                    )
+                  : RefreshIndicator(
+                      onRefresh: () => refreshHome(context),
+                      child: Column(
+                        children: [
+                          Expanded(
+                              child: ListView.builder(
+                            itemBuilder: (ctx, index) {
+                              return Column(
+                                children: [
+                                  PostOutView(
+                                      showEditPostBottomSheet:
+                                          showEditPostBottomSheet,
+                                      post: posts[index]),
+                                  Container(
+                                    height: 10,
+                                    color: const Color.fromRGBO(0, 25, 53, 1),
+                                  )
+                                ],
+                              );
+                            },
+                            itemCount: posts.length,
+                          )),
+                        ],
+                      ),
+                    ),
+            ),
+          ),
         ),
         bottomNavigationBar: NavBar(_navBarIndex),
         floatingActionButton: FloatingActionButton(

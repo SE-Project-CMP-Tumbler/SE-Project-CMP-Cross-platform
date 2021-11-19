@@ -36,6 +36,7 @@ class HtmlView extends StatelessWidget {
           alignment: Alignment.topLeft,
         ),
         'h5': Style(maxLines: 2, textOverflow: TextOverflow.ellipsis),
+        "img":Style( alignment: Alignment.center)
       },
       customImageRenders: {
         (attr, __) => attr["src"] != null: networkImageRender(width: 500, height: 300),

@@ -17,6 +17,15 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
+            Container(
+              width: 50,
+              child: FlatButton(
+                  onPressed: () {},
+                  child: Image.asset(
+                    'assets/images/icons8-love-circled-50.png',
+                    fit: BoxFit.cover,
+                  )),
+            ),
             Expanded(
               child: Text(
                 '${widget.notesNum} notes',
@@ -30,7 +39,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             const IconButton(
                 onPressed: null,
                 icon: Icon(
-                  Icons.share,
+                  Icons.reply,
                   color: Colors.black,
                 )),
             const IconButton(
@@ -43,6 +52,12 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 onPressed: null,
                 icon: Icon(
                   Icons.favorite_border_outlined,
+                  color: Colors.black,
+                )),
+            const IconButton(
+                onPressed: null,
+                icon: Icon(
+                  Icons.add_comment_outlined,
                   color: Colors.black,
                 )),
           ],
