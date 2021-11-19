@@ -55,7 +55,8 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
         );
       });
     } catch (e) {
-      print('catch: $e');
+      // ignore: avoid_print
+      print(e.toString());
     }
   }
 
@@ -124,7 +125,6 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
         top: _offset.dy,
         child: Listener(
           onPointerSignal: (PointerSignalEvent pointerSignalEvent){
-            print('signal');
           },
           onPointerMove: (PointerMoveEvent pointerMoveEvent) {
             _updatePosition(pointerMoveEvent);
@@ -133,14 +133,12 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
             });
           },
           onPointerUp: (PointerUpEvent pointerUpEvent) {
-            print('onPointerUp');
             if (_isDragging) {
               _resetPosition();
               setState(() {
                 _isDragging = false;
               });
             } else {
-              print('onPointerUp');
             }
           },
 
@@ -148,6 +146,7 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
             onPressed: widget.onPressed,
             key: _key,
             child: widget.child,
+            backgroundColor: floatingButtonColor,
           ),
         ),
       ),
