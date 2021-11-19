@@ -154,4 +154,31 @@ class Api {
 
     return jsonDecode(response.body);
   }
+
+  void sendPost(String postBody, String postStatus, String postType,
+      String postTime) async {
+    //String postTime = getDate();
+    var blogId = 7;
+    String firebaseHost = 'https://addpost-bcc94-default-rtdb.firebaseio.com/';
+
+    http.Response response = await http
+        .post(
+      Uri.parse(firebaseHost + 'post/$blogId.json'),
+      headers: {
+        // 'Authorization': User.accessToken,
+      },
+      body: json.encode({
+        'post_status': postStatus,
+        'post_time': postTime,
+        'post_type': postType,
+        'post_body': postBody
+      }),
+    )
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response("{}", 408);
+      },
+    ).onError((error, stackTrace) => http.Response("{}", 404));
+  }
 }
