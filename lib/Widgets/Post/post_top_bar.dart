@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import './post_personal_avatar.dart';
 
 class PostTopBar extends StatefulWidget {
-  Function showEditPostBottomSheet;
-  String avatarPhotoLink;
-  String name;
-  PostTopBar({
+  final Function showEditPostBottomSheet;
+  final String avatarPhotoLink;
+  final String name;
+  const PostTopBar({
     Key? key,
     required this.showEditPostBottomSheet,
     required this.avatarPhotoLink,
@@ -51,7 +51,7 @@ class _PostTopBarState extends State<PostTopBar> {
             alignment: Alignment.centerRight,
             child: IconButton(
               onPressed: () => widget.showEditPostBottomSheet(context),
-              icon: Icon(
+              icon: const Icon(
                 Icons.more_vert,
                 color: Colors.black87,
               ),

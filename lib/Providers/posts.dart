@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import '../Models/users.dart';
 import 'package:http/http.dart' as http;
 import '../Models/http_requests_exceptions.dart';
 
 import '../Models/post.dart';
 
 class Posts with ChangeNotifier {
-  List<Post> _homePosts = [];
+  final List<Post> _homePosts = [];
 
   List<Post> get homePosts {
     return [..._homePosts];
@@ -15,7 +16,8 @@ class Posts with ChangeNotifier {
   Future<void> fetchAndSetPosts() async {
     try {
       final response = await http.get(
-          Uri.parse("https://mock-back-default-rtdb.firebaseio.com/rada.json"));
+          Uri.parse("https://mock-back-default-rtdb.firebaseio.com/radar.json"),
+          headers: {'Authorization': User.accessToken});
 
       _homePosts.clear();
       Map<String, dynamic> res = json.decode(response.body);
@@ -43,11 +45,11 @@ class Posts with ChangeNotifier {
         }
       });
 
-      print(_homePosts);
-
       for (int i = 0; i < _homePosts.length; i++) {
-        final res = await http.get(Uri.parse(
-            "https://mock-back-default-rtdb.firebaseio.com/notes/${_homePosts[i].postId}.json"));
+        final res = await http.get(
+            Uri.parse(
+                "https://mock-back-default-rtdb.firebaseio.com/notes/${_homePosts[i].postId}.json"),
+            headers: {'Authorization': User.accessToken});
 
         final Map<String, dynamic> notes = json.decode(res.body);
 
@@ -59,10 +61,8 @@ class Posts with ChangeNotifier {
         _homePosts[i].replies = notes.values.single['response']['replies'];
       }
 
-      print(_homePosts);
       notifyListeners();
     } catch (error) {
-      print(error);
       throw HttpException("Something went wrong");
     }
   }

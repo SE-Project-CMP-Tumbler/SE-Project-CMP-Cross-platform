@@ -19,7 +19,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            width: 60,
+            width: 80,
             child: FlatButton(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
@@ -31,9 +31,9 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
           Expanded(
             child: Text(
               '${widget.notesNum} notes',
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 15,
+                fontSize: 18,
                 color: Colors.black87,
               ),
             ),

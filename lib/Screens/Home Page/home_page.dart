@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     animationController =
-        AnimationController(duration: new Duration(seconds: 2), vsync: this);
+        AnimationController(duration: const  Duration(seconds: 2), vsync: this);
     animationController.repeat();
   }
 
@@ -140,7 +140,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       } else {
         section = HomeSection.following;
       }
-      print('we r changign section now');
     });
   }
 

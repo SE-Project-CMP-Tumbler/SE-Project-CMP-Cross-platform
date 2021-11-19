@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../Providers/posts.dart';
+
 
 class PersonAvatar extends StatefulWidget {
-  String avatarPhotoLink;
-  PersonAvatar({Key? key, required this.avatarPhotoLink}) : super(key: key);
+  final String avatarPhotoLink;
+  const PersonAvatar({Key? key, required this.avatarPhotoLink}) : super(key: key);
 
   @override
   _PersonAvatarState createState() => _PersonAvatarState();

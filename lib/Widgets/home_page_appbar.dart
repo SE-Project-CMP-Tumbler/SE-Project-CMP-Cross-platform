@@ -6,10 +6,10 @@ enum HomeSection {
 }
 
 class HomePageAppBar extends StatelessWidget {
-  Function changeSection;
-  Enum section;
+  final Function changeSection;
+  final Enum section;
 
-  HomePageAppBar({Key? key, required this.changeSection, required this.section})
+  const HomePageAppBar({Key? key, required this.changeSection, required this.section})
       : super(key: key);
 
   @override
