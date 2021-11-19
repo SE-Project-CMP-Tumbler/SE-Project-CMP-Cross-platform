@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
 
+///Class for interaction bar exists the bottom of each post in home page
+///
+///holds:
+///1-Notes number
+///2-buttons to Favorite and reblog and reply
 class PostInteractionBar extends StatefulWidget {
-  int notesNum;
-  PostInteractionBar({Key? key, required this.notesNum}) : super(key: key);
+  final int notesNum;
+
+  ///Constructor takes total number of notes
+  const PostInteractionBar({Key? key, required this.notesNum})
+      : super(key: key);
 
   @override
   _PostInteractionBarState createState() => _PostInteractionBarState();
@@ -11,6 +20,7 @@ class PostInteractionBar extends StatefulWidget {
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
   bool isLoved = false;
+  NumberFormat numFormatter = NumberFormat.decimalPattern('en_us');
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,7 +28,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
+          SizedBox(
             width: 80,
             child: FlatButton(
                 padding:
@@ -30,11 +40,11 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
           ),
           Expanded(
             child: Text(
-              '${widget.notesNum} notes',
+              '${numFormatter.format(widget.notesNum)} notes',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
-                color: Colors.black87,
+                color: Colors.black45,
               ),
             ),
           ),

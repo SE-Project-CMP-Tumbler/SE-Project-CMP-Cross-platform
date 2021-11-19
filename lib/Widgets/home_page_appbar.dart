@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
+/// HomeSection enum facilitates handling multiple sub-pages in home page.
 enum HomeSection {
   following,
   stuffForYou,
 }
 
+///Users can use [HomePageAppBar] to navigate either __following__ or __stuffForYou__ section.
 class HomePageAppBar extends StatelessWidget {
+  ///Called when the user tap on __following__ or __stuffForYou__ in home page appbar
   final Function changeSection;
+
+  ///Holds the current section the user in
   final Enum section;
 
-  const HomePageAppBar({Key? key, required this.changeSection, required this.section})
+  const HomePageAppBar(
+      {Key? key, required this.changeSection, required this.section})
       : super(key: key);
 
   @override

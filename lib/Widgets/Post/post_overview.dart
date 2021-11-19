@@ -5,9 +5,13 @@ import '../Post/post_top_bar.dart';
 import '../../Models/post.dart';
 import '../general_widgets/html_viewer.dart';
 
+///Shows the overview of the post in the home page
 class PostOutView extends StatefulWidget {
   Function showEditPostBottomSheet;
   Post post;
+  ///takes 
+  ///*showEditPostBottomSheet function that responsible for showing some options about the post by clicking on more vert icon
+  ///*Post model contains all data about the post
   PostOutView(
       {Key? key, required this.showEditPostBottomSheet, required this.post})
       : super(key: key);
@@ -27,11 +31,11 @@ class _PostOutViewState extends State<PostOutView> {
             avatarPhotoLink: widget.post.blogAvatar,
             name: widget.post.blogUsername,
           ),
+          const Divider(color: Colors.grey,),
           Container(
             child:HtmlView(htmlData: widget.post.postBody),
             width: double.infinity,
           ),
-          //PostRecommendationBar(),
           PostInteractionBar(notesNum: widget.post.likes.length +widget.post.reblogs.length+widget.post.replies.length,)
         ],
       ),

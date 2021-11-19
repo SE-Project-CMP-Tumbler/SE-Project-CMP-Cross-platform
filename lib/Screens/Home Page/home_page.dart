@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'dart:io';
+
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 
@@ -16,7 +16,11 @@ enum HomeSection {
   stuffForYou,
 }
 
-Future<void> fetchingPostsErrorHandler(BuildContext context,String mess) async {
+
+///Shows informative message about an error occurred while fetching posts in home page.
+///
+///Takes [Buildcontext] object and error message.
+Future<void> showErrorDialog(BuildContext context,String mess) async {
   showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -32,6 +36,7 @@ Future<void> fetchingPostsErrorHandler(BuildContext context,String mess) async {
           ));
 }
 
+///Shows modal bottom sheet when the user clicks on more vert icon button in a post.
 void showEditPostBottomSheet(BuildContext ctx) {
   showModalBottomSheet<dynamic>(
     isScrollControlled: true,
@@ -83,27 +88,37 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _navBarIndex = 0;
+  
+  ///saying which section the user is surfing.
   Enum section = HomeSection.following;
+
+  /// true when posts are loading.
   bool _isLoading = false;
+
+  ///true after first successful posts fetching.
   bool _isInit = false;
 
+  /// list of current home posts.
   List<Post> posts = [];
 
-  late AnimationController animationController;
+  late AnimationController loadingSpinnerAnimationController;
   @override
   void dispose() {
     super.dispose();
-    animationController.dispose();
+    loadingSpinnerAnimationController.dispose();
   }
+
 
   @override
   void initState() {
     super.initState();
-    animationController =
+ ///animation conroller for the color varying loading spinner
+    loadingSpinnerAnimationController =
         AnimationController(duration: const  Duration(seconds: 2), vsync: this);
-    animationController.repeat();
+    loadingSpinnerAnimationController.repeat();
   }
 
+///Responsible refreshing home page and fetch new post to show.
   Future<void> refreshHome(BuildContext context) async {
     setState(() {
       _isLoading = true;
@@ -112,7 +127,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       posts = Provider.of<Posts>(context, listen: false).homePosts;
       _isLoading = false;
     }).catchError((error) {
-      fetchingPostsErrorHandler(context,error.toString());
+      showErrorDialog(context,error.toString());
     });
   }
 
@@ -126,13 +141,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         posts = Provider.of<Posts>(context, listen: false).homePosts;
         _isLoading = false;
       }).catchError((error) {
-        fetchingPostsErrorHandler(context,error.toString());
+        showErrorDialog(context,error.toString());
       });
     }
     _isInit = true;
     super.didChangeDependencies();
   }
 
+
+///Used to switch from __Following__ section to __Stuff for you__ section and vice vers.
   void changeSection() {
     setState(() {
       if (section == HomeSection.following) {
@@ -170,7 +187,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               body: _isLoading
                   ? Center(
                       child: CircularProgressIndicator(
-                        valueColor: animationController.drive(ColorTween(
+                        valueColor: loadingSpinnerAnimationController.drive(ColorTween(
                             begin: Colors.blueAccent, end: Colors.red)),
                       ),
                     )

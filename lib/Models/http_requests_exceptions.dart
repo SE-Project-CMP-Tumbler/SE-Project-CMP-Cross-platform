@@ -1,3 +1,5 @@
+
+///Customized Http exception class.
 class HttpException implements Exception {
   final String _message;
 

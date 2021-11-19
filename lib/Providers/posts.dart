@@ -6,27 +6,37 @@ import '../Models/http_requests_exceptions.dart';
 
 import '../Models/post.dart';
 
+
+///Posts provider manage the state of posts.
 class Posts with ChangeNotifier {
   final List<Post> _homePosts = [];
 
+///Returns loaded posts.
   List<Post> get homePosts {
     return [..._homePosts];
   }
 
+
+///fetch posts throught http get request.
   Future<void> fetchAndSetPosts() async {
     try {
       final response = await http.get(
           Uri.parse("https://mock-back-default-rtdb.firebaseio.com/radar.json"),
           headers: {'Authorization': User.accessToken});
 
+        // clear all loaded post.
       _homePosts.clear();
+
+      
       Map<String, dynamic> res = json.decode(response.body);
 
+    //checking the status code of the recieved response.
       if (res.values.single['meta']['status'] == "401")
         throw HttpException("You are not authorized");
       else if (res.values.single['meta']['status'] == "404")
         throw HttpException("Not Found!");
 
+      //set _homePost list.
       res.forEach((id, data) {
         List<dynamic> postsList = data['response']['posts'];
         for (var i = 0; i < postsList.length; i++) {
@@ -45,6 +55,7 @@ class Posts with ChangeNotifier {
         }
       });
 
+      // setting the notes for each post in _homePosts through http requests.
       for (int i = 0; i < _homePosts.length; i++) {
         final res = await http.get(
             Uri.parse(
@@ -53,6 +64,7 @@ class Posts with ChangeNotifier {
 
         final Map<String, dynamic> notes = json.decode(res.body);
 
+        //check the status code for the recieved response.
         if (notes.values.single['meta']['status'] == "404")
           throw HttpException("Not Found!");
 

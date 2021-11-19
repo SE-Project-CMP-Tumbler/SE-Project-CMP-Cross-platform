@@ -1,6 +1,6 @@
-// THIS MODEL IS NOT FINAL .  IT IS CREATED FOR TESTING PURPOSES.
-import 'package:intl/intl.dart';
 
+
+///Post Model
 class Post {
   int postId;
   String postBody;

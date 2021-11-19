@@ -37,6 +37,7 @@ dependencies:
   flutter_html: ^2.1.5
   intl: ^0.17.0
   like_button: ^2.0.3
+  dartdoc: ^4.1.0
   flutter_native_splash:
 
 

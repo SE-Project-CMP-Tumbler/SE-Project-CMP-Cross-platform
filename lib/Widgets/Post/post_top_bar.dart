@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import './post_personal_avatar.dart';
 
+///[PostTopBar] carries inforamtion about post owner
 class PostTopBar extends StatefulWidget {
   final Function showEditPostBottomSheet;
   final String avatarPhotoLink;
@@ -52,7 +53,7 @@ class _PostTopBarState extends State<PostTopBar> {
             child: IconButton(
               onPressed: () => widget.showEditPostBottomSheet(context),
               icon: const Icon(
-                Icons.more_vert,
+                Icons.more_horiz,
                 color: Colors.black87,
               ),
             ),

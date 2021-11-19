@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-// This widget can
-/*
 
-1- show text with style
-2- show images
-
-*/
-
+///Used to render html content
 class HtmlView extends StatelessWidget {
   String htmlData = "";
+  
+  /// takes html content as string.
   HtmlView({
     Key? key,
     required this.htmlData,
@@ -22,17 +18,17 @@ class HtmlView extends StatelessWidget {
       data: htmlData,
       style: {
         "table": Style(
-          backgroundColor: Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+          backgroundColor: const Color.fromARGB(0x50, 0xee, 0xee, 0xee),
         ),
         "tr": Style(
-          border: Border(bottom: BorderSide(color: Colors.grey)),
+          border: const Border(bottom: BorderSide(color: Colors.grey)),
         ),
         "th": Style(
-          padding: EdgeInsets.all(6),
+          padding: const EdgeInsets.all(6),
           backgroundColor: Colors.grey,
         ),
         "td": Style(
-          padding: EdgeInsets.all(6),
+          padding: const EdgeInsets.all(6),
           alignment: Alignment.topLeft,
         ),
         'h5': Style(maxLines: 2, textOverflow: TextOverflow.ellipsis),
@@ -42,19 +38,19 @@ class HtmlView extends StatelessWidget {
         (attr, __) => attr["src"] != null: networkImageRender(width: 500, height: 300),
       },
       onLinkTap: (url, _, __, ___) {
-        print("opening $url");
+        //print("opening $url");
       },
       onImageTap: (src, _, __, ___) {
-        print(src);
+        //print(src);
       },
       onImageError: (exception, stackTrace) {
-        print(exception);
+        //print(exception);
       },
       onCssParseError: (css, messages) {
-        print("css that errored: $css");
-        print("error messages:");
+        //print("css that errored: $css");
+        //print("error messages:");
         messages.forEach((element) {
-          print(element);
+          //print(element);
         });
       },
     );
