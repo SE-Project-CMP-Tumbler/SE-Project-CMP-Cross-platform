@@ -34,6 +34,11 @@ dependencies:
   google_fonts: ^2.1.0
   provider: ^6.0.1
   flutter_native_splash:
+  html_editor_enhanced: ^2.4.0+1
+  path_provider: ^2.0.7
+  http: ^0.13.4
+  intl: ^0.17.0
+  fluttertoast: ^8.0.8
 
 
 dev_dependencies:
