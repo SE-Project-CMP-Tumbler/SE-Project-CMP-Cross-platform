@@ -9,6 +9,7 @@ void main() {
 }
 
 
+
 /*class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -16,12 +17,8 @@ void main() {
       create: (_) => FollowedTags(),
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TagSelect(),
+        home: OnStart(),
       ),
     );
-    /**
-        return const MaterialApp(
-        home: OnStart(),
-        );**/
   }
 }*/

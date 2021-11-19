@@ -27,7 +27,7 @@ class _PostButtonState extends State<PostButton> {
     String html = await widget.controller.getText();
     String postTime = getDate();
     String processedHtml = await extractMediaFiles(html);
-    Api().SendPost(processedHtml, "published", "general", postTime);
+    Api().sendPost(processedHtml, "published", "general", postTime);
   }
 
   @override

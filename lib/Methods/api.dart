@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:http/http.dart' as http;
-import 'package:tumbler/Models/Users.dart';
+import 'package:tumbler/Models/users.dart';
 
 class Api {
   static const String _host =
@@ -155,15 +155,15 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  void SendPost(String postBody, String postStatus, String postType,
+  void sendPost(String postBody, String postStatus, String postType,
       String postTime) async {
     //String postTime = getDate();
-    var blog_id = 7;
+    var blogId = 7;
     String firebaseHost = 'https://addpost-bcc94-default-rtdb.firebaseio.com/';
 
     http.Response response = await http
         .post(
-      Uri.parse(firebaseHost + 'post/${blog_id}.json'),
+      Uri.parse(firebaseHost + 'post/$blogId.json'),
       headers: {
         // 'Authorization': User.accessToken,
       },
