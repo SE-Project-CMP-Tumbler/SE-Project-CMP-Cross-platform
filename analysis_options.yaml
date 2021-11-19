@@ -5,3 +5,4 @@ analyzer:
     use_key_in_widget_constructors: false
     curly_braces_in_flow_control_structures: false
     prefer_expression_function_bodies: false
+    prefer_relative_imports: true

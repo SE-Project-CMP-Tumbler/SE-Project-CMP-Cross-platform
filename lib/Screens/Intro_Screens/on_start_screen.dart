@@ -3,8 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gif_view/gif_view.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tumbler/Constants/colors.dart';
-import 'package:tumbler/Constants/ui_styles.dart';
+
+import '/Constants/colors.dart';
+import '/Constants/ui_styles.dart';
+import '/Screens/Log_In_Screens/log_in.dart';
+import '/Screens/Sign_Up_Screens/get_age.dart';
 
 class OnStart extends StatefulWidget {
   const OnStart({Key? key}) : super(key: key);
@@ -246,7 +249,12 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               vertical: 2),
                                           child: ElevatedButton(
                                               onPressed: () {
-                                                setState(() {});
+                                                setState(() {
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (cxt) =>
+                                                              GetAge()));
+                                                });
                                               },
                                               child: const Text(
                                                 'Sign up with email',
@@ -264,7 +272,12 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               horizontal: _width / 7,
                                               vertical: 2),
                                           child: ElevatedButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (cxt) =>
+                                                            GetAge()));
+                                              },
                                               child: const Text(
                                                 'Sign up with Google',
                                                 textScaleFactor: 1.3,
@@ -299,7 +312,12 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               vertical: 2),
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              setState(() {});
+                                              setState(() {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (cxt) =>
+                                                            const LogIN()));
+                                              });
                                             },
                                             child: const Text(
                                               'Log in with email',
@@ -318,7 +336,12 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                               horizontal: _width / 7,
                                               vertical: 2),
                                           child: ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (cxt) =>
+                                                          const LogIN()));
+                                            },
                                             child: const Text(
                                               'Log in with Google',
                                               textScaleFactor: 1.3,
