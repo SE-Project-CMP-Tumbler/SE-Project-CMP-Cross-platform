@@ -62,6 +62,8 @@ flutter:
   assets:
     - assets/images/tumblr-24.png
     - assets/images/icons8-love-circled-50.png
+    - assets/images/icons8-speech-50.png
+    - assets/images/interactions.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
