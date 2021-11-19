@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:like_button/like_button.dart';
 
 class PostInteractionBar extends StatefulWidget {
   int notesNum;
@@ -9,6 +10,7 @@ class PostInteractionBar extends StatefulWidget {
 }
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
+  bool isLoved = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -48,12 +50,16 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 Icons.repeat,
                 color: Colors.black,
               )),
-          const IconButton(
-              onPressed: null,
-              icon: Icon(
-                Icons.favorite_border_outlined,
-                color: Colors.black,
-              )),
+          LikeButton(
+            isLiked: isLoved,
+            likeBuilder: (isLoved) {
+              final color = (isLoved) ? Colors.red : Colors.black;
+              return Icon(
+                (isLoved) ? Icons.favorite : Icons.favorite_border_outlined,
+                color: color,
+              );
+            },
+          ),
           const IconButton(
               onPressed: null,
               icon: Icon(

@@ -30,7 +30,7 @@ class _PostTopBarState extends State<PostTopBar> {
           ),
           Text(
             widget.name,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black87,
               fontSize: 18,
               fontWeight: FontWeight.bold,

@@ -36,6 +36,7 @@ dependencies:
   http: ^0.13.4
   flutter_html: ^2.1.5
   intl: ^0.17.0
+  like_button: ^2.0.3
   flutter_native_splash:
 
 
