@@ -7,12 +7,12 @@ import '../general_widgets/html_viewer.dart';
 
 ///Shows the overview of the post in the home page
 class PostOutView extends StatefulWidget {
-  Function showEditPostBottomSheet;
-  Post post;
+  final Function showEditPostBottomSheet;
+  final Post post;
   ///takes 
   ///*showEditPostBottomSheet function that responsible for showing some options about the post by clicking on more vert icon
   ///*Post model contains all data about the post
-  PostOutView(
+  const PostOutView(
       {Key? key, required this.showEditPostBottomSheet, required this.post})
       : super(key: key);
 
@@ -23,22 +23,20 @@ class PostOutView extends StatefulWidget {
 class _PostOutViewState extends State<PostOutView> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          PostTopBar(
-            showEditPostBottomSheet: showEditPostBottomSheet,
-            avatarPhotoLink: widget.post.blogAvatar,
-            name: widget.post.blogUsername,
-          ),
-          const Divider(color: Colors.grey,),
-          Container(
-            child:HtmlView(htmlData: widget.post.postBody),
-            width: double.infinity,
-          ),
-          PostInteractionBar(notesNum: widget.post.likes.length +widget.post.reblogs.length+widget.post.replies.length,)
-        ],
-      ),
+    return Column(
+      children: [
+        PostTopBar(
+          showEditPostBottomSheet: showEditPostBottomSheet,
+          avatarPhotoLink: widget.post.blogAvatar,
+          name: widget.post.blogUsername,
+        ),
+        const Divider(color: Colors.grey,),
+        SizedBox(
+          child:HtmlView(htmlData: widget.post.postBody),
+          width: double.infinity,
+        ),
+        PostInteractionBar(notesNum: widget.post.likes.length +widget.post.reblogs.length+widget.post.replies.length,)
+      ],
     );
   }
 }
