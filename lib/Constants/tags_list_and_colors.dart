@@ -10,6 +10,8 @@ final List<Color> tagsColors = [
   const Color.fromRGBO(0, 69, 0, 1),
 ];
 
+
+/// Names for the [TagSelect] page
 final List<String> tagsNames = [
   "Choose Your Own Tag",
   "Art",
