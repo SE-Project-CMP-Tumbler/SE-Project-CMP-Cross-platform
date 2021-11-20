@@ -21,6 +21,7 @@ class PostInteractionBar extends StatefulWidget {
 class _PostInteractionBarState extends State<PostInteractionBar> {
   bool isLoved = false;
   NumberFormat numFormatter = NumberFormat.decimalPattern('en_us');
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,9 +31,11 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
         children: [
           SizedBox(
             width: 80,
-            child: FlatButton(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+            child: TextButton(
+                style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                ),
                 onPressed: () {},
                 child: Image.asset(
                   'assets/images/interactions.jpeg',

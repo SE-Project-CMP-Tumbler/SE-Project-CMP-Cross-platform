@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
+
 ///Used to render html content
 class HtmlView extends StatelessWidget {
-  String htmlData = "";
+  final String htmlData;
 
   /// takes html content as string.
-  HtmlView({
+  const HtmlView({
     Key? key,
     required this.htmlData,
   }) : super(key: key);
@@ -67,11 +68,11 @@ class HtmlView extends StatelessWidget {
         //print(exception);
       },
       onCssParseError: (css, messages) {
-        //print("css that errored: $css");
+        //print("css that error: $css");
         //print("error messages:");
-        messages.forEach((element) {
-          //print(element);
-        });
+        // for (var element in messages) {
+        //   //print(element);
+        // }
       },
     );
   }

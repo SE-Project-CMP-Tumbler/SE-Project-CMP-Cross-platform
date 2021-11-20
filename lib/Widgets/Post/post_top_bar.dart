@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import './post_personal_avatar.dart';
 
 ///[PostTopBar] carries inforamtion about post owner
@@ -6,6 +7,7 @@ class PostTopBar extends StatefulWidget {
   final Function showEditPostBottomSheet;
   final String avatarPhotoLink;
   final String name;
+
   const PostTopBar({
     Key? key,
     required this.showEditPostBottomSheet,
@@ -37,7 +39,7 @@ class _PostTopBarState extends State<PostTopBar> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          FlatButton(
+          TextButton(
               onPressed: () {},
               child: const Text(
                 "Follow",

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import '../Models/users.dart';
 import 'package:http/http.dart' as http;
+import 'package:tumbler/Models/user.dart';
 import '../Models/http_requests_exceptions.dart';
 
 import '../Models/post.dart';
@@ -30,7 +30,7 @@ class Posts with ChangeNotifier {
       
       Map<String, dynamic> res = json.decode(response.body);
 
-    //checking the status code of the recieved response.
+    //checking the status code of the received response.
       if (res.values.single['meta']['status'] == "401")
         throw HttpException("You are not authorized");
       else if (res.values.single['meta']['status'] == "404")
@@ -64,7 +64,7 @@ class Posts with ChangeNotifier {
 
         final Map<String, dynamic> notes = json.decode(res.body);
 
-        //check the status code for the recieved response.
+        //check the status code for the received response.
         if (notes.values.single['meta']['status'] == "404")
           throw HttpException("Not Found!");
 

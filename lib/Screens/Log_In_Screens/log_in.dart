@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tumbler/Models/user.dart';
 
 import '/Methods/api.dart';
-import '/Models/users.dart';
 import '/Screens/main_screen.dart';
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';

@@ -1,14 +1,14 @@
+import 'dart:async';
 import 'dart:ui';
 
-import 'dart:async';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../Widgets/general_widgets/nav_bar.dart';
-import '../../Widgets/Post/post_overview.dart';
-import "../../Providers/posts.dart";
+
 import '../../Models/post.dart';
+import "../../Providers/posts.dart";
+import '../../Widgets/Post/post_overview.dart';
+import '../../Widgets/general_widgets/nav_bar.dart';
 import '../../Widgets/home_page_appbar.dart';
 
 enum HomeSection {
@@ -16,18 +16,17 @@ enum HomeSection {
   stuffForYou,
 }
 
-
 ///Shows informative message about an error occurred while fetching posts in home page.
 ///
-///Takes [Buildcontext] object and error message.
-Future<void> showErrorDialog(BuildContext context,String mess) async {
+///Takes [context] object and error message.
+Future<void> showErrorDialog(BuildContext context, String mess) async {
   showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
             title: const Text("An error occurred"),
-            content:  Text(mess),
+            content: Text(mess),
             actions: [
-              FlatButton(
+              TextButton(
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
@@ -87,8 +86,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  int _navBarIndex = 0;
-  
+  final int _navBarIndex = 0;
+
   ///saying which section the user is surfing.
   Enum section = HomeSection.following;
 
@@ -102,23 +101,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<Post> posts = [];
 
   late AnimationController loadingSpinnerAnimationController;
+
   @override
   void dispose() {
-    super.dispose();
     loadingSpinnerAnimationController.dispose();
+    super.dispose();
   }
-
 
   @override
   void initState() {
     super.initState();
- ///animation conroller for the color varying loading spinner
+
+    /// Animation controller for the color varying loading spinner
     loadingSpinnerAnimationController =
-        AnimationController(duration: const  Duration(seconds: 2), vsync: this);
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
     loadingSpinnerAnimationController.repeat();
   }
 
-///Responsible refreshing home page and fetch new post to show.
+  /// Responsible refreshing home page and fetch new post to show.
   Future<void> refreshHome(BuildContext context) async {
     setState(() {
       _isLoading = true;
@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       posts = Provider.of<Posts>(context, listen: false).homePosts;
       _isLoading = false;
     }).catchError((error) {
-      showErrorDialog(context,error.toString());
+      showErrorDialog(context, error.toString());
     });
   }
 
@@ -141,15 +141,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         posts = Provider.of<Posts>(context, listen: false).homePosts;
         _isLoading = false;
       }).catchError((error) {
-        showErrorDialog(context,error.toString());
+        showErrorDialog(context, error.toString());
       });
     }
     _isInit = true;
     super.didChangeDependencies();
   }
 
-
-///Used to switch from __Following__ section to __Stuff for you__ section and vice vers.
+  /// Used to switch from __Following__ section to __Stuff for you__ section and vice versa.
   void changeSection() {
     setState(() {
       if (section == HomeSection.following) {
@@ -187,8 +186,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               body: _isLoading
                   ? Center(
                       child: CircularProgressIndicator(
-                        valueColor: loadingSpinnerAnimationController.drive(ColorTween(
-                            begin: Colors.blueAccent, end: Colors.red)),
+                        valueColor: loadingSpinnerAnimationController.drive(
+                            ColorTween(
+                                begin: Colors.blueAccent, end: Colors.red)),
                       ),
                     )
                   : RefreshIndicator(
@@ -218,16 +218,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
             ),
           ),
-        ),
-        bottomNavigationBar: NavBar(_navBarIndex),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Icon(
-            Icons.mode_edit_outline_outlined,
-            color: Colors.white,
-            size: 30,
-          ),
-          backgroundColor: Colors.blue,
         ),
       ),
     );
