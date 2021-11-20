@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
+
 import '../../Widgets/post_button.dart';
 
 AssetImage profilePic = const AssetImage('assets/images/profile_pic.png');

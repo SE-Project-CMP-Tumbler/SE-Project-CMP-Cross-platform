@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tumbler/Models/user.dart';
 
-import '/Methods/api.dart';
-import '/Models/users.dart';
-import '/Screens/main_screen.dart';
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
+import '/Methods/api.dart';
 import '/Screens/Log_In_Screens/forget_password.dart';
+import '/Screens/main_screen.dart';
 
 class LogIN extends StatefulWidget {
   const LogIN({Key? key}) : super(key: key);
@@ -120,8 +120,8 @@ class _LogINState extends State<LogIN> {
                 User.blogAvatar = response["response"]["blog_avatar"];
                 User.accessToken = response["response"]["access_token"];
 
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const MainScreen()));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const MainScreen()));
               } else {
                 Fluttertoast.showToast(
                   msg: response["meta"]["msg"],

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tumbler/Models/user.dart';
 
 import '/Screens/main_screen.dart';
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
 import '/Methods/api.dart';
-import '/Models/users.dart';
 import '/Screens/Log_In_Screens/log_in.dart';
 
 class Register extends StatefulWidget {
@@ -144,8 +144,8 @@ class _RegisterState extends State<Register> {
                 User.blogAvatar = response["response"]["blog_avatar"];
                 User.accessToken = response["response"]["access_token"];
 
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const MainScreen()));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const MainScreen()));
               } else {
                 Fluttertoast.showToast(
                   msg: response["meta"]["msg"],

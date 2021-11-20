@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:http/http.dart' as http;
-import 'package:tumbler/Models/users.dart';
+import 'package:tumbler/Models/user.dart';
 
 class Api {
   static const String _host =
-      "https://addpost-bcc94-default-rtdb.firebaseio.com";
+      "https://fff82fda-4df6-4c76-adb1-cba53e9e73f5.mock.pstmn.io";
   final String _getTrendingTags = "/tag/trending";
   final String _signUp = "/register";
   final String _login = "/login";
@@ -158,7 +158,6 @@ class Api {
 
   Future<Map<String, dynamic>> addPost(String postBody, String postStatus,
       String postType, String postTime) async {
-
     http.Response response = await http.post(
       Uri.parse(_host + _addPost + User.id + ".json"),
       headers: {
