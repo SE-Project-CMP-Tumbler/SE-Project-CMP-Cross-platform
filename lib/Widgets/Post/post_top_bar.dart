@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import './post_personal_avatar.dart';
 
-///[PostTopBar] carries inforamtion about post owner
+///[PostTopBar] carries information about post owner
 class PostTopBar extends StatefulWidget {
   final Function showEditPostBottomSheet;
   final String avatarPhotoLink;

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-
-///Facilitates navigation to the main screens in the application.  
+///Facilitates navigation to the main screens in the application.
 class NavBar extends StatelessWidget {
-  int selectedIndex = 0;
-  NavBar(this.selectedIndex);
+  final int selectedIndex;
 
-///Called when the user tap on any button in the navigation bar to redirect him to the screen desired.
+  const NavBar(this.selectedIndex);
+
+  ///Called when the user tap on any button in the navigation bar to redirect him to the screen desired.
   void onItemTapped(int index) {
     //if index=0 go to home route
     // if index=1  go to search

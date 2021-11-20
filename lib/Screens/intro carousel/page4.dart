@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 Widget createText(String txt, Color chosenColor, double fontSize) {
   return Text(
     txt,
@@ -25,7 +24,7 @@ class Page4 extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.pink[200],
       body: Center(
-        child: Container(
+        child: SizedBox(
           height: screenAvailHeight * 0.7,
           width: screenAvailWidth * 0.9,
           child: Stack(

@@ -158,7 +158,6 @@ class Api {
 
   Future<Map<String, dynamic>> addPost(String postBody, String postStatus,
       String postType, String postTime) async {
-
     http.Response response = await http.post(
       Uri.parse(_host + _addPost + User.id + ".json"),
       headers: {

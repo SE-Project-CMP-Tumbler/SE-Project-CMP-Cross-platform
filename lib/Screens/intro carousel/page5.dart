@@ -8,7 +8,7 @@ class Page5 extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.orange,
       body: Center(
-        child: Container(
+        child: SizedBox(
           height: (MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top) *
               0.8,

@@ -53,7 +53,7 @@ dev_dependencies:
 flutter_native_splash:
   color: "#001935"
   image: assets/images/logo_letter.png
-  
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

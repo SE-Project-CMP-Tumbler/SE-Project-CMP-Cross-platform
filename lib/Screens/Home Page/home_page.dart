@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import '../../Models/post.dart';
 import "../../Providers/posts.dart";
 import '../../Widgets/Post/post_overview.dart';
-import '../../Widgets/general_widgets/nav_bar.dart';
 import '../../Widgets/home_page_appbar.dart';
 
 enum HomeSection {
@@ -86,8 +85,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  final int _navBarIndex = 0;
-
+  
   ///saying which section the user is surfing.
   Enum section = HomeSection.following;
 

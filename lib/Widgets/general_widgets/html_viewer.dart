@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-
 ///Used to render html content
 class HtmlView extends StatelessWidget {
   final String htmlData;

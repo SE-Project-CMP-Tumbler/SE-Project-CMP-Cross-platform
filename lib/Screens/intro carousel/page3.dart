@@ -22,7 +22,7 @@ class Page3 extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.deepPurpleAccent,
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: screenAvailWidth * 0.9,
           height: screenAvailHeight * 0.8,
           child: Stack(

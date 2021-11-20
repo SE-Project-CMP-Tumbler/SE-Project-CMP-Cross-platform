@@ -144,8 +144,8 @@ class _RegisterState extends State<Register> {
                 User.blogAvatar = response["response"]["blog_avatar"];
                 User.accessToken = response["response"]["access_token"];
 
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const MainScreen()));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const MainScreen()));
               } else {
                 Fluttertoast.showToast(
                   msg: response["meta"]["msg"],

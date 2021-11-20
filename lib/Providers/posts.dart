@@ -1,36 +1,34 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tumbler/Models/user.dart';
+
 import '../Models/http_requests_exceptions.dart';
-
 import '../Models/post.dart';
-
 
 ///Posts provider manage the state of posts.
 class Posts with ChangeNotifier {
   final List<Post> _homePosts = [];
 
-///Returns loaded posts.
+  ///Returns loaded posts.
   List<Post> get homePosts {
     return [..._homePosts];
   }
 
-
-///fetch posts throught http get request.
+  ///fetch posts through http get request.
   Future<void> fetchAndSetPosts() async {
     try {
       final response = await http.get(
           Uri.parse("https://mock-back-default-rtdb.firebaseio.com/radar.json"),
           headers: {'Authorization': User.accessToken});
 
-        // clear all loaded post.
+      // clear all loaded post.
       _homePosts.clear();
 
-      
       Map<String, dynamic> res = json.decode(response.body);
 
-    //checking the status code of the received response.
+      //checking the status code of the received response.
       if (res.values.single['meta']['status'] == "401")
         throw HttpException("You are not authorized");
       else if (res.values.single['meta']['status'] == "404")

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 ///Responsiple for displaying user's avatar
 class PersonAvatar extends StatefulWidget {
   final String avatarPhotoLink;
+
   ///Takes user's Photo link only
   const PersonAvatar({Key? key, required this.avatarPhotoLink})
       : super(key: key);

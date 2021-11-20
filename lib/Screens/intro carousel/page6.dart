@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 Widget createText(String txt, Color chosenColor, double fontSize) {
   return Text(
     txt,
@@ -11,8 +10,6 @@ Widget createText(String txt, Color chosenColor, double fontSize) {
         fontWeight: FontWeight.normal),
   );
 }
-
-
 
 class Page6 extends StatelessWidget {
   const Page6({Key? key}) : super(key: key);

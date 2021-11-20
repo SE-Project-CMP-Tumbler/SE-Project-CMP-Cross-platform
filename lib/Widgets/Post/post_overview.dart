@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:tumbler/Screens/Home%20Page/home_page.dart';
+
+import '../../Models/post.dart';
 import '../Post/post_interaction_bar.dart';
 import '../Post/post_top_bar.dart';
-import '../../Models/post.dart';
 import '../general_widgets/html_viewer.dart';
 
 ///Shows the overview of the post in the home page
 class PostOutView extends StatefulWidget {
   final Function showEditPostBottomSheet;
   final Post post;
-  ///takes 
+
+  ///takes
   ///*showEditPostBottomSheet function that responsible for showing some options about the post by clicking on more vert icon
   ///*Post model contains all data about the post
   const PostOutView(
@@ -30,12 +32,18 @@ class _PostOutViewState extends State<PostOutView> {
           avatarPhotoLink: widget.post.blogAvatar,
           name: widget.post.blogUsername,
         ),
-        const Divider(color: Colors.grey,),
+        const Divider(
+          color: Colors.grey,
+        ),
         SizedBox(
-          child:HtmlView(htmlData: widget.post.postBody),
+          child: HtmlView(htmlData: widget.post.postBody),
           width: double.infinity,
         ),
-        PostInteractionBar(notesNum: widget.post.likes.length +widget.post.reblogs.length+widget.post.replies.length,)
+        PostInteractionBar(
+          notesNum: widget.post.likes.length +
+              widget.post.reblogs.length +
+              widget.post.replies.length,
+        )
       ],
     );
   }

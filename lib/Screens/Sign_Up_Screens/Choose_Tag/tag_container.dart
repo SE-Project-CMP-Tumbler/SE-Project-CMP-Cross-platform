@@ -54,13 +54,13 @@ class _TagContainerState extends State<TagContainer> {
             ),
             decoration: (widget.index == 0)
                 ? BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(color: Colors.white, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(20)))
+                    color: Colors.transparent,
+                    border: Border.all(color: Colors.white, width: 1),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)))
                 : BoxDecoration(
-              color: tagsColors[widget.index % tagsColors.length],
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
+                    color: tagsColors[widget.index % tagsColors.length],
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  ),
           ),
           if (Provider.of<FollowedTags>(context)
               .followedTags
