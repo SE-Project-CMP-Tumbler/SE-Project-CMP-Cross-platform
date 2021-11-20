@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:http/http.dart' as http;
-import 'package:tumbler/Models/users.dart';
+import 'package:tumbler/Models/user.dart';
 
 class Api {
   static const String _host =
@@ -14,6 +14,7 @@ class Api {
   final String _uploadImage = "/upload_photo/";
   final String _uploadVideo = "/upload_video/";
   final String _uploadAudio = "/upload_audio/";
+  final String _addPost = "/post/";
 
   final String _weirdConnection = '''
             {
@@ -32,6 +33,8 @@ class Api {
                       }
             } 
         ''';
+
+
 
   Future<Map<String, dynamic>> getTrendingTags() async {
     // it need Authorization, why ??
@@ -143,6 +146,30 @@ class Api {
       },
       body: {
         "video": audio,
+      },
+    ).onError((error, stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
+  }
+
+  Future<Map<String, dynamic>> addPost(String postBody, String postStatus,
+      String postType, String postTime) async {
+    http.Response response = await http.post(
+      Uri.parse(_host + _addPost + User.id + ".json"),
+      headers: {
+        'Authorization': User.accessToken,
+      },
+      body: {
+        'post_status': postStatus,
+        'post_time': postTime,
+        'post_type': postType,
+        'post_body': postBody
       },
     ).onError((error, stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {

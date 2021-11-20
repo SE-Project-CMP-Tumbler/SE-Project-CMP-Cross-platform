@@ -5,12 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 class CarouselItemBuilder extends StatelessWidget {
   const CarouselItemBuilder(
       {Key? key,
-        required double width,
-        required double height,
-        required String imageUrl,
-        required String poster,
-        required String title,
-        bool gifView = false})
+      required double width,
+      required double height,
+      required String imageUrl,
+      required String poster,
+      required String title,
+      bool gifView = false})
       : _width = width,
         _height = height,
         _imageUrl = imageUrl,
@@ -31,18 +31,18 @@ class CarouselItemBuilder extends StatelessWidget {
     return Stack(alignment: Alignment.center, children: [
       !_gifView
           ? Image.asset(
-        _imageUrl,
-        width: _width,
-        height: _height,
-        fit: BoxFit.fitHeight,
-      )
+              _imageUrl,
+              width: _width,
+              height: _height,
+              fit: BoxFit.fitHeight,
+            )
           : GifView.asset(
-        _imageUrl,
-        width: _width,
-        height: _height,
-        fit: BoxFit.fitHeight,
-        frameRate: 8,
-      ),
+              _imageUrl,
+              width: _width,
+              height: _height,
+              fit: BoxFit.fitHeight,
+              frameRate: 8,
+            ),
       Container(
         width: _width,
         height: _height,

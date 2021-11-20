@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '/Providers/followed_tags_sign_up.dart';
 import '/Screens/Sign_Up_Screens/Choose_Tag/add_your_own_tag.dart';
-import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
+import '../Constants/tags_list_and_colors.dart';
 
 class TagContainer extends StatefulWidget {
   final int index;
@@ -54,13 +54,13 @@ class _TagContainerState extends State<TagContainer> {
             ),
             decoration: (widget.index == 0)
                 ? BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(color: Colors.white, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(20)))
+                    color: Colors.transparent,
+                    border: Border.all(color: Colors.white, width: 1),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)))
                 : BoxDecoration(
-              color: tagsColors[widget.index % tagsColors.length],
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
+                    color: tagsColors[widget.index % tagsColors.length],
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  ),
           ),
           if (Provider.of<FollowedTags>(context)
               .followedTags

@@ -6,7 +6,7 @@ import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
 import '/Methods/api.dart';
 import '/Providers/followed_tags_sign_up.dart';
-import '/Screens/Sign_Up_Screens/Choose_Tag/tags_list_and_colors.dart';
+import '../../../Constants/tags_list_and_colors.dart';
 
 class AddYourOwnTag extends StatefulWidget {
   @override
@@ -28,8 +28,8 @@ class _AddYourOwnTagState extends State<AddYourOwnTag> {
       Fluttertoast.showToast(
         msg: response["meta"]["msg"],
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        backgroundColor: Colors.red,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
         textColor: Colors.white,
         fontSize: 16.0,
       );
