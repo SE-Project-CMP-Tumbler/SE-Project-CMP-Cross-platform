@@ -194,6 +194,7 @@ class _DraggableFloatingActionButtonState
           child: FloatingActionButton(
             onPressed: widget.onPressed,
             key: _key,
+            heroTag: '0',
             child: widget.child,
             backgroundColor: floatingButtonColor,
           ),
@@ -211,6 +212,7 @@ class _DraggableFloatingActionButtonState
       left: _offset.dx,
       top: _offset.dy,
       child: FloatingActionButton(
+        heroTag: '${index+1}',
         elevation: 0.0,
         onPressed: widget.onPressed,
         child: child,

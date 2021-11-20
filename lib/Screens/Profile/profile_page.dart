@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:math' as math;
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tumbler/Screens/Settings/profile_settings.dart';
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
@@ -208,7 +209,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                                   clipBehavior: Clip.hardEdge,
                                   child: IconButton(
                                     icon:Icon(Icons.settings,size: 25, color: Colors.white),
-                                    onPressed: (){},
+                                    onPressed: (){
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) => const ProfileSettings()));
+                                    },
                                     splashColor: Colors.white10,
 
                                   ),
