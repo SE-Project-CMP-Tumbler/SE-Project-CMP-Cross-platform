@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:like_button/like_button.dart';
+import "package:flutter/material.dart";
+import "package:intl/intl.dart";
+import "package:like_button/like_button.dart";
 
 ///Class for interaction bar exists the bottom of each post in home page
 ///
@@ -8,11 +8,12 @@ import 'package:like_button/like_button.dart';
 ///1-Notes number
 ///2-buttons to Favorite and reblog and reply
 class PostInteractionBar extends StatefulWidget {
-  final int notesNum;
-
   ///Constructor takes total number of notes
-  const PostInteractionBar({Key? key, required this.notesNum})
+  const PostInteractionBar({required final this.notesNum, final Key? key})
       : super(key: key);
+
+  /// Number of Notes of the Blog
+  final int notesNum;
 
   @override
   _PostInteractionBarState createState() => _PostInteractionBarState();
@@ -20,30 +21,29 @@ class PostInteractionBar extends StatefulWidget {
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
   bool isLoved = false;
-  NumberFormat numFormatter = NumberFormat.decimalPattern('en_us');
+  NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Container(
       color: Colors.white,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
+        children: <Widget>[
           SizedBox(
             width: 80,
             child: TextButton(
-                style: TextButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                ),
-                onPressed: () {},
-                child: Image.asset(
-                  'assets/images/interactions.jpeg',
-                )),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+              ),
+              onPressed: () {},
+              child: Image.asset(
+                "assets/images/interactions.jpeg",
+              ),
+            ),
           ),
           Expanded(
             child: Text(
-              '${numFormatter.format(widget.notesNum)} notes',
+              "${numFormatter.format(widget.notesNum)} notes",
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -52,33 +52,36 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             ),
           ),
           const IconButton(
-              onPressed: null,
-              icon: Icon(
-                Icons.reply,
-                color: Colors.black,
-              )),
+            onPressed: null,
+            icon: Icon(
+              Icons.reply,
+              color: Colors.black,
+            ),
+          ),
           const IconButton(
-              onPressed: null,
-              icon: Icon(
-                Icons.repeat,
-                color: Colors.black,
-              )),
+            onPressed: null,
+            icon: Icon(
+              Icons.repeat,
+              color: Colors.black,
+            ),
+          ),
           LikeButton(
             isLiked: isLoved,
-            likeBuilder: (isLoved) {
-              final color = (isLoved) ? Colors.red : Colors.black;
+            likeBuilder: (final bool isLoved) {
+              final Color color = isLoved ? Colors.red : Colors.black;
               return Icon(
-                (isLoved) ? Icons.favorite : Icons.favorite_border_outlined,
+                isLoved ? Icons.favorite : Icons.favorite_border_outlined,
                 color: color,
               );
             },
           ),
           const IconButton(
-              onPressed: null,
-              icon: Icon(
-                Icons.add_comment_outlined,
-                color: Colors.black,
-              )),
+            onPressed: null,
+            icon: Icon(
+              Icons.add_comment_outlined,
+              color: Colors.black,
+            ),
+          ),
         ],
       ),
     );

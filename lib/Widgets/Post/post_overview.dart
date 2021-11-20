@@ -1,22 +1,27 @@
-import 'package:flutter/material.dart';
-import 'package:tumbler/Screens/Home%20Page/home_page.dart';
-
-import '../../Models/post.dart';
-import '../Post/post_interaction_bar.dart';
-import '../Post/post_top_bar.dart';
-import '../general_widgets/html_viewer.dart';
+import "package:flutter/material.dart";
+import "package:tumbler/Models/post.dart";
+import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Widgets/Post/post_interaction_bar.dart";
+import "package:tumbler/Widgets/Post/post_top_bar.dart";
+import "package:tumbler/Widgets/general_widgets/html_viewer.dart";
 
 ///Shows the overview of the post in the home page
 class PostOutView extends StatefulWidget {
-  final Function showEditPostBottomSheet;
-  final Post post;
-
   ///takes
-  ///*showEditPostBottomSheet function that responsible for showing some options about the post by clicking on more vert icon
+  ///*showEditPostBottomSheet function that responsible for showing
+  ///some options about the post by clicking on more vert icon
   ///*Post model contains all data about the post
-  const PostOutView(
-      {Key? key, required this.showEditPostBottomSheet, required this.post})
-      : super(key: key);
+  const PostOutView({
+    required final this.showEditPostBottomSheet,
+    required final this.post,
+    final Key? key,
+  }) : super(key: key);
+
+  /// to be passed to [PostTopBar]
+  final Function showEditPostBottomSheet;
+
+  /// The Content of the Post
+  final Post post;
 
   @override
   _PostOutViewState createState() => _PostOutViewState();
@@ -24,9 +29,9 @@ class PostOutView extends StatefulWidget {
 
 class _PostOutViewState extends State<PostOutView> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         PostTopBar(
           showEditPostBottomSheet: showEditPostBottomSheet,
           avatarPhotoLink: widget.post.blogAvatar,
@@ -36,8 +41,8 @@ class _PostOutViewState extends State<PostOutView> {
           color: Colors.grey,
         ),
         SizedBox(
-          child: HtmlView(htmlData: widget.post.postBody),
           width: double.infinity,
+          child: HtmlView(htmlData: widget.post.postBody),
         ),
         PostInteractionBar(
           notesNum: widget.post.likes.length +
