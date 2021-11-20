@@ -6,7 +6,7 @@ import 'package:gif_view/gif_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tumbler/Constants/colors.dart';
 import 'package:tumbler/Constants/ui_styles.dart';
-import 'dart:io';
+
 class OnStart extends StatefulWidget {
   const OnStart({Key? key}) : super(key: key);
 

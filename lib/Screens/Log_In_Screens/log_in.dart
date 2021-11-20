@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '/Methods/email_password_validators.dart';
 import '/Methods/api.dart';
 import '/Models/users.dart';
 import '/Screens/main_screen.dart';
@@ -44,10 +45,7 @@ class _LogINState extends State<LogIN> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: TextFormField(
-              validator: (s) => s!.contains(RegExp(
-                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))
-                  ? null
-                  : "Please Enter a Valid Email",
+              validator: emailValidator,
               controller: _emailController,
               onChanged: (s) => setState(() {}),
               keyboardType: TextInputType.emailAddress,
@@ -59,11 +57,11 @@ class _LogINState extends State<LogIN> {
                 hintText: 'Email',
                 suffixIcon: _emailController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () =>
-                            setState(() => _emailController.clear()),
-                        color: Colors.white30,
-                      )
+                  icon: const Icon(Icons.clear),
+                  onPressed: () =>
+                      setState(() => _emailController.clear()),
+                  color: Colors.white30,
+                )
                     : null,
               ),
             ),
@@ -71,8 +69,7 @@ class _LogINState extends State<LogIN> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: TextFormField(
-              validator: (s) =>
-                  s!.length < 8 ? "Please Enter Strong Password" : null,
+              validator: passValidator,
               controller: _passController,
               onChanged: (s) => setState(() {}),
               keyboardType: TextInputType.text,
@@ -97,6 +94,36 @@ class _LogINState extends State<LogIN> {
     );
   }
 
+  /// Call API Log In Function.
+  ///
+  /// Get the [response] from the [Api.LogIn] function
+  /// and sets [User.name], [User.id], [User.blogAvatar],
+  /// [User.accessToken] from the database if no error happened.
+  void logIn() async {
+    Map<String, dynamic> response = await Api()
+        .logIn(_emailController.text, _passController.text);
+
+    if (response["meta"]["status"] == "200") {
+      User.name = response["response"]["blog_username"];
+      User.email = response["response"]["email"];
+      User.id = response["response"]["id"];
+      User.blogAvatar = response["response"]["blog_avatar"];
+      User.accessToken = response["response"]["access_token"];
+
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const MainScreen()));
+    } else {
+      Fluttertoast.showToast(
+        msg: response["meta"]["msg"],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     AppBar appBar = AppBar(
@@ -108,46 +135,24 @@ class _LogINState extends State<LogIN> {
       centerTitle: true,
       actions: [
         TextButton(
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              Map<String, dynamic> response = await Api()
-                  .logIn(_emailController.text, _passController.text);
-
-              if (response["meta"]["status"] == "200") {
-                User.name = response["response"]["blog_username"];
-                User.email = response["response"]["email"];
-                User.id = response["response"]["id"];
-                User.blogAvatar = response["response"]["blog_avatar"];
-                User.accessToken = response["response"]["access_token"];
-
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const MainScreen()));
-              } else {
-                Fluttertoast.showToast(
-                  msg: response["meta"]["msg"],
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.TOP,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 16.0,
-                );
-              }
-            }
+          onPressed: ()  {
+            if (_formKey.currentState!.validate())
+              logIn();
           },
           child: Center(
               child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Log In",
-              style: TextStyle(
-                fontSize: 15,
-                color: (_emailController.text.isEmpty ||
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Log In",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: (_emailController.text.isEmpty ||
                         _passController.text.isEmpty)
-                    ? Colors.blue.withOpacity(0.5)
-                    : Colors.blue,
-              ),
-            ),
-          )),
+                        ? Colors.blue.withOpacity(0.5)
+                        : Colors.blue,
+                  ),
+                ),
+              )),
         )
       ],
     );
@@ -158,9 +163,15 @@ class _LogINState extends State<LogIN> {
         body: SingleChildScrollView(
           physics: const ScrollPhysics(),
           child: Container(
-            height: MediaQuery.of(context).size.height -
+            height: MediaQuery
+                .of(context)
+                .size
+                .height -
                 appBar.preferredSize.height -
-                MediaQuery.of(context).padding.vertical,
+                MediaQuery
+                    .of(context)
+                    .padding
+                    .vertical,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -168,7 +179,7 @@ class _LogINState extends State<LogIN> {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: form(),
                 ),
                 TextButton(

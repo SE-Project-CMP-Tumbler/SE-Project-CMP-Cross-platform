@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '/Methods/email_password_validators.dart';
 import '/Screens/main_screen.dart';
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
@@ -47,10 +48,7 @@ class _RegisterState extends State<Register> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: TextFormField(
-              validator: (s) => s!.contains(RegExp(
-                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))
-                  ? null
-                  : "Please Enter a Valid Email",
+              validator: emailValidator,
               controller: _emailController,
               onChanged: (s) => setState(() {}),
               keyboardType: TextInputType.emailAddress,
@@ -74,8 +72,7 @@ class _RegisterState extends State<Register> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: TextFormField(
-              validator: (s) =>
-                  s!.length < 8 ? "Please Enter Strong Password" : null,
+              validator: passValidator,
               controller: _passController,
               onChanged: (s) => setState(() {}),
               keyboardType: TextInputType.text,
@@ -123,6 +120,40 @@ class _RegisterState extends State<Register> {
     );
   }
 
+
+  /// Call API Sign Up Function
+  ///
+  /// Get the [response] from the [Api.signU] function
+  /// and sets [User.name], [User.id], [User.blogAvatar]
+  /// , [User.accessToken] from the database if no error happened.
+  void signUp() async{
+    Map<String, dynamic> response = await Api().signUp(
+        _nameController.text,
+        _passController.text,
+        _emailController.text,
+        User.age);
+
+    if (response["meta"]["status"] == "200") {
+      User.name = response["response"]["blog_username"];
+      User.email = response["response"]["email"];
+      User.id = response["response"]["id"];
+      User.blogAvatar = response["response"]["blog_avatar"];
+      User.accessToken = response["response"]["access_token"];
+
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MainScreen()));
+    } else {
+      Fluttertoast.showToast(
+        msg: response["meta"]["msg"],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     AppBar appBar = AppBar(
@@ -130,33 +161,8 @@ class _RegisterState extends State<Register> {
       actions: [
         TextButton(
           onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              Map<String, dynamic> response = await Api().signUp(
-                  _nameController.text,
-                  _passController.text,
-                  _emailController.text,
-                  User.age);
-
-              if (response["meta"]["status"] == "200") {
-                User.name = response["response"]["blog_username"];
-                User.email = response["response"]["email"];
-                User.id = response["response"]["id"];
-                User.blogAvatar = response["response"]["blog_avatar"];
-                User.accessToken = response["response"]["access_token"];
-
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const MainScreen()));
-              } else {
-                Fluttertoast.showToast(
-                  msg: response["meta"]["msg"],
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.TOP,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 16.0,
-                );
-              }
-            }
+            if (_formKey.currentState!.validate())
+              signUp();
           },
           child: Center(
               child: Padding(
