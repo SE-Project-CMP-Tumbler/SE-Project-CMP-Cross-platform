@@ -1,26 +1,28 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tumbler/Providers/posts.dart';
-import 'package:tumbler/Screens/intro%20carousel/intro_carousel.dart';
-
-import './Providers/followed_tags_sign_up.dart';
-import 'Screens/Intro_Screens/on_start_screen.dart';
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:tumbler/Providers/followed_tags_sign_up.dart";
+import "package:tumbler/Providers/posts.dart";
+import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
 
 void main() => runApp(MyApp());
 
+/// The Start of the Application
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => FollowedTags()),
-        ChangeNotifierProvider(create: (_) => Posts()),
+      providers: <ChangeNotifierProvider<dynamic>>[
+        ChangeNotifierProvider<FollowedTags>(
+          create: (final _) => FollowedTags(),
+        ),
+        ChangeNotifierProvider<Posts>(
+          create: (final _) => Posts(),
+        ),
       ],
-      child: const MaterialApp(
+      child:  MaterialApp(
         debugShowCheckedModeBanner: false,
         home: OnStart(),
       ),
     );
-
   }
 }

@@ -1,23 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:tumbler/Models/user.dart';
-import 'package:tumbler/Screens/intro%20carousel/intro_carousel.dart';
+import "package:flutter/material.dart";
+import "package:fluttertoast/fluttertoast.dart";
+import "package:tumbler/Constants/colors.dart";
+import "package:tumbler/Constants/ui_styles.dart";
+import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/email_password_validators.dart";
+import "package:tumbler/Models/user.dart";
+import "package:tumbler/Screens/Intro_Carousel/intro_carousel.dart";
+import "package:tumbler/Screens/Log_In_Screens/log_in.dart";
+import "package:tumbler/Screens/main_screen.dart";
 
-import '/Methods/email_password_validators.dart';
-import '/Screens/main_screen.dart';
-import '/Constants/colors.dart';
-import '/Constants/ui_styles.dart';
-import '/Methods/api.dart';
-import '/Screens/Log_In_Screens/log_in.dart';
-
-class Register extends StatefulWidget {
-  const Register({Key? key}) : super(key: key);
-
+/// Sign Up Page
+class SignUp extends StatefulWidget {
   @override
-  _RegisterState createState() => _RegisterState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _RegisterState extends State<Register> {
+class _SignUpState extends State<SignUp> {
   late TextEditingController _nameController;
   late TextEditingController _passController;
   late TextEditingController _emailController;
@@ -41,31 +39,31 @@ class _RegisterState extends State<Register> {
     super.dispose();
   }
 
-  form() {
+  Form form() {
     return Form(
       key: _formKey,
       child: Column(
-        children: [
+        children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: TextFormField(
               validator: emailValidator,
               controller: _emailController,
-              onChanged: (s) => setState(() {}),
+              onChanged: (final String s) => setState(() {}),
               keyboardType: TextInputType.emailAddress,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 enabledBorder: formEnabledFieldBorderStyle,
                 focusedBorder: formFocusedFieldBorderStyle,
                 hintStyle: const TextStyle(color: Colors.white30),
-                hintText: 'Email',
+                hintText: "Email",
                 suffixIcon: _emailController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () =>
-                            setState(() => _emailController.clear()),
-                        color: Colors.white30,
-                      )
+                  icon: const Icon(Icons.clear),
+                  onPressed: () =>
+                      setState(() => _emailController.clear()),
+                  color: Colors.white30,
+                )
                     : null,
               ),
             ),
@@ -75,7 +73,7 @@ class _RegisterState extends State<Register> {
             child: TextFormField(
               validator: passValidator,
               controller: _passController,
-              onChanged: (s) => setState(() {}),
+              onChanged: (final String s) => setState(() {}),
               keyboardType: TextInputType.text,
               style: const TextStyle(color: Colors.white),
               obscureText: _obscureText,
@@ -84,12 +82,13 @@ class _RegisterState extends State<Register> {
                   color: Colors.white,
                   onPressed: () => setState(() => _obscureText = !_obscureText),
                   icon: Icon(
-                      (_obscureText) ? Icons.visibility : Icons.visibility_off),
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                  ),
                 ),
                 enabledBorder: formEnabledFieldBorderStyle,
                 focusedBorder: formFocusedFieldBorderStyle,
                 hintStyle: const TextStyle(color: Colors.white30),
-                hintText: 'Password',
+                hintText: "Password",
               ),
             ),
           ),
@@ -97,21 +96,21 @@ class _RegisterState extends State<Register> {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: TextFormField(
               controller: _nameController,
-              onChanged: (s) => setState(() {}),
+              onChanged: (final String s) => setState(() {}),
               keyboardType: TextInputType.emailAddress,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 enabledBorder: formEnabledFieldBorderStyle,
                 focusedBorder: formFocusedFieldBorderStyle,
                 hintStyle: const TextStyle(color: Colors.white30),
-                hintText: 'Name',
+                hintText: "Name",
                 suffixIcon: _nameController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () =>
-                            setState(() => _nameController.clear()),
-                        color: Colors.white30,
-                      )
+                  icon: const Icon(Icons.clear),
+                  onPressed: () =>
+                      setState(() => _nameController.clear()),
+                  color: Colors.white30,
+                )
                     : null,
               ),
             ),
@@ -121,18 +120,18 @@ class _RegisterState extends State<Register> {
     );
   }
 
-
   /// Call API Sign Up Function
   ///
   /// Get the [response] from the [Api.signU] function
   /// and sets [User.name], [User.id], [User.blogAvatar]
   /// , [User.accessToken] from the database if no error happened.
-  void signUp() async{
-    Map<String, dynamic> response = await Api().signUp(
-        _nameController.text,
-        _passController.text,
-        _emailController.text,
-        User.age);
+  Future<void> signUp() async {
+    final Map<String, dynamic> response = await Api().signUp(
+      _nameController.text,
+      _passController.text,
+      _emailController.text,
+      User.age,
+    );
 
     if (response["meta"]["status"] == "200") {
       User.name = response["response"]["blog_username"];
@@ -141,45 +140,50 @@ class _RegisterState extends State<Register> {
       User.blogAvatar = response["response"]["blog_avatar"];
       User.accessToken = response["response"]["access_token"];
 
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const IntroCarousel()));
+      await Navigator.of(context).pushReplacement(
+        MaterialPageRoute<MainScreen>(
+          builder: (final BuildContext context) => IntroCarousel(),
+        ),
+      );
     } else {
-      Fluttertoast.showToast(
+      await Fluttertoast.showToast(
         msg: response["meta"]["msg"],
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.black,
         textColor: Colors.white,
-        fontSize: 16.0,
+        fontSize: 16,
       );
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    AppBar appBar = AppBar(
+  Widget build(final BuildContext context) {
+    final AppBar appBar = AppBar(
       backgroundColor: appBackgroundColor,
-      actions: [
+      actions: <Widget>[
         TextButton(
           onPressed: () async {
-            if (_formKey.currentState!.validate())
-              signUp();
+            if (_formKey.currentState!.validate()) {
+              await signUp();
+            }
           },
           child: Center(
-              child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Done",
-              style: TextStyle(
-                fontSize: 15,
-                color: (_nameController.text.isEmpty ||
-                        _emailController.text.isEmpty ||
-                        _passController.text.isEmpty)
-                    ? Colors.blue.withOpacity(0.5)
-                    : Colors.blue,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                "Done",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: (_nameController.text.isEmpty ||
+                      _emailController.text.isEmpty ||
+                      _passController.text.isEmpty)
+                      ? Colors.blue.withOpacity(0.5)
+                      : Colors.blue,
+                ),
               ),
             ),
-          )),
+          ),
         )
       ],
     );
@@ -195,26 +199,24 @@ class _RegisterState extends State<Register> {
                 MediaQuery.of(context).padding.vertical,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 Text(
                   "What Should we call you?",
                   style: titleTextStyle,
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 75, vertical: 10),
+                  const EdgeInsets.symmetric(horizontal: 75, vertical: 10),
                   child: Text(
-                    "You'll need a name to make your own posts, customize your blog, and message people.",
+                    """
+You'll need a name to make your own posts, customize your blog, and message people.""",
                     style: subTitleTextStyle,
                     textAlign: TextAlign.justify,
                   ),
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: form(),
                 ),
                 Expanded(
@@ -222,7 +224,7 @@ class _RegisterState extends State<Register> {
                     alignment: Alignment.bottomCenter,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
+                      children: <Widget>[
                         const Text(
                           "Already have an account?",
                           style: TextStyle(
@@ -233,8 +235,12 @@ class _RegisterState extends State<Register> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const LogIN()));
+                            Navigator.of(context).push(
+                              MaterialPageRoute<LogIN>(
+                                builder: (final BuildContext context) =>
+                                    LogIN(),
+                              ),
+                            );
                           },
                           child: const Text(
                             "Log in",

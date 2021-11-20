@@ -1,10 +1,16 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
+/// Setting Page
 class ProfileSettings extends StatelessWidget {
-  const ProfileSettings({Key? key}) : super(key: key);
+  /// Constructor
+  const ProfileSettings({final Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: Container(child: Center(child: Text('I\'m Setting Page'),),));
+  Widget build(final BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text("I'm Setting Page"),
+      ),
+    );
   }
 }

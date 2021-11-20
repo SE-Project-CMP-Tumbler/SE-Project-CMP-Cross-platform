@@ -48,6 +48,8 @@ dependencies:
   path_provider: ^2.0.7
   intl: ^0.17.0
   animator:
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

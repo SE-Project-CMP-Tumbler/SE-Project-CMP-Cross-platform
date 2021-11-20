@@ -1,41 +1,35 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
+import "package:tumbler/Widgets/Intro_Carousel/text.dart";
 
-Widget createText(String txt, Color chosenColor, double fontSize) {
-  return Text(
-    txt,
-    style: TextStyle(
-        color: chosenColor,
-        fontSize: fontSize,
-        fontFamily: "sans-serif",
-        fontWeight: FontWeight.normal),
-  );
-}
-
+/// Third Page of Intro Carousel
 class Page3 extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenAvailHeight = mediaQuery.size.height -
+  Widget build(final BuildContext context) {
+    final MediaQueryData mediaQuery = MediaQuery.of(context);
+    final double screenAvailHeight = mediaQuery.size.height -
         mediaQuery.padding.top -
         mediaQuery.padding.bottom;
-    final screenAvailWidth = mediaQuery.size.width;
+    final double screenAvailWidth = mediaQuery.size.width;
     return Scaffold(
-      backgroundColor:  Colors.transparent,
+      backgroundColor: Colors.transparent,
       body: Stack(
         alignment: Alignment.center,
-        children: [
+        children: <Widget>[
           Positioned(
-            bottom: 0.25*screenAvailHeight,
+            bottom: 0.25 * screenAvailHeight,
             right: 25,
-            child: Image.asset('assets/images/women.png',width: screenAvailWidth*0.7,),
+            child: Image.asset(
+              "assets/images/women.png",
+              width: screenAvailWidth * 0.7,
+            ),
           ),
           Positioned(
-            top:  screenAvailHeight*0.15,
+            top: screenAvailHeight * 0.15,
             left: 30,
             right: 0,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 FittedBox(
                   child: createText("discover", Colors.white, 54),
                 ),

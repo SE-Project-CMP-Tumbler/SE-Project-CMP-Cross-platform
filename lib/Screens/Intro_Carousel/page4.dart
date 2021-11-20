@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Intro_Carousel/text.dart";
 
-/// Fourth Page in IntroCarousel
+/// Fourth Page in Intro Carousel
 class Page4 extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
@@ -11,23 +11,24 @@ class Page4 extends StatelessWidget {
         mediaQuery.padding.bottom;
     final double screenAvailWidth = mediaQuery.size.width;
     return Scaffold(
-      backgroundColor: Colors.pink[200],
-      body: Center(
-        child: SizedBox(
-          height: screenAvailHeight * 0.7,
-          width: screenAvailWidth * 0.9,
+      backgroundColor: Colors.transparent,
+      body: Align(
+        alignment: Alignment.topRight,
+        child: Padding(
+          padding: EdgeInsets.only(top: screenAvailHeight * 0.23),
           child: Stack(
             children: <Widget>[
               Container(
-                alignment: Alignment.centerRight,
+                alignment: Alignment.topRight,
+                padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Image.asset(
-                  "assets/Cat-Photo.jpg",
-                  width: screenAvailWidth * 0.8,
-                  scale: 1,
+                  "assets/images/cat.png",
+                  width: screenAvailWidth * 0.75,
                 ),
               ),
               Positioned(
-                bottom: -2,
+                top: screenAvailHeight * 0.27,
+                left: screenAvailWidth * 0.1,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
