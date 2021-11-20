@@ -42,10 +42,13 @@ dependencies:
   video_player: ^2.2.7
   dartdoc: ^4.1.0
   chewie:
+  font_awesome_flutter: ^9.2.0
   flutter_native_splash:
   html_editor_enhanced: ^2.4.0+1
   path_provider: ^2.0.7
   intl: ^0.17.0
+  animator:
+
 
 dev_dependencies:
   flutter_test:
@@ -53,7 +56,6 @@ dev_dependencies:
 flutter_native_splash:
   color: "#001935"
   image: assets/images/logo_letter.png
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -71,6 +73,22 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
+    - assets/images/intro_1.gif
+    - assets/images/intro_2.gif
+    - assets/images/intro_2.webp
+    - assets/images/intro_3.jpg
+    - assets/images/intro_4.jpg
+    - assets/images/intro_5.gif
+    - assets/images/logo.png
+    - assets/images/logo_letter.png
+    - assets/images/create_post.png
+    - assets/images/capital_letter.png
+    - assets/images/quote.png
+    - assets/images/intro_2_delayed.gif
+    - assets/images/create_tumblr.png
+    - assets/images/cat.png
+    - assets/images/express_ys.png
+    - assets/images/women.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

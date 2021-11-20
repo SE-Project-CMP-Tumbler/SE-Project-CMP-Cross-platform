@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Intro_Carousel/text.dart";
 
-/// Sixth Page in IntroCarousel
+/// sixth Page of Intro Carousel
 class Page6 extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
@@ -11,36 +11,36 @@ class Page6 extends StatelessWidget {
         mediaQuery.padding.bottom;
     final double screenAvailWidth = mediaQuery.size.width;
     return Scaffold(
-      backgroundColor: Colors.lightBlue[800],
+      backgroundColor: Colors.transparent,
       body: Container(
         margin: EdgeInsets.only(
-          top: screenAvailHeight * 0.1,
-          left: screenAvailWidth * 0.05,
+          top: screenAvailHeight * 0.15,
+          left: screenAvailWidth * 0.08,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            createText("Explore and", Colors.black, 50),
+            createText("Explore and", Colors.black, 54),
             SizedBox(
               height: screenAvailHeight * 0.01,
             ),
-            createText("discover", Colors.black, 50),
+            createText("discover", Colors.black, 54),
             SizedBox(
               height: screenAvailHeight * 0.01,
             ),
-            createText("new", Colors.black, 50),
+            createText("new", Colors.black, 54),
             SizedBox(
               height: screenAvailHeight * 0.01,
             ),
-            createText("interests.", Colors.black, 50),
+            createText("interests.", Colors.black, 54),
             SizedBox(
               height: screenAvailHeight * 0.01,
             ),
-            createText("Find your", Colors.black, 50),
+            createText("Find your", Colors.black, 54),
             SizedBox(
               height: screenAvailHeight * 0.01,
             ),
-            createText("people...", Colors.black, 50),
+            createText("people ...", Colors.black, 54),
           ],
         ),
       ),

@@ -1,13 +1,15 @@
 import "package:flutter/material.dart";
 
-/// First Page in IntroCarousel
+/// First Page in Intro Carousel
 class Page1 extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
+    final double _height = MediaQuery.of(context).size.height;
+    final double _width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.yellow,
-      body: Container(
-        margin: const EdgeInsets.fromLTRB(30, 210, 60, 80),
+      backgroundColor: Colors.transparent,
+      body: Padding(
+        padding: EdgeInsets.only(top: 0.2 * _height, left: 0.085 * _width),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const <Widget>[

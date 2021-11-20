@@ -4,7 +4,7 @@ import "package:flutter/material.dart";
 import "package:flutter/painting.dart";
 import "package:tumbler/Constants/colors.dart";
 
-/// Class For Draggable Floating Action Button
+/// Class for Draggable Floating Action Bar
 class DraggableFloatingActionButton extends StatefulWidget {
   /// Constructor
   const DraggableFloatingActionButton({
@@ -220,6 +220,7 @@ class _DraggableFloatingActionButtonState
             child: FloatingActionButton(
               onPressed: widget.onPressed,
               key: _key,
+              heroTag: "0",
               backgroundColor: floatingButtonColor,
               child: widget.child,
             ),
@@ -242,6 +243,7 @@ class _DraggableFloatingActionButtonState
       left: _offset.dx,
       top: _offset.dy,
       child: FloatingActionButton(
+        heroTag: "${index + 1}",
         elevation: 0,
         onPressed: widget.onPressed,
         foregroundColor: Colors.black,

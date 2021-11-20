@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
 import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Screens/Profile/profile_page.dart";
 import "package:tumbler/Widgets/draggable_floating_button.dart";
 
 /// The Main Screen That Hold [HomePage],
@@ -91,12 +92,7 @@ class _MainScreenState extends State<MainScreen>
                 child: const Center(child: Text("THIS IS CHAT")),
               ),
               // TODO(Ziyad): Replace this with profile page
-              Container(
-                color: appBackgroundColor,
-                child: const Center(
-                  child: Text("THIS IS PROFILE"),
-                ),
-              ),
+              ProfilePage(),
             ],
           ),
           if (selectedIndex == 0 || selectedIndex == 3)
