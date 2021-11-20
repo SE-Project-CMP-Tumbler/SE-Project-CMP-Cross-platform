@@ -1,22 +1,25 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import "package:auto_size_text/auto_size_text.dart";
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:tumbler/Constants/tags_list_and_colors.dart";
+import "package:tumbler/Providers/followed_tags_sign_up.dart";
+import "package:tumbler/Screens/Sign_Up_Screens/Choose_Tag/add_your_own_tag.dart";
 
-import '/Providers/followed_tags_sign_up.dart';
-import '/Screens/Sign_Up_Screens/Choose_Tag/add_your_own_tag.dart';
-import '../Constants/tags_list_and_colors.dart';
-
+/// Custom Container for [TagSelect] page.
 class TagContainer extends StatefulWidget {
-  final int index;
+  /// Constructor
+  const TagContainer({required final this.index, final Key? key})
+      : super(key: key);
 
-  const TagContainer({Key? key, required this.index}) : super(key: key);
+  /// Index of the [TagContainer] in [TagSelect] page
+  final int index;
 
   @override
   State<TagContainer> createState() => _TagContainerState();
 }
 
 class _TagContainerState extends State<TagContainer> {
-  void pressed(bool x) {
+  void pressed(final bool x) {
     if (widget.index != 0) {
       if (x) {
         Provider.of<FollowedTags>(context, listen: false)
@@ -26,23 +29,38 @@ class _TagContainerState extends State<TagContainer> {
             .addFollowTag(tagsNames[widget.index]);
       }
     } else {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => AddYourOwnTag()));
+      Navigator.of(context).push(
+        MaterialPageRoute<AddYourOwnTag>(
+          builder: (final BuildContext context) => AddYourOwnTag(),
+        ),
+      );
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return InkWell(
-      onTap: () => pressed(context
-          .read<FollowedTags>()
-          .followedTags
-          .contains(tagsNames[widget.index])),
+      onTap: () => pressed(
+        context
+            .read<FollowedTags>()
+            .followedTags
+            .contains(tagsNames[widget.index]),
+      ),
       child: Stack(
-        children: [
+        children: <Widget>[
           Container(
+            decoration: (widget.index == 0)
+                ? BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(color: Colors.white),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  )
+                : BoxDecoration(
+                    color: tagsColors[widget.index % tagsColors.length],
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  ),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: AutoSizeText(
@@ -52,15 +70,6 @@ class _TagContainerState extends State<TagContainer> {
                 ),
               ),
             ),
-            decoration: (widget.index == 0)
-                ? BoxDecoration(
-                    color: Colors.transparent,
-                    border: Border.all(color: Colors.white, width: 1),
-                    borderRadius: const BorderRadius.all(Radius.circular(20)))
-                : BoxDecoration(
-                    color: tagsColors[widget.index % tagsColors.length],
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  ),
           ),
           if (Provider.of<FollowedTags>(context)
               .followedTags

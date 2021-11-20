@@ -1,25 +1,28 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+// ignore_for_file: implementation_imports
+import "package:csslib/src/messages.dart";
+import "package:flutter/material.dart";
+import "package:flutter_html/flutter_html.dart";
 
 ///Used to render html content
 class HtmlView extends StatelessWidget {
-  final String htmlData;
-
   /// takes html content as string.
   const HtmlView({
-    Key? key,
-    required this.htmlData,
+    required final this.htmlData,
+    final Key? key,
   }) : super(key: key);
 
+  /// HTML Data
+  final String htmlData;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Html(
       data: htmlData,
-      style: {
+      style: <String, Style>{
         "table": Style(
           backgroundColor: const Color.fromARGB(0x50, 0xee, 0xee, 0xee),
         ),
-        'p': Style(
+        "p": Style(
           color: Colors.black,
         ),
         "tr": Style(
@@ -33,40 +36,41 @@ class HtmlView extends StatelessWidget {
           padding: const EdgeInsets.all(6),
           alignment: Alignment.topLeft,
         ),
-        'h5': Style(
+        "h5": Style(
           color: Colors.black,
           // maxLines: 2,
           // textOverflow: TextOverflow.ellipsis,
           // color: Colors.black,
         ),
-        'h4': Style(
+        "h4": Style(
           color: Colors.black,
         ),
-        'h3': Style(
+        "h3": Style(
           color: Colors.black,
         ),
-        'h2': Style(
+        "h2": Style(
           color: Colors.black,
         ),
-        'h1': Style(
+        "h1": Style(
           color: Colors.black,
         ),
         "img": Style(alignment: Alignment.center)
       },
+      // ignore: always_specify_types
       customImageRenders: {
-        (attr, __) => attr["src"] != null:
+        (final Map<String, String> attr, final __) => attr["src"] != null:
             networkImageRender(width: 500, height: 300),
       },
-      onLinkTap: (url, _, __, ___) {
+      onLinkTap: (final String? url, final _, final __, final ___) {
         //print("opening $url");
       },
-      onImageTap: (src, _, __, ___) {
+      onImageTap: (final String? src, final _, final __, final ___) {
         //print(src);
       },
-      onImageError: (exception, stackTrace) {
+      onImageError: (final Object exception, final StackTrace? stackTrace) {
         //print(exception);
       },
-      onCssParseError: (css, messages) {
+      onCssParseError: (final String css, final List<Message> messages) {
         //print("css that error: $css");
         //print("error messages:");
         // for (var element in messages) {

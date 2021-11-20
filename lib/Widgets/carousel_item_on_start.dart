@@ -1,17 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:gif_view/gif_view.dart';
-import 'package:google_fonts/google_fonts.dart';
+import "package:flutter/material.dart";
+import "package:gif_view/gif_view.dart";
+import "package:google_fonts/google_fonts.dart";
 
+/// Used For Carousel Item
 class CarouselItemBuilder extends StatelessWidget {
-  const CarouselItemBuilder(
-      {Key? key,
-      required double width,
-      required double height,
-      required String imageUrl,
-      required String poster,
-      required String title,
-      bool gifView = false})
-      : _width = width,
+  /// Constructor
+  const CarouselItemBuilder({
+    required final double width,
+    required final double height,
+    required final String imageUrl,
+    required final String poster,
+    required final String title,
+    final bool gifView = false,
+    final Key? key,
+  })  : _width = width,
         _height = height,
         _imageUrl = imageUrl,
         _title = title,
@@ -27,68 +29,78 @@ class CarouselItemBuilder extends StatelessWidget {
   final bool _gifView;
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(alignment: Alignment.center, children: [
-      !_gifView
-          ? Image.asset(
-              _imageUrl,
-              width: _width,
-              height: _height,
-              fit: BoxFit.fitHeight,
-            )
-          : GifView.asset(
-              _imageUrl,
-              width: _width,
-              height: _height,
-              fit: BoxFit.fitHeight,
-              frameRate: 8,
-            ),
-      Container(
-        width: _width,
-        height: _height,
-        color: Colors.black.withOpacity(0.49),
-      ),
-      Positioned(
-        child: Text(
-          _poster,
-          style: GoogleFonts.nunito(
-              color: Colors.white38, fontWeight: FontWeight.w700, fontSize: 12),
+  Widget build(final BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        if (!_gifView)
+          Image.asset(
+            _imageUrl,
+            width: _width,
+            height: _height,
+            fit: BoxFit.fitHeight,
+          )
+        else
+          GifView.asset(
+            _imageUrl,
+            width: _width,
+            height: _height,
+            fit: BoxFit.fitHeight,
+            frameRate: 8,
+          ),
+        Container(
+          width: _width,
+          height: _height,
+          color: Colors.black.withOpacity(0.49),
         ),
-        bottom: 25,
-      ),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Expanded(child: Container()),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 40.0, horizontal: 40.0),
-                  child: Text(
-                    _title,
-                    textScaleFactor: 2.2,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontFamily: 'favoritPro',
+        Positioned(
+          bottom: 25,
+          child: Text(
+            _poster,
+            style: GoogleFonts.nunito(
+              color: Colors.white38,
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Expanded(child: Container()),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 40,
+                      horizontal: 40,
+                    ),
+                    child: Text(
+                      _title,
+                      textScaleFactor: 2.2,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: "favoritPro",
                         height: 1.4,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
-                        shadows: [
-                          Shadow(color: Colors.black, blurRadius: 8.0),
-                          Shadow(color: Colors.white, blurRadius: 1.0)
-                        ]),
+                        shadows: <Shadow>[
+                          Shadow(blurRadius: 8),
+                          Shadow(color: Colors.white, blurRadius: 1)
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-                Container(),
-              ],
+                  Container(),
+                ],
+              ),
             ),
-          ),
-          Expanded(child: Container()),
-        ],
-      )
-    ]);
+            Expanded(child: Container()),
+          ],
+        )
+      ],
+    );
   }
 }

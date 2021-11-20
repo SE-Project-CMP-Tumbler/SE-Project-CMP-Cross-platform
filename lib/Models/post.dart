@@ -1,32 +1,33 @@
+// ignore_for_file: public_member_api_docs
 ///Post Model
 class Post {
-  int postId;
-  String postBody;
-  String postStatus;
-  String postType;
-  int blogId;
-  String blogUsername;
-  String blogAvatar;
-  String blogAvatarShape;
-  String blogTitle;
-  String postTime;
-  List<dynamic> likes = [];
-  List<dynamic> reblogs = [];
-  List<dynamic> replies = [];
-
   Post({
-    required this.postId,
-    required this.postBody,
-    required this.postStatus,
-    required this.postType,
-    required this.blogId,
-    required this.blogUsername,
-    required this.blogAvatar,
-    required this.blogAvatarShape,
-    required this.blogTitle,
-    required this.postTime,
-    this.likes = const [],
-    this.reblogs = const [],
-    this.replies = const [],
+    required final this.postId,
+    required final this.postBody,
+    required final this.postStatus,
+    required final this.postType,
+    required final this.blogId,
+    required final this.blogUsername,
+    required final this.blogAvatar,
+    required final this.blogAvatarShape,
+    required final this.blogTitle,
+    required final this.postTime,
+    final this.likes = const <dynamic>[],
+    final this.reblogs = const <dynamic>[],
+    final this.replies = const <dynamic>[],
   });
+
+  final int postId;
+  final String postBody;
+  final String postStatus;
+  final String postType;
+  final int blogId;
+  final String blogUsername;
+  final String blogAvatar;
+  final String blogAvatarShape;
+  final String blogTitle;
+  final String postTime;
+  List<dynamic> likes = <dynamic>[];
+  List<dynamic> reblogs = <dynamic>[];
+  List<dynamic> replies = <dynamic>[];
 }

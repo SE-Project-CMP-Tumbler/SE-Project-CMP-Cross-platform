@@ -1,24 +1,15 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
+import "package:tumbler/Widgets/Intro_Carousel/text.dart";
 
-Widget createText(String txt, Color chosenColor, double fontSize) {
-  return Text(
-    txt,
-    style: TextStyle(
-        color: chosenColor,
-        fontSize: fontSize,
-        fontFamily: "sans-serif",
-        fontWeight: FontWeight.normal),
-  );
-}
-
+/// Third Page in IntroCarousel
 class Page3 extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenAvailHeight = mediaQuery.size.height -
+  Widget build(final BuildContext context) {
+    final MediaQueryData mediaQuery = MediaQuery.of(context);
+    final double screenAvailHeight = mediaQuery.size.height -
         mediaQuery.padding.top -
         mediaQuery.padding.bottom;
-    final screenAvailWidth = mediaQuery.size.width;
+    final double screenAvailWidth = mediaQuery.size.width;
     return Scaffold(
       backgroundColor: Colors.deepPurpleAccent,
       body: Center(
@@ -26,19 +17,20 @@ class Page3 extends StatelessWidget {
           width: screenAvailWidth * 0.9,
           height: screenAvailHeight * 0.8,
           child: Stack(
-            children: [
+            children: <Widget>[
               Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Image.asset(
-                    "assets/Page3Image.jpg",
-                    height: screenAvailHeight * 0.55,
-                  )),
+                right: 0,
+                bottom: 0,
+                child: Image.asset(
+                  "assets/Page3Image.jpg",
+                  height: screenAvailHeight * 0.55,
+                ),
+              ),
               Positioned(
                 bottom: screenAvailHeight * 0.5,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     FittedBox(
                       child: createText("discover", Colors.white, 45),
                     ),
