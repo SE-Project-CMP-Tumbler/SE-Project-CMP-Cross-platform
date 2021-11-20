@@ -6,7 +6,7 @@ import 'package:tumbler/Models/users.dart';
 
 class Api {
   static const String _host =
-      "https://fff82fda-4df6-4c76-adb1-cba53e9e73f5.mock.pstmn.io";
+      "https://addpost-bcc94-default-rtdb.firebaseio.com";
   final String _getTrendingTags = "/tag/trending";
   final String _signUp = "/register";
   final String _login = "/login";
@@ -14,6 +14,7 @@ class Api {
   final String _uploadImage = "/upload_photo/";
   final String _uploadVideo = "/upload_video/";
   final String _uploadAudio = "/upload_audio/";
+  final String _addPost = "/post/";
 
   final String _weirdConnection = '''
             {
@@ -155,30 +156,28 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  void sendPost(String postBody, String postStatus, String postType,
-      String postTime) async {
-    //String postTime = getDate();
-    var blogId = 7;
-    String firebaseHost = 'https://addpost-bcc94-default-rtdb.firebaseio.com/';
+  Future<Map<String, dynamic>> addPost(String postBody, String postStatus,
+      String postType, String postTime) async {
 
-    http.Response response = await http
-        .post(
-      Uri.parse(firebaseHost + 'post/$blogId.json'),
+    http.Response response = await http.post(
+      Uri.parse(_host + _addPost + User.id + ".json"),
       headers: {
-        // 'Authorization': User.accessToken,
+        'Authorization': User.accessToken,
       },
-      body: json.encode({
+      body: {
         'post_status': postStatus,
         'post_time': postTime,
         'post_type': postType,
         'post_body': postBody
-      }),
-    )
-        .timeout(
-      const Duration(seconds: 10),
-      onTimeout: () {
-        return http.Response("{}", 408);
       },
-    ).onError((error, stackTrace) => http.Response("{}", 404));
+    ).onError((error, stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
   }
 }

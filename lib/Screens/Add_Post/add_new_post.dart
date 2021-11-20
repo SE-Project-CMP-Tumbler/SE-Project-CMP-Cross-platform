@@ -3,33 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import '../../Widgets/post_button.dart';
 
-class AddPostPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Add Post',
-      theme: ThemeData(),
-      darkTheme: ThemeData.dark(),
-      home: const AddPost(title: 'Flutter Add Post Editor Example'),
-    );
-  }
-}
-
 AssetImage profilePic = const AssetImage('assets/images/profile_pic.png');
 String userName = "UserName";
 
 class AddPost extends StatefulWidget {
-  const AddPost({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const AddPost({Key? key}) : super(key: key);
 
   @override
   _AddPostState createState() => _AddPostState();
 }
 
 class _AddPostState extends State<AddPost> {
-  var lastCharsNum = 0;
   bool isPostButtonDisabled = true;
   final HtmlEditorController controller =
       HtmlEditorController(processOutputHtml: true);
@@ -51,7 +35,10 @@ class _AddPostState extends State<AddPost> {
                   Icons.close,
                   color: Colors.black,
                 ),
-                onPressed: () {}),
+                onPressed: () {
+                  // TODO: Alert to save as draft
+                  Navigator.of(context).pop();
+                }),
             actions: [
               PostButton(
                   controller: controller,
@@ -60,7 +47,7 @@ class _AddPostState extends State<AddPost> {
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+            children: [
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
