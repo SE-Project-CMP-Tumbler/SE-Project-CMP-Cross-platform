@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tumbler/Models/user.dart';
 
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
-import '/Models/users.dart';
 import '/Screens/Sign_Up_Screens/Choose_Tag/tag_page.dart';
 
 class GetAge extends StatefulWidget {

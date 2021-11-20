@@ -5,32 +5,32 @@ import 'package:flutter/painting.dart';
 import 'package:tumbler/Constants/colors.dart';
 
 class DraggableFloatingActionButton extends StatefulWidget {
-
   final Widget child;
   final Offset initialOffset;
   final VoidCallback onPressed;
   final GlobalKey parentKey;
   final Duration duration;
-  const DraggableFloatingActionButton({
-    required this.child,
-    required this.initialOffset,
-    required this.onPressed,
-    required this.parentKey,
-    required this.duration
-  });
+
+  const DraggableFloatingActionButton(
+      {required this.child,
+      required this.initialOffset,
+      required this.onPressed,
+      required this.parentKey,
+      required this.duration});
 
   @override
   State<StatefulWidget> createState() => _DraggableFloatingActionButtonState();
 }
 
-class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionButton> {
-
+class _DraggableFloatingActionButtonState
+    extends State<DraggableFloatingActionButton> {
   final GlobalKey _key = GlobalKey();
 
   bool _isDragging = false;
   late Offset _offset;
   late Offset _minOffset;
   late Offset _maxOffset;
+
   @override
   void initState() {
     super.initState();
@@ -40,8 +40,10 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
   }
 
   void _setBoundary(_) {
-    final RenderBox parentRenderBox = widget.parentKey.currentContext?.findRenderObject() as RenderBox;
-    final RenderBox renderBox = _key.currentContext?.findRenderObject() as RenderBox;
+    final RenderBox parentRenderBox =
+        widget.parentKey.currentContext?.findRenderObject() as RenderBox;
+    final RenderBox renderBox =
+        _key.currentContext?.findRenderObject() as RenderBox;
 
     try {
       final Size parentSize = parentRenderBox.size;
@@ -50,9 +52,7 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
       setState(() {
         _minOffset = const Offset(0, 0);
         _maxOffset = Offset(
-            parentSize.width - size.width,
-            parentSize.height - size.height
-        );
+            parentSize.width - size.width, parentSize.height - size.height);
       });
     } catch (e) {
       // ignore: avoid_print
@@ -104,28 +104,79 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        buildAnimatedPositioned(Colors.deepOrange, 1, Image.asset('assets/images/quote.png', color:navy,width: 25.0,)),
-        buildAnimatedPositioned(Colors.white, 2,  Image.asset('assets/images/capital_letter.png', color: navy,width: 25.0,)),
-        buildAnimatedPositioned(Colors.pink, 3,  Icon(CupertinoIcons.headphones, color: navy,size: 30,)),
-        buildAnimatedPositioned(Colors.deepPurple, 4, Icon(CupertinoIcons.videocam_fill, color: navy,size: 30,)),
-        buildAnimatedPositioned(floatingButtonColor, 5, Center(child: Text('hi!', style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 22.0,
-          color: navy
-        ),),)),
-        buildAnimatedPositioned(Colors.green, 6,  Icon(Icons.all_inclusive_outlined, color: navy,size: 25,)),
-        buildAnimatedPositioned(Colors.yellow, 7,  Icon(Icons.gif_outlined, color: navy,size: 30,)),
-        buildAnimatedPositioned(Colors.red, 8, Icon(CupertinoIcons.photo_camera_solid, color: navy,)),
-        AnimatedPositioned(
+    return Stack(children: [
+      buildAnimatedPositioned(
+          Colors.deepOrange,
+          1,
+          Image.asset(
+            'assets/images/quote.png',
+            color: navy,
+            width: 25.0,
+          )),
+      buildAnimatedPositioned(
+          Colors.white,
+          2,
+          Image.asset(
+            'assets/images/capital_letter.png',
+            color: navy,
+            width: 25.0,
+          )),
+      buildAnimatedPositioned(
+          Colors.pink,
+          3,
+          Icon(
+            CupertinoIcons.headphones,
+            color: navy,
+            size: 30,
+          )),
+      buildAnimatedPositioned(
+          Colors.deepPurple,
+          4,
+          Icon(
+            CupertinoIcons.videocam_fill,
+            color: navy,
+            size: 30,
+          )),
+      buildAnimatedPositioned(
+          floatingButtonColor,
+          5,
+          Center(
+            child: Text(
+              'hi!',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 22.0, color: navy),
+            ),
+          )),
+      buildAnimatedPositioned(
+          Colors.green,
+          6,
+          Icon(
+            Icons.all_inclusive_outlined,
+            color: navy,
+            size: 25,
+          )),
+      buildAnimatedPositioned(
+          Colors.yellow,
+          7,
+          Icon(
+            Icons.gif_outlined,
+            color: navy,
+            size: 30,
+          )),
+      buildAnimatedPositioned(
+          Colors.red,
+          8,
+          Icon(
+            CupertinoIcons.photo_camera_solid,
+            color: navy,
+          )),
+      AnimatedPositioned(
         curve: Curves.easeOutCubic,
         duration: Duration(milliseconds: widget.duration.inMilliseconds),
-        left:_offset.dx,
+        left: _offset.dx,
         top: _offset.dy,
         child: Listener(
-          onPointerSignal: (PointerSignalEvent pointerSignalEvent){
-          },
+          onPointerSignal: (PointerSignalEvent pointerSignalEvent) {},
           onPointerMove: (PointerMoveEvent pointerMoveEvent) {
             _updatePosition(pointerMoveEvent);
             setState(() {
@@ -138,10 +189,8 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
               setState(() {
                 _isDragging = false;
               });
-            } else {
-            }
+            } else {}
           },
-
           child: FloatingActionButton(
             onPressed: widget.onPressed,
             key: _key,
@@ -150,24 +199,24 @@ class _DraggableFloatingActionButtonState extends State<DraggableFloatingActionB
           ),
         ),
       ),
-
-      ]
-    );
+    ]);
   }
 
-  AnimatedPositioned buildAnimatedPositioned(Color bgColor, int index, Widget child ) {
+  AnimatedPositioned buildAnimatedPositioned(
+      Color bgColor, int index, Widget child) {
     return AnimatedPositioned(
-        curve: Curves.fastLinearToSlowEaseIn,
-        duration: Duration(milliseconds: (index+5)*(index+1)*60-index*300+50),
-        left:_offset.dx,
-        top: _offset.dy,
-        child: FloatingActionButton(
-          elevation: 0.0,
-          onPressed: widget.onPressed,
-          child: child,
-          foregroundColor: Colors.black,
-          backgroundColor: bgColor,
-        ),
-      );
+      curve: Curves.fastLinearToSlowEaseIn,
+      duration: Duration(
+          milliseconds: (index + 5) * (index + 1) * 60 - index * 300 + 50),
+      left: _offset.dx,
+      top: _offset.dy,
+      child: FloatingActionButton(
+        elevation: 0.0,
+        onPressed: widget.onPressed,
+        child: child,
+        foregroundColor: Colors.black,
+        backgroundColor: bgColor,
+      ),
+    );
   }
 }

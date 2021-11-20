@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tumbler/Constants/colors.dart';
-
+import 'package:tumbler/Screens/Add_Post/add_new_post.dart';
+import 'package:tumbler/Screens/Home%20Page/home_page.dart';
 import 'package:tumbler/Widgets/draggable_floating_button.dart';
 
 class MainScreen extends StatefulWidget {
@@ -14,7 +15,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
-
   // state variables 'll be defined here
   TabController? tabController;
   int selectedIndex = 0;
@@ -77,12 +77,7 @@ class _MainScreenState extends State<MainScreen>
             physics: const NeverScrollableScrollPhysics(),
             controller: tabController,
             children: [
-              // TODO: Replace this with home page
-              Container(
-                  color: appBackgroundColor,
-                  child: const Center(
-                    child: Text('THIS IS HOME'),
-                  )),
+              const HomePage(),
               // TODO: Replace this with search page
               Container(
                   color: appBackgroundColor,
@@ -114,6 +109,8 @@ class _MainScreenState extends State<MainScreen>
                   parentKey: _parentKey,
                   onPressed: () {
                     // TODO: Navigate to Add Post Page
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const AddPost()));
                   },
                 )
               : Container(),
