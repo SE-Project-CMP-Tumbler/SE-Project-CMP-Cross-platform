@@ -20,42 +20,37 @@ class Page3 extends StatelessWidget {
         mediaQuery.padding.bottom;
     final screenAvailWidth = mediaQuery.size.width;
     return Scaffold(
-      backgroundColor: Colors.deepPurpleAccent,
-      body: Center(
-        child: SizedBox(
-          width: screenAvailWidth * 0.9,
-          height: screenAvailHeight * 0.8,
-          child: Stack(
-            children: [
-              Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Image.asset(
-                    "assets/Page3Image.jpg",
-                    height: screenAvailHeight * 0.55,
-                  )),
-              Positioned(
-                bottom: screenAvailHeight * 0.5,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                      child: createText("discover", Colors.white, 45),
-                    ),
-                    SizedBox(
-                      height: screenAvailHeight * 0.01,
-                    ),
-                    FittedBox(child: createText("your", Colors.white, 45)),
-                    SizedBox(
-                      height: screenAvailHeight * 0.01,
-                    ),
-                    FittedBox(child: createText("community", Colors.white, 45))
-                  ],
-                ),
-              ),
-            ],
+      backgroundColor:  Colors.transparent,
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            bottom: 0.25*screenAvailHeight,
+            right: 25,
+            child: Image.asset('assets/images/women.png',width: screenAvailWidth*0.7,),
           ),
-        ),
+          Positioned(
+            top:  screenAvailHeight*0.15,
+            left: 30,
+            right: 0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FittedBox(
+                  child: createText("discover", Colors.white, 54),
+                ),
+                SizedBox(
+                  height: screenAvailHeight * 0.01,
+                ),
+                FittedBox(child: createText("your", Colors.white, 54)),
+                SizedBox(
+                  height: screenAvailHeight * 0.01,
+                ),
+                FittedBox(child: createText("community", Colors.white, 54))
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

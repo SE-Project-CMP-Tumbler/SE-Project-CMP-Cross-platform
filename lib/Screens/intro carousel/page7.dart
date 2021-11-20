@@ -22,34 +22,34 @@ class Page7 extends StatelessWidget {
         mediaQuery.padding.bottom;
     final screenAvailWidth = mediaQuery.size.width;
     return Scaffold(
-      backgroundColor: Colors.greenAccent[700],
+      backgroundColor:  Colors.transparent,
       body: Container(
           margin: EdgeInsets.only(
-              left: screenAvailWidth * 0.05, top: screenAvailHeight * 0.1),
+              left: screenAvailWidth * 0.08, top: screenAvailHeight * 0.15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              createText("follow them", Colors.black, 50),
+              createText("follow them", Colors.black, 54),
               SizedBox(
                 height: screenAvailHeight * 0.01,
               ),
-              createText("and fill your", Colors.black, 50),
+              createText("and fill your", Colors.black, 54),
               SizedBox(
                 height: screenAvailHeight * 0.01,
               ),
-              createText("dashboard", Colors.black, 50),
+              createText("dashboard", Colors.black, 54),
               SizedBox(
                 height: screenAvailHeight * 0.01,
               ),
-              createText("with all the", Colors.black, 50),
+              createText("with all the", Colors.black, 54),
               SizedBox(
                 height: screenAvailHeight * 0.01,
               ),
-              createText("things you", Colors.black, 50),
+              createText("things you", Colors.black, 54),
               SizedBox(
                 height: screenAvailHeight * 0.01,
               ),
-              createText("love.", Colors.black, 50),
+              createText("love.", Colors.black, 54),
             ],
           )),
     );

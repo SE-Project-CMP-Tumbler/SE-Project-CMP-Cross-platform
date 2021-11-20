@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tumbler/Constants/colors.dart';
 import 'package:tumbler/Screens/Add_Post/add_new_post.dart';
 import 'package:tumbler/Screens/Home%20Page/home_page.dart';
+import 'package:tumbler/Screens/Profile/profile_page.dart';
 import 'package:tumbler/Widgets/draggable_floating_button.dart';
 
 class MainScreen extends StatefulWidget {
@@ -89,23 +90,14 @@ class _MainScreenState extends State<MainScreen>
                 color: appBackgroundColor,
                 child: const Center(child: Text('THIS IS CHAT')),
               ),
-              // TODO: Replace this with profile page
-              Container(
-                  color: appBackgroundColor,
-                  child: const Center(
-                    child: Text('THIS IS PROFILE'),
-                  )),
+              ProfilePage()
             ],
           ),
           selectedIndex == 0 || selectedIndex == 3
               ? DraggableFloatingActionButton(
                   duration: const Duration(milliseconds: 100),
-                  child: Image.asset(
-                    'assets/images/create_post.png',
-                    color: Colors.white,
-                    width: 25.0,
-                  ),
-                  initialOffset: Offset(_width - 70, _height - 150),
+                  child: Icon(Icons.mode_edit_outline_outlined,size: 30,),
+                  initialOffset: Offset(_width - 70, _height - 135),
                   parentKey: _parentKey,
                   onPressed: () {
                     // TODO: Navigate to Add Post Page

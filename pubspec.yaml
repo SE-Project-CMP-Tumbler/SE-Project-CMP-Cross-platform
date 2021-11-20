@@ -47,7 +47,7 @@ dependencies:
   html_editor_enhanced: ^2.4.0+1
   path_provider: ^2.0.7
   intl: ^0.17.0
-
+  animator:
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -84,6 +84,9 @@ flutter:
     - assets/images/quote.png
     - assets/images/intro_2_delayed.gif
     - assets/images/create_tumblr.png
+    - assets/images/cat.png
+    - assets/images/express_ys.png
+    - assets/images/women.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

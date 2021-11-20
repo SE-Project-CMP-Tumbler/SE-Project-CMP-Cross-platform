@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tumbler/Models/user.dart';
+import 'package:tumbler/Screens/intro%20carousel/intro_carousel.dart';
 
 import '/Methods/email_password_validators.dart';
 import '/Screens/main_screen.dart';
@@ -141,7 +142,7 @@ class _RegisterState extends State<Register> {
       User.accessToken = response["response"]["access_token"];
 
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const MainScreen()));
+          MaterialPageRoute(builder: (context) => const IntroCarousel()));
     } else {
       Fluttertoast.showToast(
         msg: response["meta"]["msg"],
