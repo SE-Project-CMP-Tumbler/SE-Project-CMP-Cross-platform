@@ -150,8 +150,8 @@ class _RegisterState extends State<Register> {
                 Fluttertoast.showToast(
                   msg: response["meta"]["msg"],
                   toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.TOP,
-                  backgroundColor: Colors.red,
+                  gravity: ToastGravity.BOTTOM,
+                  backgroundColor: Colors.black,
                   textColor: Colors.white,
                   fontSize: 16.0,
                 );

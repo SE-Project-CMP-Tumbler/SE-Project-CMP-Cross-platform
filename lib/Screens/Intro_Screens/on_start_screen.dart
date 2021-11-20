@@ -6,7 +6,9 @@ import 'package:gif_view/gif_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tumbler/Constants/colors.dart';
 import 'package:tumbler/Constants/ui_styles.dart';
-import 'dart:io';
+import 'package:tumbler/Screens/Log_In_Screens/log_in.dart';
+import 'package:tumbler/Screens/Sign_Up_Screens/get_age.dart';
+
 class OnStart extends StatefulWidget {
   const OnStart({Key? key}) : super(key: key);
 
@@ -18,9 +20,10 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
   int _currentPage = 0;
   bool isClicked = false;
   int _currentButtonSet = 1;
-  bool _hideButtonSet1= false;
-  bool _hideButtonSet2= true;
-  bool _hideButtonSet3= true;
+  bool _hideButtonSet1 = false;
+  bool _hideButtonSet2 = true;
+  bool _hideButtonSet3 = true;
+
   @override
   Widget build(BuildContext context) {
     double _height = MediaQuery.of(context).size.height;
@@ -30,10 +33,9 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
     return WillPopScope(
       onWillPop: () {
         setState(() {
-          _hideButtonSet1=false;
+          _hideButtonSet1 = false;
           isClicked = false;
           _currentButtonSet = 1;
-
         });
         return Future.value(false);
       },
@@ -70,7 +72,9 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                     CarouselItemBuilder(
                       width: _width,
                       height: _height,
-                      imageUrl: isAndroid?'assets/images/intro_2.gif':'assets/images/intro_2_delayed.gif',
+                      imageUrl: isAndroid
+                          ? 'assets/images/intro_2.gif'
+                          : 'assets/images/intro_2_delayed.gif',
                       title: 'Follow Tumblrs that\nspark your interests.',
                       poster: 'Posted by bleedgfx',
                       gifView: isAndroid,
@@ -119,45 +123,45 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                           padding: const EdgeInsets.only(bottom: 20.0),
                           child: Center(
                               child: Image.asset(
-                                'assets/images/logo.png',
-                                width: (_width / 2) - 10,
-                              )))),
+                            'assets/images/logo.png',
+                            width: (_width / 2) - 10,
+                          )))),
                   Expanded(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                buildPageIndicator(0),
-                                const SizedBox(
-                                  width: 10.0,
-                                ),
-                                buildPageIndicator(1),
-                                const SizedBox(
-                                  width: 10.0,
-                                ),
-                                buildPageIndicator(2),
-                                const SizedBox(
-                                  width: 10.0,
-                                ),
-                                buildPageIndicator(3),
-                                const SizedBox(
-                                  width: 10.0,
-                                ),
-                                buildPageIndicator(4),
-                              ],
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            buildPageIndicator(0),
+                            const SizedBox(
+                              width: 10.0,
                             ),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Column(),
-                          ),
-                        ],
-                      )),
+                            buildPageIndicator(1),
+                            const SizedBox(
+                              width: 10.0,
+                            ),
+                            buildPageIndicator(2),
+                            const SizedBox(
+                              width: 10.0,
+                            ),
+                            buildPageIndicator(3),
+                            const SizedBox(
+                              width: 10.0,
+                            ),
+                            buildPageIndicator(4),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Column(),
+                      ),
+                    ],
+                  )),
                 ],
               ),
               Column(
@@ -169,7 +173,6 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                         Expanded(
                           flex: 3,
                           child: Stack(alignment: Alignment.center, children: [
-
                             AnimatedPositioned(
                               duration: const Duration(milliseconds: 500),
                               curve: Curves.easeInOutCubic,
@@ -178,16 +181,15 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                               bottom: (_currentButtonSet == 1)
                                   ? _height / 6
                                   : _height / 3,
-                              onEnd: (){
-                                if(_currentButtonSet!=1)
-                                {
+                              onEnd: () {
+                                if (_currentButtonSet != 1) {
                                   setState(() {
-                                    _hideButtonSet1=true;
+                                    _hideButtonSet1 = true;
                                   });
                                 }
                               },
                               child: AnimatedContainer(
-                                height: (_hideButtonSet1)?0:null,
+                                height: (_hideButtonSet1) ? 0 : null,
                                 duration: const Duration(milliseconds: 300),
                                 child: AnimatedOpacity(
                                   opacity: (_currentButtonSet == 1) ? 1 : 0,
@@ -199,55 +201,54 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                         children: [
                                           Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: _width / 7,
-                                                    vertical: 2),
-                                                child: ElevatedButton(
-                                                    onPressed: () {
-                                                      if(_currentButtonSet==1)
-                                                      {
-                                                        setState(() {
-                                                          isClicked = true;
-                                                          _currentButtonSet = 2;//signUp options
-                                                          _hideButtonSet2=false;
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: _width / 7,
+                                                vertical: 2),
+                                            child: ElevatedButton(
+                                                onPressed: () {
+                                                  if (_currentButtonSet == 1) {
+                                                    setState(() {
+                                                      isClicked = true;
+                                                      _currentButtonSet =
+                                                          2; //signUp options
+                                                      _hideButtonSet2 = false;
+                                                    });
+                                                    //logic of the function here
 
-                                                        });
-                                                        //logic of the function here
-
-                                                      }
-
-                                                    },
-                                                    child: const Text(
-                                                      'Sign up',
-                                                      textScaleFactor: 1.3,
-                                                    ),
-                                                    style: onStartButtonStyle),
-                                              )),
+                                                  }
+                                                },
+                                                child: const Text(
+                                                  'Sign up',
+                                                  textScaleFactor: 1.3,
+                                                ),
+                                                style: onStartButtonStyle),
+                                          )),
                                         ],
                                       ),
                                       Row(
                                         children: [
                                           Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: _width / 7,
-                                                    vertical: 2),
-                                                child: ElevatedButton(
-                                                    onPressed: () {
-                                                      if(_currentButtonSet==1) {
-                                                        setState(() {
-                                                          _currentButtonSet = 3; //login options
-                                                          _hideButtonSet3=false;
-                                                        });
-                                                        //logic of the function here
-                                                      }
-                                                    },
-                                                    child: const Text(
-                                                      'Log in',
-                                                      textScaleFactor: 1.3,
-                                                    ),
-                                                    style: onStartButtonStyle),
-                                              )),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: _width / 7,
+                                                vertical: 2),
+                                            child: ElevatedButton(
+                                                onPressed: () {
+                                                  if (_currentButtonSet == 1) {
+                                                    setState(() {
+                                                      _currentButtonSet =
+                                                          3; //login options
+                                                      _hideButtonSet3 = false;
+                                                    });
+                                                    //logic of the function here
+                                                  }
+                                                },
+                                                child: const Text(
+                                                  'Log in',
+                                                  textScaleFactor: 1.3,
+                                                ),
+                                                style: onStartButtonStyle),
+                                          )),
                                         ],
                                       ),
                                     ],
@@ -261,19 +262,18 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                               left: 0,
                               right: 0,
                               bottom:
-                              (_currentButtonSet == 2) ? _height / 6 : -100,
+                                  (_currentButtonSet == 2) ? _height / 6 : -100,
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 500),
-                                height: _hideButtonSet2?0:null,
+                                height: _hideButtonSet2 ? 0 : null,
                                 child: AnimatedOpacity(
                                   opacity: (_currentButtonSet == 2) ? 1 : 0,
                                   curve: Curves.easeInOutCubic,
                                   duration: const Duration(milliseconds: 500),
-                                  onEnd: (){
-                                    if(_currentButtonSet!=2)
-                                    {
+                                  onEnd: () {
+                                    if (_currentButtonSet != 2) {
                                       setState(() {
-                                        _hideButtonSet2=true;
+                                        _hideButtonSet2 = true;
                                       });
                                     }
                                   },
@@ -283,47 +283,50 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                         children: [
                                           Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: _width / 7,
-                                                    vertical: 2),
-                                                child: ElevatedButton(
-                                                    onPressed: () {
-                                                      if(_currentButtonSet==2)
-                                                      {
-                                                        //logic of the function here
-
-                                                      }
-
-                                                    },
-                                                    child: const Text(
-                                                      'Sign up with email',
-                                                      textScaleFactor: 1.3,
-                                                    ),
-                                                    style: onStartButtonStyle),
-                                              )),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: _width / 7,
+                                                vertical: 2),
+                                            child: ElevatedButton(
+                                                onPressed: () {
+                                                  if (_currentButtonSet == 2) {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    GetAge()));
+                                                  }
+                                                },
+                                                child: const Text(
+                                                  'Sign up with email',
+                                                  textScaleFactor: 1.3,
+                                                ),
+                                                style: onStartButtonStyle),
+                                          )),
                                         ],
                                       ),
                                       Row(
                                         children: [
                                           Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: _width / 7,
-                                                    vertical: 2),
-                                                child: ElevatedButton(
-                                                    onPressed: () {
-                                                      if(_currentButtonSet==2)
-                                                      {
-                                                        //logic of the function here
-
-                                                      }
-                                                    },
-                                                    child: const Text(
-                                                      'Sign up with Google',
-                                                      textScaleFactor: 1.3,
-                                                    ),
-                                                    style: onStartButtonStyle),
-                                              )),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: _width / 7,
+                                                vertical: 2),
+                                            child: ElevatedButton(
+                                                onPressed: () {
+                                                  if (_currentButtonSet == 2) {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    GetAge()));
+                                                  }
+                                                },
+                                                child: const Text(
+                                                  'Sign up with Google',
+                                                  textScaleFactor: 1.3,
+                                                ),
+                                                style: onStartButtonStyle),
+                                          )),
                                         ],
                                       ),
                                     ],
@@ -337,71 +340,71 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                               left: 0,
                               right: 0,
                               bottom:
-                              (_currentButtonSet == 3) ? _height / 6 : -100,
-                              onEnd: (){
-                                if(_currentButtonSet!=3)
-                                {
+                                  (_currentButtonSet == 3) ? _height / 6 : -100,
+                              onEnd: () {
+                                if (_currentButtonSet != 3) {
                                   setState(() {
-                                    _hideButtonSet3=true;
+                                    _hideButtonSet3 = true;
                                   });
                                 }
                               },
                               child: AnimatedContainer(
-                                duration:const Duration(milliseconds: 500),
-                                height: _hideButtonSet3?0:null,
+                                duration: const Duration(milliseconds: 500),
+                                height: _hideButtonSet3 ? 0 : null,
                                 child: AnimatedOpacity(
                                   opacity: (_currentButtonSet == 3) ? 1 : 0,
                                   curve: Curves.easeInOutCubic,
                                   duration: const Duration(milliseconds: 500),
-
                                   child: Column(
                                     children: [
                                       Row(
                                         children: [
                                           Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: _width / 7,
-                                                    vertical: 2),
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    if(_currentButtonSet==3)
-                                                    {
-                                                      //logic of the function here
-
-                                                    }
-                                                  },
-                                                  child: const Text(
-                                                    'Log in with email',
-                                                    textScaleFactor: 1.3,
-                                                  ),
-                                                  style: onStartButtonStyle,
-                                                ),
-                                              )),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: _width / 7,
+                                                vertical: 2),
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                if (_currentButtonSet == 3) {
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const LogIN()));
+                                                }
+                                              },
+                                              child: const Text(
+                                                'Log in with email',
+                                                textScaleFactor: 1.3,
+                                              ),
+                                              style: onStartButtonStyle,
+                                            ),
+                                          )),
                                         ],
                                       ),
                                       Row(
                                         children: [
                                           Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: _width / 7,
-                                                    vertical: 2),
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    if(_currentButtonSet==3)
-                                                    {
-                                                      //logic of the function here
-
-                                                    }
-                                                  },
-                                                  child: const Text(
-                                                    'Log in with Google',
-                                                    textScaleFactor: 1.3,
-                                                  ),
-                                                  style: onStartButtonStyle,
-                                                ),
-                                              )),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: _width / 7,
+                                                vertical: 2),
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                if (_currentButtonSet == 3) {
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const LogIN()));
+                                                }
+                                              },
+                                              child: const Text(
+                                                'Log in with Google',
+                                                textScaleFactor: 1.3,
+                                              ),
+                                              style: onStartButtonStyle,
+                                            ),
+                                          )),
                                         ],
                                       ),
                                     ],
@@ -439,7 +442,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
               height: (_currentPage == page) ? 10 : 0.0,
               decoration: BoxDecoration(
                   borderRadius:
-                  BorderRadius.circular((_currentPage == page) ? 10 : 1.0),
+                      BorderRadius.circular((_currentPage == page) ? 10 : 1.0),
                   color: Colors.white),
             ),
           ),
@@ -452,12 +455,12 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
 class CarouselItemBuilder extends StatelessWidget {
   const CarouselItemBuilder(
       {Key? key,
-        required double width,
-        required double height,
-        required String imageUrl,
-        required String poster,
-        required String title,
-        bool gifView = false})
+      required double width,
+      required double height,
+      required String imageUrl,
+      required String poster,
+      required String title,
+      bool gifView = false})
       : _width = width,
         _height = height,
         _imageUrl = imageUrl,
@@ -478,18 +481,18 @@ class CarouselItemBuilder extends StatelessWidget {
     return Stack(alignment: Alignment.center, children: [
       !_gifView
           ? Image.asset(
-        _imageUrl,
-        width: _width,
-        height: _height,
-        fit: BoxFit.fitHeight,
-      )
+              _imageUrl,
+              width: _width,
+              height: _height,
+              fit: BoxFit.fitHeight,
+            )
           : GifView.asset(
-        _imageUrl,
-        width: _width,
-        height: _height,
-        fit: BoxFit.fitHeight,
-        frameRate: 8,
-      ),
+              _imageUrl,
+              width: _width,
+              height: _height,
+              fit: BoxFit.fitHeight,
+              frameRate: 8,
+            ),
       Container(
         width: _width,
         height: _height,
