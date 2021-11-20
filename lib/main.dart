@@ -14,7 +14,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => FollowedTags()),
         ChangeNotifierProvider(create: (_) => Posts()),
-        // Provider<Posts>(create: (_) => Posts()),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -22,12 +21,5 @@ class MyApp extends StatelessWidget {
       ),
     );
 
-    return ChangeNotifierProvider(
-      create: (_) => FollowedTags(),
-      child: const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: OnStart(),
-      ),
-    );
   }
 }

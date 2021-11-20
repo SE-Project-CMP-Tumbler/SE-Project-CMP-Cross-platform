@@ -91,13 +91,9 @@ class _AddPostState extends State<AddPost> {
                   onChangeContent: (String? changed) async {
                     String txt = await controller.getText();
                     if (txt.isEmpty) {
-                      setState(() {
-                        isPostButtonDisabled = true;
-                      });
+                      setState(() => isPostButtonDisabled = true);
                     } else {
-                      setState(() {
-                        isPostButtonDisabled = false;
-                      });
+                      setState(() => isPostButtonDisabled = false);
                     }
                   },
                 ),

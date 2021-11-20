@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tumbler/Models/user.dart';
 
 import '/Methods/email_password_validators.dart';
 import '/Methods/api.dart';
-import '/Models/users.dart';
 import '/Screens/main_screen.dart';
 import '/Constants/colors.dart';
 import '/Constants/ui_styles.dart';
@@ -116,8 +116,8 @@ class _LogINState extends State<LogIN> {
       Fluttertoast.showToast(
         msg: response["meta"]["msg"],
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        backgroundColor: Colors.red,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
         textColor: Colors.white,
         fontSize: 16.0,
       );

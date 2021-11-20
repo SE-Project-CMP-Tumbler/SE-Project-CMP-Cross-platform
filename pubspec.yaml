@@ -38,7 +38,6 @@ dependencies:
   flutter_widget_from_html: ^0.8.2
   like_button: ^2.0.3
   flutter_html: ^2.1.5
-  dartdoc: ^4.1.0
   auto_size_text: ^3.0.0
   video_player: ^2.2.7
   dartdoc: ^4.1.0
