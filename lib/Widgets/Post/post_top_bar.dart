@@ -1,19 +1,24 @@
-import 'package:flutter/material.dart';
-
-import './post_personal_avatar.dart';
+import "package:flutter/material.dart";
+import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 ///[PostTopBar] carries information about post owner
 class PostTopBar extends StatefulWidget {
-  final Function showEditPostBottomSheet;
-  final String avatarPhotoLink;
-  final String name;
-
+  /// Constructor
   const PostTopBar({
-    Key? key,
-    required this.showEditPostBottomSheet,
-    required this.avatarPhotoLink,
-    required this.name,
+    required final this.showEditPostBottomSheet,
+    required final this.avatarPhotoLink,
+    required final this.name,
+    final Key? key,
   }) : super(key: key);
+
+  /// Function to show Edit Bottom Sheet
+  final Function showEditPostBottomSheet;
+
+  /// Link for the Avatar Photo
+  final String avatarPhotoLink;
+
+  /// Name of the user published the Post
+  final String name;
 
   @override
   _PostTopBarState createState() => _PostTopBarState();
@@ -21,13 +26,12 @@ class PostTopBar extends StatefulWidget {
 
 class _PostTopBarState extends State<PostTopBar> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Container(
       color: Colors.white,
       height: 60,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
+        children: <Widget>[
           PersonAvatar(
             avatarPhotoLink: widget.avatarPhotoLink,
           ),
@@ -40,26 +44,28 @@ class _PostTopBarState extends State<PostTopBar> {
             ),
           ),
           TextButton(
-              onPressed: () {},
-              child: const Text(
-                "Follow",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.blue,
-                ),
-              )),
-          Expanded(
-              child: Container(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              onPressed: () => widget.showEditPostBottomSheet(context),
-              icon: const Icon(
-                Icons.more_horiz,
-                color: Colors.black87,
+            onPressed: () {},
+            child: const Text(
+              "Follow",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Colors.blue,
               ),
             ),
-          ))
+          ),
+          Expanded(
+            child: Container(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                onPressed: () => widget.showEditPostBottomSheet(context),
+                icon: const Icon(
+                  Icons.more_horiz,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

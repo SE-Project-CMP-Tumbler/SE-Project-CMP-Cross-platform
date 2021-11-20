@@ -1,8 +1,9 @@
 /// Customized Http exception class.
 class HttpException implements Exception {
-  final String _message;
-
+  /// Constructor to set [_message]
   HttpException(this._message);
+
+  final String _message;
 
   @override
   String toString() {
