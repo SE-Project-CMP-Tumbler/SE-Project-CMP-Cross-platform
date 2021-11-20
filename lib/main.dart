@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './Screens/Home Page/home_page.dart';
-import './Providers/posts.dart';
+import './Providers/followed_tags_sign_up.dart';
+import 'Screens/Intro_Screens/on_start_screen.dart';
 
-void main() {
-  runApp(ChangeNotifierProvider(
-    create: (ctx) => Posts(),
-    child: MaterialApp(
-        theme: ThemeData.dark().copyWith(
-          accentColor: Colors.amberAccent,
-        ),
-        home: HomePage()),
-  ));
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => FollowedTags(),
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: OnStart(),
+      ),
+    );
+  }
 }
