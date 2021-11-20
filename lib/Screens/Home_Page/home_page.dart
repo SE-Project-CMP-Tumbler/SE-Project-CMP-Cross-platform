@@ -117,8 +117,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
     loadingSpinnerAnimationController.dispose();
+    super.dispose();
   }
 
   @override
