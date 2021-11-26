@@ -6,7 +6,7 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Screens/Log_In_Screens/log_in.dart";
 import "package:tumbler/Screens/Sign_Up_Screens/get_age.dart";
-import "package:tumbler/Widgets/carousel_item_on_start.dart";
+import "package:tumbler/Widgets/OnStart/carousel_item_on_start.dart";
 
 /// The Animation Page On Application Starts.
 class OnStart extends StatefulWidget {
@@ -215,7 +215,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                       setState(() {
                                                         isClicked = true;
                                                         _currentButtonSet =
-                                                        2; //signUp options
+                                                            2; //signUp options
                                                         _hideButtonSet2 = false;
                                                       });
                                                     }
@@ -244,7 +244,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                         1) {
                                                       setState(() {
                                                         _currentButtonSet =
-                                                        3; //login options
+                                                            3; //login options
                                                         _hideButtonSet3 = false;
                                                       });
                                                     }
@@ -305,9 +305,9 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                         MaterialPageRoute<
                                                             GetAge>(
                                                           builder: (
-                                                              final BuildContext
-                                                              context,
-                                                              ) =>
+                                                            final BuildContext
+                                                                context,
+                                                          ) =>
                                                               GetAge(),
                                                         ),
                                                       );
@@ -340,9 +340,9 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                         MaterialPageRoute<
                                                             GetAge>(
                                                           builder: (
-                                                              final BuildContext
-                                                              context,
-                                                              ) =>
+                                                            final BuildContext
+                                                                context,
+                                                          ) =>
                                                               GetAge(),
                                                         ),
                                                       );
@@ -404,9 +404,9 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                         MaterialPageRoute<
                                                             LogIN>(
                                                           builder: (
-                                                              final BuildContext
-                                                              context,
-                                                              ) =>
+                                                            final BuildContext
+                                                                context,
+                                                          ) =>
                                                               LogIN(),
                                                         ),
                                                       );
@@ -439,9 +439,9 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                         MaterialPageRoute<
                                                             LogIN>(
                                                           builder: (
-                                                              final BuildContext
-                                                              context,
-                                                              ) =>
+                                                            final BuildContext
+                                                                context,
+                                                          ) =>
                                                               LogIN(),
                                                         ),
                                                       );
@@ -495,7 +495,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
               height: (_currentPage == page) ? 10 : 0.0,
               decoration: BoxDecoration(
                 borderRadius:
-                BorderRadius.circular((_currentPage == page) ? 10 : 1.0),
+                    BorderRadius.circular((_currentPage == page) ? 10 : 1.0),
                 color: Colors.white,
               ),
             ),
