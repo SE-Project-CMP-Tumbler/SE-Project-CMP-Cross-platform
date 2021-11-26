@@ -6,8 +6,8 @@ import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Models/post.dart";
 import "package:tumbler/Providers/posts.dart";
+import "package:tumbler/Widgets/Home/home_sliver_app_bar.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
-import "package:tumbler/Widgets/home_page_appbar.dart";
 
 /// HomeSection enum facilitates handling multiple sub-pages in home page.
 enum HomeSection {
@@ -18,33 +18,35 @@ enum HomeSection {
   stuffForYou,
 }
 
-///Shows informative message about an error occurred
+/// Shows informative message about an error occurred
 /// while fetching posts in home page.
 ///
-///Takes [context] object and error message.
+///Takes [context] object and [errorMessage].
 Future<void> showErrorDialog(
   final BuildContext context,
-  final String mess,
+  final String errorMessage,
 ) async {
   await showDialog(
     context: context,
-    builder: (final BuildContext ctx) => AlertDialog(
-      title: const Text("An error occurred"),
-      content: Text(mess),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () {
-            Navigator.of(ctx).pop();
-          },
-          child: const Text("Okay"),
-        )
-      ],
-    ),
+    builder: (final BuildContext ctx) {
+      return AlertDialog(
+        title: const Text("An error occurred"),
+        content: Text(errorMessage),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: const Text("Okay"),
+          )
+        ],
+      );
+    },
   );
 }
 
-///Shows modal bottom sheet when
-///the user clicks on more vert icon button in a post.
+/// Shows modal bottom sheet when
+/// the user clicks on more vert icon button in a post.
 void showEditPostBottomSheet(final BuildContext ctx) {
   showModalBottomSheet<dynamic>(
     isScrollControlled: true,

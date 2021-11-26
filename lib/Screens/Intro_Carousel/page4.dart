@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:tumbler/Widgets/Intro_Carousel/text.dart";
+import "package:tumbler/Widgets/Intro_Carousel/text_style.dart";
 
 /// Fourth Page in Intro Carousel
 class Page4 extends StatelessWidget {
@@ -32,19 +32,19 @@ class Page4 extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    createText("and", Colors.black, 45),
+                    customText("and", Colors.black, 45),
                     SizedBox(
                       height: screenAvailHeight * 0.01,
                     ),
-                    createText("explore", Colors.black, 45),
+                    customText("explore", Colors.black, 45),
                     SizedBox(
                       height: screenAvailHeight * 0.01,
                     ),
-                    createText("what you", Colors.black, 45),
+                    customText("what you", Colors.black, 45),
                     SizedBox(
                       height: screenAvailHeight * 0.01,
                     ),
-                    createText("love!", Colors.black, 45),
+                    customText("love!", Colors.black, 45),
                     SizedBox(
                       height: screenAvailHeight * 0.01,
                     ),

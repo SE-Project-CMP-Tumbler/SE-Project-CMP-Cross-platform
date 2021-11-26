@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Models/post.dart";
 import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_interaction_bar.dart";
 import "package:tumbler/Widgets/Post/post_top_bar.dart";
-import "package:tumbler/Widgets/general_widgets/html_viewer.dart";
 
 ///Shows the overview of the post in the home page
 class PostOutView extends StatefulWidget {

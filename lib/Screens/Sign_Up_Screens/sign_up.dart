@@ -59,11 +59,11 @@ class _SignUpState extends State<SignUp> {
                 hintText: "Email",
                 suffixIcon: _emailController.text.isNotEmpty
                     ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () =>
-                      setState(() => _emailController.clear()),
-                  color: Colors.white30,
-                )
+                        icon: const Icon(Icons.clear),
+                        onPressed: () =>
+                            setState(() => _emailController.clear()),
+                        color: Colors.white30,
+                      )
                     : null,
               ),
             ),
@@ -106,11 +106,11 @@ class _SignUpState extends State<SignUp> {
                 hintText: "Name",
                 suffixIcon: _nameController.text.isNotEmpty
                     ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () =>
-                      setState(() => _nameController.clear()),
-                  color: Colors.white30,
-                )
+                        icon: const Icon(Icons.clear),
+                        onPressed: () =>
+                            setState(() => _nameController.clear()),
+                        color: Colors.white30,
+                      )
                     : null,
               ),
             ),
@@ -176,8 +176,8 @@ class _SignUpState extends State<SignUp> {
                 style: TextStyle(
                   fontSize: 15,
                   color: (_nameController.text.isEmpty ||
-                      _emailController.text.isEmpty ||
-                      _passController.text.isEmpty)
+                          _emailController.text.isEmpty ||
+                          _passController.text.isEmpty)
                       ? Colors.blue.withOpacity(0.5)
                       : Colors.blue,
                 ),
@@ -206,7 +206,7 @@ class _SignUpState extends State<SignUp> {
                 ),
                 Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 75, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 75, vertical: 10),
                   child: Text(
                     """
 You'll need a name to make your own posts, customize your blog, and message people.""",
@@ -216,7 +216,7 @@ You'll need a name to make your own posts, customize your blog, and message peop
                 ),
                 Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: form(),
                 ),
                 Expanded(
