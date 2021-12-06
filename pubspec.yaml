@@ -27,27 +27,34 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  flutter_lints: ^1.0.4
+  animator:
+  auto_size_text: ^3.0.0
   carousel_slider: ^4.0.0
+  chewie:
+  cupertino_icons: ^1.0.2
+  dartdoc: ^4.1.0
+  fluttertoast: ^8.0.8
+  flutter_html: ^2.1.5
+  flutter_native_splash:
+  flutter_lints: ^1.0.4
+  flutter_widget_from_html: ^0.8.2
+  font_awesome_flutter: ^9.2.0
   gif_view: ^0.0.1
   google_fonts: ^2.1.0
-  provider: ^6.0.1
-  http: ^0.13.4
-  fluttertoast: ^8.0.8
-  flutter_widget_from_html: ^0.8.2
-  like_button: ^2.0.3
-  flutter_html: ^2.1.5
-  auto_size_text: ^3.0.0
-  video_player: ^2.2.7
-  dartdoc: ^4.1.0
-  chewie:
-  font_awesome_flutter: ^9.2.0
-  flutter_native_splash:
   html_editor_enhanced: ^2.4.0+1
-  path_provider: ^2.0.7
+  http: ^0.13.4
   intl: ^0.17.0
-  animator:
+  like_button: ^2.0.3
+  path_provider: ^2.0.7
+  provider: ^6.0.1
+  video_player: ^2.2.7
+
+
+
+
+
+
+
 
 
 dev_dependencies:
@@ -73,22 +80,9 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
-    - assets/images/intro_1.gif
-    - assets/images/intro_2.gif
-    - assets/images/intro_2.webp
-    - assets/images/intro_3.jpg
-    - assets/images/intro_4.jpg
-    - assets/images/intro_5.gif
-    - assets/images/logo.png
-    - assets/images/logo_letter.png
-    - assets/images/create_post.png
-    - assets/images/capital_letter.png
-    - assets/images/quote.png
-    - assets/images/intro_2_delayed.gif
-    - assets/images/create_tumblr.png
-    - assets/images/cat.png
-    - assets/images/express_ys.png
-    - assets/images/women.png
+
+
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

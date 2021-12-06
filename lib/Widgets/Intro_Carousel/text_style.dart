@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 
 /// Return Specific Style
-Widget createText(
+Widget customText(
   final String txt,
   final Color chosenColor,
   final double fontSize,

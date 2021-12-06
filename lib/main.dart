@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
           create: (final _) => Posts(),
         ),
       ],
-      child:  MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: OnStart(),
       ),
