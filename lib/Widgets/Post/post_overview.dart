@@ -45,9 +45,9 @@ class _PostOutViewState extends State<PostOutView> {
           child: HtmlView(htmlData: widget.post.postBody),
         ),
         PostInteractionBar(
-          notesNum: widget.post.likes.length +
-              widget.post.reblogs.length +
-              widget.post.replies.length,
+         likes:widget.post.likes,
+         reblogs:widget.post.reblogs,
+         replies:widget.post.replies,
         )
       ],
     );

@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:like_button/like_button.dart";
+import "../../Screens/Notes/post_notes.dart";
 
 ///Class for interaction bar exists the bottom of each post in home page
 ///
@@ -8,12 +9,14 @@ import "package:like_button/like_button.dart";
 ///1-Notes number
 ///2-buttons to Favorite and reblog and reply
 class PostInteractionBar extends StatefulWidget {
-  ///Constructor takes total number of notes
-  const PostInteractionBar({required final this.notesNum, final Key? key})
+  ///Constructor takes posts' notes
+   PostInteractionBar({required final this.likes,required final this.reblogs,required final this.replies, final Key? key})
       : super(key: key);
 
-  /// Number of Notes of the Blog
-  final int notesNum;
+  List<dynamic> likes = <dynamic>[];
+  List<dynamic> reblogs = <dynamic>[];
+  List<dynamic> replies = <dynamic>[];
+
 
   @override
   _PostInteractionBarState createState() => _PostInteractionBarState();
@@ -35,7 +38,15 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
               ),
-              onPressed: () {},
+              onPressed: () {
+                   Navigator.of(context).push(
+                                          MaterialPageRoute<Notes>(
+                                            builder:
+                                                (final BuildContext context) =>
+                                                     Notes(likes:widget.likes,reblogs: widget.reblogs,replies: widget.replies,),
+                                          ),
+                                        );
+              },
               child: Image.asset(
                 "assets/images/interactions.jpeg",
               ),
@@ -43,7 +54,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
           ),
           Expanded(
             child: Text(
-              "${numFormatter.format(widget.notesNum)} notes",
+              "${numFormatter.format(widget.likes.length+widget.replies.length+widget.reblogs.length)} notes",
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
