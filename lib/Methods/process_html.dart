@@ -16,19 +16,21 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
   Map<String, dynamic> url;
 
   while (x != -1 && index1 <= html.length - 25) {
-    x = html.indexOf("<img src='data:image/", index1);
+    x = html.indexOf("<img src=", index1);
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded image
-      index1 = html.indexOf("'", index2); // the end of the encoded image
-
-      url = await Api().uploadImage(
+      index1 = html.indexOf("\"", index2); // the end of the encoded image
+      html = html.replaceRange(x + 10, index1, "lolphoto"); //
+      index1 = html.indexOf("\"",
+          index2); //repeating this line is important since the html size changes in each iteration
+      /* url = await Api().uploadImage(
         File.fromRawPath(
-          base64Decode(html.substring(index2 + 1, index1).trim()),
+          //base64Decode(html.substring(index2 + 1, index1).trim()),
         ),
-      );
+      );*/
 
-      if (url["meta"]["status"] == "200") {
-        html = html.replaceRange(x + 10, index1, url["response"]["url"]);
+      /*if (url["meta"]["status"] == "200") {
+        html = html.replaceRange(x + 10, index1, "lolphoto");
       } else {
         await Fluttertoast.showToast(
           msg: "Failed To Upload Images",
@@ -38,7 +40,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
           textColor: Colors.white,
           fontSize: 16,
         );
-      }
+      }*/
     }
   }
 

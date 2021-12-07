@@ -10,6 +10,8 @@ import "package:tumbler/Models/user.dart";
 class Api {
   static const String _host =
       "https://fff82fda-4df6-4c76-adb1-cba53e9e73f5.mock.pstmn.io";
+  static const String _hostS =
+      "https://addpost-bcc94-default-rtdb.firebaseio.com/";
   static const String _firebaseHost =
       "https://mock-back-default-rtdb.firebaseio.com";
   final String _getTrendingTags = "/tag/trending";
@@ -185,14 +187,15 @@ class Api {
   }
 
   /// Upload HTML code of the post.
-  Future<Map<String, dynamic>> addPost(
+  //Future<Map<String, dynamic>> addPost(
+  void addPost(
     final String postBody,
     final String postStatus,
     final String postType,
     final String postTime,
   ) async {
     final http.Response response = await http.post(
-      Uri.parse(_host + _addPost + User.id),
+      Uri.parse(_hostS + _addPost + User.id),
       headers: <String, String>{
         "Authorization": User.accessToken,
       },
@@ -209,8 +212,7 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
-
-    return jsonDecode(response.body);
+    //return jsonDecode(response.body);
   }
 
   /// GET Posts For the Home Page

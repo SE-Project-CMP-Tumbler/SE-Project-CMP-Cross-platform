@@ -28,11 +28,15 @@ class _AddPostState extends State<AddPost> {
   Future<void> addThePost() async {
     final String html = await controller.getText();
     final String postTime = getDate();
+    print("lol5");
     final String processedHtml = await extractMediaFiles(html);
-    final Map<String, dynamic> response =
-        await Api().addPost(processedHtml, "published", "general", postTime);
+    print("lol3");
+    print(processedHtml);
+    print("lol6");
+    //final Map<String, dynamic> response = await
+    Api().addPost(html, "published", "general", postTime);
 
-    if (response["meta"]["status"] == "200") {
+    /*if (response["meta"]["status"] == "200") {
       await Fluttertoast.showToast(
         msg: "Added Successfully",
         toastLength: Toast.LENGTH_SHORT,
@@ -51,7 +55,7 @@ class _AddPostState extends State<AddPost> {
         textColor: Colors.white,
         fontSize: 16,
       );
-    }
+    }*/
   }
 
   @override
