@@ -20,7 +20,8 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded image
       index1 = html.indexOf("\"", index2); // the end of the encoded image
-      html = html.replaceRange(x + 10, index1, "lolphoto"); //
+      html = html.replaceRange(
+          x + 10, index1, "lolphoto"); //this line should be removed
       index1 = html.indexOf("\"",
           index2); //repeating this line is important since the html size changes in each iteration
       /* url = await Api().uploadImage(
@@ -51,12 +52,16 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
   url = <String, dynamic>{};
 
   while (x != -1 && index1 <= html.length - 25) {
-    x = html.indexOf("<video src='data:video/", index1);
+    x = html.indexOf("<video src=", index1);
 
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded video
-      index1 = html.indexOf("'", index2); // the end of the encoded video
-      url = await Api().uploadVideo(
+      index1 = html.indexOf("\"", index2); // the end of the encoded video
+      html = html.replaceRange(
+          x + 10, index1, "lolVideo"); //this line should be removed
+      index1 = html.indexOf("\"",
+          index2); //repeating this line is important since the html size changes in each iteration
+      /*url = await Api().uploadVideo(
         File.fromRawPath(
           base64Decode(html.substring(index2 + 1, index1).trim()),
         ),
@@ -73,7 +78,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
           textColor: Colors.white,
           fontSize: 16,
         );
-      }
+      }*/
     }
   }
 
@@ -86,9 +91,13 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
   while (x != -1 && index1 <= html.length - 25) {
     x = html.indexOf("<audio src='data:audio/", index1);
     if (x != -1) {
-      index2 = html.indexOf(",", x); // the start of the encoded video
-      index1 = html.indexOf("'", index2); // the end of the encoded video
-      url = await Api().uploadAudio(
+      index2 = html.indexOf(",", x); // the start of the encoded audio
+      index1 = html.indexOf("\"", index2); // the end of the encoded audio
+      html = html.replaceRange(
+          x + 10, index1, "lolAudio"); //this line should be removed
+      index1 = html.indexOf("\"",
+          index2); //repeating this line is important since the html size changes in each iteration
+      /*url = await Api().uploadAudio(
         File.fromRawPath(
           base64Decode(html.substring(index2 + 1, index1).trim()),
         ),
@@ -105,7 +114,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
           textColor: Colors.white,
           fontSize: 16,
         );
-      }
+      }*/
     }
   }
   return html;
