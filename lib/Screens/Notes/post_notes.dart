@@ -71,7 +71,7 @@ class _NotesState extends State<Notes> {
               padding: const EdgeInsets.all(15.0),
               child: ListView.builder(
                 itemBuilder: (final BuildContext ctx, final int index) {
-                  return Comment(
+                  return Reply(
                     commentText: widget.replies[index]["reply_text"],
                     userName: widget.replies[index]["blog_username"],
                     photoUrl:  widget.replies[index]["blog_avatar"],
@@ -124,8 +124,8 @@ class CustomizedTab extends StatelessWidget {
   }
 }
 
-class Comment extends StatelessWidget {
-  Comment(
+class Reply extends StatelessWidget {
+  Reply(
       {Key? key,
       required this.photoUrl,
       required this.userName,
