@@ -1,5 +1,103 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "../../Widgets/Post/html_viewer.dart";
+
+enum blogsType {
+  withComments,
+  Others,
+}
+
+void showEditPostBottomSheet(final BuildContext ctx, final Enum currType,
+    final Function changeBlogViewSection) {
+  showModalBottomSheet<dynamic>(
+    isScrollControlled: true,
+    context: ctx,
+    builder: (final _) {
+      return Container(
+        height: 150,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextButton(
+                onPressed: () {
+                  if (currType != blogsType.withComments) {
+                    changeBlogViewSection(blogsType.withComments);
+                  }
+                  Navigator.pop(ctx);
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(
+                        "Reblogs with comments",
+                        style: TextStyle(
+                          color: (currType == blogsType.withComments)
+                              ? Colors.blue
+                              : Colors.black87,
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
+                    const FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(
+                        "Show reblogs with added comments and/or tags",
+                        style: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 15,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (currType != blogsType.Others) {
+                    changeBlogViewSection(blogsType.Others);
+                  }
+                  Navigator.pop(ctx);
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(
+                        "Other reblogs",
+                        style: TextStyle(
+                          color: (currType == blogsType.Others)
+                              ? Colors.blue
+                              : Colors.black87,
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
+                    FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(
+                        "Show empty reblogs",
+                        style: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 15,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 
 /// [Notes]
 class Notes extends StatefulWidget {
@@ -16,6 +114,8 @@ class Notes extends StatefulWidget {
 
   ///
   List<dynamic> reblogs = <dynamic>[];
+  List<dynamic> reblogsWithComments = <dynamic>[];
+  List<dynamic> reblogsWithOutComments = <dynamic>[];
 
   ///
   List<dynamic> replies = <dynamic>[];
@@ -27,15 +127,34 @@ class Notes extends StatefulWidget {
 class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
   late TabController tabController;
 
+  final replyController = TextEditingController();
+
+  Enum blogType = blogsType.withComments;
+
+  void checkReplyText() {
+    setState(() {});
+  }
+
+  void changeBlogViewSection(final Enum type) {
+    setState(() {
+      blogType = type;
+    });
+  }
+
   @override
   void initState() {
+    // spilt blogs recieved into to sub-categories
+
     super.initState();
-    tabController = new TabController(vsync: this, length: 3);
+    // Start listening to changes.
+    replyController.addListener(checkReplyText);
+    tabController = TabController(vsync: this, length: 3);
   }
 
   @override
   void dispose() {
     tabController.dispose();
+    replyController.dispose();
     super.dispose();
   }
 
@@ -46,7 +165,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
             : (tabController.index == 1)
                 ? Colors.lightGreen
                 : Colors.red,
-        onTap: (_) {
+        onTap: (final _) {
           setState(() {});
         },
         tabs: <Widget>[
@@ -107,25 +226,121 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(15),
-              child: ListView.builder(
-                itemBuilder: (final BuildContext ctx, final int index) {
-                  return ReplyTile(
-                    commentText: widget.replies[index]["reply_text"],
-                    userName: widget.replies[index]["blog_username"],
-                    photoUrl: widget.replies[index]["blog_avatar"],
-                  );
-                },
-                itemCount: widget.replies.length,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (final BuildContext ctx, final int index) {
+                        return ReplyTile(
+                          commentText: widget.replies[index]["reply_text"],
+                          userName: widget.replies[index]["blog_username"],
+                          photoUrl: widget.replies[index]["blog_avatar"],
+                        );
+                      },
+                      itemCount: widget.replies.length,
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: replyController,
+                          decoration: const InputDecoration(
+                            hintText: "Unleash a compliment...",
+                            hintStyle: TextStyle(color: Colors.black54),
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            "Reply",
+                            style: TextStyle(
+                              color: (replyController.text.isNotEmpty)
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            ),
+                          ))
+                    ],
+                  ),
+                ],
               ),
             ),
-            const Center(
-              child: Text("favorites here"),
+            Padding(
+              padding: EdgeInsets.all(0),
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverAppBar(
+                    // Provide a standard title.
+                    title: FittedBox(
+                      child: (blogType == blogsType.withComments)
+                          ? const Text(
+                              "Reblogs with comments",
+                              style: TextStyle(
+                                  color: Colors.black45, fontSize: 17),
+                            )
+                          : const Text(
+                              "Other reblogs",
+                              style: TextStyle(
+                                  color: Colors.black45, fontSize: 17),
+                            ),
+                    ),
+                    // Allows the user to reveal the app bar if they begin scrolling
+                    // back up the list of items.
+                    floating: true,
+                    backgroundColor: Colors.white,
+                    titleSpacing: 0,
+                    elevation: 1,
+                    forceElevated: true,
+                    // Display a placeholder widget to visualize the shrinking size.
+                    // flexibleSpace: Placeholder(),
+                    // Make the initial height of the SliverAppBar larger than normal.
+                    expandedHeight: 2,
+                    toolbarHeight: 40,
+                    leadingWidth: 10,
+                    leading: Container(),
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          showEditPostBottomSheet(
+                              context, blogType, changeBlogViewSection);
+                        },
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                      )
+                    ],
+                  ),
+                  SliverList(
+                    // Use a delegate to build items as they're scrolled on screen.
+                    delegate: SliverChildBuilderDelegate(
+                      // The builder function returns a ListTile with a title thatand
+                      // displays the index of the current item.
+                      (context, index) => ReblogTile(
+                        avatarUrl: widget.reblogs[index]["blog_avatar"],
+                        htmlData: widget.reblogs[index]["reblog_content"],
+                        userName: widget.reblogs[index]["blog_username"],
+                      ),
+                      // Builds 1000 ListTiles
+                      childCount: widget.reblogs.length,
+                    ),
+                  )
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(5),
               child: ListView.builder(
                 itemBuilder: (final BuildContext ctx, final int index) {
-                  return likeTile(
+                  return LikeTile(
                     blogAvatar: widget.likes[index]["blog_avatar"],
                     blogTitle: widget.likes[index]["blog_title"],
                     followStatus: widget.likes[index]["followed"],
@@ -142,9 +357,88 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
   }
 }
 
-class likeTile extends StatelessWidget {
+class ReblogTile extends StatelessWidget {
+  const ReblogTile(
+      {required final this.avatarUrl,
+      required final this.userName,
+      required final this.htmlData,
+      Key? key})
+      : super(key: key);
+
+  final String avatarUrl;
+  final String userName;
+  final String htmlData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(avatarUrl),
+                  radius: 17,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    userName,
+                    style: TextStyle(color: Colors.black87, fontSize: 14),
+                  ),
+                ),
+                Expanded(
+                    child: Container(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.more_vert),
+                  ),
+                ))
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              child: HtmlView(htmlData: htmlData),
+            ),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Reblog",
+                    style: TextStyle(color: Colors.black54, fontSize: 17),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "View Post",
+                    style: TextStyle(color: Colors.black54, fontSize: 17),
+                  ),
+                )
+              ],
+            ),
+            Divider(
+              color: Colors.black38,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LikeTile extends StatelessWidget {
   ///
-  const likeTile({
+  const LikeTile({
     required final this.userName,
     required final this.blogTitle,
     required final this.blogAvatar,
