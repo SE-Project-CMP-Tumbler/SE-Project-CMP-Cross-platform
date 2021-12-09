@@ -109,10 +109,11 @@ class _LogINState extends State<LogIN> {
       User.blogAvatar = response["response"]["blog_avatar"];
       User.accessToken = response["response"]["access_token"];
 
-      await Navigator.of(context).pushReplacement(
+      await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<MainScreen>(
           builder: (final BuildContext context) => MainScreen(),
         ),
+        (final Route<dynamic> route) => false,
       );
     } else {
       await Fluttertoast.showToast(

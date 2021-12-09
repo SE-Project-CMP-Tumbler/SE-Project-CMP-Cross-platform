@@ -140,6 +140,7 @@ class _SignUpState extends State<SignUp> {
       User.blogAvatar = response["response"]["blog_avatar"];
       User.accessToken = response["response"]["access_token"];
 
+      // TODO(Ziyad): remove all the previous pages
       await Navigator.of(context).pushReplacement(
         MaterialPageRoute<MainScreen>(
           builder: (final BuildContext context) => IntroCarousel(),

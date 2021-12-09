@@ -20,6 +20,8 @@ class Api {
   final String _uploadVideo = "/upload_video/";
   final String _uploadAudio = "/upload_audio/";
   final String _addPost = "/post/";
+  final String _changeEmail = "/change_email";
+  final String _logOut = "/logout";
 
   final String _weirdConnection = '''
             {
@@ -230,6 +232,50 @@ class Api {
       ),
       headers: <String, String>{"Authorization": User.accessToken},
     );
+
+    return jsonDecode(response.body);
+  }
+
+  /// PUT request to change the current user Email
+  /// with [email]
+  Future<Map<String, dynamic>> changeEmail(
+    final String email,
+    final String password,
+  ) async {
+    final http.Response response = await http.put(
+      Uri.parse(_host + _changeEmail),
+      body: <String, String>{
+        "email": email,
+        "password": password,
+      },
+      headers: <String, String>{
+        "Authorization": User.accessToken,
+      },
+    ).onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
+  }
+
+  /// Post request to log out
+  Future<Map<String, dynamic>> logOut() async {
+    final http.Response response = await http.put(
+      Uri.parse(_host + _logOut),
+      headers: <String, String>{
+        "Authorization": User.accessToken,
+      },
+    ).onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
 
     return jsonDecode(response.body);
   }
