@@ -1,4 +1,4 @@
-// ignore_for_file: always_specify_types
+import 'dart:convert';
 
 import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
@@ -18,47 +18,47 @@ class Posts with ChangeNotifier {
   Future<void> fetchAndSetPosts() async {
     // clear all loaded post.
     _homePosts.clear();
-    final Map<String, dynamic> res = await Api().fetchAndPosts();
+    final dynamic res = await Api().fetchAndPosts();
 
     //checking the status code of the received response.
-    if (res.values.single["meta"]["status"] == "401")
+    if (res.statusCode == 401)
       throw HttpException("You are not authorized");
-    else if (res.values.single["meta"]["status"] == "404")
-      throw HttpException("Not Found!");
+    else if (res.statusCode == 404) throw HttpException("Not Found!");
+
+    final Map<String, dynamic> encodedRes = jsonDecode(res.body);
 
     //set _homePost list.
-    res.forEach((final String id, final dynamic data) {
-      final List<dynamic> postsList = data["response"]["posts"];
-      for (int i = 0; i < postsList.length; i++) {
-        _homePosts.add(
-          Post(
-            postId: postsList[i]["post_id"] as int,
-            postBody: postsList[i]["post_body"] as String,
-            postStatus: postsList[i]["post_status"] as String,
-            postType: postsList[i]["post_type"] as String,
-            blogId: postsList[i]["blog_id"] as int,
-            blogUsername: postsList[i]["blog_username"] as String,
-            blogAvatar: postsList[i]["blog_avatar"] as String,
-            blogAvatarShape: postsList[i]["blog_avatar_shape"] as String,
-            blogTitle: postsList[i]["blog_title"] as String,
-            postTime: postsList[i]["post_time"] as String,
-          ),
-        );
-      }
-    });
+    final List<dynamic> postsList = encodedRes["response"]["posts"];
+    for (int i = 0; i < postsList.length; i++) {
+      _homePosts.add(
+        Post(
+          postId: postsList[i]["post_id"] as int,
+          postBody: postsList[i]["post_body"] ?? "",
+          postStatus: postsList[i]["post_status"] ?? "",
+          postType: postsList[i]["post_type"] ?? "",
+          blogId: postsList[i]["blog_id"] as int,
+          blogUsername: postsList[i]["blog_username"] ?? "",
+          blogAvatar: postsList[i]["blog_avatar"] ?? "",
+          blogAvatarShape: postsList[i]["blog_avatar_shape"] ?? "",
+          blogTitle: postsList[i]["blog_title"] ?? "",
+          postTime: postsList[i]["post_time"] ?? "",
+        ),
+      );
+    }
 
     // setting the notes for each post in _homePosts through http requests.
     for (int i = 0; i < _homePosts.length; i++) {
-      final Map<String, dynamic> notes =
-          await Api().getNotes(_homePosts[i].postId.toString());
+      final Map<String, dynamic> notes = await Api().getNotes("${i%2 + 1}");
 
       //check the status code for the received response.
       if (notes.values.single["meta"]["status"] == "404")
         throw HttpException("Not Found!");
       else {
         _homePosts[i].likes = notes.values.single["response"]["likes"] ?? [];
-        _homePosts[i].reblogs =notes.values.single["response"]["reblogs"] ??[];
-        _homePosts[i].replies = notes.values.single["response"]["replies"] ??[];
+        _homePosts[i].reblogs =
+            notes.values.single["response"]["reblogs"] ?? [];
+        _homePosts[i].replies =
+            notes.values.single["response"]["replies"] ?? [];
       }
     }
 

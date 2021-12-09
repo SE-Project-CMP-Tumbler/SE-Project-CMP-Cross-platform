@@ -214,12 +214,18 @@ class Api {
   }
 
   /// GET Posts For the Home Page
-  Future<Map<String, dynamic>> fetchAndPosts() async {
-    final http.Response response = await http.get(
-      Uri.parse("$_firebaseHost/radar.json"),
-      headers: <String, String>{"Authorization": User.accessToken},
-    );
-    return jsonDecode(response.body);
+  Future<dynamic> fetchAndPosts() async {
+    try {
+      final http.Response response = await http.get(
+        Uri.parse("https://api.tumbler.social/api/posts/random_posts/"),
+        headers: <String, String>{"Authorization": User.accessToken},
+      );
+
+      return response;
+    } on Exception catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   /// GET Notes For the post with id [postID]
