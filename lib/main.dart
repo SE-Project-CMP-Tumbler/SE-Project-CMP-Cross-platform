@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import "package:tumbler/Models/user.dart";
 import "package:tumbler/Providers/followed_tags_sign_up.dart";
 import "package:tumbler/Providers/posts.dart";
 import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
+import "package:tumbler/Screens/main_screen.dart";
 
 void main() => runApp(MyApp());
 
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: OnStart(),
+        home: User.accessToken.isEmpty ? OnStart() : MainScreen(),
       ),
     );
   }
