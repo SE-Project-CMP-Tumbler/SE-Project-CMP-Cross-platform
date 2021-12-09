@@ -40,13 +40,23 @@ class _ChangeEmailState extends State<ChangeEmail> {
     if (response["meta"]["status"] == "200") {
       User.email = response["response"]["email"];
 
-      // TODO(Ziyad): Restart the app?
+      await Fluttertoast.showToast(
+        msg: "You successfully updated your Email!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16,
+      );
+
+      // TODO(Ziyad): Restart the app? or log out ?
       await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<MainScreen>(
           builder: (final BuildContext context) => MainScreen(),
         ),
         (final Route<dynamic> route) => false,
       );
+      return;
     } else {
       await Fluttertoast.showToast(
         msg: response["meta"]["msg"],

@@ -262,6 +262,34 @@ class Api {
     return jsonDecode(response.body);
   }
 
+  /// PUT request to change the current user Password
+  /// with [email]
+  Future<Map<String, dynamic>> changePassword(
+      final String currentPass,
+      final String newPass,
+      final String confirmPass,
+      ) async {
+    final http.Response response = await http.put(
+      Uri.parse(_host + _changeEmail),
+      body: <String, String>{
+        "current_password": currentPass,
+        "password": newPass,
+        "password_confirmation": confirmPass,
+      },
+      headers: <String, String>{
+        "Authorization": User.accessToken,
+      },
+    ).onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
+  }
+
   /// Post request to log out
   Future<Map<String, dynamic>> logOut() async {
     final http.Response response = await http.put(

@@ -1,10 +1,12 @@
 import "dart:io";
-
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
+import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
+import "package:tumbler/Screens/main_screen.dart";
 
 /// Change Password Page
 class ChangePassword extends StatefulWidget {
@@ -17,8 +19,8 @@ class ChangePassword extends StatefulWidget {
 
 class _ChangePasswordState extends State<ChangePassword> {
   final TextEditingController _passController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -26,12 +28,51 @@ class _ChangePasswordState extends State<ChangePassword> {
     super.dispose();
   }
 
+  Future<void> changePass(final String newPass) async {
+    // we don't have confirm password
+    final Map<String, dynamic> response = await Api().changePassword(
+      _passController.text,
+      newPass,
+      newPass,
+    );
+
+    if (response["meta"]["status"] == "200") {
+
+      await Fluttertoast.showToast(
+        msg: "You successfully updated your Password!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16,
+      );
+
+      // TODO(Ziyad): Restart the app? or log out ?
+      await Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<MainScreen>(
+          builder: (final BuildContext context) => MainScreen(),
+        ),
+        (final Route<dynamic> route) => false,
+      );
+      return;
+    } else {
+      await Fluttertoast.showToast(
+        msg: response["meta"]["msg"],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16,
+      );
+    }
+  }
+
   Future<void> showConfirmPasswordDialog(
     final BuildContext context,
     final String content,
   ) async {
-    bool _obscureText2 = true;
-    final TextEditingController _passController2 = TextEditingController();
+    bool _obscureDialogText = true;
+    final TextEditingController _passDialogController = TextEditingController();
     await showDialog(
       context: context,
       builder: (final BuildContext ctx) {
@@ -55,18 +96,18 @@ class _ChangePasswordState extends State<ChangePassword> {
                       ),
                     ),
                     TextField(
-                      controller: _passController2,
+                      controller: _passDialogController,
                       onChanged: (final String s) => setState(() {}),
                       keyboardType: TextInputType.text,
                       style: const TextStyle(color: Colors.white),
-                      obscureText: _obscureText2,
+                      obscureText: _obscureDialogText,
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
                           color: Colors.white,
-                          onPressed: () =>
-                              setState(() => _obscureText2 = !_obscureText2),
+                          onPressed: () => setState(
+                              () => _obscureDialogText = !_obscureDialogText,),
                           icon: Icon(
-                            _obscureText2
+                            _obscureDialogText
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
@@ -76,7 +117,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                         hintStyle: const TextStyle(color: Colors.white30),
                         hintText: "Password",
                       ),
-                    )
+                    ),
                   ],
                 ),
                 actions: <Widget>[
@@ -87,9 +128,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                     child: const Text("Cancel"),
                   ),
                   TextButton(
-                    onPressed: () {
-                      // how to confirm the password?
-                      // TODO(Ziyad): make the api request
+                    onPressed: () async {
+                      await changePass(_passDialogController.text);
                     },
                     child: const Text("Confirm"),
                   )
@@ -109,18 +149,18 @@ class _ChangePasswordState extends State<ChangePassword> {
                       child: Text(content),
                     ),
                     TextField(
-                      controller: _passController2,
+                      controller: _passDialogController,
                       onChanged: (final String s) => setState(() {}),
                       keyboardType: TextInputType.text,
                       style: const TextStyle(color: Colors.white),
-                      obscureText: _obscureText2,
+                      obscureText: _obscureDialogText,
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
                           color: Colors.white,
-                          onPressed: () =>
-                              setState(() => _obscureText2 = !_obscureText2),
+                          onPressed: () => setState(
+                              () => _obscureDialogText = !_obscureDialogText,),
                           icon: Icon(
-                            _obscureText2
+                            _obscureDialogText
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
@@ -141,9 +181,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                     child: const Text("Cancel"),
                   ),
                   TextButton(
-                    onPressed: () {
-                      // how to confirm the password?
-                      // TODO(Ziyad): make the api request
+                    onPressed: () async {
+                      await changePass(_passDialogController.text);
                     },
                     child: const Text("Confirm"),
                   )

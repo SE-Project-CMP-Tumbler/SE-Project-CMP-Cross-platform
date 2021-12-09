@@ -1,6 +1,8 @@
 import 'package:google_sign_in/google_sign_in.dart';
 
 void logInWithGoogle() {
+  // still not working
+  // need to add the sha1 to the firebase
   GoogleSignIn().signIn().then((final GoogleSignInAccount? userData) async {
     print("1");
     print(userData!.serverAuthCode);
