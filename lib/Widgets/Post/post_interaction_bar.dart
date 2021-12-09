@@ -1,7 +1,9 @@
+// ignore_for_file: must_be_immutable, public_member_api_docs, lines_longer_than_80_chars
+
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:like_button/like_button.dart";
-import "../../Screens/Notes/post_notes.dart";
+import "package:tumbler/Screens/Notes/post_notes.dart";
 
 ///Class for interaction bar exists the bottom of each post in home page
 ///

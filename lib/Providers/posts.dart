@@ -1,3 +1,5 @@
+// ignore_for_file: always_specify_types
+
 import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/http_requests_exceptions.dart";
@@ -54,9 +56,9 @@ class Posts with ChangeNotifier {
       if (notes.values.single["meta"]["status"] == "404")
         throw HttpException("Not Found!");
       else {
-        _homePosts[i].likes = notes.values.single["response"]["likes"];
-        _homePosts[i].reblogs = notes.values.single["response"]["reblogs"];
-        _homePosts[i].replies = notes.values.single["response"]["replies"];
+        _homePosts[i].likes = notes.values.single["response"]["likes"] ?? [];
+        _homePosts[i].reblogs =notes.values.single["response"]["reblogs"] ??[];
+        _homePosts[i].replies = notes.values.single["response"]["replies"] ??[];
       }
     }
 

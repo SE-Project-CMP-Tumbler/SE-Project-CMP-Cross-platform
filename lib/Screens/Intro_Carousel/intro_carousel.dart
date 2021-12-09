@@ -203,6 +203,7 @@ class _IntroCarouselState extends State<IntroCarousel> {
                                   builder: (final BuildContext context) =>
                                       MainScreen(),
                                 ),
+                                // ignore: always_specify_types
                                 (final Route route) => false,
                               );
                             }
