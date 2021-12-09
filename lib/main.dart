@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: AddPost(),
+        //home: AddPost(),
+        home: OnStart(),
       ),
     );
   }

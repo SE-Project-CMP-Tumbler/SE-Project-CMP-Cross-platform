@@ -125,6 +125,11 @@ class _SignUpState extends State<SignUp> {
   /// Get the [response] from the [Api.signU] function
   /// and sets [User.name], [User.id], [User.blogAvatar]
   /// , [User.accessToken] from the database if no error happened.
+  /// Call API Sign Up Function
+  ///
+  /// Get the [response] from the [Api.signU] function
+  /// and sets [User.name], [User.id], [User.blogAvatar]
+  /// , [User.accessToken] from the database if no error happened.
   Future<void> signUp() async {
     final Map<String, dynamic> response = await Api().signUp(
       _nameController.text,
@@ -136,10 +141,11 @@ class _SignUpState extends State<SignUp> {
     if (response["meta"]["status"] == "200") {
       User.name = response["response"]["blog_username"];
       User.email = response["response"]["email"];
-      User.id = response["response"]["id"];
-      User.blogAvatar = response["response"]["blog_avatar"];
+      User.id = response["response"]["id"].toString();
+      User.blogAvatar = response["response"]["blog_avatar"] ?? "";
       User.accessToken = response["response"]["access_token"];
 
+      // TODO(Ziyad): remove all the previous pages
       await Navigator.of(context).pushReplacement(
         MaterialPageRoute<MainScreen>(
           builder: (final BuildContext context) => IntroCarousel(),

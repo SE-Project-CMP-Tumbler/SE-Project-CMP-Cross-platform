@@ -5,7 +5,9 @@ import "package:html_editor_enhanced/html_editor.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
-import "package:tumbler/Models/user.dart";
+import "../../Models/user.dart";
+import "../../Widgets/Add_Post/dropdown_list.dart";
+import "../../Widgets/Add_Post/popup_menu.dart";
 
 /// Page to Add New Post
 class AddPost extends StatefulWidget {
@@ -28,15 +30,22 @@ class _AddPostState extends State<AddPost> {
   Future<void> addThePost() async {
     final String html = await controller.getText();
     final String postTime = getDate();
-    print("lol5");
     final String processedHtml = await extractMediaFiles(html);
-    print("lol3");
     print(processedHtml);
-    print("lol6");
-    //final Map<String, dynamic> response = await
-    Api().addPost(html, "published", "general", postTime);
-
-    /*if (response["meta"]["status"] == "200") {
+    String postOptionChoice = "";
+    if (postType == PostTypes.defaultPost) {
+      postOptionChoice = "published";
+    } else if (postType == PostTypes.draftPost) {
+      postOptionChoice = "draft";
+    } else if (postType == PostTypes.privatePost) {
+      postOptionChoice = "private";
+    }
+    print("salama");
+    final Map<String, dynamic> response =
+        await Api().addPost(html, postOptionChoice, "general", postTime);
+    print(response["meta"]["status"]);
+    print("lollol");
+    if (response["meta"]["status"] == "200") {
       await Fluttertoast.showToast(
         msg: "Added Successfully",
         toastLength: Toast.LENGTH_SHORT,
@@ -55,7 +64,7 @@ class _AddPostState extends State<AddPost> {
         textColor: Colors.white,
         fontSize: 16,
       );
-    }*/
+    }
   }
 
   @override
@@ -83,16 +92,43 @@ class _AddPostState extends State<AddPost> {
           actions: <Widget>[
             Container(
               margin: const EdgeInsets.all(10),
-              child: TextButton(
+              child: ElevatedButton(
                 onPressed: isPostButtonDisabled ? null : addThePost,
                 style: ElevatedButton.styleFrom(
-                  onPrimary: Colors.blue[400],
+                  onPrimary: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 child: const Text("Post"),
               ),
+            ),
+            /*PopupMenuButton(
+              
+              icon: Icon(
+                Icons.more_vert,
+                color: Colors.black,
+              ),
+              itemBuilder: (context) => [showModalBottomSheet(child: PostTypeMenu(), )],
+            ),*/
+            IconButton(
+              icon: Icon(
+                Icons.more_vert,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Column(mainAxisSize: MainAxisSize.min,
+                        //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          //Divider(),
+                          PostTypeMenu(),
+                        ]);
+                  },
+                );
+              },
             ),
           ],
         ),
@@ -107,6 +143,7 @@ class _AddPostState extends State<AddPost> {
                 ),
                 height: MediaQuery.of(context).size.height * .05, //web hiz3l
                 child: Row(
+                  //mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Container(
                       margin: const EdgeInsets.all(10),
@@ -116,10 +153,7 @@ class _AddPostState extends State<AddPost> {
                             AssetImage("assets/images/profile_pic.png"),
                       ),
                     ),
-                    Text(
-                      User.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    ProfilesList(),
                   ],
                 ),
               ),
