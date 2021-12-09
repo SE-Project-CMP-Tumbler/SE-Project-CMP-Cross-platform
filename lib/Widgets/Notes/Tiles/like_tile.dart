@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import '../../Post/post_personal_avatar.dart';
+import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 
 class LikeTile extends StatelessWidget {

@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
+import "package:tumbler/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
 import "package:tumbler/Widgets/Notes/Tiles/rebolg_tile_without_comments.dart";
@@ -150,155 +151,169 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
         body: TabBarView(
           controller: tabController,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (final BuildContext ctx, final int index) {
-                        return ReplyTile(
-                          commentText: widget.repliesList[index]["reply_text"],
-                          userName: widget.repliesList[index]["blog_username"],
-                          avatarUrl: widget.repliesList[index]["blog_avatar"],
-                          avatarShape: widget.repliesList[index]
-                              ["blog_avatar_shape"],
-                        );
-                      },
-                      itemCount: widget.repliesList.length,
-                    ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: replyController,
-                          decoration: const InputDecoration(
-                            hintText: "Unleash a compliment...",
-                            hintStyle: TextStyle(color: Colors.black54),
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "Reply",
-                          style: TextStyle(
-                            color: (replyController.text.isNotEmpty)
-                                ? Colors.blue
-                                : Colors.grey,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.zero,
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverAppBar(
-                    title: FittedBox(
-                      child: (blogTypeToShow == blogsType.withComments.index)
-                          ? const Text(
-                              "Reblogs with comments",
-                              style: TextStyle(
-                                color: Colors.black45,
-                                fontSize: 17,
-                              ),
-                            )
-                          : const Text(
-                              "Other reblogs",
-                              style: TextStyle(
-                                color: Colors.black45,
-                                fontSize: 17,
-                              ),
-                            ),
-                    ),
-                    floating: true,
-                    backgroundColor: Colors.white,
-                    titleSpacing: 0,
-                    elevation: 1,
-                    forceElevated: true,
-                    expandedHeight: 2,
-                    toolbarHeight: 40,
-                    leadingWidth: 10,
-                    leading: Container(),
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          showReblogsCategoriesBottomSheet(
-                              context, blogTypeToShow, changeBlogViewSection);
+            if (widget.repliesList.isEmpty)
+              const EmptyBoxImage(msg: "No replies to show")
+            else
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemBuilder: (final BuildContext ctx, final int index) {
+                          return ReplyTile(
+                            commentText: widget.repliesList[index]
+                                ["reply_text"],
+                            userName: widget.repliesList[index]
+                                ["blog_username"],
+                            avatarUrl: widget.repliesList[index]["blog_avatar"],
+                            avatarShape: widget.repliesList[index]
+                                ["blog_avatar_shape"],
+                          );
                         },
-                        icon: const Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.black45,
-                        ),
-                      )
-                    ],
-                  ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (final BuildContext context, final int index) =>
-                          (blogTypeToShow == blogsType.withComments.index)
-                              ? ReblogTileWithComments(
-                                  avatarUrl:
-                                      widget.reblogsWithCommentsList[index]
-                                          ["blog_avatar"],
-                                  htmlData:
-                                      widget.reblogsWithCommentsList[index]
-                                          ["reblog_content"],
-                                  userName:
-                                      widget.reblogsWithCommentsList[index]
-                                          ["blog_username"],
-                                  avatarShape:
-                                      widget.reblogsWithCommentsList[index]
-                                          ["blog_avatar_shape"],
-                                )
-                              : ReblogTileWithOutComments(
-                                  userName:
-                                      widget.reblogsWithOutCommentsList[index]
-                                          ["blog_username"],
-                                  avatartUrl:
-                                      widget.reblogsWithOutCommentsList[index]
-                                          ["blog_avatar"],
-                                  avatarShape:
-                                      widget.reblogsWithOutCommentsList[index]
-                                          ["blog_avatar_shape"],
-                                ),
-                      childCount:
-                          (blogTypeToShow == blogsType.withComments.index)
-                              ? widget.reblogsWithCommentsList.length
-                              : widget.reblogsWithOutCommentsList.length,
+                        itemCount: widget.repliesList.length,
+                      ),
                     ),
-                  )
-                ],
+                    Row(
+                      children: <Widget>[
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: replyController,
+                            decoration: const InputDecoration(
+                              hintText: "Unleash a compliment...",
+                              hintStyle: TextStyle(color: Colors.black54),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            "Reply",
+                            style: TextStyle(
+                              color: (replyController.text.isNotEmpty)
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: ListView.builder(
-                itemBuilder: (final BuildContext ctx, final int index) {
-                  return LikeTile(
-                    blogAvatar: widget.likesList[index]["blog_avatar"],
-                    blogTitle: widget.likesList[index]["blog_title"],
-                    followStatus: widget.likesList[index]["followed"],
-                    userName: widget.likesList[index]["blog_username"],
-                    avatarShape: widget.likesList[index]["blog_avatar_shape"],
-                  );
-                },
-                itemCount: widget.likesList.length,
+            if (widget.reblogsWithCommentsList.isEmpty &&
+                    blogTypeToShow == blogsType.withComments.index ||
+                widget.reblogsWithOutCommentsList.isEmpty &&
+                    blogTypeToShow == blogsType.Others.index)
+              const EmptyBoxImage(msg: "No replies to show")
+            else
+              Padding(
+                padding: EdgeInsets.zero,
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    SliverAppBar(
+                      title: FittedBox(
+                        child: (blogTypeToShow == blogsType.withComments.index)
+                            ? const Text(
+                                "Reblogs with comments",
+                                style: TextStyle(
+                                  color: Colors.black45,
+                                  fontSize: 17,
+                                ),
+                              )
+                            : const Text(
+                                "Other reblogs",
+                                style: TextStyle(
+                                  color: Colors.black45,
+                                  fontSize: 17,
+                                ),
+                              ),
+                      ),
+                      floating: true,
+                      backgroundColor: Colors.white,
+                      titleSpacing: 0,
+                      elevation: 1,
+                      forceElevated: true,
+                      expandedHeight: 2,
+                      toolbarHeight: 40,
+                      leadingWidth: 10,
+                      leading: Container(),
+                      actions: [
+                        IconButton(
+                          onPressed: () {
+                            showReblogsCategoriesBottomSheet(
+                                context, blogTypeToShow, changeBlogViewSection);
+                          },
+                          icon: const Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.black45,
+                          ),
+                        )
+                      ],
+                    ),
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (final BuildContext context, final int index) =>
+                            (blogTypeToShow == blogsType.withComments.index)
+                                ? ReblogTileWithComments(
+                                    avatarUrl:
+                                        widget.reblogsWithCommentsList[index]
+                                            ["blog_avatar"],
+                                    htmlData:
+                                        widget.reblogsWithCommentsList[index]
+                                            ["reblog_content"],
+                                    userName:
+                                        widget.reblogsWithCommentsList[index]
+                                            ["blog_username"],
+                                    avatarShape:
+                                        widget.reblogsWithCommentsList[index]
+                                            ["blog_avatar_shape"],
+                                  )
+                                : ReblogTileWithOutComments(
+                                    userName:
+                                        widget.reblogsWithOutCommentsList[index]
+                                            ["blog_username"],
+                                    avatartUrl:
+                                        widget.reblogsWithOutCommentsList[index]
+                                            ["blog_avatar"],
+                                    avatarShape:
+                                        widget.reblogsWithOutCommentsList[index]
+                                            ["blog_avatar_shape"],
+                                  ),
+                        childCount:
+                            (blogTypeToShow == blogsType.withComments.index)
+                                ? widget.reblogsWithCommentsList.length
+                                : widget.reblogsWithOutCommentsList.length,
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
+            if (widget.likesList.isEmpty)
+              const EmptyBoxImage(msg: "No replies to show")
+            else
+              Padding(
+                padding: const EdgeInsets.all(5),
+                child: ListView.builder(
+                  itemBuilder: (final BuildContext ctx, final int index) {
+                    return LikeTile(
+                      blogAvatar: widget.likesList[index]["blog_avatar"],
+                      blogTitle: widget.likesList[index]["blog_title"],
+                      followStatus: widget.likesList[index]["followed"],
+                      userName: widget.likesList[index]["blog_username"],
+                      avatarShape: widget.likesList[index]["blog_avatar_shape"],
+                    );
+                  },
+                  itemCount: widget.likesList.length,
+                ),
+              ),
           ],
         ),
       ),

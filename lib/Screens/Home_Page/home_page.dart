@@ -4,6 +4,7 @@ import "dart:ui";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import "package:tumbler/Exceptions_UI/generic_exception.dart";
 import "package:tumbler/Models/post.dart";
 import "package:tumbler/Providers/posts.dart";
 import "package:tumbler/Widgets/Home/home_sliver_app_bar.dart";
@@ -109,6 +110,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   /// true when posts are loading.
   bool _isLoading = false;
 
+  /// true when error occured
+  bool _error = false;
+
   ///true after first successful posts fetching.
   bool _isInit = false;
 
@@ -135,6 +139,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   /// Responsible refreshing home page and fetch new post to show.
   Future<void> refreshHome(final BuildContext context) async {
+    _error = false;
     setState(() {
       _isLoading = true;
     });
@@ -146,7 +151,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         _isLoading = false;
       });
     }).catchError((final Object? error) {
-      showErrorDialog(context, error.toString());
+      setState(() {
+        _isLoading = false;
+        _error = true;
+      });
+      //showErrorDialog(context, error.toString());
     });
   }
 
@@ -161,7 +170,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           _isLoading = false;
         });
       }).catchError((final Object? error) {
-        showErrorDialog(context, error.toString());
+        setState(() {
+          _isLoading = false;
+          _error = true;
+        });
+        //showErrorDialog(context, error.toString());
       });
     }
     _isInit = true;
@@ -217,31 +230,44 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     )
                   : RefreshIndicator(
                       onRefresh: () => refreshHome(context),
-                      child: Column(
-                        children: <Widget>[
-                          Expanded(
-                            child: ListView.builder(
-                              itemBuilder:
-                                  (final BuildContext ctx, final int index) {
-                                return Column(
-                                  children: <Widget>[
-                                    PostOutView(
-                                      showEditPostBottomSheet:
-                                          showEditPostBottomSheet,
-                                      post: posts[index],
-                                    ),
-                                    Container(
-                                      height: 10,
-                                      color: const Color.fromRGBO(0, 25, 53, 1),
-                                    )
-                                  ],
-                                );
-                              },
-                              itemCount: posts.length,
+                      child: _error
+                          ? ListView(
+                              children: const <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 150),
+                                  child: ErrorImage(
+                                    msg:
+                                        "Unexpected error, please try again later",
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              children: <Widget>[
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemBuilder: (final BuildContext ctx,
+                                        final int index) {
+                                      return Column(
+                                        children: <Widget>[
+                                          PostOutView(
+                                            showEditPostBottomSheet:
+                                                showEditPostBottomSheet,
+                                            post: posts[index],
+                                          ),
+                                          Container(
+                                            height: 10,
+                                            color: const Color.fromRGBO(
+                                                0, 25, 53, 1),
+                                          )
+                                        ],
+                                      );
+                                    },
+                                    itemCount: posts.length,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
                     ),
             ),
           ),

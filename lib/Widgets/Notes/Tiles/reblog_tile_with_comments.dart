@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import '../../Post/post_personal_avatar.dart';
-import '../../Post/html_viewer.dart';
+import "package:tumbler/Widgets/Post/html_viewer.dart";
+import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 
 class ReblogTileWithComments extends StatelessWidget {
@@ -11,7 +11,7 @@ class ReblogTileWithComments extends StatelessWidget {
       required final this.userName,
       required final this.htmlData,
       required final this.avatarShape,
-      final Key? key})
+      final Key? key,})
       : super(key: key);
 
   final String avatarUrl;
