@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "../../Widgets/Post/html_viewer.dart";
+import "../../Widgets/Post/post_personal_avatar.dart";
 
 enum blogsType {
   withComments,
@@ -78,7 +79,7 @@ void showEditPostBottomSheet(final BuildContext ctx, final Enum currType,
                         ),
                       ),
                     ),
-                    FittedBox(
+                    const FittedBox(
                       fit: BoxFit.contain,
                       child: Text(
                         "Show empty reblogs",
@@ -103,22 +104,22 @@ void showEditPostBottomSheet(final BuildContext ctx, final Enum currType,
 class Notes extends StatefulWidget {
   ///
   Notes({
-    required final this.likes,
-    required final this.reblogs,
-    required final this.replies,
+    required final this.likesList,
+    required final this.reblogsList,
+    required final this.repliesList,
     final Key? key,
   }) : super(key: key);
 
   ///
-  List<dynamic> likes = <dynamic>[];
+  List<dynamic> likesList = <dynamic>[];
 
   ///
-  List<dynamic> reblogs = <dynamic>[];
-  List<dynamic> reblogsWithComments = <dynamic>[];
-  List<dynamic> reblogsWithOutComments = <dynamic>[];
+  List<dynamic> reblogsList = <dynamic>[];
+  List<dynamic> reblogsWithCommentsList = <dynamic>[];
+  List<dynamic> reblogsWithOutCommentsList = <dynamic>[];
 
   ///
-  List<dynamic> replies = <dynamic>[];
+  List<dynamic> repliesList = <dynamic>[];
 
   @override
   _NotesState createState() => _NotesState();
@@ -129,7 +130,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
 
   final replyController = TextEditingController();
 
-  Enum blogType = blogsType.withComments;
+  Enum blogTypeToShow = blogsType.withComments;
 
   void checkReplyText() {
     setState(() {});
@@ -137,13 +138,20 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
 
   void changeBlogViewSection(final Enum type) {
     setState(() {
-      blogType = type;
+      blogTypeToShow = type;
     });
   }
 
   @override
   void initState() {
     // spilt blogs recieved into to sub-categories
+    for (int i = 0; i < widget.reblogsList.length; i++) {
+      if (widget.reblogsList[i]["reblog_content"].isEmpty) {
+        widget.reblogsWithOutCommentsList.add(widget.reblogsList[i]);
+      } else {
+        widget.reblogsWithCommentsList.add(widget.reblogsList[i]);
+      }
+    }
 
     super.initState();
     // Start listening to changes.
@@ -171,21 +179,21 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
         tabs: <Widget>[
           CustomizedTab(
             iconType: Icons.comment,
-            number: widget.replies.length,
+            number: widget.repliesList.length,
             color: Colors.blue,
             currIndex: tabController.index,
             myIndex: 0,
           ),
           CustomizedTab(
             iconType: Icons.repeat,
-            number: widget.reblogs.length,
+            number: widget.reblogsList.length,
             color: Colors.green,
             currIndex: tabController.index,
             myIndex: 1,
           ),
           CustomizedTab(
             iconType: Icons.favorite_outline_outlined,
-            number: widget.likes.length,
+            number: widget.likesList.length,
             color: Colors.red,
             currIndex: tabController.index,
             myIndex: 2,
@@ -209,9 +217,9 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
             children: [
               Text(
                 "${numFormatter.format(
-                  widget.likes.length +
-                      widget.replies.length +
-                      widget.reblogs.length,
+                  widget.likesList.length +
+                      widget.repliesList.length +
+                      widget.reblogsList.length,
                 )} notes",
               ),
             ],
@@ -232,12 +240,13 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                     child: ListView.builder(
                       itemBuilder: (final BuildContext ctx, final int index) {
                         return ReplyTile(
-                          commentText: widget.replies[index]["reply_text"],
-                          userName: widget.replies[index]["blog_username"],
-                          photoUrl: widget.replies[index]["blog_avatar"],
+                          commentText: widget.repliesList[index]["reply_text"],
+                          userName: widget.repliesList[index]["blog_username"],
+                          avatarUrl: widget.repliesList[index]["blog_avatar"],
+                          avatarShape: widget.repliesList[index]["blog_avatar_shape"],
                         );
                       },
-                      itemCount: widget.replies.length,
+                      itemCount: widget.repliesList.length,
                     ),
                   ),
                   Row(
@@ -274,13 +283,12 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(0),
+              padding: EdgeInsets.zero,
               child: CustomScrollView(
                 slivers: <Widget>[
                   SliverAppBar(
-                    // Provide a standard title.
                     title: FittedBox(
-                      child: (blogType == blogsType.withComments)
+                      child: (blogTypeToShow == blogsType.withComments)
                           ? const Text(
                               "Reblogs with comments",
                               style: TextStyle(
@@ -292,16 +300,11 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                                   color: Colors.black45, fontSize: 17),
                             ),
                     ),
-                    // Allows the user to reveal the app bar if they begin scrolling
-                    // back up the list of items.
                     floating: true,
                     backgroundColor: Colors.white,
                     titleSpacing: 0,
                     elevation: 1,
                     forceElevated: true,
-                    // Display a placeholder widget to visualize the shrinking size.
-                    // flexibleSpace: Placeholder(),
-                    // Make the initial height of the SliverAppBar larger than normal.
                     expandedHeight: 2,
                     toolbarHeight: 40,
                     leadingWidth: 10,
@@ -310,7 +313,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                       IconButton(
                         onPressed: () {
                           showEditPostBottomSheet(
-                              context, blogType, changeBlogViewSection);
+                              context, blogTypeToShow, changeBlogViewSection);
                         },
                         icon: const Icon(
                           Icons.arrow_drop_down,
@@ -320,17 +323,31 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                     ],
                   ),
                   SliverList(
-                    // Use a delegate to build items as they're scrolled on screen.
                     delegate: SliverChildBuilderDelegate(
-                      // The builder function returns a ListTile with a title thatand
-                      // displays the index of the current item.
-                      (context, index) => ReblogTile(
-                        avatarUrl: widget.reblogs[index]["blog_avatar"],
-                        htmlData: widget.reblogs[index]["reblog_content"],
-                        userName: widget.reblogs[index]["blog_username"],
-                      ),
-                      // Builds 1000 ListTiles
-                      childCount: widget.reblogs.length,
+                      (context, index) => (blogTypeToShow ==
+                              blogsType.withComments)
+                          ? ReblogTileWithComments(
+                              avatarUrl: widget.reblogsWithCommentsList[index]
+                                  ["blog_avatar"],
+                              htmlData: widget.reblogsWithCommentsList[index]
+                                  ["reblog_content"],
+                              userName: widget.reblogsWithCommentsList[index]
+                                  ["blog_username"],
+                                  avatarShape: widget.reblogsWithCommentsList[index]
+                                  ["blog_avatar_shape"] ,
+                            )
+                          : ReblogTileWithOutComments(
+                              userName: widget.reblogsWithOutCommentsList[index]
+                                  ["blog_username"],
+                              avatartUrl:
+                                  widget.reblogsWithOutCommentsList[index]
+                                      ["blog_avatar"],
+                                      avatarShape: widget.reblogsWithOutCommentsList[index]
+                                      ["blog_avatar_shape"] ,
+                            ),
+                      childCount: (blogTypeToShow == blogsType.withComments)
+                          ? widget.reblogsWithCommentsList.length
+                          : widget.reblogsWithOutCommentsList.length,
                     ),
                   )
                 ],
@@ -341,13 +358,14 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
               child: ListView.builder(
                 itemBuilder: (final BuildContext ctx, final int index) {
                   return LikeTile(
-                    blogAvatar: widget.likes[index]["blog_avatar"],
-                    blogTitle: widget.likes[index]["blog_title"],
-                    followStatus: widget.likes[index]["followed"],
-                    userName: widget.likes[index]["blog_username"],
+                    blogAvatar: widget.likesList[index]["blog_avatar"],
+                    blogTitle: widget.likesList[index]["blog_title"],
+                    followStatus: widget.likesList[index]["followed"],
+                    userName: widget.likesList[index]["blog_username"],
+                    avatarShape: widget.likesList[index]["blog_avatar_shape"],
                   );
                 },
-                itemCount: widget.likes.length,
+                itemCount: widget.likesList.length,
               ),
             ),
           ],
@@ -357,17 +375,59 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
   }
 }
 
-class ReblogTile extends StatelessWidget {
-  const ReblogTile(
+class ReblogTileWithOutComments extends StatelessWidget {
+  const ReblogTileWithOutComments(
+      {required final this.avatartUrl,
+      required final this.userName,
+      required this.avatarShape,
+      Key? key})
+      : super(key: key);
+
+  final avatartUrl;
+  final userName;
+  final avatarShape;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: GestureDetector(
+        onTap: () {},
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+          child: Row(
+            children: [
+              PersonAvatar(avatarPhotoLink: avatartUrl, shape: avatarShape),
+              SizedBox(
+                width: 1,
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  userName,
+                  style: TextStyle(color: Colors.black87, fontSize: 14),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ReblogTileWithComments extends StatelessWidget {
+  const ReblogTileWithComments(
       {required final this.avatarUrl,
       required final this.userName,
       required final this.htmlData,
+      required final this.avatarShape,
       Key? key})
       : super(key: key);
 
   final String avatarUrl;
   final String userName;
   final String htmlData;
+  final String avatarShape;
 
   @override
   Widget build(BuildContext context) {
@@ -378,10 +438,7 @@ class ReblogTile extends StatelessWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(avatarUrl),
-                  radius: 17,
-                ),
+                PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
                 SizedBox(
                   width: 5,
                 ),
@@ -443,6 +500,7 @@ class LikeTile extends StatelessWidget {
     required final this.blogTitle,
     required final this.blogAvatar,
     required final this.followStatus,
+    required final this.avatarShape,
     final Key? key,
   }) : super(key: key);
 
@@ -450,6 +508,7 @@ class LikeTile extends StatelessWidget {
   final String blogTitle;
   final String blogAvatar;
   final bool followStatus;
+  final String avatarShape;
 
   @override
   Widget build(final BuildContext context) {
@@ -458,10 +517,7 @@ class LikeTile extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundImage: NetworkImage(blogAvatar),
-          ),
+          PersonAvatar(avatarPhotoLink: blogAvatar, shape: avatarShape),
           const SizedBox(
             width: 15,
           ),
@@ -570,20 +626,24 @@ class CustomizedTab extends StatelessWidget {
 class ReplyTile extends StatelessWidget {
   ///
   const ReplyTile({
-    required final this.photoUrl,
+    required final this.avatarUrl,
     required final this.userName,
     required final this.commentText,
+    required final this.avatarShape,
     final Key? key,
   }) : super(key: key);
 
   ///
-  final String photoUrl;
+  final String avatarUrl;
 
   ///
   final String userName;
 
   ///
   final String commentText;
+
+  ///
+  final String avatarShape;
 
   @override
   Widget build(final BuildContext context) {
@@ -592,10 +652,7 @@ class ReplyTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundImage: NetworkImage(photoUrl),
-          ),
+         PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
           const SizedBox(
             width: 15,
           ),

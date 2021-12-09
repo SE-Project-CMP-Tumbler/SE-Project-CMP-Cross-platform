@@ -33,7 +33,7 @@ class _PostTopBarState extends State<PostTopBar> {
       child: Row(
         children: <Widget>[
           PersonAvatar(
-            avatarPhotoLink: widget.avatarPhotoLink,
+            avatarPhotoLink: widget.avatarPhotoLink,shape:"square"
           ),
           Text(
             widget.name,

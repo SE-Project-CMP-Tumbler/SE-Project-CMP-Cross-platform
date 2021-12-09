@@ -43,7 +43,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                                           MaterialPageRoute<Notes>(
                                             builder:
                                                 (final BuildContext context) =>
-                                                     Notes(likes:widget.likes,reblogs: widget.reblogs,replies: widget.replies,),
+                                                     Notes(likesList:widget.likes,reblogsList: widget.reblogs,repliesList: widget.replies,),
                                           ),
                                         );
               },
