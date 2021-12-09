@@ -1,12 +1,19 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
-///Responsiple for displaying user's avatar
+///Responsible for displaying user's avatar
 class PersonAvatar extends StatefulWidget {
+  ///Takes user's Photo link only
+  const PersonAvatar({
+    required final this.avatarPhotoLink,
+    required final this.shape,
+    final Key? key,
+  }) : super(key: key);
+
+  /// Link to Avatar Photo
   final String avatarPhotoLink;
 
-  ///Takes user's Photo link only
-  const PersonAvatar({Key? key, required this.avatarPhotoLink})
-      : super(key: key);
+  /// shape of the avatar
+  final String shape;
 
   @override
   _PersonAvatarState createState() => _PersonAvatarState();
@@ -14,18 +21,28 @@ class PersonAvatar extends StatefulWidget {
 
 class _PersonAvatarState extends State<PersonAvatar> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return GestureDetector(
       onTap: () {
-        //TODO: Navigate to user's profile
+        // TODO(Waleed): Navigate to user's profile
       },
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: SizedBox(
-          height: 40.0,
-          width: 40.0,
-          child: Image.network(widget.avatarPhotoLink, fit: BoxFit.cover),
-        ),
+        padding: const EdgeInsets.all(10),
+        child: (widget.shape == "circle")
+            ? CircleAvatar(
+                backgroundImage: NetworkImage(widget.avatarPhotoLink),
+                radius: 19,
+              )
+            : Container(
+                height: 40,
+                width: 40,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+                child: Image.network(widget.avatarPhotoLink, fit: BoxFit.cover),
+              ),
       ),
     );
   }

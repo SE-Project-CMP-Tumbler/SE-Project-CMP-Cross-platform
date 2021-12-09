@@ -1,21 +1,22 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:tumbler/Constants/colors.dart';
-import 'package:tumbler/Screens/Add_Post/add_new_post.dart';
-import 'package:tumbler/Screens/Home%20Page/home_page.dart';
-import 'package:tumbler/Widgets/draggable_floating_button.dart';
+import "package:flutter/cupertino.dart";
+import "package:flutter/gestures.dart";
+import "package:flutter/material.dart";
+import "package:tumbler/Constants/colors.dart";
+import "package:tumbler/Screens/Add_Post/add_new_post.dart";
+import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Screens/Profile/profile_page.dart";
+import "package:tumbler/Widgets/Home/draggable_floating_button.dart";
 
+/// The Main Screen That Hold [HomePage],
+/// Search Page, Activity Page, Profile Page
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
-
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
-  // state variables 'll be defined here
+  // state variables "ll be defined here
   TabController? tabController;
   int selectedIndex = 0;
   double fButtonDx = 20;
@@ -24,43 +25,43 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   void initState() {
-    super.initState();
     tabController = TabController(length: 4, vsync: this);
+    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
     tabController!.dispose();
+    super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    double _width = MediaQuery.of(context).size.width;
-    double _height = MediaQuery.of(context).size.height;
+  Widget build(final BuildContext context) {
+    final double _width = MediaQuery.of(context).size.width;
+    final double _height = MediaQuery.of(context).size.height;
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         type: BottomNavigationBarType.fixed,
-        items: const [
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home_filled, size: 30),
-            label: 'Home',
+            label: "Home",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search_rounded, size: 30),
-            label: 'Search',
+            label: "Search",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_bubble, size: 30),
-            label: 'Activity',
+            label: "Activity",
           ),
           BottomNavigationBarItem(
             icon: Icon(
               CupertinoIcons.person_solid,
               size: 30,
             ),
-            label: 'Profile',
+            label: "Profile",
           ),
         ],
         showUnselectedLabels: false,
@@ -72,55 +73,53 @@ class _MainScreenState extends State<MainScreen>
       ),
       body: Stack(
         key: _parentKey,
-        children: [
+        children: <Widget>[
           TabBarView(
             physics: const NeverScrollableScrollPhysics(),
             controller: tabController,
-            children: [
+            children: <Widget>[
               const HomePage(),
-              // TODO: Replace this with search page
-              Container(
-                  color: appBackgroundColor,
-                  child: const Center(
-                    child: Text('THIS IS SEARCH'),
-                  )),
-              // TODO: Replace this with chat Page
+              // TODO(Ziyad): Replace this with search page
               Container(
                 color: appBackgroundColor,
-                child: const Center(child: Text('THIS IS CHAT')),
+                child: const Center(
+                  child: Text("THIS IS SEARCH"),
+                ),
               ),
-              // TODO: Replace this with profile page
+              // TODO(Ziyad): Replace this with chat Page
               Container(
-                  color: appBackgroundColor,
-                  child: const Center(
-                    child: Text('THIS IS PROFILE'),
-                  )),
+                color: appBackgroundColor,
+                child: const Center(child: Text("THIS IS CHAT")),
+              ),
+              // TODO(Ziyad): Replace this with profile page
+              ProfilePage(),
             ],
           ),
-          selectedIndex == 0 || selectedIndex == 3
-              ? DraggableFloatingActionButton(
-                  duration: const Duration(milliseconds: 100),
-                  child: Image.asset(
-                    'assets/images/create_post.png',
-                    color: Colors.white,
-                    width: 25.0,
+          if (selectedIndex == 0 || selectedIndex == 3)
+            DraggableFloatingActionButton(
+              duration: const Duration(milliseconds: 100),
+              initialOffset: Offset(_width - 70, _height - 150),
+              parentKey: _parentKey,
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<AddPost>(
+                    builder: (final BuildContext context) => AddPost(),
                   ),
-                  initialOffset: Offset(_width - 70, _height - 150),
-                  parentKey: _parentKey,
-                  onPressed: () {
-                    // TODO: Navigate to Add Post Page
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const AddPost()));
-                  },
-                )
-              : Container(),
+                );
+              },
+              child: Image.asset(
+                "assets/images/create_post.png",
+                color: Colors.white,
+                width: 25,
+              ),
+            )
         ],
       ),
     );
   }
 
-  //all state functions will be declared here
-  void onTabClicked(int index) {
+  // All state functions will be declared here
+  void onTabClicked(final int index) {
     setState(() {
       selectedIndex = index;
       tabController!.index = selectedIndex;

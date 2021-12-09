@@ -1,16 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:tumbler/Models/user.dart';
+import "package:flutter/material.dart";
+import "package:fluttertoast/fluttertoast.dart";
+import "package:tumbler/Constants/colors.dart";
+import "package:tumbler/Constants/ui_styles.dart";
+import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/email_password_validators.dart";
+import "package:tumbler/Models/user.dart";
+import "package:tumbler/Screens/Log_In_Screens/forget_password.dart";
+import "package:tumbler/Screens/main_screen.dart";
 
-import '/Constants/colors.dart';
-import '/Constants/ui_styles.dart';
-import '/Methods/api.dart';
-import '/Screens/Log_In_Screens/forget_password.dart';
-import '/Screens/main_screen.dart';
-
+/// Log In Page
 class LogIN extends StatefulWidget {
-  const LogIN({Key? key}) : super(key: key);
-
   @override
   _LogINState createState() => _LogINState();
 }
@@ -36,27 +35,24 @@ class _LogINState extends State<LogIN> {
     super.dispose();
   }
 
-  form() {
+  Form form() {
     return Form(
       key: _formKey,
       child: Column(
-        children: [
+        children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: TextFormField(
-              validator: (s) => s!.contains(RegExp(
-                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))
-                  ? null
-                  : "Please Enter a Valid Email",
+              validator: emailValidator,
               controller: _emailController,
-              onChanged: (s) => setState(() {}),
+              onChanged: (final String s) => setState(() {}),
               keyboardType: TextInputType.emailAddress,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 enabledBorder: formEnabledFieldBorderStyle,
                 focusedBorder: formFocusedFieldBorderStyle,
                 hintStyle: const TextStyle(color: Colors.white30),
-                hintText: 'Email',
+                hintText: "Email",
                 suffixIcon: _emailController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear),
@@ -71,10 +67,9 @@ class _LogINState extends State<LogIN> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: TextFormField(
-              validator: (s) =>
-                  s!.length < 8 ? "Please Enter Strong Password" : null,
+              validator: passValidator,
               controller: _passController,
-              onChanged: (s) => setState(() {}),
+              onChanged: (final String s) => setState(() {}),
               keyboardType: TextInputType.text,
               style: const TextStyle(color: Colors.white),
               obscureText: _obscureText,
@@ -83,12 +78,13 @@ class _LogINState extends State<LogIN> {
                   color: Colors.white,
                   onPressed: () => setState(() => _obscureText = !_obscureText),
                   icon: Icon(
-                      (_obscureText) ? Icons.visibility : Icons.visibility_off),
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                  ),
                 ),
                 enabledBorder: formEnabledFieldBorderStyle,
                 focusedBorder: formFocusedFieldBorderStyle,
                 hintStyle: const TextStyle(color: Colors.white30),
-                hintText: 'Password',
+                hintText: "Password",
               ),
             ),
           ),
@@ -97,57 +93,70 @@ class _LogINState extends State<LogIN> {
     );
   }
 
+  /// Call API Log In Function.
+  ///
+  /// Get the [response] from the [Api.LogIn] function
+  /// and sets [User.name], [User.id], [User.blogAvatar],
+  /// [User.accessToken] from the database if no error happened.
+  Future<void> logIn() async {
+    final Map<String, dynamic> response =
+        await Api().logIn(_emailController.text, _passController.text);
+
+    if (response["meta"]["status"] == "200") {
+      User.name = response["response"]["blog_username"];
+      User.email = response["response"]["email"];
+      User.id = response["response"]["id"];
+      User.blogAvatar = response["response"]["blog_avatar"];
+      User.accessToken = response["response"]["access_token"];
+
+      await Navigator.of(context).pushReplacement(
+        MaterialPageRoute<MainScreen>(
+          builder: (final BuildContext context) => MainScreen(),
+        ),
+      );
+    } else {
+      await Fluttertoast.showToast(
+        msg: response["meta"]["msg"],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16,
+      );
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
-    AppBar appBar = AppBar(
+  Widget build(final BuildContext context) {
+    final AppBar appBar = AppBar(
       backgroundColor: appBackgroundColor,
       title: const Image(
-        image: AssetImage('assets/images/logo_letter.png'),
+        image: AssetImage("assets/images/logo_letter.png"),
         height: 45,
       ),
       centerTitle: true,
-      actions: [
+      actions: <Widget>[
         TextButton(
-          onPressed: () async {
+          onPressed: () {
             if (_formKey.currentState!.validate()) {
-              Map<String, dynamic> response = await Api()
-                  .logIn(_emailController.text, _passController.text);
-
-              if (response["meta"]["status"] == "200") {
-                User.name = response["response"]["blog_username"];
-                User.email = response["response"]["email"];
-                User.id = response["response"]["id"];
-                User.blogAvatar = response["response"]["blog_avatar"];
-                User.accessToken = response["response"]["access_token"];
-
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const MainScreen()));
-              } else {
-                Fluttertoast.showToast(
-                  msg: response["meta"]["msg"],
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.black,
-                  textColor: Colors.white,
-                  fontSize: 16.0,
-                );
-              }
+              logIn();
             }
           },
           child: Center(
-              child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Log In",
-              style: TextStyle(
-                fontSize: 15,
-                color: (_emailController.text.isEmpty ||
-                        _passController.text.isEmpty)
-                    ? Colors.blue.withOpacity(0.5)
-                    : Colors.blue,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                "Log In",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: (_emailController.text.isEmpty ||
+                          _passController.text.isEmpty)
+                      ? Colors.blue.withOpacity(0.5)
+                      : Colors.blue,
+                ),
               ),
             ),
-          )),
+          ),
         )
       ],
     );
@@ -164,8 +173,7 @@ class _LogINState extends State<LogIN> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -174,8 +182,9 @@ class _LogINState extends State<LogIN> {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const ForgetPassWord(),
+                      MaterialPageRoute<ForgetPassWord>(
+                        builder: (final BuildContext context) =>
+                            ForgetPassWord(),
                       ),
                     );
                   },

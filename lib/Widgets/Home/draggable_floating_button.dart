@@ -1,22 +1,34 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:tumbler/Constants/colors.dart';
+import "package:flutter/cupertino.dart";
+import "package:flutter/gestures.dart";
+import "package:flutter/material.dart";
+import "package:flutter/painting.dart";
+import "package:tumbler/Constants/colors.dart";
 
+/// Class for Draggable Floating Action Bar
 class DraggableFloatingActionButton extends StatefulWidget {
-  final Widget child;
-  final Offset initialOffset;
-  final VoidCallback onPressed;
-  final GlobalKey parentKey;
-  final Duration duration;
+  /// Constructor
+  const DraggableFloatingActionButton({
+    required final this.child,
+    required final this.initialOffset,
+    required final this.onPressed,
+    required final this.parentKey,
+    required final this.duration,
+  });
 
-  const DraggableFloatingActionButton(
-      {required this.child,
-      required this.initialOffset,
-      required this.onPressed,
-      required this.parentKey,
-      required this.duration});
+  /// The Next Floating Action Bar
+  final Widget child;
+
+  /// Initial Offset of The Floating Action Bar
+  final Offset initialOffset;
+
+  /// On press function
+  final VoidCallback onPressed;
+
+  /// The Previous Floating Action Bar
+  final GlobalKey parentKey;
+
+  /// Duration of the Animation
+  final Duration duration;
 
   @override
   State<StatefulWidget> createState() => _DraggableFloatingActionButtonState();
@@ -39,7 +51,7 @@ class _DraggableFloatingActionButtonState
     WidgetsBinding.instance?.addPostFrameCallback(_setBoundary);
   }
 
-  void _setBoundary(_) {
+  void _setBoundary(final _) {
     final RenderBox parentRenderBox =
         widget.parentKey.currentContext?.findRenderObject() as RenderBox;
     final RenderBox renderBox =
@@ -50,17 +62,19 @@ class _DraggableFloatingActionButtonState
       final Size size = renderBox.size;
 
       setState(() {
-        _minOffset = const Offset(0, 0);
+        _minOffset = Offset.zero;
         _maxOffset = Offset(
-            parentSize.width - size.width, parentSize.height - size.height);
+          parentSize.width - size.width,
+          parentSize.height - size.height,
+        );
       });
-    } catch (e) {
+    } on Exception catch (e) {
       // ignore: avoid_print
       print(e.toString());
     }
   }
 
-  void _updatePosition(PointerMoveEvent pointerMoveEvent) {
+  void _updatePosition(final PointerMoveEvent pointerMoveEvent) {
     double newOffsetX = _offset.dx + pointerMoveEvent.delta.dx;
     double newOffsetY = _offset.dy + pointerMoveEvent.delta.dy;
 
@@ -103,119 +117,138 @@ class _DraggableFloatingActionButtonState
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(children: [
-      buildAnimatedPositioned(
+  Widget build(final BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        buildAnimatedPositioned(
           Colors.deepOrange,
           1,
           Image.asset(
-            'assets/images/quote.png',
+            "assets/images/quote.png",
             color: navy,
-            width: 25.0,
-          )),
-      buildAnimatedPositioned(
+            width: 25,
+          ),
+        ),
+        buildAnimatedPositioned(
           Colors.white,
           2,
           Image.asset(
-            'assets/images/capital_letter.png',
+            "assets/images/capital_letter.png",
             color: navy,
-            width: 25.0,
-          )),
-      buildAnimatedPositioned(
+            width: 25,
+          ),
+        ),
+        buildAnimatedPositioned(
           Colors.pink,
           3,
           Icon(
             CupertinoIcons.headphones,
             color: navy,
             size: 30,
-          )),
-      buildAnimatedPositioned(
+          ),
+        ),
+        buildAnimatedPositioned(
           Colors.deepPurple,
           4,
           Icon(
             CupertinoIcons.videocam_fill,
             color: navy,
             size: 30,
-          )),
-      buildAnimatedPositioned(
+          ),
+        ),
+        buildAnimatedPositioned(
           floatingButtonColor,
           5,
           Center(
             child: Text(
-              'hi!',
+              "hi!",
               style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 22.0, color: navy),
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                color: navy,
+              ),
             ),
-          )),
-      buildAnimatedPositioned(
+          ),
+        ),
+        buildAnimatedPositioned(
           Colors.green,
           6,
           Icon(
             Icons.all_inclusive_outlined,
             color: navy,
             size: 25,
-          )),
-      buildAnimatedPositioned(
+          ),
+        ),
+        buildAnimatedPositioned(
           Colors.yellow,
           7,
           Icon(
             Icons.gif_outlined,
             color: navy,
             size: 30,
-          )),
-      buildAnimatedPositioned(
+          ),
+        ),
+        buildAnimatedPositioned(
           Colors.red,
           8,
           Icon(
             CupertinoIcons.photo_camera_solid,
             color: navy,
-          )),
-      AnimatedPositioned(
-        curve: Curves.easeOutCubic,
-        duration: Duration(milliseconds: widget.duration.inMilliseconds),
-        left: _offset.dx,
-        top: _offset.dy,
-        child: Listener(
-          onPointerSignal: (PointerSignalEvent pointerSignalEvent) {},
-          onPointerMove: (PointerMoveEvent pointerMoveEvent) {
-            _updatePosition(pointerMoveEvent);
-            setState(() {
-              _isDragging = true;
-            });
-          },
-          onPointerUp: (PointerUpEvent pointerUpEvent) {
-            if (_isDragging) {
-              _resetPosition();
-              setState(() {
-                _isDragging = false;
-              });
-            } else {}
-          },
-          child: FloatingActionButton(
-            onPressed: widget.onPressed,
-            key: _key,
-            child: widget.child,
-            backgroundColor: floatingButtonColor,
           ),
         ),
-      ),
-    ]);
+        AnimatedPositioned(
+          curve: Curves.easeOutCubic,
+          duration: Duration(milliseconds: widget.duration.inMilliseconds),
+          left: _offset.dx,
+          top: _offset.dy,
+          child: Listener(
+            onPointerSignal: (final PointerSignalEvent pointerSignalEvent) {},
+            onPointerMove: (final PointerMoveEvent pointerMoveEvent) {
+              _updatePosition(pointerMoveEvent);
+              setState(() {
+                _isDragging = true;
+              });
+            },
+            onPointerUp: (final PointerUpEvent pointerUpEvent) {
+              if (_isDragging) {
+                _resetPosition();
+                setState(() {
+                  _isDragging = false;
+                });
+              } else {}
+            },
+            child: FloatingActionButton(
+              onPressed: widget.onPressed,
+              key: _key,
+              heroTag: "0",
+              backgroundColor: floatingButtonColor,
+              child: widget.child,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   AnimatedPositioned buildAnimatedPositioned(
-      Color bgColor, int index, Widget child) {
+    final Color bgColor,
+    final int index,
+    final Widget child,
+  ) {
     return AnimatedPositioned(
       curve: Curves.fastLinearToSlowEaseIn,
       duration: Duration(
-          milliseconds: (index + 5) * (index + 1) * 60 - index * 300 + 50),
+        milliseconds: (index + 5) * (index + 1) * 60 - index * 300 + 50,
+      ),
       left: _offset.dx,
       top: _offset.dy,
       child: FloatingActionButton(
-        elevation: 0.0,
+        heroTag: "${index + 1}",
+        elevation: 0,
         onPressed: widget.onPressed,
-        child: child,
         foregroundColor: Colors.black,
         backgroundColor: bgColor,
+        child: child,
       ),
     );
   }

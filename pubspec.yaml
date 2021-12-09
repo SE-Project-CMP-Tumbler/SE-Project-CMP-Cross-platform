@@ -27,25 +27,35 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  flutter_lints: ^1.0.4
+  animator:
+  auto_size_text: ^3.0.0
   carousel_slider: ^4.0.0
+  chewie:
+  cupertino_icons: ^1.0.2
+  dartdoc: ^4.1.0
+  fluttertoast: ^8.0.8
+  flutter_html: ^2.1.5
+  flutter_native_splash:
+  flutter_lints: ^1.0.4
+  flutter_widget_from_html: ^0.8.2
+  font_awesome_flutter: ^9.2.0
   gif_view: ^0.0.1
   google_fonts: ^2.1.0
-  provider: ^6.0.1
-  http: ^0.13.4
-  fluttertoast: ^8.0.8
-  flutter_widget_from_html: ^0.8.2
-  like_button: ^2.0.3
-  flutter_html: ^2.1.5
-  dartdoc: ^4.1.0
-  auto_size_text: ^3.0.0
-  video_player: ^2.2.7
-  chewie:
-  flutter_native_splash:
   html_editor_enhanced: ^2.4.0+1
-  path_provider: ^2.0.7
+  http: ^0.13.4
   intl: ^0.17.0
+  like_button: ^2.0.3
+  path_provider: ^2.0.7
+  provider: ^6.0.1
+  video_player: ^2.2.7
+
+
+
+
+
+
+
+
 
 dev_dependencies:
   flutter_test:
@@ -53,7 +63,6 @@ dev_dependencies:
 flutter_native_splash:
   color: "#001935"
   image: assets/images/logo_letter.png
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -71,6 +80,9 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
+
+
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

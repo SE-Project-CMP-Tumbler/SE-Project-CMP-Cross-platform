@@ -1,26 +1,61 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:html_editor_enhanced/html_editor.dart';
+import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
+import "package:fluttertoast/fluttertoast.dart";
+import "package:html_editor_enhanced/html_editor.dart";
+import "package:intl/intl.dart";
+import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/process_html.dart";
+import "package:tumbler/Models/user.dart";
 
-import '../../Widgets/post_button.dart';
-
-AssetImage profilePic = const AssetImage('assets/images/profile_pic.png');
-String userName = "UserName";
-
+/// Page to Add New Post
 class AddPost extends StatefulWidget {
-  const AddPost({Key? key}) : super(key: key);
-
   @override
   _AddPostState createState() => _AddPostState();
 }
 
 class _AddPostState extends State<AddPost> {
   bool isPostButtonDisabled = true;
-  final HtmlEditorController controller =
-      HtmlEditorController(processOutputHtml: true);
+  final HtmlEditorController controller = HtmlEditorController();
+
+  /// Return the Data in Custom Format
+  String getDate() {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat("dd-MM-yyyy");
+    final String formatted = formatter.format(now);
+    return formatted;
+  }
+
+  Future<void> addThePost() async {
+    final String html = await controller.getText();
+    final String postTime = getDate();
+    final String processedHtml = await extractMediaFiles(html);
+    final Map<String, dynamic> response =
+        await Api().addPost(processedHtml, "published", "general", postTime);
+
+    if (response["meta"]["status"] == "200") {
+      await Fluttertoast.showToast(
+        msg: "Added Successfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16,
+      );
+      Navigator.of(context).pop();
+    } else {
+      await Fluttertoast.showToast(
+        msg: response["meta"]["msg"],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16,
+      );
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return GestureDetector(
       onTap: () {
         if (!kIsWeb) {
@@ -29,42 +64,56 @@ class _AddPostState extends State<AddPost> {
       },
       child: Scaffold(
         appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-                icon: const Icon(
-                  Icons.close,
-                  color: Colors.black,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.close,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              // TODO(Salama): Alert to save as draft
+              Navigator.of(context).pop();
+            },
+          ),
+          actions: <Widget>[
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: TextButton(
+                onPressed: isPostButtonDisabled ? null : addThePost,
+                style: ElevatedButton.styleFrom(
+                  onPrimary: Colors.blue[400],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
-                onPressed: () {
-                  // TODO: Alert to save as draft
-                  Navigator.of(context).pop();
-                }),
-            actions: [
-              PostButton(
-                  controller: controller,
-                  isThisButtonDisabled: isPostButtonDisabled)
-            ]),
+                child: const Text("Post"),
+              ),
+            ),
+          ],
+        ),
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.white, width: 0)),
+                  color: Colors.white,
+                  border: Border.all(color: Colors.white, width: 0),
+                ),
                 height: MediaQuery.of(context).size.height * .05, //web hiz3l
                 child: Row(
-                  children: [
+                  children: <Widget>[
                     Container(
                       margin: const EdgeInsets.all(10),
-                      child: CircleAvatar(
-                        radius: 20.0,
-                        backgroundImage: profilePic,
+                      child: const CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                            AssetImage("assets/images/profile_pic.png"),
                       ),
                     ),
                     Text(
-                      userName,
+                      User.name,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -73,31 +122,34 @@ class _AddPostState extends State<AddPost> {
               HtmlEditor(
                 controller: controller,
                 htmlEditorOptions: const HtmlEditorOptions(
-                  hint: 'Add something, if you\'d like',
+                  hint: "Add something, if you'd like",
                   shouldEnsureVisible: true,
-                  autoAdjustHeight: true,
-                  adjustHeightForKeyboard: true,
                   mobileLongPressDuration: Duration(milliseconds: 500),
                   spellCheck: true,
                 ),
                 htmlToolbarOptions: const HtmlToolbarOptions(
                   toolbarPosition: ToolbarPosition.belowEditor,
-                  toolbarType: ToolbarType.nativeScrollable,
+                  defaultToolbarButtons: <Toolbar>[
+                    StyleButtons(),
+                    FontSettingButtons(),
+                    FontButtons(clearAll: false),
+                    ColorButtons(),
+                    ListButtons(),
+                    ParagraphButtons(),
+                    InsertButtons(),
+                    OtherButtons(),
+                  ],
                 ),
                 otherOptions: OtherOptions(
                   height: MediaQuery.of(context).size.height * .75, //web hiz3l
                 ),
                 callbacks: Callbacks(
-                  onChangeContent: (String? changed) async {
-                    String txt = await controller.getText();
-                    if (txt.isEmpty) {
-                      setState(() {
-                        isPostButtonDisabled = true;
-                      });
+                  onChangeContent: (final String? changed) async {
+                    final String html = await controller.getText();
+                    if (html.isEmpty) {
+                      setState(() => isPostButtonDisabled = true);
                     } else {
-                      setState(() {
-                        isPostButtonDisabled = false;
-                      });
+                      setState(() => isPostButtonDisabled = false);
                     }
                   },
                 ),

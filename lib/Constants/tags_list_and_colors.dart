@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
-final List<Color> tagsColors = [
+/// List of Colors used in the [TagSelect] page.
+final List<Color> tagsColors = <Color>[
   const Color.fromRGBO(0, 70, 122, 1),
   const Color.fromRGBO(106, 77, 217, 1),
   const Color.fromRGBO(139, 0, 9104, 1),
@@ -10,7 +11,8 @@ final List<Color> tagsColors = [
   const Color.fromRGBO(0, 69, 0, 1),
 ];
 
-final List<String> tagsNames = [
+/// Names for the [TagSelect] page.
+final List<String> tagsNames = <String>[
   "Choose Your Own Tag",
   "Art",
   "Writing",
