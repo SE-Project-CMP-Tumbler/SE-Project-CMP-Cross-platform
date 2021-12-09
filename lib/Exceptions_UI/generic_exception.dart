@@ -13,7 +13,6 @@ class ErrorImage extends StatelessWidget {
     return Center(
       child: SizedBox(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset("assets/images/frustrated-face.png"),

@@ -1,12 +1,14 @@
+// ignore_for_file: public_member_api_docs
+
 import "package:flutter/material.dart";
 
 enum blogsType {
   withComments,
-  Others,
+  others,
 }
 
 void showReblogsCategoriesBottomSheet(final BuildContext ctx,
-    final int currType, final Function changeBlogViewSection) {
+    final int currType, final Function changeBlogViewSection,) {
   showModalBottomSheet<dynamic>(
     isScrollControlled: true,
     context: ctx,
@@ -28,7 +30,7 @@ void showReblogsCategoriesBottomSheet(final BuildContext ctx,
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children:<Widget> [
                     FittedBox(
                       fit: BoxFit.contain,
                       child: Text(
@@ -56,20 +58,20 @@ void showReblogsCategoriesBottomSheet(final BuildContext ctx,
               ),
               TextButton(
                 onPressed: () {
-                  if (currType != blogsType.Others.index) {
-                    changeBlogViewSection(blogsType.Others);
+                  if (currType != blogsType.others.index) {
+                    changeBlogViewSection(blogsType.others);
                   }
                   Navigator.pop(ctx);
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     FittedBox(
                       fit: BoxFit.contain,
                       child: Text(
                         "Other reblogs",
                         style: TextStyle(
-                          color: (currType == blogsType.Others.index)
+                          color: (currType == blogsType.others.index)
                               ? Colors.blue
                               : Colors.black87,
                           fontSize: 17,

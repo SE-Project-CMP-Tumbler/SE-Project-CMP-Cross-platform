@@ -1,5 +1,7 @@
+// ignore_for_file: public_member_api_docs
+
 import "package:flutter/material.dart";
-import '../../Post/post_personal_avatar.dart';
+import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 
 class ReplyTile extends StatelessWidget {
@@ -30,7 +32,7 @@ class ReplyTile extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
          PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
           const SizedBox(
             width: 15,
@@ -39,12 +41,12 @@ class ReplyTile extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black26),
-                  borderRadius: const BorderRadius.all(Radius.circular(15))),
+                  borderRadius: const BorderRadius.all(Radius.circular(15)),),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     Text(
                       userName,
                       style: const TextStyle(

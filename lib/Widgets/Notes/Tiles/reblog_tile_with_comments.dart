@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
@@ -22,11 +24,11 @@ class ReblogTileWithComments extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8),
       child: Column(
-        children: [
+        children: <Widget>[
           Row(
-            children: [
+            children: <Widget>[
               PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
               const SizedBox(
                 width: 5,
@@ -45,7 +47,7 @@ class ReblogTileWithComments extends StatelessWidget {
                   onPressed: () {},
                   icon: const Icon(Icons.more_vert),
                 ),
-              ))
+              ),)
             ],
           ),
           const SizedBox(
@@ -53,7 +55,7 @@ class ReblogTileWithComments extends StatelessWidget {
           ),
           HtmlView(htmlData: htmlData),
           Row(
-            children: [
+            children:<Widget> [
               TextButton(
                 onPressed: () {},
                 child: const Text(
@@ -78,4 +80,3 @@ class ReblogTileWithComments extends StatelessWidget {
     );
   }
 }
-

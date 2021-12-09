@@ -1,9 +1,11 @@
+// ignore_for_file: must_be_immutable
+
 import "package:flutter/material.dart";
-import 'package:intl/intl.dart';
+import "package:intl/intl.dart";
 
-
+///[CustomizedTab] customizes tabs in tab view
 class CustomizedTab extends StatelessWidget {
-  ///
+  /// takes number, iconType, color, currIndex and myIndex
   CustomizedTab({
     required final this.number,
     required final this.iconType,
@@ -37,7 +39,7 @@ class CustomizedTab extends StatelessWidget {
       child: Tab(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Icon(
               iconType,
               color: (currIndex == myIndex) ? color : Colors.grey,
@@ -51,7 +53,7 @@ class CustomizedTab extends StatelessWidget {
                   color: (currIndex == myIndex)
                       ? color.withOpacity(1)
                       : Colors.grey,
-                  fontSize: 16),
+                  fontSize: 16,),
             ),
           ],
         ),

@@ -14,7 +14,6 @@ class EmptyBoxImage extends StatelessWidget {
     return Center(
       child: SizedBox(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset("./assets/images/empty-box.png"),

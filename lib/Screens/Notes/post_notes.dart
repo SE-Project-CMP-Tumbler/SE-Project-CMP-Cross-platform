@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable, lines_longer_than_80_chars
+
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
@@ -9,14 +11,18 @@ import "package:tumbler/Widgets/Notes/Tiles/reply_tile.dart";
 import "package:tumbler/Widgets/Notes/customized_tab.dart";
 import "package:tumbler/Widgets/Notes/show_reblog_type_bottomsheet.dart";
 
+/// [blogType] is an Enumerator for specifing two different reblogs types
 enum blogsType {
+  ///reblogs with comments
   withComments,
-  Others,
+
+  ///reblogs without comments
+  others
 }
 
-/// [Notes]
+/// [Notes] is a class handels all stuff related to notes
 class Notes extends StatefulWidget {
-  ///
+  /// Takes likeList, reblogList and repliesList
   Notes({
     required final this.likesList,
     required final this.reblogsList,
@@ -24,19 +30,19 @@ class Notes extends StatefulWidget {
     final Key? key,
   }) : super(key: key);
 
-  ///
+  /// contains all likes with their detalis
   List<dynamic> likesList = <dynamic>[];
 
-  ///
+  ///contains all reblogs with their detalis
   List<dynamic> reblogsList = <dynamic>[];
 
-  ///
+  /// contains all reblogs with comments with their detalis
   List<dynamic> reblogsWithCommentsList = <dynamic>[];
 
-  ///
+  ///contains all likes without comments their detalis
   List<dynamic> reblogsWithOutCommentsList = <dynamic>[];
 
-  ///
+  /// contains all replies with their detalis
   List<dynamic> repliesList = <dynamic>[];
 
   @override
@@ -125,7 +131,6 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
   @override
   Widget build(final BuildContext context) {
     return DefaultTabController(
-      initialIndex: 0,
       length: 3,
       child: Scaffold(
         appBar: AppBar(
@@ -133,7 +138,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
           titleSpacing: 30,
           title: Row(
             mainAxisSize: MainAxisSize.max,
-            children: [
+            children: <Widget>[
               Text(
                 "${numFormatter.format(
                   widget.likesList.length +
@@ -157,7 +162,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
               Padding(
                 padding: const EdgeInsets.all(15),
                 child: Column(
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: ListView.builder(
                         itemBuilder: (final BuildContext ctx, final int index) {
@@ -211,7 +216,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
             if (widget.reblogsWithCommentsList.isEmpty &&
                     blogTypeToShow == blogsType.withComments.index ||
                 widget.reblogsWithOutCommentsList.isEmpty &&
-                    blogTypeToShow == blogsType.Others.index)
+                    blogTypeToShow == blogsType.others.index)
               const EmptyBoxImage(msg: "No replies to show")
             else
               Padding(
@@ -245,11 +250,11 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                       toolbarHeight: 40,
                       leadingWidth: 10,
                       leading: Container(),
-                      actions: [
+                      actions: <Widget> [
                         IconButton(
                           onPressed: () {
                             showReblogsCategoriesBottomSheet(
-                                context, blogTypeToShow, changeBlogViewSection);
+                                context, blogTypeToShow, changeBlogViewSection,);
                           },
                           icon: const Icon(
                             Icons.arrow_drop_down,

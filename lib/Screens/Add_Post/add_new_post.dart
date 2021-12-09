@@ -72,6 +72,7 @@ class _AddPostState extends State<AddPost> {
               color: Colors.black,
             ),
             onPressed: () {
+              // ignore: todo
               // TODO(Salama): Alert to save as draft
               Navigator.of(context).pop();
             },

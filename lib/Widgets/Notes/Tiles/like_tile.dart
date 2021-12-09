@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 
+// ignore: public_member_api_docs
 class LikeTile extends StatelessWidget {
   ///
   const LikeTile({
@@ -13,10 +14,15 @@ class LikeTile extends StatelessWidget {
     final Key? key,
   }) : super(key: key);
 
+/// username of who had liked the post
   final String userName;
+/// blogTitle of who had liked the post
   final String blogTitle;
+/// blogAvatar of who had liked the post
   final String blogAvatar;
+/// followStatus of who had liked the post
   final bool followStatus;
+/// avatarShape of who had liked the post
   final String avatarShape;
 
   @override
@@ -24,8 +30,9 @@ class LikeTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(4),
       child: Row(
+        // ignore: avoid_redundant_argument_values
         mainAxisAlignment: MainAxisAlignment.start,
-        children: [
+        children: <Widget>[
           PersonAvatar(avatarPhotoLink: blogAvatar, shape: avatarShape),
           const SizedBox(
             width: 15,
@@ -35,15 +42,15 @@ class LikeTile extends StatelessWidget {
               height: 40,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Text(
                     userName,
                     style: const TextStyle(
-                        color: Colors.black87, fontWeight: FontWeight.bold),
+                        color: Colors.black87, fontWeight: FontWeight.bold,),
                   ),
                   Text(
                     blogTitle,
-                    style: const TextStyle(color: Colors.black45),
+                    style: const TextStyle(color: Colors.black45,),
                   ),
                 ],
               ),

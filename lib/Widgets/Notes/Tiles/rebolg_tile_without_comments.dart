@@ -1,5 +1,7 @@
+// ignore_for_file: public_member_api_docs
+
 import "package:flutter/material.dart";
-import '../../Post/post_personal_avatar.dart';
+import "Package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 
 class ReblogTileWithOutComments extends StatelessWidget {
@@ -9,14 +11,13 @@ class ReblogTileWithOutComments extends StatelessWidget {
       {required final this.avatartUrl,
       required final this.userName,
       required final this.avatarShape,
-      final Key? key})
+      final Key? key,})
       : super(key: key);
 
 ///
   final String avatartUrl;
   ///
   final String userName;
-
   ///
   final String avatarShape;
 
@@ -25,9 +26,9 @@ class ReblogTileWithOutComments extends StatelessWidget {
     return GestureDetector(
       onTap: () {},
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
-          children: [
+          children: <Widget>[
             PersonAvatar(avatarPhotoLink: avatartUrl, shape: avatarShape),
             const SizedBox(
               width: 1,
