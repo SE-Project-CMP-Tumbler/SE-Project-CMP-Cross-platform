@@ -1,103 +1,16 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-import "../../Widgets/Post/html_viewer.dart";
-import "../../Widgets/Post/post_personal_avatar.dart";
+
+import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
+import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
+import "package:tumbler/Widgets/Notes/Tiles/rebolg_tile_without_comments.dart";
+import "package:tumbler/Widgets/Notes/Tiles/reply_tile.dart";
+import "package:tumbler/Widgets/Notes/customized_tab.dart";
+import "package:tumbler/Widgets/Notes/show_reblog_type_bottomsheet.dart";
 
 enum blogsType {
   withComments,
   Others,
-}
-
-void showEditPostBottomSheet(final BuildContext ctx, final Enum currType,
-    final Function changeBlogViewSection) {
-  showModalBottomSheet<dynamic>(
-    isScrollControlled: true,
-    context: ctx,
-    builder: (final _) {
-      return Container(
-        height: 150,
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextButton(
-                onPressed: () {
-                  if (currType != blogsType.withComments) {
-                    changeBlogViewSection(blogsType.withComments);
-                  }
-                  Navigator.pop(ctx);
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text(
-                        "Reblogs with comments",
-                        style: TextStyle(
-                          color: (currType == blogsType.withComments)
-                              ? Colors.blue
-                              : Colors.black87,
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                    const FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text(
-                        "Show reblogs with added comments and/or tags",
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 15,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (currType != blogsType.Others) {
-                    changeBlogViewSection(blogsType.Others);
-                  }
-                  Navigator.pop(ctx);
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text(
-                        "Other reblogs",
-                        style: TextStyle(
-                          color: (currType == blogsType.Others)
-                              ? Colors.blue
-                              : Colors.black87,
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                    const FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text(
-                        "Show empty reblogs",
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 15,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }
 
 /// [Notes]
@@ -115,7 +28,11 @@ class Notes extends StatefulWidget {
 
   ///
   List<dynamic> reblogsList = <dynamic>[];
+
+  ///
   List<dynamic> reblogsWithCommentsList = <dynamic>[];
+
+  ///
   List<dynamic> reblogsWithOutCommentsList = <dynamic>[];
 
   ///
@@ -128,9 +45,10 @@ class Notes extends StatefulWidget {
 class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
   late TabController tabController;
 
-  final replyController = TextEditingController();
+  //
+  final TextEditingController replyController = TextEditingController();
 
-  Enum blogTypeToShow = blogsType.withComments;
+  int blogTypeToShow = blogsType.withComments.index;
 
   void checkReplyText() {
     setState(() {});
@@ -138,7 +56,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
 
   void changeBlogViewSection(final Enum type) {
     setState(() {
-      blogTypeToShow = type;
+      blogTypeToShow = type.index;
     });
   }
 
@@ -243,7 +161,8 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                           commentText: widget.repliesList[index]["reply_text"],
                           userName: widget.repliesList[index]["blog_username"],
                           avatarUrl: widget.repliesList[index]["blog_avatar"],
-                          avatarShape: widget.repliesList[index]["blog_avatar_shape"],
+                          avatarShape: widget.repliesList[index]
+                              ["blog_avatar_shape"],
                         );
                       },
                       itemCount: widget.repliesList.length,
@@ -268,15 +187,16 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                         width: 15,
                       ),
                       TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Reply",
-                            style: TextStyle(
-                              color: (replyController.text.isNotEmpty)
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            ),
-                          ))
+                        onPressed: () {},
+                        child: Text(
+                          "Reply",
+                          style: TextStyle(
+                            color: (replyController.text.isNotEmpty)
+                                ? Colors.blue
+                                : Colors.grey,
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ],
@@ -288,16 +208,20 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                 slivers: <Widget>[
                   SliverAppBar(
                     title: FittedBox(
-                      child: (blogTypeToShow == blogsType.withComments)
+                      child: (blogTypeToShow == blogsType.withComments.index)
                           ? const Text(
                               "Reblogs with comments",
                               style: TextStyle(
-                                  color: Colors.black45, fontSize: 17),
+                                color: Colors.black45,
+                                fontSize: 17,
+                              ),
                             )
                           : const Text(
                               "Other reblogs",
                               style: TextStyle(
-                                  color: Colors.black45, fontSize: 17),
+                                color: Colors.black45,
+                                fontSize: 17,
+                              ),
                             ),
                     ),
                     floating: true,
@@ -312,7 +236,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                     actions: [
                       IconButton(
                         onPressed: () {
-                          showEditPostBottomSheet(
+                          showReblogsCategoriesBottomSheet(
                               context, blogTypeToShow, changeBlogViewSection);
                         },
                         icon: const Icon(
@@ -324,30 +248,37 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                   ),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      (context, index) => (blogTypeToShow ==
-                              blogsType.withComments)
-                          ? ReblogTileWithComments(
-                              avatarUrl: widget.reblogsWithCommentsList[index]
-                                  ["blog_avatar"],
-                              htmlData: widget.reblogsWithCommentsList[index]
-                                  ["reblog_content"],
-                              userName: widget.reblogsWithCommentsList[index]
-                                  ["blog_username"],
-                                  avatarShape: widget.reblogsWithCommentsList[index]
-                                  ["blog_avatar_shape"] ,
-                            )
-                          : ReblogTileWithOutComments(
-                              userName: widget.reblogsWithOutCommentsList[index]
-                                  ["blog_username"],
-                              avatartUrl:
-                                  widget.reblogsWithOutCommentsList[index]
-                                      ["blog_avatar"],
-                                      avatarShape: widget.reblogsWithOutCommentsList[index]
-                                      ["blog_avatar_shape"] ,
-                            ),
-                      childCount: (blogTypeToShow == blogsType.withComments)
-                          ? widget.reblogsWithCommentsList.length
-                          : widget.reblogsWithOutCommentsList.length,
+                      (final BuildContext context, final int index) =>
+                          (blogTypeToShow == blogsType.withComments.index)
+                              ? ReblogTileWithComments(
+                                  avatarUrl:
+                                      widget.reblogsWithCommentsList[index]
+                                          ["blog_avatar"],
+                                  htmlData:
+                                      widget.reblogsWithCommentsList[index]
+                                          ["reblog_content"],
+                                  userName:
+                                      widget.reblogsWithCommentsList[index]
+                                          ["blog_username"],
+                                  avatarShape:
+                                      widget.reblogsWithCommentsList[index]
+                                          ["blog_avatar_shape"],
+                                )
+                              : ReblogTileWithOutComments(
+                                  userName:
+                                      widget.reblogsWithOutCommentsList[index]
+                                          ["blog_username"],
+                                  avatartUrl:
+                                      widget.reblogsWithOutCommentsList[index]
+                                          ["blog_avatar"],
+                                  avatarShape:
+                                      widget.reblogsWithOutCommentsList[index]
+                                          ["blog_avatar_shape"],
+                                ),
+                      childCount:
+                          (blogTypeToShow == blogsType.withComments.index)
+                              ? widget.reblogsWithCommentsList.length
+                              : widget.reblogsWithOutCommentsList.length,
                     ),
                   )
                 ],
@@ -370,321 +301,6 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ReblogTileWithOutComments extends StatelessWidget {
-  const ReblogTileWithOutComments(
-      {required final this.avatartUrl,
-      required final this.userName,
-      required this.avatarShape,
-      Key? key})
-      : super(key: key);
-
-  final avatartUrl;
-  final userName;
-  final avatarShape;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: GestureDetector(
-        onTap: () {},
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-          child: Row(
-            children: [
-              PersonAvatar(avatarPhotoLink: avatartUrl, shape: avatarShape),
-              SizedBox(
-                width: 1,
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  userName,
-                  style: TextStyle(color: Colors.black87, fontSize: 14),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ReblogTileWithComments extends StatelessWidget {
-  const ReblogTileWithComments(
-      {required final this.avatarUrl,
-      required final this.userName,
-      required final this.htmlData,
-      required final this.avatarShape,
-      Key? key})
-      : super(key: key);
-
-  final String avatarUrl;
-  final String userName;
-  final String htmlData;
-  final String avatarShape;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
-                SizedBox(
-                  width: 5,
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    userName,
-                    style: TextStyle(color: Colors.black87, fontSize: 14),
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.more_vert),
-                  ),
-                ))
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Container(
-              child: HtmlView(htmlData: htmlData),
-            ),
-            Row(
-              children: [
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Reblog",
-                    style: TextStyle(color: Colors.black54, fontSize: 17),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "View Post",
-                    style: TextStyle(color: Colors.black54, fontSize: 17),
-                  ),
-                )
-              ],
-            ),
-            Divider(
-              color: Colors.black38,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class LikeTile extends StatelessWidget {
-  ///
-  const LikeTile({
-    required final this.userName,
-    required final this.blogTitle,
-    required final this.blogAvatar,
-    required final this.followStatus,
-    required final this.avatarShape,
-    final Key? key,
-  }) : super(key: key);
-
-  final String userName;
-  final String blogTitle;
-  final String blogAvatar;
-  final bool followStatus;
-  final String avatarShape;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          PersonAvatar(avatarPhotoLink: blogAvatar, shape: avatarShape),
-          const SizedBox(
-            width: 15,
-          ),
-          Expanded(
-            child: SizedBox(
-              height: 40,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    userName,
-                    style: const TextStyle(
-                        color: Colors.black87, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    blogTitle,
-                    style: const TextStyle(color: Colors.black45),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                child: followStatus
-                    ? const Text(
-                        "Unfollow",
-                        style: TextStyle(fontSize: 18),
-                      )
-                    : const Text(
-                        "Follow",
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                onPressed: () {},
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class CustomizedTab extends StatelessWidget {
-  ///
-  CustomizedTab({
-    required final this.number,
-    required final this.iconType,
-    required final this.color,
-    required final this.currIndex,
-    required final this.myIndex,
-    final Key? key,
-  }) : super(key: key);
-
-  ///
-  final int number;
-
-  ///
-  final IconData iconType;
-
-  ///
-  final Color color;
-
-  ///
-  final int? currIndex;
-
-  ///
-  final int myIndex;
-
-  ///
-  NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
-
-  @override
-  Widget build(final BuildContext context) {
-    return Center(
-      child: Tab(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              iconType,
-              color: (currIndex == myIndex) ? color : Colors.grey,
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            Text(
-              numFormatter.format(number),
-              style: TextStyle(
-                  color: (currIndex == myIndex)
-                      ? color.withOpacity(1)
-                      : Colors.grey,
-                  fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ReplyTile extends StatelessWidget {
-  ///
-  const ReplyTile({
-    required final this.avatarUrl,
-    required final this.userName,
-    required final this.commentText,
-    required final this.avatarShape,
-    final Key? key,
-  }) : super(key: key);
-
-  ///
-  final String avatarUrl;
-
-  ///
-  final String userName;
-
-  ///
-  final String commentText;
-
-  ///
-  final String avatarShape;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-         PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
-          const SizedBox(
-            width: 15,
-          ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black26),
-                  borderRadius: const BorderRadius.all(Radius.circular(15))),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      userName,
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      commentText,
-                      maxLines: 1000,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
-        ],
       ),
     );
   }
