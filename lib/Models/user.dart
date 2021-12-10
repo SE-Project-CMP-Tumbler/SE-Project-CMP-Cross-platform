@@ -3,8 +3,14 @@
 class User {
   static int age = 0;
   static String email = "";
-  static String id = "";
-  static String name = "";
+  static String userID = "";
   static String blogAvatar = "";
   static String accessToken = "";
+  static List<String> profilesNames = <String>[
+    "Salama",
+    "Mohamed Salama",
+    "Waleed",
+    "Ahmed Waleed"
+  ];
+  static int currentProfile = 0;
 }
