@@ -6,9 +6,9 @@ class User {
   static String email = "";
   static String userID = "";
   static String accessToken = "";
-  static String blogAvatar = "";
-  static List<String> blogsNames = <String>[];
+
   static List<String> blogsIDs = <String>[];
+  static List<String> blogsNames = <String>[];
   static List<String> avatars = <String>[];
   static List<String> avatarShapes = <String>[];
   static List<String> headerImages = <String>[];
