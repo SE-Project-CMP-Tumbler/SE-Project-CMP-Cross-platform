@@ -27,7 +27,7 @@ class _PersonAvatarState extends State<PersonAvatar> {
         // TODO(Waleed): Navigate to user's profile
       },
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(7),
         child: (widget.shape == "circle")
             ? CircleAvatar(
                 backgroundImage: NetworkImage(widget.avatarPhotoLink),
@@ -41,7 +41,12 @@ class _PersonAvatarState extends State<PersonAvatar> {
                     Radius.circular(20),
                   ),
                 ),
-                child: Image.network(widget.avatarPhotoLink, fit: BoxFit.cover),
+                child: Image.network(
+                  widget.avatarPhotoLink.isEmpty
+                      ? "https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg"
+                      : widget.avatarPhotoLink,
+                  fit: BoxFit.cover,
+                ),
               ),
       ),
     );

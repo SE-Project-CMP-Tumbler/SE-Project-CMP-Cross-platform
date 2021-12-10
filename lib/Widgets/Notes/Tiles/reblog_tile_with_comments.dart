@@ -4,17 +4,15 @@ import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
-
 class ReblogTileWithComments extends StatelessWidget {
-  
   ///
-  const ReblogTileWithComments(
-      {required final this.avatarUrl,
-      required final this.userName,
-      required final this.htmlData,
-      required final this.avatarShape,
-      final Key? key,})
-      : super(key: key);
+  const ReblogTileWithComments({
+    required final this.avatarUrl,
+    required final this.userName,
+    required final this.htmlData,
+    required final this.avatarShape,
+    final Key? key,
+  }) : super(key: key);
 
   final String avatarUrl;
   final String userName;
@@ -31,7 +29,7 @@ class ReblogTileWithComments extends StatelessWidget {
             children: <Widget>[
               PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
               const SizedBox(
-                width: 5,
+                width: 2,
               ),
               TextButton(
                 onPressed: () {},
@@ -41,21 +39,22 @@ class ReblogTileWithComments extends StatelessWidget {
                 ),
               ),
               Expanded(
-                  child: Container(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.more_vert),
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.more_horiz),
+                  ),
                 ),
-              ),)
+              )
             ],
           ),
           const SizedBox(
-            height: 15,
+            height: 7,
           ),
           HtmlView(htmlData: htmlData),
           Row(
-            children:<Widget> [
+            children: <Widget>[
               TextButton(
                 onPressed: () {},
                 child: const Text(
@@ -73,7 +72,7 @@ class ReblogTileWithComments extends StatelessWidget {
             ],
           ),
           const Divider(
-            color: Colors.black38,
+            color: Colors.black54,
           ),
         ],
       ),

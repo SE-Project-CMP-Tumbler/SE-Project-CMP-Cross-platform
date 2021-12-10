@@ -3,7 +3,7 @@ import "package:tumbler/Models/user.dart";
 
 /// Fill the User model class with the
 /// user data
-Future<bool> fillAllBlog() async {
+Future<bool> fillUserBlogs() async {
   final Map<String, dynamic> response = await Api().getAllBlogs();
 
   if (response["meta"]["status"] == "200") {

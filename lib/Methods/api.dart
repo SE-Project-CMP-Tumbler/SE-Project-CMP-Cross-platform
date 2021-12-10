@@ -287,9 +287,9 @@ class Api {
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
       Uri.parse(
-        "$_firebaseHost/notes/$postID.json",
+        "https://mock-back-default-rtdb.firebaseio.com/notes/$postID.json",
       ),
-      headers: _headerContentAuth,
+      headers: <String, String>{"Authorization": User.accessToken},
     );
     return jsonDecode(response.body);
   }
