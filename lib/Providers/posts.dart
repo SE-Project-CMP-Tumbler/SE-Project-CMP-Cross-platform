@@ -40,8 +40,7 @@ class Posts with ChangeNotifier {
           postType: postsList[i]["post_type"] ?? "",
           blogId: postsList[i]["blog_id"] as int,
           blogUsername: postsList[i]["blog_username"] ?? "",
-          blogAvatar: "https://picsum.photos/250?image=9",
-          //postsList[i]["blog_avatar"] ?? "",
+          blogAvatar: "",
           blogAvatarShape: postsList[i]["blog_avatar_shape"] ?? "",
           blogTitle: postsList[i]["blog_title"] ?? "",
           postTime: postsList[i]["post_time"] ?? "",
@@ -50,21 +49,21 @@ class Posts with ChangeNotifier {
     }
 
     // setting the notes for each post in _homePosts through http requests.
-    // for (int i = 0; i < _homePosts.length; i++) {
-    //final Map<String, dynamic> notes = await Api().getNotes("${i % 2 + 1}");
-    //
-    //   //check the status code for the received response.
-    //   if (notes.values.single["meta"]["status"] == "404")
-    //     throw HttpException("Not Found!");
-    //   else {
-    //     _homePosts[i].likes =
-    //         notes.values.single["response"]["likes"] ?? <dynamic>[];
-    //     _homePosts[i].reblogs =
-    //         notes.values.single["response"]["reblogs"] ?? <dynamic>[];
-    //     _homePosts[i].replies =
-    //         notes.values.single["response"]["replies"] ?? <dynamic>[];
-    //   }
-    // }
+    for (int i = 0; i < _homePosts.length; i++) {
+      final Map<String, dynamic> notes = await Api().getNotes("${i % 2 + 1}");
+
+      //check the status code for the received response.
+      if (notes.values.single["meta"]["status"] == "404")
+        throw HttpException("Not Found!");
+      else {
+        _homePosts[i].likes =
+            notes.values.single["response"]["likes"] ?? <dynamic>[];
+        _homePosts[i].reblogs =
+            notes.values.single["response"]["reblogs"] ?? <dynamic>[];
+        _homePosts[i].replies =
+            notes.values.single["response"]["replies"] ?? <dynamic>[];
+      }
+    }
 
     notifyListeners();
   }

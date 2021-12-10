@@ -244,7 +244,8 @@ class Api {
         "post_type": postType,
         "post_body": postBody
       }),
-    ).onError((final Object? error, final StackTrace stackTrace) {
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -273,9 +274,9 @@ class Api {
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
       Uri.parse(
-        "$_firebaseHost/notes/$postID.json",
+        "https://mock-back-default-rtdb.firebaseio.com/notes/$postID.json",
       ),
-      headers: _headerContentAuth,
+      headers: <String, String>{"Authorization": User.accessToken},
     );
     return jsonDecode(response.body);
   }

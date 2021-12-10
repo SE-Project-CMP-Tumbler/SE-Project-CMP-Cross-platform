@@ -216,7 +216,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                     blogTypeToShow == blogsType.withComments.index ||
                 widget.reblogsWithOutCommentsList.isEmpty &&
                     blogTypeToShow == blogsType.others.index)
-              const EmptyBoxImage(msg: "No replies to show")
+              const EmptyBoxImage(msg: "No reblogs to show")
             else
               Padding(
                 padding: EdgeInsets.zero,
@@ -301,7 +301,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                 ),
               ),
             if (widget.likesList.isEmpty)
-              const EmptyBoxImage(msg: "No replies to show")
+              const EmptyBoxImage(msg: "No likes to show")
             else
               Padding(
                 padding: const EdgeInsets.all(5),
