@@ -1,4 +1,10 @@
 import "package:flutter/material.dart";
+import "package:tumbler/Constants/colors.dart";
+import "package:tumbler/Methods/log_out.dart";
+import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
+import "package:tumbler/Screens/Settings/change_email.dart";
+import "package:tumbler/Screens/Settings/change_name.dart";
+import "package:tumbler/Screens/Settings/change_password.dart";
 
 /// Setting Page
 class ProfileSettings extends StatelessWidget {
@@ -7,9 +13,84 @@ class ProfileSettings extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: appBackgroundColor,
       body: Center(
-        child: Text("I'm Setting Page"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<ChangeName>(
+                    builder: (final BuildContext context) => const ChangeName(),
+                  ),
+                );
+              },
+              child: const Text(
+                "Change Name",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<ChangeEmail>(
+                    builder: (final BuildContext context) =>
+                        const ChangeEmail(),
+                  ),
+                );
+              },
+              child: const Text(
+                "Change Email",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<ChangePassword>(
+                    builder: (final BuildContext context) =>
+                        const ChangePassword(),
+                  ),
+                );
+              },
+              child: const Text(
+                "Change Password",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (await logOut()) {
+                  // TODO(Ziyad): Restart the app?
+                  await Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute<OnStart>(
+                      builder: (final BuildContext context) => OnStart(),
+                    ),
+                    (final Route<dynamic> route) => false,
+                  );
+                }
+              },
+              child: const Text(
+                "Log out",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

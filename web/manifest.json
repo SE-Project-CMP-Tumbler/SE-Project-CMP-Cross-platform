@@ -1,6 +1,6 @@
 {
-  "name": "tumlr",
-  "short_name": "tumlr",
+  "name": "tumbler",
+  "short_name": "tumbler",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",

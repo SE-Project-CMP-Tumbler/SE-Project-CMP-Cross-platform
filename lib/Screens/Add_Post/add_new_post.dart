@@ -86,7 +86,6 @@ class _AddPostState extends State<AddPost> {
             ),
             onPressed: () {
               // not complited in back end
-              // ignore: todo
               // TODO(Salama): Alert to save as draft
               Navigator.of(context).pop();
             },
