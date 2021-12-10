@@ -3,6 +3,7 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
+import 'package:http/http.dart';
 import "package:tumbler/Methods/Api.dart";
 
 /// Get URL for all the Encoded Images, Videos, Audios
@@ -20,17 +21,18 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded image
       index1 = html.indexOf("\"", index2); // the end of the encoded image
-      html = html.replaceRange(
-          x + 10, index1, "lolphoto"); //this line should be removed
+      /*html = html.replaceRange(
+          x + 10, index1, "lolphoto");*/ //this line should be removed
       index1 = html.indexOf("\"",
           index2); //repeating this line is important since the html size changes in each iteration
-      /* url = await Api().uploadImage(
+      //var mpf = MultipartFile(field, stream, length)
+      url = await Api().uploadImage(
         File.fromRawPath(
-          //base64Decode(html.substring(index2 + 1, index1).trim()),
+          base64Decode(html.substring(index2 + 1, index1).trim()),
         ),
-      );*/
+      );
 
-      /*if (url["meta"]["status"] == "200") {
+      if (url["meta"]["status"] == "200") {
         html = html.replaceRange(x + 10, index1, "lolphoto");
       } else {
         await Fluttertoast.showToast(
@@ -41,7 +43,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
           textColor: Colors.white,
           fontSize: 16,
         );
-      }*/
+      }
     }
   }
 
@@ -57,18 +59,18 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded video
       index1 = html.indexOf("\"", index2); // the end of the encoded video
-      html = html.replaceRange(
-          x + 24, index1, "lolVideo"); //this line should be removed
+      /* html = html.replaceRange(
+          x + 24, index1, "lolVideo");*/ //this line should be removed
       index1 = html.indexOf("\"",
           index2); //repeating this line is important since the html size changes in each iteration
-      /*url = await Api().uploadVideo(
+      url = await Api().uploadVideo(
         File.fromRawPath(
           base64Decode(html.substring(index2 + 1, index1).trim()),
         ),
       );
 
       if (url["meta"]["status"] == "200") {
-        html = html.replaceRange(x + 12, index1, url["response"]["url"]);
+        html = html.replaceRange(x + 24, index1, url["response"]["url"]);
       } else {
         await Fluttertoast.showToast(
           msg: "Failed To Upload videos",
@@ -78,7 +80,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
           textColor: Colors.white,
           fontSize: 16,
         );
-      }*/
+      }
     }
   }
 
@@ -93,18 +95,18 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded audio
       index1 = html.indexOf("\"", index2); // the end of the encoded audio
-      html = html.replaceRange(
-          x + 24, index1, "lolAudio"); //this line should be removed
+      /*html = html.replaceRange(
+          x + 24, index1, "lolAudio");*/ //this line should be removed
       index1 = html.indexOf("\"",
           index2); //repeating this line is important since the html size changes in each iteration
-      /*url = await Api().uploadAudio(
+      url = await Api().uploadAudio(
         File.fromRawPath(
           base64Decode(html.substring(index2 + 1, index1).trim()),
         ),
       );
 
       if (url["meta"]["status"] == "200") {
-        html = html.replaceRange(x + 12, index1, url["response"]["url"]);
+        html = html.replaceRange(x + 24, index1, url["response"]["url"]);
       } else {
         await Fluttertoast.showToast(
           msg: "Failed To Upload Audios",
@@ -114,7 +116,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
           textColor: Colors.white,
           fontSize: 16,
         );
-      }*/
+      }
     }
   }
   return html;

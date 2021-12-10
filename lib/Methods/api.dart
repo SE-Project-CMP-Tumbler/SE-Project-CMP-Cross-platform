@@ -138,6 +138,7 @@ class Api {
       Uri.parse(_host + _uploadVideo + User.id),
       headers: <String, String>{
         "Authorization": User.accessToken,
+        "Content-Type": "multipart/form-data",
       },
       body: json.encode(<String, dynamic>{
         "video": video,
@@ -155,26 +156,37 @@ class Api {
   }
 
   /// Upload [image] to our server to get url of this image.
-  Future<Map<String, dynamic>> uploadImage(final io.File image) async {
-    final http.Response response = await http
+  Future<dynamic> uploadImage(final io.File image) async {
+    //print (i)
+    /* var request =
+        http.MultipartRequest('POST', Uri.parse(_host + _uploadImage));
+    request.headers.addAll({
+      "Authorization": User.accessToken,
+      "Content-Type": "multipart/form-data",
+    });
+    var mpf = image;
+    request.files.add(mpf);
+    var response = await request.send;*/
+
+    /*final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadImage + User.id),
       headers: <String, String>{
         "Authorization": User.accessToken,
+        "Content-Type": "multipart/form-data",
       },
-      body: json.encode(<String, dynamic>{
-        "image": image,
-      }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
+      body: image,
+    )*/
+    /*.onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
         return http.Response(_failed, 404);
       }
-    });
-
-    return jsonDecode(response.body);
+    });*/
+    //print("inImage");
+    // print(response.body);
+    //return response;
   }
 
   /// Upload [audio] to our server to get url of this audio.
@@ -211,11 +223,11 @@ class Api {
     final String postTime,
   ) async {
     //print("postBody");
-    print(User.accessToken);
-    print(User.id);
+    //print(User.accessToken);
+    // print(User.id);
     String s = "Bearer " + User.accessToken;
-    final RegExp pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-    pattern.allMatches(s).forEach((RegExpMatch match) => print(match.group(0)));
+    //final RegExp pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
+    //pattern.allMatches(s).forEach((RegExpMatch match) => print(match.group(0)));
     //print(s);
     final http.Response response = await http
         .post(Uri.parse(_hostS + _addPost + "57"),
@@ -244,8 +256,8 @@ class Api {
     });
     //print(response.statusCode);
     print(response.body);
-    print(User.id);
-    var data = jsonDecode(response.body);
+    //print(User.id);
+    //var data = jsonDecode(response.body);
     //print(data);
     return jsonDecode(response.body);
   }

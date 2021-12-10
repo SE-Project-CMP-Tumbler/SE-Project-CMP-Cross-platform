@@ -30,8 +30,8 @@ class _AddPostState extends State<AddPost> {
   Future<void> addThePost() async {
     final String html = await controller.getText();
     final String postTime = getDate();
-    final String processedHtml = await extractMediaFiles(html);
-    print(processedHtml);
+    //final String processedHtml = await extractMediaFiles(html);
+    //print(processedHtml);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
       postOptionChoice = "published";
@@ -40,11 +40,11 @@ class _AddPostState extends State<AddPost> {
     } else if (postType == PostTypes.privatePost) {
       postOptionChoice = "private";
     }
-    print("salama");
+    //print("salama");
     final Map<String, dynamic> response =
         await Api().addPost(html, postOptionChoice, "general", postTime);
-    print(response["meta"]["status"]);
-    print("lollol");
+    //print(response["meta"]["status"]);
+    //print("lollol");
     if (response["meta"]["status"] == "200") {
       await Fluttertoast.showToast(
         msg: "Added Successfully",
@@ -85,6 +85,8 @@ class _AddPostState extends State<AddPost> {
               color: Colors.black,
             ),
             onPressed: () {
+              // not complited in back end
+              // ignore: todo
               // TODO(Salama): Alert to save as draft
               Navigator.of(context).pop();
             },
@@ -103,27 +105,18 @@ class _AddPostState extends State<AddPost> {
                 child: const Text("Post"),
               ),
             ),
-            /*PopupMenuButton(
-              
-              icon: Icon(
-                Icons.more_vert,
-                color: Colors.black,
-              ),
-              itemBuilder: (context) => [showModalBottomSheet(child: PostTypeMenu(), )],
-            ),*/
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.more_vert,
                 color: Colors.black,
               ),
               onPressed: () {
                 showModalBottomSheet<void>(
                   context: context,
-                  builder: (BuildContext context) {
-                    return Column(mainAxisSize: MainAxisSize.min,
-                        //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          //Divider(),
+                  builder: (final BuildContext context) {
+                    return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const <Widget>[
                           PostTypeMenu(),
                         ]);
                   },
@@ -143,7 +136,6 @@ class _AddPostState extends State<AddPost> {
                 ),
                 height: MediaQuery.of(context).size.height * .05, //web hiz3l
                 child: Row(
-                  //mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Container(
                       margin: const EdgeInsets.all(10),
@@ -153,7 +145,7 @@ class _AddPostState extends State<AddPost> {
                             AssetImage("assets/images/profile_pic.png"),
                       ),
                     ),
-                    ProfilesList(),
+                    const ProfilesList(),
                   ],
                 ),
               ),
