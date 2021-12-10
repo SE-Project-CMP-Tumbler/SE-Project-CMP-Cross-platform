@@ -6,6 +6,7 @@ import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Add_Post/popup_menu.dart";
+import "../../Methods/process_html.dart";
 
 /// Page to Add New Post
 class AddPost extends StatefulWidget {
@@ -28,8 +29,8 @@ class _AddPostState extends State<AddPost> {
   Future<void> addThePost() async {
     final String html = await controller.getText();
     final String postTime = getDate();
-    //final String processedHtml = await extractMediaFiles(html);
-    //print(processedHtml);
+    final String processedHtml = await extractMediaFiles(html);
+    print(processedHtml);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
       postOptionChoice = "published";
@@ -39,8 +40,8 @@ class _AddPostState extends State<AddPost> {
       postOptionChoice = "private";
     }
     //print("salama");
-    final Map<String, dynamic> response =
-        await Api().addPost(html, postOptionChoice, "general", postTime);
+    final Map<String, dynamic> response = await Api()
+        .addPost(processedHtml, postOptionChoice, "general", postTime);
     //print(response["meta"]["status"]);
     //print("lollol");
     if (response["meta"]["status"] == "200") {
@@ -112,10 +113,11 @@ class _AddPostState extends State<AddPost> {
                   context: context,
                   builder: (final BuildContext context) {
                     return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const <Widget>[
-                          PostTypeMenu(),
-                        ],);
+                      mainAxisSize: MainAxisSize.min,
+                      children: const <Widget>[
+                        PostTypeMenu(),
+                      ],
+                    );
                   },
                 );
               },
@@ -157,14 +159,39 @@ class _AddPostState extends State<AddPost> {
                 htmlToolbarOptions: const HtmlToolbarOptions(
                   toolbarPosition: ToolbarPosition.belowEditor,
                   defaultToolbarButtons: <Toolbar>[
-                    StyleButtons(),
-                    FontSettingButtons(),
-                    FontButtons(clearAll: false),
-                    ColorButtons(),
-                    ListButtons(),
-                    ParagraphButtons(),
-                    InsertButtons(),
-                    OtherButtons(),
+                    //StyleButtons(),
+
+                    //ColorButtons(),
+                    //ListButtons(),
+                    FontButtons(
+                        italic: true,
+                        bold: true,
+                        underline: true,
+                        clearAll: false,
+                        strikethrough: false,
+                        subscript: false,
+                        superscript: false),
+                    InsertButtons(
+                        audio: true,
+                        link: true,
+                        video: true,
+                        picture: true,
+                        hr: false,
+                        otherFile: false,
+                        table: false),
+                    ParagraphButtons(
+                        alignCenter: true,
+                        alignJustify: true,
+                        alignLeft: true,
+                        alignRight: true,
+                        caseConverter: false,
+                        decreaseIndent: false,
+                        increaseIndent: false,
+                        lineHeight: false,
+                        textDirection: false),
+                    FontSettingButtons(fontSizeUnit: false),
+
+                    //OtherButtons(),
                   ],
                 ),
                 otherOptions: OtherOptions(
