@@ -12,8 +12,8 @@ class ProfilesList extends StatefulWidget {
 }
 
 class _ProfilesListState extends State<ProfilesList> {
-  List<String> s = User.profilesNames;
-  String dropdownValue = User.profilesNames[User.currentProfile];
+  List<String> s = User.blogsNames;
+  String dropdownValue = User.blogsNames[User.currentProfile];
   @override
   Widget build(final BuildContext context) {
     return DropdownButton<String>(
@@ -28,7 +28,7 @@ class _ProfilesListState extends State<ProfilesList> {
       onChanged: (final String? newValue) {
         setState(() {
           dropdownValue = newValue!;
-          User.currentProfile = User.profilesNames.indexOf(newValue);
+          User.currentProfile = User.blogsNames.indexOf(newValue);
           //print(User.currentProfile);
         });
       },
