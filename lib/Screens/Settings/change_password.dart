@@ -1,4 +1,5 @@
 import "dart:io";
+
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
@@ -6,7 +7,7 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
-import "package:tumbler/Screens/main_screen.dart";
+import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
 
 /// Change Password Page
 class ChangePassword extends StatefulWidget {
@@ -28,16 +29,15 @@ class _ChangePasswordState extends State<ChangePassword> {
     super.dispose();
   }
 
-  Future<void> changePass(final String newPass) async {
+  Future<void> changePass(final String oldPass) async {
     // we don't have confirm password
     final Map<String, dynamic> response = await Api().changePassword(
+      oldPass,
       _passController.text,
-      newPass,
-      newPass,
+      _passController.text,
     );
 
     if (response["meta"]["status"] == "200") {
-
       await Fluttertoast.showToast(
         msg: "You successfully updated your Password!",
         toastLength: Toast.LENGTH_SHORT,
@@ -49,8 +49,8 @@ class _ChangePasswordState extends State<ChangePassword> {
 
       // TODO(Ziyad): Restart the app? or log out ?
       await Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<MainScreen>(
-          builder: (final BuildContext context) => MainScreen(),
+        MaterialPageRoute<OnStart>(
+          builder: (final BuildContext context) => OnStart(),
         ),
         (final Route<dynamic> route) => false,
       );
@@ -105,7 +105,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         suffixIcon: IconButton(
                           color: Colors.white,
                           onPressed: () => setState(
-                              () => _obscureDialogText = !_obscureDialogText,),
+                            () => _obscureDialogText = !_obscureDialogText,
+                          ),
                           icon: Icon(
                             _obscureDialogText
                                 ? Icons.visibility
@@ -158,7 +159,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         suffixIcon: IconButton(
                           color: Colors.white,
                           onPressed: () => setState(
-                              () => _obscureDialogText = !_obscureDialogText,),
+                            () => _obscureDialogText = !_obscureDialogText,
+                          ),
                           icon: Icon(
                             _obscureDialogText
                                 ? Icons.visibility

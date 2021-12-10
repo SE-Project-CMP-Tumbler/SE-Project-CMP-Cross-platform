@@ -11,7 +11,7 @@ Future<bool> logOut() async {
   if (response["meta"]["status"] == "200") {
     User.age = 0;
     User.email = "";
-    User.id = "";
+    User.userID = "";
     User.name = "";
     User.blogAvatar = "";
     User.accessToken = "";

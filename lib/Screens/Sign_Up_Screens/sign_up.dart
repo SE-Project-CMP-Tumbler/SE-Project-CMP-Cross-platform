@@ -7,7 +7,6 @@ import "package:tumbler/Methods/email_password_validators.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Intro_Carousel/intro_carousel.dart";
 import "package:tumbler/Screens/Log_In_Screens/log_in.dart";
-import "package:tumbler/Screens/main_screen.dart";
 
 /// Sign Up Page
 class SignUp extends StatefulWidget {
@@ -123,7 +122,7 @@ class _SignUpState extends State<SignUp> {
   /// Call API Sign Up Function
   ///
   /// Get the [response] from the [Api.signU] function
-  /// and sets [User.name], [User.id], [User.blogAvatar]
+  /// and sets [User.name], [User.userID], [User.blogAvatar]
   /// , [User.accessToken] from the database if no error happened.
   Future<void> signUp() async {
     final Map<String, dynamic> response = await Api().signUp(
@@ -136,15 +135,15 @@ class _SignUpState extends State<SignUp> {
     if (response["meta"]["status"] == "200") {
       User.name = response["response"]["blog_username"];
       User.email = response["response"]["email"];
-      User.id = response["response"]["id"];
-      User.blogAvatar = response["response"]["blog_avatar"];
+      User.userID = response["response"]["id"].toString();
+      User.blogAvatar = response["response"]["blog_avatar"] ?? "";
       User.accessToken = response["response"]["access_token"];
 
-      // TODO(Ziyad): remove all the previous pages
-      await Navigator.of(context).pushReplacement(
-        MaterialPageRoute<MainScreen>(
+      await Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<IntroCarousel>(
           builder: (final BuildContext context) => IntroCarousel(),
         ),
+            (final Route<dynamic> route) => false,
       );
     } else {
       await Fluttertoast.showToast(

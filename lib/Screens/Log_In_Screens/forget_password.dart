@@ -40,6 +40,7 @@ class _ForgetPassWordState extends State<ForgetPassWord> {
     final Map<String, dynamic> response =
         await Api().forgetPassword(_emailController.text);
 
+    print(response);
     if (response["meta"]["status"] == "200")
       setState(() => firstHomePage = false);
     else

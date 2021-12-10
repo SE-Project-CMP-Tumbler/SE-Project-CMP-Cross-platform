@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: User.accessToken.isEmpty ? OnStart() : MainScreen(),
+        home: OnStart(),
       ),
     );
   }

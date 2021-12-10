@@ -1,10 +1,10 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Methods/log_out.dart";
+import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/Settings/change_email.dart";
 import "package:tumbler/Screens/Settings/change_name.dart";
 import "package:tumbler/Screens/Settings/change_password.dart";
-import "package:tumbler/Screens/main_screen.dart";
 
 /// Setting Page
 class ProfileSettings extends StatelessWidget {
@@ -74,8 +74,8 @@ class ProfileSettings extends StatelessWidget {
                 if (await logOut()) {
                   // TODO(Ziyad): Restart the app?
                   await Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute<MainScreen>(
-                      builder: (final BuildContext context) => MainScreen(),
+                    MaterialPageRoute<OnStart>(
+                      builder: (final BuildContext context) => OnStart(),
                     ),
                     (final Route<dynamic> route) => false,
                   );
