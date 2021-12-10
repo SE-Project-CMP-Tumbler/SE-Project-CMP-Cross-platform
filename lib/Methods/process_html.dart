@@ -16,11 +16,18 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
   Map<String, dynamic> url;
 
   while (x != -1 && index1 <= html.length - 25) {
-    x = html.indexOf("<img src='data:image/", index1);
+    x = html.indexOf("<img src=", index1);
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded image
-      index1 = html.indexOf("'", index2); // the end of the encoded image
-
+      index1 = html.indexOf('"', index2); // the end of the encoded image
+      /*html = html.replaceRange(
+          x + 10, index1, "lolphoto");*/ //this line should be removed
+      index1 = html.indexOf(
+        '"',
+        index2,
+      ); //repeating this line is important since the html size
+          // changes in each iteration
+      //var mpf = MultipartFile(field, stream, length)
       url = await Api().uploadImage(
         File.fromRawPath(
           base64Decode(html.substring(index2 + 1, index1).trim()),
@@ -28,7 +35,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
       );
 
       if (url["meta"]["status"] == "200") {
-        html = html.replaceRange(x + 10, index1, url["response"]["url"]);
+        html = html.replaceRange(x + 10, index1, "lolphoto");
       } else {
         await Fluttertoast.showToast(
           msg: "Failed To Upload Images",
@@ -49,11 +56,18 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
   url = <String, dynamic>{};
 
   while (x != -1 && index1 <= html.length - 25) {
-    x = html.indexOf("<video src='data:video/", index1);
+    x = html.indexOf("<video", index1);
 
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded video
-      index1 = html.indexOf("'", index2); // the end of the encoded video
+      index1 = html.indexOf('"', index2); // the end of the encoded video
+      /* html = html.replaceRange(
+          x + 24, index1, "lolVideo");*/ //this line should be removed
+      index1 = html.indexOf(
+        '"',
+        index2,
+      ); //repeating this line is important since the html size
+          // changes in each iteration
       url = await Api().uploadVideo(
         File.fromRawPath(
           base64Decode(html.substring(index2 + 1, index1).trim()),
@@ -61,7 +75,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
       );
 
       if (url["meta"]["status"] == "200") {
-        html = html.replaceRange(x + 12, index1, url["response"]["url"]);
+        html = html.replaceRange(x + 24, index1, url["response"]["url"]);
       } else {
         await Fluttertoast.showToast(
           msg: "Failed To Upload videos",
@@ -82,10 +96,17 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
   url = <String, dynamic>{};
 
   while (x != -1 && index1 <= html.length - 25) {
-    x = html.indexOf("<audio src='data:audio/", index1);
+    x = html.indexOf("<audio", index1);
     if (x != -1) {
-      index2 = html.indexOf(",", x); // the start of the encoded video
-      index1 = html.indexOf("'", index2); // the end of the encoded video
+      index2 = html.indexOf(",", x); // the start of the encoded audio
+      index1 = html.indexOf('"', index2); // the end of the encoded audio
+      /*html = html.replaceRange(
+          x + 24, index1, "lolAudio");*/ //this line should be removed
+      index1 = html.indexOf(
+        '"',
+        index2,
+      ); //repeating this line is important since the html size
+      // changes in each iteration
       url = await Api().uploadAudio(
         File.fromRawPath(
           base64Decode(html.substring(index2 + 1, index1).trim()),
@@ -93,7 +114,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
       );
 
       if (url["meta"]["status"] == "200") {
-        html = html.replaceRange(x + 12, index1, url["response"]["url"]);
+        html = html.replaceRange(x + 24, index1, url["response"]["url"]);
       } else {
         await Fluttertoast.showToast(
           msg: "Failed To Upload Audios",
