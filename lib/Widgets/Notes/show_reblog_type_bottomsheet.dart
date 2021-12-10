@@ -32,7 +32,6 @@ void showReblogsCategoriesBottomSheet(final BuildContext ctx,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children:<Widget> [
                     FittedBox(
-                      fit: BoxFit.contain,
                       child: Text(
                         "Reblogs with comments",
                         style: TextStyle(
@@ -44,7 +43,6 @@ void showReblogsCategoriesBottomSheet(final BuildContext ctx,
                       ),
                     ),
                     const FittedBox(
-                      fit: BoxFit.contain,
                       child: Text(
                         "Show reblogs with added comments and/or tags",
                         style: TextStyle(
@@ -67,7 +65,6 @@ void showReblogsCategoriesBottomSheet(final BuildContext ctx,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     FittedBox(
-                      fit: BoxFit.contain,
                       child: Text(
                         "Other reblogs",
                         style: TextStyle(
@@ -79,7 +76,6 @@ void showReblogsCategoriesBottomSheet(final BuildContext ctx,
                       ),
                     ),
                     const FittedBox(
-                      fit: BoxFit.contain,
                       child: Text(
                         "Show empty reblogs",
                         style: TextStyle(

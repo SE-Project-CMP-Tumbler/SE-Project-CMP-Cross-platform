@@ -19,6 +19,7 @@ class Api {
   final String _uploadVideo = "/upload_video/";
   final String _uploadAudio = "/upload_audio/";
   final String _addPost = "/post/";
+  final String _fetchPost = "/posts/random_posts/";
   final String _changeEmail = "/change_email";
   final String _changePass = "/change_password";
   final String _logOut = "/logout";
@@ -212,18 +213,18 @@ class Api {
     final String postType,
     final String postTime,
   ) async {
-    final http.Response response = await http.post(
+    final http.Response response = await http
+        .post(
       Uri.parse(_host + _addPost + User.userID),
-      headers: <String, String>{
-        "Authorization": User.accessToken,
-      },
-      body: <String, String>{
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, String>{
         "post_status": postStatus,
         "post_time": postTime,
         "post_type": postType,
         "post_body": postBody
-      },
-    ).onError((final Object? error, final StackTrace stackTrace) {
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -238,14 +239,13 @@ class Api {
   Future<dynamic> fetchAndPosts() async {
     try {
       final http.Response response = await http.get(
-        Uri.parse("https://api.tumbler.social/api/posts/random_posts/"),
-        headers: <String, String>{"Authorization": User.accessToken},
+        Uri.parse(_host + _fetchPost),
+        headers: _headerContentAuth,
       );
 
       return response;
-    } on Exception catch (e) {
-      print(e);
-      throw e;
+    } on Exception {
+      rethrow;
     }
   }
 
@@ -255,7 +255,7 @@ class Api {
       Uri.parse(
         "$_firebaseHost/notes/$postID.json",
       ),
-      headers: <String, String>{"Authorization": User.accessToken},
+      headers: _headerContentAuth,
     );
 
     return jsonDecode(response.body);

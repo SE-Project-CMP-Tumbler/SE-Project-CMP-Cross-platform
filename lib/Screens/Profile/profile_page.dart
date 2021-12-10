@@ -153,7 +153,7 @@ class _ProfilePageState extends State<ProfilePage>
                                       items: _tumblers
                                           .map(
                                             (final String e) =>
-                                                DropdownMenuItem(
+                                                DropdownMenuItem<String>(
                                               value: e,
                                               child: Container(
                                                 alignment: Alignment.centerLeft,
