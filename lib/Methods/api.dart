@@ -270,11 +270,22 @@ class Api {
   }
 
   /// GET Notes For the post with id [postID]
-  /// GET Notes For the post with id [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
       Uri.parse(
         "https://mock-back-default-rtdb.firebaseio.com/notes/$postID.json",
+      ),
+      headers: <String, String>{"Authorization": User.accessToken},
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// GET getPostLikeStatus for a post with id [postID]
+  Future<Map<String, dynamic>> getPostLikeStatus(final int postID) async {
+    // note: this is a mock function , the real one should accept current blogID beside postID.
+    final http.Response response = await http.get(
+      Uri.parse(
+        "https://mock-back-default-rtdb.firebaseio.com/postLoveStatus/$postID.json",
       ),
       headers: <String, String>{"Authorization": User.accessToken},
     );
