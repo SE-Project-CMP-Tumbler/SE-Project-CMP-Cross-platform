@@ -86,7 +86,8 @@ class Api {
         "age": age.toString(),
       }),
       headers: _headerContent,
-    ).onError((final Object? error, final StackTrace stackTrace) {
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -143,7 +144,8 @@ class Api {
 
   /// Upload [video] to our server to get url of this video.
   Future<Map<String, dynamic>> uploadVideo(final io.File video) async {
-    final http.Response response = await http.post(
+    final http.Response response = await http
+        .post(
       Uri.parse(_host + _uploadVideo + User.userID),
       headers: <String, String>{
         "Authorization": User.accessToken,
@@ -201,7 +203,8 @@ class Api {
 
   /// Upload [audio] to our server to get url of this audio.
   Future<Map<String, dynamic>> uploadAudio(final io.File audio) async {
-    final http.Response response = await http.post(
+    final http.Response response = await http
+        .post(
       Uri.parse(_host + _uploadAudio + User.userID),
       headers: <String, String>{
         "Authorization": "Bearer " + User.accessToken,
@@ -241,19 +244,13 @@ class Api {
         "post_type": postType,
         "post_body": postBody
       }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
+    ).onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
         return http.Response(_failed, 404);
       }
     });
-    //print(response.statusCode);
-    print(response.body);
-    //print(User.id);
-    //var data = jsonDecode(response.body);
-    //print(data);
     return jsonDecode(response.body);
   }
 
@@ -271,6 +268,7 @@ class Api {
     }
   }
 
+  /// GET Notes For the post with id [postID]
   /// GET Notes For the post with id [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(

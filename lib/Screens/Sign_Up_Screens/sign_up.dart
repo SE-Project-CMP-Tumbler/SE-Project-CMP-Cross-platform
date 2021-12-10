@@ -138,17 +138,18 @@ class _SignUpState extends State<SignUp> {
     );
 
     if (response["meta"]["status"] == "200") {
-      User.name = response["response"]["blog_username"];
+      User.profilesNames.add(response["response"]["blog_username"]);
       User.email = response["response"]["email"];
       User.userID = response["response"]["id"].toString();
       User.blogAvatar = response["response"]["blog_avatar"] ?? "";
       User.accessToken = response["response"]["access_token"];
+      User.currentProfile = 0;
 
       await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<IntroCarousel>(
           builder: (final BuildContext context) => IntroCarousel(),
         ),
-            (final Route<dynamic> route) => false,
+        (final Route<dynamic> route) => false,
       );
     } else {
       await Fluttertoast.showToast(

@@ -4,10 +4,8 @@ import "package:fluttertoast/fluttertoast.dart";
 import "package:html_editor_enhanced/html_editor.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
-import "package:tumbler/Methods/process_html.dart";
-import "../../Models/user.dart";
-import "../../Widgets/Add_Post/dropdown_list.dart";
-import "../../Widgets/Add_Post/popup_menu.dart";
+import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
+import "package:tumbler/Widgets/Add_Post/popup_menu.dart";
 
 /// Page to Add New Post
 class AddPost extends StatefulWidget {
@@ -117,7 +115,7 @@ class _AddPostState extends State<AddPost> {
                         mainAxisSize: MainAxisSize.min,
                         children: const <Widget>[
                           PostTypeMenu(),
-                        ]);
+                        ],);
                   },
                 );
               },

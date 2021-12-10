@@ -4,7 +4,6 @@ class User {
   static int age = 0;
   static String email = "";
   static String userID = "";
-  static String name = "";
   static String blogAvatar = "";
   static String accessToken = "";
   static List<String> profilesNames = <String>[

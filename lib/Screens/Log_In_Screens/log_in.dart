@@ -103,7 +103,8 @@ class _LogINState extends State<LogIN> {
         await Api().logIn(_emailController.text, _passController.text);
 
     if (response["meta"]["status"] == "200") {
-      User.name = response["response"]["blog_username"];
+      User.currentProfile = 0;
+      User.profilesNames.add(response["response"]["blog_username"]);
       User.email = response["response"]["email"];
       User.userID = response["response"]["id"].toString();
       User.blogAvatar = response["response"]["blog_avatar"] ?? "";

@@ -1,8 +1,11 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Models/user.dart";
 
+/// DropDownMenu for the profiles in
+/// Add post Page
 class ProfilesList extends StatefulWidget {
-  const ProfilesList({Key? key}) : super(key: key);
+  /// Constructor
+  const ProfilesList({final Key? key}) : super(key: key);
 
   @override
   _ProfilesListState createState() => _ProfilesListState();

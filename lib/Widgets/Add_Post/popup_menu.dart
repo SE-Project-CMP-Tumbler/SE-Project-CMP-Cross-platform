@@ -1,10 +1,22 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
-enum PostTypes { defaultPost, draftPost, privatePost }
+/// Type of Post
+enum PostTypes {
+  /// Default Post type (published)
+  defaultPost,
+  /// When Saved as Draft
+  draftPost,
+  /// When Posted as private
+  privatePost
+}
+
+/// the current post type
 PostTypes postType = PostTypes.defaultPost;
 
+/// Post Type Menu
 class PostTypeMenu extends StatefulWidget {
-  const PostTypeMenu({Key? key}) : super(key: key);
+  /// Constructor
+  const PostTypeMenu({final Key? key}) : super(key: key);
 
   @override
   _PostTypeMenuState createState() => _PostTypeMenuState();
@@ -14,7 +26,7 @@ class _PostTypeMenuState extends State<PostTypeMenu> {
   @override
   Widget build(final BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         Row(mainAxisAlignment: MainAxisAlignment.center,
             //crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -42,7 +54,7 @@ class _PostTypeMenuState extends State<PostTypeMenu> {
                   child: const Text("Done"),
                 ),
               ),
-            ]),
+            ],),
         const Divider(
           thickness: 0.4,
           color: Colors.black45,
@@ -54,8 +66,8 @@ class _PostTypeMenuState extends State<PostTypeMenu> {
               color: Colors.black,
             ),
             Text("   Post now"),
-          ]),
-          trailing: Radio(
+          ],),
+          trailing: Radio<PostTypes>(
             value: PostTypes.defaultPost,
             groupValue: postType,
             onChanged: (final PostTypes? value) {
@@ -76,8 +88,8 @@ class _PostTypeMenuState extends State<PostTypeMenu> {
               color: Colors.black,
             ),
             Text("   Save as draft"),
-          ]),
-          trailing: Radio(
+          ],),
+          trailing: Radio<PostTypes>(
             value: PostTypes.draftPost,
             groupValue: postType,
             onChanged: (final PostTypes? value) {
@@ -98,8 +110,8 @@ class _PostTypeMenuState extends State<PostTypeMenu> {
               color: Colors.black,
             ),
             Text("   Post privately"),
-          ]),
-          trailing: Radio(
+          ],),
+          trailing: Radio<PostTypes>(
             value: PostTypes.privatePost,
             groupValue: postType,
             onChanged: (final PostTypes? value) {
