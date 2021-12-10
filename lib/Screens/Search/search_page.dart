@@ -1,9 +1,10 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:tumbler/Constants/colors.dart";
-
+/// to search for tumblers
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+  /// constructor
+  const SearchPage({final Key? key}) : super(key: key);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -15,7 +16,6 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(final BuildContext context) {
     final double _height = MediaQuery.of(context).size.height;
-    // ignore: unused_local_variable
     final double _width = MediaQuery.of(context).size.width;
 
     void _onUpdateScroll(final ScrollMetrics metrics) {
@@ -35,7 +35,7 @@ class _SearchPageState extends State<SearchPage> {
     final List<String> backGrounds=<String>["search_1.jpg","search_2.jpg",
       "search_3.jpg","search_4.jpg"];
     return Scaffold(
-      backgroundColor: appBackgroundColor,
+      backgroundColor: navy,
       body: NotificationListener<ScrollNotification>(
         onNotification: (final ScrollNotification scrollNotification) {
          if (scrollNotification is ScrollUpdateNotification) {
