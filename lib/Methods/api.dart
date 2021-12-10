@@ -1,32 +1,31 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
-import 'package:path/path.dart';
-import 'package:async/async.dart';
-//import 'dart:io';
-//import 'package:http/http.dart' as http;
-//import 'dart:convert';
 import "dart:convert";
 import "dart:io" as io;
 
+import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
 import "package:tumbler/Models/user.dart";
 
 /// Class [Api] is used for all GET, POST, PUT, Delete request from the backend.
 class Api {
-  static const String _host = "https://api.tumbler.social/api";
   static const String _firebaseHost =
       "https://mock-back-default-rtdb.firebaseio.com";
-  final String _getTrendingTags = "/tag/trending";
-  final String _signUp = "/register";
-  final String _login = "/login";
-  final String _forgotPassword = "/forgot_password";
-  final String _uploadImage = "/upload_photo/";
-  final String _uploadVideo = "/upload_video/";
-  final String _uploadAudio = "/upload_audio/";
-  final String _addPost = "/post/";
-  final String _fetchPost = "/posts/random_posts/";
-  final String _changeEmail = "/change_email";
-  final String _changePass = "/change_password";
-  final String _logOut = "/logout";
+
+  final String _host = dotenv.env["host"] ?? " ";
+
+  final String _getTrendingTags = dotenv.env["host"] ?? " ";
+  final String _signUp          = dotenv.env["signUp"] ?? " ";
+  final String _login           = dotenv.env["login"] ?? " ";
+  final String _forgotPassword  = dotenv.env["forgotPassword"] ?? " ";
+  final String _uploadImage     = dotenv.env["uploadImage"] ?? " ";
+  final String _uploadVideo     = dotenv.env["uploadVideo"] ?? " ";
+  final String _uploadAudio     = dotenv.env["uploadAudio"] ?? " ";
+  final String _addPost         = dotenv.env["addPost"] ?? " ";
+  final String _blog            = dotenv.env["blog"] ?? " ";
+  final String _fetchPost       = dotenv.env["fetchPost"] ?? " ";
+  final String _changeEmail     = dotenv.env["changeEmail"] ?? " ";
+  final String _changePass      = dotenv.env["changePass"] ?? " ";
+  final String _logOut          = dotenv.env["logOut"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -94,8 +93,7 @@ class Api {
         "age": age.toString(),
       }),
       headers: _headerContent,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
+    ).onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -285,13 +283,21 @@ class Api {
     }
   }
 
-  /// GET Notes For the post with id [postID]
-  /// GET Notes For the post with id [postID]
+  /// GET Notes For the post with [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
       Uri.parse(
         "$_firebaseHost/notes/$postID.json",
       ),
+      headers: _headerContentAuth,
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Get all blogs of user
+  Future<Map<String, dynamic>> getAllBlogs() async {
+    final http.Response response = await http.get(
+      Uri.parse(_host + _blog),
       headers: _headerContentAuth,
     );
     return jsonDecode(response.body);

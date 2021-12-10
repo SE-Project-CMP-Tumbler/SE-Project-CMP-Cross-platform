@@ -12,7 +12,7 @@ Future<bool> logOut() async {
     User.age = 0;
     User.email = "";
     User.userID = "";
-    User.profilesNames.clear();
+    User.blogsNames.clear();
     User.blogAvatar = "";
     User.accessToken = "";
     User.currentProfile = 0;
