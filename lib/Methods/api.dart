@@ -37,7 +37,7 @@ class Api {
             {
               "meta": {
                         "status": "404",
-                         "msg": "Failed to connect to the server"
+                         "msg": "Failed to Connect to the server"
                       }
             } 
         ''';
@@ -86,15 +86,13 @@ class Api {
         "age": age.toString(),
       }),
       headers: _headerContent,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
+    ).onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
         return http.Response(_failed, 404);
       }
     });
-
     return jsonDecode(response.body);
   }
 
@@ -149,11 +147,13 @@ class Api {
       Uri.parse(_host + _uploadVideo + User.userID),
       headers: <String, String>{
         "Authorization": User.accessToken,
+        "Content-Type": "multipart/form-data",
       },
-      body: <String, dynamic>{
+      body: json.encode(<String, dynamic>{
         "video": video,
-      },
-    ).onError((final Object? error, final StackTrace stackTrace) {
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -165,24 +165,38 @@ class Api {
   }
 
   /// Upload [image] to our server to get url of this image.
-  Future<Map<String, dynamic>> uploadImage(final io.File image) async {
-    final http.Response response = await http.post(
-      Uri.parse(_host + _uploadImage + User.userID),
+  Future<dynamic> uploadImage(final io.File image) async {
+    //print (i)
+    /* var request =
+        http.MultipartRequest('POST', Uri.parse(_host + _uploadImage));
+    request.headers.addAll({
+      "Authorization": User.accessToken,
+      "Content-Type": "multipart/form-data",
+    });
+    var mpf = image;
+    request.files.add(mpf);
+    var response = await request.send;*/
+
+    /*final http.Response response = await http
+        .post(
+      Uri.parse(_host + _uploadImage + User.id),
+
       headers: <String, String>{
         "Authorization": User.accessToken,
+        "Content-Type": "multipart/form-data",
       },
-      body: <String, dynamic>{
-        "image": image,
-      },
-    ).onError((final Object? error, final StackTrace stackTrace) {
+      body: image,
+    )*/
+    /*.onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
         return http.Response(_failed, 404);
       }
-    });
-
-    return jsonDecode(response.body);
+    });*/
+    //print("inImage");
+    // print(response.body);
+    //return response;
   }
 
   /// Upload [audio] to our server to get url of this audio.
@@ -190,12 +204,15 @@ class Api {
     final http.Response response = await http.post(
       Uri.parse(_host + _uploadAudio + User.userID),
       headers: <String, String>{
-        "Authorization": User.accessToken,
+        "Authorization": "Bearer " + User.accessToken,
+        "Content-Type": "multipart/form-data",
+        //"Accept" :
       },
-      body: <String, dynamic>{
+      body: json.encode(<String, dynamic>{
         "audio": audio,
-      },
-    ).onError((final Object? error, final StackTrace stackTrace) {
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -208,6 +225,7 @@ class Api {
 
   /// Upload HTML code of the post.
   Future<Map<String, dynamic>> addPost(
+    //Future<void> addPost(
     final String postBody,
     final String postStatus,
     final String postType,
@@ -231,7 +249,11 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
-
+    //print(response.statusCode);
+    print(response.body);
+    //print(User.id);
+    //var data = jsonDecode(response.body);
+    //print(data);
     return jsonDecode(response.body);
   }
 
@@ -257,7 +279,6 @@ class Api {
       ),
       headers: _headerContentAuth,
     );
-
     return jsonDecode(response.body);
   }
 

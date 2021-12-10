@@ -124,6 +124,11 @@ class _SignUpState extends State<SignUp> {
   /// Get the [response] from the [Api.signU] function
   /// and sets [User.name], [User.userID], [User.blogAvatar]
   /// , [User.accessToken] from the database if no error happened.
+  /// Call API Sign Up Function
+  ///
+  /// Get the [response] from the [Api.signU] function
+  /// and sets [User.name], [User.id], [User.blogAvatar]
+  /// , [User.accessToken] from the database if no error happened.
   Future<void> signUp() async {
     final Map<String, dynamic> response = await Api().signUp(
       _nameController.text,

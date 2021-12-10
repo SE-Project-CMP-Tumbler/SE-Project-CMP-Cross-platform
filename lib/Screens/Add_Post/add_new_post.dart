@@ -5,7 +5,9 @@ import "package:html_editor_enhanced/html_editor.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
-import "package:tumbler/Models/user.dart";
+import "../../Models/user.dart";
+import "../../Widgets/Add_Post/dropdown_list.dart";
+import "../../Widgets/Add_Post/popup_menu.dart";
 
 /// Page to Add New Post
 class AddPost extends StatefulWidget {
@@ -28,10 +30,21 @@ class _AddPostState extends State<AddPost> {
   Future<void> addThePost() async {
     final String html = await controller.getText();
     final String postTime = getDate();
-    final String processedHtml = await extractMediaFiles(html);
+    //final String processedHtml = await extractMediaFiles(html);
+    //print(processedHtml);
+    String postOptionChoice = "";
+    if (postType == PostTypes.defaultPost) {
+      postOptionChoice = "published";
+    } else if (postType == PostTypes.draftPost) {
+      postOptionChoice = "draft";
+    } else if (postType == PostTypes.privatePost) {
+      postOptionChoice = "private";
+    }
+    //print("salama");
     final Map<String, dynamic> response =
-        await Api().addPost(processedHtml, "published", "general", postTime);
-
+        await Api().addPost(html, postOptionChoice, "general", postTime);
+    //print(response["meta"]["status"]);
+    //print("lollol");
     if (response["meta"]["status"] == "200") {
       await Fluttertoast.showToast(
         msg: "Added Successfully",
@@ -72,7 +85,7 @@ class _AddPostState extends State<AddPost> {
               color: Colors.black,
             ),
             onPressed: () {
-              // ignore: todo
+              // not complited in back end
               // TODO(Salama): Alert to save as draft
               Navigator.of(context).pop();
             },
@@ -80,16 +93,34 @@ class _AddPostState extends State<AddPost> {
           actions: <Widget>[
             Container(
               margin: const EdgeInsets.all(10),
-              child: TextButton(
+              child: ElevatedButton(
                 onPressed: isPostButtonDisabled ? null : addThePost,
                 style: ElevatedButton.styleFrom(
-                  onPrimary: Colors.blue[400],
+                  onPrimary: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 child: const Text("Post"),
               ),
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.more_vert,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (final BuildContext context) {
+                    return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const <Widget>[
+                          PostTypeMenu(),
+                        ]);
+                  },
+                );
+              },
             ),
           ],
         ),
@@ -113,10 +144,7 @@ class _AddPostState extends State<AddPost> {
                             AssetImage("assets/images/profile_pic.png"),
                       ),
                     ),
-                    Text(
-                      User.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    const ProfilesList(),
                   ],
                 ),
               ),

@@ -7,4 +7,11 @@ class User {
   static String name = "";
   static String blogAvatar = "";
   static String accessToken = "";
+  static List<String> profilesNames = <String>[
+    "Salama",
+    "Mohamed Salama",
+    "Waleed",
+    "Ahmed Waleed"
+  ];
+  static int currentProfile = 0;
 }
