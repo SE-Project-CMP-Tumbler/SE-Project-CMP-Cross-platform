@@ -49,7 +49,11 @@ class Api {
     io.HttpHeaders.acceptHeader: "application/json",
     io.HttpHeaders.contentTypeHeader: "application/json",
   };
-
+  final Map<String, String> _headerContentUpload = <String, String>{
+    io.HttpHeaders.acceptHeader: "application/json",
+    io.HttpHeaders.contentTypeHeader: "application/json",
+    io.HttpHeaders.authorizationHeader: "Bearer " + User.accessToken,
+  };
   final Map<String, String> _headerContentAuth = <String, String>{
     io.HttpHeaders.acceptHeader: "application/json",
     io.HttpHeaders.contentTypeHeader: "application/json",
@@ -145,15 +149,16 @@ class Api {
   }
 
   /// Upload [video] to our server to get url of this video.
-  Future<Map<String, dynamic>> uploadVideo(final io.File video) async {
+  Future<Map<String, dynamic>> uploadVideo(final String video) async {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadVideo + User.userID),
       headers: <String, String>{
-        "Authorization": User.accessToken,
-        "Content-Type": "multipart/form-data",
+        "Authorization": "Bearer " + User.accessToken,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
       },
-      body: json.encode(<String, dynamic>{
+      body: json.encode(<String, String>{
         "video": video,
       }),
     )
@@ -169,49 +174,40 @@ class Api {
   }
 
   /// Upload [image] to our server to get url of this image.
-  Future<dynamic> uploadImage(final io.File image) async {
-    // var request =
-    //     http.MultipartRequest('POST', Uri.parse(_host + _uploadImage));
-    // request.headers.addAll({
-    //   "Authorization": User.accessToken,
-    //   "Content-Type": "multipart/form-data",
-    // });
-    // var mpf = image;
-    // request.files.add(mpf);
-    // var response = await request.send;
-
-    // final http.Response response = await http
-    //     .post(
-    //   Uri.parse(_host + _uploadImage + User.id),
-    //
-    //   headers: <String, String>{
-    //     "Authorization": User.accessToken,
-    //     "Content-Type": "multipart/form-data",
-    //   },
-    //   body: image,
-    // )
-    // .onError((final Object? error, final StackTrace stackTrace) {
-    //   if (error.toString()
-    //   .startsWith("SocketException: Failed host lookup")) {
-    //     return http.Response(_weirdConnection, 502);
-    //   } else {
-    //     return http.Response(_failed, 404);
-    //   }
-    // });
-    // return response;
+  Future<dynamic> uploadImage(final String image) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(_host + _uploadImage),
+      headers: <String, String>{
+        "Authorization": "Bearer " + User.accessToken,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: json.encode(<String, String>{
+        "image": image,
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
   }
 
   /// Upload [audio] to our server to get url of this audio.
-  Future<Map<String, dynamic>> uploadAudio(final io.File audio) async {
+  Future<Map<String, dynamic>> uploadAudio(final String audio) async {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadAudio + User.userID),
       headers: <String, String>{
         "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "multipart/form-data",
-        //"Accept" :
+        "Content-Type": "application/json",
+        "Accept": "application/json",
       },
-      body: json.encode(<String, dynamic>{
+      body: json.encode(<String, String>{
         "audio": audio,
       }),
     )
@@ -226,6 +222,16 @@ class Api {
     return jsonDecode(response.body);
   }
 
+  ///get all blogs of user
+  Future<Map<String, dynamic>> getAllBlogs() async {
+    final http.Response response = await http.get(
+      Uri.parse(_host + "/blog"),
+      headers: _headerContentAuth,
+    );
+    //print(response.body);
+    return jsonDecode(response.body);
+  }
+
   /// Upload HTML code of the post.
   Future<Map<String, dynamic>> addPost(
     //Future<void> addPost(
@@ -234,9 +240,16 @@ class Api {
     final String postType,
     final String postTime,
   ) async {
+    print("lol");
+    final Map<String, dynamic> blogs = await getAllBlogs();
+    //print(blogs);
+    var decodeResponse = blogs["response"]["blogs"][0]["id"];
+    String blogId = decodeResponse.toString();
+    //print(blogId);
+    //String blogId = "5";
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _addPost + User.userID),
+      Uri.parse(_host + _addPost + blogId),
       headers: _headerContentAuth,
       body: jsonEncode(<String, String>{
         "post_status": postStatus,
@@ -252,6 +265,7 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
+    //print(response.body);
     return jsonDecode(response.body);
   }
 
