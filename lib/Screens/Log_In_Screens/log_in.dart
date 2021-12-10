@@ -96,7 +96,7 @@ class _LogINState extends State<LogIN> {
   /// Call API Log In Function.
   ///
   /// Get the [response] from the [Api.LogIn] function
-  /// and sets [User.name], [User.id], [User.blogAvatar],
+  /// and sets [User.name], [User.userID], [User.blogAvatar],
   /// [User.accessToken] from the database if no error happened.
   Future<void> logIn() async {
     final Map<String, dynamic> response =
@@ -105,21 +105,22 @@ class _LogINState extends State<LogIN> {
     if (response["meta"]["status"] == "200") {
       User.name = response["response"]["blog_username"];
       User.email = response["response"]["email"];
-      User.id = response["response"]["id"];
-      User.blogAvatar = response["response"]["blog_avatar"];
+      User.userID = response["response"]["id"].toString();
+      User.blogAvatar = response["response"]["blog_avatar"] ?? "";
       User.accessToken = response["response"]["access_token"];
 
-      await Navigator.of(context).pushReplacement(
+      await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<MainScreen>(
           builder: (final BuildContext context) => MainScreen(),
         ),
+        (final Route<dynamic> route) => false,
       );
     } else {
       await Fluttertoast.showToast(
         msg: response["meta"]["msg"],
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         textColor: Colors.white,
         fontSize: 16,
       );

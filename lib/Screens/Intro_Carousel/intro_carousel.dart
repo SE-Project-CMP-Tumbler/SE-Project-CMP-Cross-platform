@@ -203,7 +203,7 @@ class _IntroCarouselState extends State<IntroCarousel> {
                                   builder: (final BuildContext context) =>
                                       MainScreen(),
                                 ),
-                                (final Route route) => false,
+                                (final Route<dynamic> route) => false,
                               );
                             }
                           },

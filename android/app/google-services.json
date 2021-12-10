@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "542961071315",
+    "project_id": "tumbler-98224",
+    "storage_bucket": "tumbler-98224.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542961071315:android:4b59a2e54e5ebea3b95026",
+        "android_client_info": {
+          "package_name": "com.tumbler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "542961071315-ir2vc72qs0li6ddj9uc1d0j7bj6c39ec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7NoFkV4e5vdCjw5062zpdyhy1ZyZY0Lc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "542961071315-ir2vc72qs0li6ddj9uc1d0j7bj6c39ec.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
