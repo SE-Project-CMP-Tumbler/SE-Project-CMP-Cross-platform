@@ -137,7 +137,6 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
           backgroundColor: const Color.fromRGBO(0, 25, 53, 1),
           titleSpacing: 30,
           title: Row(
-            mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Text(
                 "${numFormatter.format(
