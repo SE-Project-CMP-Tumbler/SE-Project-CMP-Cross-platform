@@ -5,6 +5,8 @@ import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
 import "package:tumbler/Methods/get_all_blogs.dart";
+import "package:tumbler/Methods/initializer.dart";
+import "package:tumbler/Methods/local_db.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Log_In_Screens/forget_password.dart";
 import "package:tumbler/Screens/main_screen.dart";
@@ -95,7 +97,6 @@ class _LogINState extends State<LogIN> {
   }
 
   /// Call API Log In Function.
-  ///
   /// Get the [response] from the [Api.LogIn] function
   /// and sets [User.name], [User.userID], [User.blogAvatar],
   /// [User.accessToken] from the database if no error happened.
@@ -110,7 +111,16 @@ class _LogINState extends State<LogIN> {
       // the index of the primary user
       User.currentProfile = 0;
 
-      if (await fillAllBlog()) {
+      await LocalDataBase.instance.insertIntoUserTable(
+        User.userID,
+        User.email,
+        User.age,
+        User.accessToken,
+        User.currentProfile,
+      );
+
+      if (await fillUserBlogs()) {
+        await initializeUserBlogs();
         await Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute<MainScreen>(
             builder: (final BuildContext context) => MainScreen(),
