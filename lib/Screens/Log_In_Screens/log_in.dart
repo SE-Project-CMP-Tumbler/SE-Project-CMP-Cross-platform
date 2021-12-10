@@ -4,6 +4,7 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
+import "package:tumbler/Methods/get_all_blogs.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Log_In_Screens/forget_password.dart";
 import "package:tumbler/Screens/main_screen.dart";
@@ -103,24 +104,35 @@ class _LogINState extends State<LogIN> {
         await Api().logIn(_emailController.text, _passController.text);
 
     if (response["meta"]["status"] == "200") {
-      User.name = response["response"]["blog_username"];
       User.email = response["response"]["email"];
       User.userID = response["response"]["id"].toString();
-      User.blogAvatar = response["response"]["blog_avatar"] ?? "";
       User.accessToken = response["response"]["access_token"];
+      // the index of the primary user
+      User.currentProfile = 0;
 
-      await Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<MainScreen>(
-          builder: (final BuildContext context) => MainScreen(),
-        ),
-        (final Route<dynamic> route) => false,
-      );
+      if (await fillAllBlog()) {
+        await Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<MainScreen>(
+            builder: (final BuildContext context) => MainScreen(),
+          ),
+              (final Route<dynamic> route) => false,
+        );
+      } else {
+        await Fluttertoast.showToast(
+          msg: "Failed to get your blogs",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16,
+        );
+      }
     } else {
       await Fluttertoast.showToast(
         msg: response["meta"]["msg"],
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         textColor: Colors.white,
         fontSize: 16,
       );

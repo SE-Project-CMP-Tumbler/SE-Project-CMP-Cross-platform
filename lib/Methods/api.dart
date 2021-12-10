@@ -1,27 +1,31 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
-
 import "dart:convert";
 import "dart:io" as io;
 
+import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
 import "package:tumbler/Models/user.dart";
 
 /// Class [Api] is used for all GET, POST, PUT, Delete request from the backend.
 class Api {
-  static const String _host = "https://api.tumbler.social/api";
   static const String _firebaseHost =
       "https://mock-back-default-rtdb.firebaseio.com";
-  final String _getTrendingTags = "/tag/trending";
-  final String _signUp = "/register";
-  final String _login = "/login";
-  final String _forgotPassword = "/forgot_password";
-  final String _uploadImage = "/upload_photo/";
-  final String _uploadVideo = "/upload_video/";
-  final String _uploadAudio = "/upload_audio/";
-  final String _addPost = "/post/";
-  final String _changeEmail = "/change_email";
-  final String _changePass = "/change_password";
-  final String _logOut = "/logout";
+
+  final String _host = dotenv.env["host"] ?? " ";
+
+  final String _getTrendingTags = dotenv.env["host"] ?? " ";
+  final String _signUp          = dotenv.env["signUp"] ?? " ";
+  final String _login           = dotenv.env["login"] ?? " ";
+  final String _forgotPassword  = dotenv.env["forgotPassword"] ?? " ";
+  final String _uploadImage     = dotenv.env["uploadImage"] ?? " ";
+  final String _uploadVideo     = dotenv.env["uploadVideo"] ?? " ";
+  final String _uploadAudio     = dotenv.env["uploadAudio"] ?? " ";
+  final String _addPost         = dotenv.env["addPost"] ?? " ";
+  final String _blog            = dotenv.env["blog"] ?? " ";
+  final String _fetchPost       = dotenv.env["fetchPost"] ?? " ";
+  final String _changeEmail     = dotenv.env["changeEmail"] ?? " ";
+  final String _changePass      = dotenv.env["changePass"] ?? " ";
+  final String _logOut          = dotenv.env["logOut"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -36,7 +40,7 @@ class Api {
             {
               "meta": {
                         "status": "404",
-                         "msg": "Failed to connect to the server"
+                         "msg": "Failed to Connect to the server"
                       }
             } 
         ''';
@@ -85,15 +89,13 @@ class Api {
         "age": age.toString(),
       }),
       headers: _headerContent,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
+    ).onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
         return http.Response(_failed, 404);
       }
     });
-
     return jsonDecode(response.body);
   }
 
@@ -144,15 +146,18 @@ class Api {
 
   /// Upload [video] to our server to get url of this video.
   Future<Map<String, dynamic>> uploadVideo(final io.File video) async {
-    final http.Response response = await http.post(
+    final http.Response response = await http
+        .post(
       Uri.parse(_host + _uploadVideo + User.userID),
       headers: <String, String>{
         "Authorization": User.accessToken,
+        "Content-Type": "multipart/form-data",
       },
-      body: <String, dynamic>{
+      body: json.encode(<String, dynamic>{
         "video": video,
-      },
-    ).onError((final Object? error, final StackTrace stackTrace) {
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -164,37 +169,55 @@ class Api {
   }
 
   /// Upload [image] to our server to get url of this image.
-  Future<Map<String, dynamic>> uploadImage(final io.File image) async {
-    final http.Response response = await http.post(
-      Uri.parse(_host + _uploadImage + User.userID),
+  Future<dynamic> uploadImage(final io.File image) async {
+    //print (i)
+    /* var request =
+        http.MultipartRequest('POST', Uri.parse(_host + _uploadImage));
+    request.headers.addAll({
+      "Authorization": User.accessToken,
+      "Content-Type": "multipart/form-data",
+    });
+    var mpf = image;
+    request.files.add(mpf);
+    var response = await request.send;*/
+
+    /*final http.Response response = await http
+        .post(
+      Uri.parse(_host + _uploadImage + User.id),
+
       headers: <String, String>{
         "Authorization": User.accessToken,
+        "Content-Type": "multipart/form-data",
       },
-      body: <String, dynamic>{
-        "image": image,
-      },
-    ).onError((final Object? error, final StackTrace stackTrace) {
+      body: image,
+    )*/
+    /*.onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
         return http.Response(_failed, 404);
       }
-    });
-
-    return jsonDecode(response.body);
+    });*/
+    //print("inImage");
+    // print(response.body);
+    //return response;
   }
 
   /// Upload [audio] to our server to get url of this audio.
   Future<Map<String, dynamic>> uploadAudio(final io.File audio) async {
-    final http.Response response = await http.post(
+    final http.Response response = await http
+        .post(
       Uri.parse(_host + _uploadAudio + User.userID),
       headers: <String, String>{
-        "Authorization": User.accessToken,
+        "Authorization": "Bearer " + User.accessToken,
+        "Content-Type": "multipart/form-data",
+        //"Accept" :
       },
-      body: <String, dynamic>{
+      body: json.encode(<String, dynamic>{
         "audio": audio,
-      },
-    ).onError((final Object? error, final StackTrace stackTrace) {
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -207,51 +230,64 @@ class Api {
 
   /// Upload HTML code of the post.
   Future<Map<String, dynamic>> addPost(
+    //Future<void> addPost(
     final String postBody,
     final String postStatus,
     final String postType,
     final String postTime,
   ) async {
-    final http.Response response = await http.post(
+    final http.Response response = await http
+        .post(
       Uri.parse(_host + _addPost + User.userID),
-      headers: <String, String>{
-        "Authorization": User.accessToken,
-      },
-      body: <String, String>{
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, String>{
         "post_status": postStatus,
         "post_time": postTime,
         "post_type": postType,
         "post_body": postBody
-      },
-    ).onError((final Object? error, final StackTrace stackTrace) {
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
         return http.Response(_failed, 404);
       }
     });
-
     return jsonDecode(response.body);
   }
 
   /// GET Posts For the Home Page
-  Future<Map<String, dynamic>> fetchAndPosts() async {
-    final http.Response response = await http.get(
-      Uri.parse("$_firebaseHost/radar.json"),
-      headers: <String, String>{"Authorization": User.accessToken},
-    );
-    return jsonDecode(response.body);
+  Future<dynamic> fetchAndPosts() async {
+    try {
+      final http.Response response = await http.get(
+        Uri.parse(_host + _fetchPost),
+        headers: _headerContentAuth,
+      );
+
+      return response;
+    } on Exception {
+      rethrow;
+    }
   }
 
-  /// GET Notes For the post with id [postID]
+  /// GET Notes For the post with [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
       Uri.parse(
         "$_firebaseHost/notes/$postID.json",
       ),
-      headers: <String, String>{"Authorization": User.accessToken},
+      headers: _headerContentAuth,
     );
+    return jsonDecode(response.body);
+  }
 
+  /// Get all blogs of user
+  Future<Map<String, dynamic>> getAllBlogs() async {
+    final http.Response response = await http.get(
+      Uri.parse(_host + _blog),
+      headers: _headerContentAuth,
+    );
     return jsonDecode(response.body);
   }
 

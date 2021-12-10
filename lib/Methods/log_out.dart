@@ -12,9 +12,10 @@ Future<bool> logOut() async {
     User.age = 0;
     User.email = "";
     User.userID = "";
-    User.name = "";
+    User.blogsNames.clear();
     User.blogAvatar = "";
     User.accessToken = "";
+    User.currentProfile = 0;
 
     await Fluttertoast.showToast(
       msg: "Log Out",
