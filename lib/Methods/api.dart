@@ -33,7 +33,7 @@ class Api {
                         "status": "502",
                          "msg": "Weird Connection. Try Again?"
                       }
-            } 
+            }
         ''';
 
   final String _failed = '''
@@ -42,7 +42,7 @@ class Api {
                         "status": "404",
                          "msg": "Failed to Connect to the server"
                       }
-            } 
+            }
         ''';
 
   final Map<String, String> _headerContent = <String, String>{
@@ -218,6 +218,15 @@ class Api {
     return jsonDecode(response.body);
   }
 
+  /// Get all blogs of user
+  Future<Map<String, dynamic>> getAllBlogs() async {
+    final http.Response response = await http.get(
+      Uri.parse(_host + _blog),
+      headers: _headerContentAuth,
+    );
+    return jsonDecode(response.body);
+  }
+
   /// Upload HTML code of the post.
   Future<Map<String, dynamic>> addPost(
     //Future<void> addPost(
@@ -268,15 +277,6 @@ class Api {
         "https://mock-back-default-rtdb.firebaseio.com/notes/$postID.json",
       ),
       headers: <String, String>{"Authorization": User.accessToken},
-    );
-    return jsonDecode(response.body);
-  }
-
-  /// Get all blogs of user
-  Future<Map<String, dynamic>> getAllBlogs() async {
-    final http.Response response = await http.get(
-      Uri.parse(_host + _blog),
-      headers: _headerContentAuth,
     );
     return jsonDecode(response.body);
   }
