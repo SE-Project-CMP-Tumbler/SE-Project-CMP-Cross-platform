@@ -3,7 +3,13 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:like_button/like_button.dart";
+import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
+
+Future<bool> getLikeStatus(final int postId, final int blogId) async {
+  Map<String, dynamic> res = await Api().getPostLikeStatus(postId);
+  return res.values.single["response"]["like_status"];
+}
 
 ///Class for interaction bar exists the bottom of each post in home page
 ///
@@ -16,6 +22,7 @@ class PostInteractionBar extends StatefulWidget {
     required final this.likes,
     required final this.reblogs,
     required final this.replies,
+    required final this.postId,
     final Key? key,
   }) : super(key: key);
 
@@ -23,13 +30,32 @@ class PostInteractionBar extends StatefulWidget {
   List<dynamic> reblogs = <dynamic>[];
   List<dynamic> replies = <dynamic>[];
 
+  final int postId;
+  late String blogId;
+  bool isLoved = false;
+
   @override
   _PostInteractionBarState createState() => _PostInteractionBarState();
 }
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
-  bool isLoved = false;
   NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
+
+  @override
+  void initState() {
+    //TODO(Waleed): get current blogID and use it to get current like status for a post.
+    //widget.blogId = User.userID;
+
+    getLikeStatus(widget.postId % 4 + 1, 0).then((final bool result) {
+      if (this.mounted) {
+        setState(() {
+          widget.isLoved = result;
+        });
+      }
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(final BuildContext context) {
@@ -84,7 +110,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             ),
           ),
           LikeButton(
-            isLiked: isLoved,
+            isLiked: widget.isLoved,
             likeBuilder: (final bool isLoved) {
               final Color color = isLoved ? Colors.red : Colors.black;
               return Icon(
