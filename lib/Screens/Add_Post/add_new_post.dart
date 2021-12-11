@@ -4,9 +4,9 @@ import "package:fluttertoast/fluttertoast.dart";
 import "package:html_editor_enhanced/html_editor.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/process_html.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Add_Post/popup_menu.dart";
-import "../../Methods/process_html.dart";
 
 /// Page to Add New Post
 class AddPost extends StatefulWidget {
@@ -160,31 +160,19 @@ class _AddPostState extends State<AddPost> {
                   toolbarPosition: ToolbarPosition.belowEditor,
                   defaultToolbarButtons: <Toolbar>[
                     FontButtons(
-                        italic: true,
-                        bold: true,
-                        underline: true,
                         clearAll: false,
                         strikethrough: false,
                         subscript: false,
-                        superscript: false),
+                        superscript: false,),
                     InsertButtons(
-                        audio: true,
-                        link: true,
-                        video: true,
-                        picture: true,
                         hr: false,
-                        otherFile: false,
-                        table: false),
+                        table: false,),
                     ParagraphButtons(
-                        alignCenter: true,
-                        alignJustify: true,
-                        alignLeft: true,
-                        alignRight: true,
                         caseConverter: false,
                         decreaseIndent: false,
                         increaseIndent: false,
                         lineHeight: false,
-                        textDirection: false),
+                        textDirection: false,),
                     FontSettingButtons(fontSizeUnit: false),
                   ],
                 ),
