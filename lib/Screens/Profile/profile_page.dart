@@ -242,7 +242,7 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                   ),
                   Text(
-                    User.blogsIDs[User.currentProfile],
+                    User.titles[User.currentProfile],
                     textScaleFactor: 2.4,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
