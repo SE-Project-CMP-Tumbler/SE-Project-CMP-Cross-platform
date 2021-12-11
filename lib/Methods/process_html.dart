@@ -17,10 +17,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded image
       index1 = html.indexOf('"', index2); // the end of the encoded image
-      index1 = html.indexOf(
-        '"',
-        index2,
-      ); //repeating this line is important
+      index1 = html.indexOf('"', index2); //repeating this line is important
       //since the html size changes in each iteration
 
       final String image = html.substring(index2 + 1, index1);
