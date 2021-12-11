@@ -141,6 +141,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  contained_tab_bar_view:
+    dependency: "direct main"
+    description:
+      name: contained_tab_bar_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.0"
+  container_tab_indicator:
+    dependency: transitive
+    description:
+      name: container_tab_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   convert:
     dependency: transitive
     description:
@@ -176,6 +190,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.0"
+  enhanced_drop_down:
+    dependency: "direct main"
+    description:
+      name: enhanced_drop_down
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.7+1"
   fake_async:
     dependency: transitive
     description:

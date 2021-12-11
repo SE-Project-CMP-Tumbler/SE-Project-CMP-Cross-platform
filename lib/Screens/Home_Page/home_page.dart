@@ -123,8 +123,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
     loadingSpinnerAnimationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -170,7 +170,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           _isLoading = false;
         });
       }).catchError((final Object? error) {
-        setState(() {
+        if(mounted)
+          setState(() {
           _isLoading = false;
           _error = true;
         });
@@ -178,7 +179,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       });
     }
     _isInit = true;
-    super.didChangeDependencies();
+    if(mounted)
+      super.didChangeDependencies();
   }
 
   /// Used to switch from __Following__ section

@@ -1,10 +1,13 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
+import "package:tumbler/Providers/blogs.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
 import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
+import "package:tumbler/Screens/Search/search_page.dart";
 import "package:tumbler/Widgets/Home/draggable_floating_button.dart";
 
 /// The Main Screen That Hold [HomePage],
@@ -22,7 +25,7 @@ class _MainScreenState extends State<MainScreen>
   double fButtonDx = 20;
   double fButtonDy = 20;
   final GlobalKey _parentKey = GlobalKey();
-
+  int? currentProfile;
   @override
   void initState() {
     tabController = TabController(length: 4, vsync: this);
@@ -39,6 +42,7 @@ class _MainScreenState extends State<MainScreen>
   Widget build(final BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
     final double _height = MediaQuery.of(context).size.height;
+    currentProfile= Provider.of<BlogsData>(context).currentBlog;
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
@@ -83,7 +87,7 @@ class _MainScreenState extends State<MainScreen>
               Container(
                 color: appBackgroundColor,
                 child: const Center(
-                  child: Text("THIS IS SEARCH"),
+                  child: SearchPage(),
                 ),
               ),
               // TODO(Ziyad): Replace this with chat Page
@@ -92,7 +96,7 @@ class _MainScreenState extends State<MainScreen>
                 child: const Center(child: Text("THIS IS CHAT")),
               ),
               // TODO(Ziyad): Replace this with profile page
-              ProfilePage(),
+              ProfilePage(currentBlog: currentProfile,),
             ],
           ),
           if (selectedIndex == 0 || selectedIndex == 3)

@@ -51,6 +51,8 @@ dependencies:
   provider: ^6.0.1
   sqflite: ^2.0.1
   video_player: ^2.2.7
+  contained_tab_bar_view: ^0.8.0
+  enhanced_drop_down: ^0.1.7+1
 
 
 dev_dependencies:
@@ -78,6 +80,35 @@ flutter:
     - assets/fonts/
     - .env
 
+    - assets/images/intro_1.gif
+    - assets/images/intro_2.gif
+    - assets/images/intro_2.webp
+    - assets/images/intro_3.jpg
+    - assets/images/intro_4.jpg
+    - assets/images/intro_5.gif
+    - assets/images/logo.png
+    - assets/images/logo_letter.png
+    - assets/images/create_post.png
+    - assets/images/capital_letter.png
+    - assets/images/quote.png
+    - assets/images/intro_2_delayed.gif
+    - assets/images/create_tumblr.png
+    - assets/images/cat.png
+    - assets/images/express_ys.png
+    - assets/images/women.png
+    - assets/images/search_1.jpg
+    - assets/images/search_2.jpg
+    - assets/images/search_3.jpg
+    - assets/images/search_4.jpg
+    - assets/images/1.png
+    - assets/images/2.png
+    - assets/images/3.png
+    - assets/images/4.png
+    - assets/images/5.png
+    - assets/images/6.png
+    - assets/images/7.png
+    - assets/images/8.png
+    - assets/images/9.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
