@@ -50,6 +50,7 @@ dependencies:
   provider: ^6.0.1
   video_player: ^2.2.7
   contained_tab_bar_view: ^0.8.0
+  enhanced_drop_down: ^0.1.7+1
 
 
 

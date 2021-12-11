@@ -1,14 +1,91 @@
 import "dart:math" as math;
 
+import 'package:enhanced_drop_down/enhanced_drop_down.dart';
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:flutter/painting.dart";
 import "package:flutter/rendering.dart";
 import "package:flutter/services.dart";
+import 'package:provider/provider.dart';
+import 'package:tumbler/Constants/colors.dart';
+import 'package:tumbler/Models/blog.dart';
+import 'package:tumbler/Models/post.dart';
+import 'package:tumbler/Providers/blogs.dart';
+import 'package:tumbler/Providers/posts.dart';
+import 'package:tumbler/Screens/Home_Page/home_page.dart';
+import 'package:tumbler/Screens/Profile/create_new_blog.dart';
+import 'package:tumbler/Screens/Profile/likes_tab.dart';
 import "package:tumbler/Screens/Settings/profile_settings.dart";
+import 'package:tumbler/Widgets/Post/post_overview.dart';
+import 'package:tumbler/Widgets/Post/profile_personal_post.dart';
 
+/// Shows modal bottom sheet when
+/// the user clicks on more vert icon button in a post.
+void showEditPostProfileBottomSheet(final BuildContext ctx) {
+  showModalBottomSheet<dynamic>(
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    context: ctx,
+    builder: (final _) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          const Text("Dec 19, 2019",style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),),
+          const SizedBox(height: 8,),
+          Container(
+            width: double.infinity,
+            decoration:const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(20),
+                topLeft: Radius.circular(20),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ListTile(
+                  onTap: () {},
+                  title: const Text(
+                    "Pin post",
+                    style: TextStyle(color: Colors.black),
+                  ),
+
+                ),
+                ListTile(
+                  onTap: () {},
+                  title: const Text(
+                    "Mute notifications",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                ListTile(
+                  onTap: () {},
+                  title: const Text(
+                    "Copy Link",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
 /// Profile Page of the User
 class ProfilePage extends StatefulWidget {
+  /// constructor
+  const ProfilePage({
+    required final this.currentBlog,
+    final Key? key,}) : super(key: key);
+  /// takes the current blog index
+  final int? currentBlog;
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -22,22 +99,15 @@ class _ProfilePageState extends State<ProfilePage>
   final GlobalKey<State<StatefulWidget>> orangeKey = GlobalKey();
   final GlobalKey<State<StatefulWidget>> yellowKey = GlobalKey();
   final GlobalKey<State<StatefulWidget>> purpleKey = GlobalKey();
-  final List<String> _tumblers = <String>[
-    "Donia Esawi",
-    "Regina Phalange",
-    "Princess Consuella BananaHammok",
-    "Create a new tumblr"
-  ];
-  final List<String> _tumblersProfilePics = <String>[
-    "intro_3.jpg",
-    "intro_4.jpg",
-    "intro_4.jpg",
-    "create_tumblr.png"
-  ];
   int currentOption = 0;
   int themeColor = 0xff001935;
   int themeTitleColor = 0xffffffff;
-  String? _selectedTumbler = "Donia Esawi";
+  int accentColor= 0xffffffff;
+  String? _selectedTumbler;
+  List<String> blogUserNames=<String>[];
+  List<Post> posts = <Post>[];
+  List<Blog> blogs=<Blog>[];
+  int? currentProfile;
 
   @override
   void initState() {
@@ -48,6 +118,40 @@ class _ProfilePageState extends State<ProfilePage>
         statusBarColor: Colors.transparent,
       ),
     );
+    refreshHome(context);
+    getAllBlogs(context);
+
+
+  }
+  // TODO(Donia): Remove this
+  Future<void> refreshHome(final BuildContext context) async {
+
+    await Provider.of<Posts>(context, listen: false)
+        .fetchAndSetPosts()
+        .then((final _) {
+      setState(() {
+        posts = Provider.of<Posts>(context, listen: false).homePosts;
+      });
+    }).catchError((final Object? error) {
+      showErrorDialog(context, error.toString());
+    });
+  }
+
+  Future<void> getAllBlogs(final BuildContext context) async {
+    await Provider.of<BlogsData>(context, listen: false)
+        .fetchAndSetBlogs().catchError((final Object? error) {
+      showErrorDialog(context, error.toString());
+    });
+    blogs= await Provider.of<BlogsData>(context,listen: false).get_Blogs().then(
+            (value) {
+              setState(() {
+                _selectedTumbler= value[widget.currentBlog!].username;
+              });
+              return value;
+            } );
+
+
+
   }
 
   @override
@@ -59,361 +163,380 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(final BuildContext context) {
+    blogUserNames = blogs.map((e) => e.username!).toList();
+    blogUserNames.add("Create new tumblr");
+    currentProfile= Provider.of<BlogsData>(context).currentBlog;
     final double _height = MediaQuery.of(context).size.height;
     // ignore: unused_local_variable
     final double _width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      body: Container(
-        color: Color(themeColor),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverList(
-              delegate: SliverChildListDelegate(
-                <Widget>[
-                  Container(
-                    height: 0.35 * _height,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: ExactAssetImage("assets/images/intro_3.jpg"),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: <Widget>[
-                        Positioned(
-                          top: 0.35 * _height - 0.085 * _height,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            color: Color(themeColor),
-                            height: 0.8 * _height,
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0.085 * _height - 25,
-                          child: Container(
-                            height: 100,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              color: Color(themeColor),
-                              shape: BoxShape.circle, //editable
-                              border: Border.all(
-                                width: 3,
-                                color: Color(themeColor),
-                              ),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(50),
-                              ), //editable
-                              child: Image.asset(
-                                "assets/images/intro_3.jpg",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "Untitled",
-                          textScaleFactor: 2.4,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Color(themeTitleColor),
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: SafeArea(
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 4,
-                                  child: SizedBox(
-                                    width: _width / 2,
-                                    child: DropdownButton<String>(
-                                      onChanged: (final String? value) {
-                                        setState(() {
-                                          _selectedTumbler = value;
-                                        });
-                                      },
-                                      value: _selectedTumbler,
-                                      // Hide the default underline
-                                      underline: Container(
-                                        height: 0,
-                                      ),
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down_outlined,
-                                        color: Colors.white,
-                                      ),
-                                      isExpanded: true,
-                                      // The list of options
-                                      items: _tumblers
-                                          .map(
-                                            (final String e) =>
-                                                DropdownMenuItem<String>(
-                                              value: e,
-                                              child: Container(
-                                                alignment: Alignment.centerLeft,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Image.asset(
-                                                          "assets/images/${_tumblersProfilePics[_tumblers.indexOf(e)]}",
-                                                          width: 35,
-                                                          height: 35,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        Expanded(
-                                                          child: Text(
-                                                            e,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    if (_tumblers.indexOf(e) !=
-                                                        3)
-                                                      Expanded(
-                                                        child: Divider(
-                                                          thickness: 1,
-                                                          color: Colors
-                                                              .grey.shade200,
-                                                          height: 0,
-                                                        ),
-                                                      )
-                                                    else
-                                                      Container()
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                          .toList(),
-
-                                      // Customize the selected item
-                                      selectedItemBuilder: (
-                                        final BuildContext context,
-                                      ) =>
-                                          _tumblers
-                                              .map(
-                                                (final String e) => Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                      8,
-                                                    ),
-                                                    child: Text(
-                                                      e,
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.white,
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Material(
-                                    type: MaterialType.transparency,
-                                    shape: const CircleBorder(),
-                                    clipBehavior: Clip.hardEdge,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.search_outlined,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () {},
-                                      splashColor: Colors.white10,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Material(
-                                    type: MaterialType.transparency,
-                                    shape: const CircleBorder(),
-                                    clipBehavior: Clip.hardEdge,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.color_lens,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () {},
-                                      splashColor: Colors.white10,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Material(
-                                    type: MaterialType.transparency,
-                                    shape: const CircleBorder(),
-                                    clipBehavior: Clip.hardEdge,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.share,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () {},
-                                      splashColor: Colors.white10,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Material(
-                                    type: MaterialType.transparency,
-                                    shape: const CircleBorder(),
-                                    clipBehavior: Clip.hardEdge,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.settings,
-                                        size: 25,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute<ProfileSettings>(
-                                            builder:
-                                                (final BuildContext context) =>
-                                                    const ProfileSettings(),
-                                          ),
-                                        );
-                                      },
-                                      splashColor: Colors.white10,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
+    final List<String> _tabs = <String>["Posts", "Likes", "Following"];
+    return DefaultTabController(
+      length: _tabs.length, // This is the number of tabs.
+      child: Scaffold(
+        backgroundColor: Color(themeColor),
+        body:
+        NestedScrollView(
+        floatHeaderSlivers: true,
+        headerSliverBuilder:
+        (final BuildContext context, final bool innerBoxIsScrolled) {
+        /// These are the slivers that show up in the "outer" scroll view.
+        return <Widget>[
+        SliverOverlapAbsorber(
+          /// This widget takes the overlapping behavior of the SliverAppBar,
+          /// and redirects it to the SliverOverlapInjector below. If it is
+          /// missing, then it is possible for the nested "inner" scroll view
+          /// below to end up under the SliverAppBar even when the inner
+          /// scroll view thinks it has not been scrolled.
+          /// This is not necessary if the "headerSliverBuilder" only builds
+          /// widgets that do not overlap the next sliver.
+          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate(
+              <Widget>[
+                Container(
+                  height: 0.35 * _height,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: ExactAssetImage("assets/images/intro_3.jpg"),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ],
-              ),
-            ),
-            makeTabBarHeader(),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                  //posts
-                  <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Container(
-                        key: greenKey,
-                        height: 1800,
-                        color: Colors.white,
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: <Widget>[
+                  Positioned(
+                    top: 0.35 * _height - 0.085 * _height,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: Color(themeColor),
+                      height: 0.8 * _height,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0.085 * _height - 25,
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        color: Color(themeColor),
+                        shape: BoxShape.circle, //editable
+                        border: Border.all(
+                          width: 3,
+                          color: Color(themeColor),
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(50),
+                        ), //editable
+                        child: Image.asset(
+                          "assets/images/intro_3.jpg",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Container(
-                        key: purpleKey,
-                        height: 1800,
-                        color: Colors.white,
-                      ),
+                  ),
+                  Text(
+                    "Untitled",
+                    textScaleFactor: 2.4,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(themeTitleColor),
                     ),
-                  ]),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: SafeArea(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 4,
+                            child: SizedBox(
+                              width: _width / 2,
+                              child: DropdownButton<String>(
+                                onChanged: (final String? value) {
 
-  SliverPersistentHeader makeTabBarHeader() {
-    return SliverPersistentHeader(
-      pinned: true,
-      delegate: _SliverAppBarDelegate(
-        minHeight: 70,
-        maxHeight: 70,
-        child: Container(
-          padding: const EdgeInsets.only(top: 20),
-          color: Color(themeColor),
-          child: TabBar(
-            onTap: (final int val) {
-              setState(() {
-                currentTab = val;
-              });
-            },
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            controller: tabController,
-            tabs: const <Widget>[
-              Tab(
-                child: Text(
-                  "Posts",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                                  if(value==
+                                      blogUserNames[blogUserNames.length-1])
+                                    {
+                                      Navigator.push(context,
+                                        MaterialPageRoute(builder:
+                                          (final BuildContext context)=>
+                                          const CreateNewBlog(),),);
+                                    }
+                                  else{
+                                    setState(() {
+                                      _selectedTumbler = value;
+                                    });
+                                    Provider.of<BlogsData>
+                                      (context,listen: false)
+                                        .updateCurrentBlogIndex(
+                                        blogUserNames.
+                                        indexOf(_selectedTumbler!),
+                                    );
+                                  }
+                                },
+                                value: _selectedTumbler,
+                                // Hide the default underline
+                                underline: Container(
+                                  height: 0,
+                                ),
+                                icon: const Icon(
+                                  Icons.arrow_drop_down_outlined,
+                                  color: Colors.white,
+                                ),
+                                isExpanded: true,
+                                // The list of options
+                                items: blogUserNames
+                                    .map(
+                                      (final String e) =>
+                                      DropdownMenuItem<String>(
+                                        value: e,
+                                        child: Container(
+                                          alignment: Alignment.centerLeft,
+                                          child:
+                                          Row(
+                                            children: <Widget>[
+                                              if(e==blogUserNames[blogUserNames.length-1])
+                                              const
+                                              Icon(Icons.add_circle_outline
+                                                ,)
+                                              else
+                                              Image.network(
+                                                blogs[
+                                                  blogs.indexWhere(
+                                                (final Blog element) =>
+                                                element.username==e,)
+                                                ].avatarImageUrl??"https://picsum.photos/200",
+                                                width: 35,
+                                                height: 35,
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Expanded(
+                                                child: Text(
+                                                  e,
+                                                  overflow:
+                                                  TextOverflow
+                                                      .ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+
+
+                                        ),
+                                      ),
+                                ).toList(),
+
+                                // Customize the selected item
+                                selectedItemBuilder: (
+                                    final BuildContext context,) =>
+                                    blogUserNames
+                                        .map(
+                                          (final String e) => Align(
+                                        alignment:
+                                        Alignment.centerLeft,
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.all(
+                                            8,
+                                          ),
+                                          child: Text(
+                                            e,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white,
+                                            ),
+                                            overflow:
+                                            TextOverflow.ellipsis,
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                      ),
+                                    ).toList(),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Material(
+                              type: MaterialType.transparency,
+                              shape: const CircleBorder(),
+                              clipBehavior: Clip.hardEdge,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.search_outlined,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {},
+                                splashColor: Colors.white10,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Material(
+                              type: MaterialType.transparency,
+                              shape: const CircleBorder(),
+                              clipBehavior: Clip.hardEdge,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.color_lens,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {},
+                                splashColor: Colors.white10,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Material(
+                              type: MaterialType.transparency,
+                              shape: const CircleBorder(),
+                              clipBehavior: Clip.hardEdge,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.share,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {},
+                                splashColor: Colors.white10,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Material(
+                              type: MaterialType.transparency,
+                              shape: const CircleBorder(),
+                              clipBehavior: Clip.hardEdge,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.settings,
+                                  size: 25,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<ProfileSettings>(
+                                      builder:
+                                          (final BuildContext context) =>
+                                      const ProfileSettings(),
+                                    ),
+                                  );
+                                },
+                                splashColor: Colors.white10,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  ],
                 ),
-              ),
-              Tab(
-                child: Text(
-                  "Likes",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                 ),
+
+              ],
+            ),
+          ),
+        ),
+        SliverPersistentHeader(
+          pinned: true,
+          floating: true,
+          delegate: _SliverAppBarDelegate(
+            minHeight: 80,
+            maxHeight: 80,
+            child: Container(
+              color: Color(themeColor),
+              child: TabBar(
+                padding: const EdgeInsets.only(top: 32),
+                indicatorColor: Color(accentColor),
+                labelColor: Color(accentColor),
+                // These are the widgets to put in each tab in the tab bar
+                tabs: _tabs.map((final String name) =>
+                    Tab(text: name),).toList(),
               ),
-              Tab(
-                child: Text(
-                  "Following",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                ),
-              ),
-            ],
-            indicatorSize: TabBarIndicatorSize.tab,
+            ),
+          ),
+        ),
+        ];
+        },
+          body: Container(
+            color: navy,
+            child: TabBarView(
+              // These are the contents of the tab views, below the tabs.
+              children: _tabs.map((final String name) => Builder(
+                // This Builder is needed to provide a BuildContext that is
+                // "inside" the NestedScrollView, so that
+                // sliverOverlapAbsorberHandleFor() can find the
+                // NestedScrollView.
+                builder: (final BuildContext context) {
+                  if(name=="Posts")
+                    return CustomScrollView(
+                      // The "controller" and "primary" members should be left
+                      // unset, so that the NestedScrollView can control this
+                      // inner scroll view.
+                      // If the "controller" property is set, then this scroll
+                      // view will not be associated with the NestedScrollView.
+                      // The PageStorageKey should be unique to this ScrollView;
+                      // it allows the list to remember its scroll position when
+                      // the tab view is not on the screen.
+                      key: PageStorageKey<String>(name),
+                      slivers: <Widget>[
+
+                        SliverOverlapInjector(
+                          // This is the flip side of the SliverOverlapAbsorber
+                          // above.
+                          handle: NestedScrollView.
+                          sliverOverlapAbsorberHandleFor(context),
+                        ),
+                        SliverPadding(
+                          padding: const EdgeInsets.only(bottom: 18),
+
+                          sliver: SliverList(
+
+                            delegate: SliverChildBuilderDelegate(
+                                  (final BuildContext context, final int index) {
+                                // This builder is called for each child.
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 18),
+                                  child: PersonalPost(
+                                    showEditPostBottomSheet:
+                                    showEditPostProfileBottomSheet,
+                                    post: posts[index],
+                                  ),
+                                );
+                              },
+                              // The childCount of the SliverChildBuilderDelegate
+                              // specifies how many children this inner list
+                              // has.
+                              childCount: posts.length,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  else if(name=="Likes")
+                    return LikesTab(secondaryTextColor: floatingButtonColor,
+                      posts: posts,);
+                  else
+                    return Container();
+                },
+              ),).toList(),
+            ),
           ),
         ),
       ),
     );
   }
+
+
+
 }
 
-/// To Stick Tab Bar
-class StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
-  /// Constructor
-  StickyTabBarDelegate({required final this.child});
-
-  /// Child
-  final TabBar child;
-
-  @override
-  Widget build(
-    final BuildContext context,
-    final double shrinkOffset,
-    final bool overlapsContent,
-  ) {
-    return child;
-  }
-
-  @override
-  double get maxExtent => child.preferredSize.height;
-
-  @override
-  double get minExtent => child.preferredSize.height;
-
-  @override
-  bool shouldRebuild(final SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
-  }
-}
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate({
@@ -434,10 +557,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-    final BuildContext context,
-    final double shrinkOffset,
-    final bool overlapsContent,
-  ) {
+      final BuildContext context,
+      final double shrinkOffset,
+      final bool overlapsContent,
+      ) {
     return SizedBox.expand(child: child);
   }
 

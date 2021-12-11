@@ -23,7 +23,8 @@ class Api {
   final String _changeEmail = "/change_email";
   final String _changePass = "/change_password";
   final String _logOut = "/logout";
-
+  final String _getBlogs="/blog";
+  final String _addBlog="/blog";
   final String _weirdConnection = '''
             {
               "meta": {
@@ -351,4 +352,45 @@ class Api {
 
     return jsonDecode(response.body);
   }
+
+
+  /// blogs
+  /// Make GET Request to the API to get List of all blogs (Profiles).
+  Future<dynamic> getBlogs() async {
+    final http.Response response = await http
+        .get(Uri.parse(_host + _getBlogs),
+              headers: _headerContentAuth,)
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
+  }
+  /// Post a new blog
+  Future<dynamic> postNewBlog(
+      final String blogUserName,
+      ) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(_host + _addBlog ),
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, String>{
+        "title": "Untitled",
+        "blog_username": blogUserName,
+      }),
+    ).onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
+  }
+
+
 }
+

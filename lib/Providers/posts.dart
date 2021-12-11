@@ -8,12 +8,15 @@ import "package:tumbler/Models/post.dart";
 ///Posts provider manage the state of posts.
 class Posts with ChangeNotifier {
   final List<Post> _homePosts = <Post>[];
-
+  final List<Post> _profilePosts = <Post>[];
   ///Returns loaded posts.
   List<Post> get homePosts {
     return <Post>[..._homePosts];
   }
-
+  /// Returns all profile 'Posts' tab
+  List<Post> get profilePosts {
+    return <Post>[..._profilePosts];
+  }
   ///fetch posts through http get request.
   Future<void> fetchAndSetPosts() async {
     // clear all loaded post.

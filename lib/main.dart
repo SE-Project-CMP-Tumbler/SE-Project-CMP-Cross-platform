@@ -1,8 +1,11 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import 'package:tumbler/Providers/blogs.dart';
 import "package:tumbler/Providers/followed_tags_sign_up.dart";
 import "package:tumbler/Providers/posts.dart";
 import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
+import 'package:tumbler/Screens/Profile/create_new_blog.dart';
+import 'package:tumbler/Screens/Profile/profile_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,6 +20,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<Posts>(
           create: (final _) => Posts(),
+        ),
+        ChangeNotifierProvider<BlogsData>(
+          create: (final _) => BlogsData(),
         ),
       ],
       child: MaterialApp(

@@ -5,6 +5,7 @@ import 'package:tumbler/Models/post.dart';
 import 'package:tumbler/Screens/Home_Page/home_page.dart';
 import 'package:tumbler/Screens/Profile/profile_page.dart';
 import 'package:tumbler/Widgets/Post/personal_post_interaction_bar.dart';
+import 'package:tumbler/Widgets/Post/personal_post_top_bar.dart';
 import 'package:tumbler/Widgets/Post/post_top_bar.dart';
 /// for the 'Posts' tab in ProfilePage
 class PersonalPost extends StatefulWidget {
@@ -34,18 +35,15 @@ class _PersonalPostState extends State<PersonalPost> {
   Widget build(final BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
     final double _height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: navy,
-      body: Center(
-        child: Container(
+    return Container(
           color: Colors.white,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               // tumbler user name and profile pic and options
-              PostTopBar(
-                showEditPostBottomSheet: showEditPostProfileBottomSheet,
+              PersonalPostTopBar(
+                showEditPostPersonalBottomSheet: showEditPostProfileBottomSheet,
                 avatarPhotoLink: widget.post.blogAvatar,
                 name: widget.post.blogUsername,
               ),
@@ -130,8 +128,6 @@ class _PersonalPostState extends State<PersonalPost> {
               ),**/
             ],
           ),
-        ),
-      ),
-    );
+        );
   }
 }
