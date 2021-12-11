@@ -42,17 +42,12 @@ class Api {
                         "status": "404",
                          "msg": "Failed to Connect to the server"
                       }
-            } 
+            }
         ''';
 
   final Map<String, String> _headerContent = <String, String>{
     io.HttpHeaders.acceptHeader: "application/json",
     io.HttpHeaders.contentTypeHeader: "application/json",
-  };
-  final Map<String, String> _headerContentUpload = <String, String>{
-    io.HttpHeaders.acceptHeader: "application/json",
-    io.HttpHeaders.contentTypeHeader: "application/json",
-    io.HttpHeaders.authorizationHeader: "Bearer " + User.accessToken,
   };
   final Map<String, String> _headerContentAuth = <String, String>{
     io.HttpHeaders.acceptHeader: "application/json",
@@ -154,11 +149,7 @@ class Api {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadVideo + User.userID),
-      headers: <String, String>{
-        "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: _headerContentAuth,
       body: json.encode(<String, String>{
         "video": video,
       }),
@@ -179,11 +170,7 @@ class Api {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadImage),
-      headers: <String, String>{
-        "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: _headerContentAuth,
       body: json.encode(<String, String>{
         "image": image,
       }),
@@ -203,11 +190,7 @@ class Api {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadAudio + User.userID),
-      headers: <String, String>{
-        "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: _headerContentAuth,
       body: json.encode(<String, String>{
         "audio": audio,
       }),
@@ -234,22 +217,14 @@ class Api {
 
   /// Upload HTML code of the post.
   Future<Map<String, dynamic>> addPost(
-    //Future<void> addPost(
     final String postBody,
     final String postStatus,
     final String postType,
     final String postTime,
   ) async {
-    print("lol");
-    final Map<String, dynamic> blogs = await getAllBlogs();
-    //print(blogs);
-    var decodeResponse = blogs["response"]["blogs"][0]["id"];
-    String blogId = decodeResponse.toString();
-    //print(blogId);
-    //String blogId = "5";
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _addPost + blogId),
+      Uri.parse(_host + _addPost + User.blogsIDs[User.currentProfile]),
       headers: _headerContentAuth,
       body: jsonEncode(<String, String>{
         "post_status": postStatus,
@@ -265,7 +240,6 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
-    //print(response.body);
     return jsonDecode(response.body);
   }
 
@@ -286,9 +260,7 @@ class Api {
   /// GET Notes For the post with [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
-      Uri.parse(
-        "https://mock-back-default-rtdb.firebaseio.com/notes/$postID.json",
-      ),
+      Uri.parse(_firebaseHost + "/notes/$postID.json"),
       headers: <String, String>{"Authorization": User.accessToken},
     );
     return jsonDecode(response.body);

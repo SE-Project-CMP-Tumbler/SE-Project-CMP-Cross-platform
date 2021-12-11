@@ -10,7 +10,7 @@ Future<bool> fillUserBlogs() async {
     final List<dynamic> blogs = response["response"]["blogs"];
 
     for (final Map<String, dynamic> blog in blogs) {
-      if (blog["is_primary"] as bool) {
+      if (!(blog["is_primary"] as bool)) {
         User.blogsIDs.add(blog["id"].toString());
         User.blogsNames.add(blog["username"] ?? " ");
         User.avatars.add(blog["avatar"] ?? " ");

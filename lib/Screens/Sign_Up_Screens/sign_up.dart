@@ -4,7 +4,6 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
-import "package:tumbler/Methods/get_all_blogs.dart";
 import "package:tumbler/Methods/initializer.dart";
 import "package:tumbler/Methods/local_db.dart";
 import "package:tumbler/Models/user.dart";
@@ -156,24 +155,14 @@ class _SignUpState extends State<SignUp> {
 
       // Note: May be it is not wanted in sign up
       // he only has one blog
-      if (await fillUserBlogs()) {
-        await initializeUserBlogs();
-        await Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute<IntroCarousel>(
-            builder: (final BuildContext context) => IntroCarousel(),
-          ),
-          (final Route<dynamic> route) => false,
-        );
-      } else {
-        await Fluttertoast.showToast(
-          msg: "Failed to get your blogs",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 16,
-        );
-      }
+
+      await initializeUserBlogs();
+      await Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<IntroCarousel>(
+          builder: (final BuildContext context) => IntroCarousel(),
+        ),
+        (final Route<dynamic> route) => false,
+      );
     } else {
       await Fluttertoast.showToast(
         msg: response["meta"]["msg"],

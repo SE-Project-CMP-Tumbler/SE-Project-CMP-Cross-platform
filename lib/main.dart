@@ -9,7 +9,7 @@ import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/main_screen.dart";
 
 Future<void> main() async {
-  await dotenv.load(fileName: "assets/env/.env");
+  await dotenv.load();
   await initializeUserData();
   await initializeUserBlogs();
   runApp(MyApp());
