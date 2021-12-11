@@ -131,7 +131,7 @@ class _AddPostState extends State<AddPost> {
                   color: Colors.white,
                   border: Border.all(color: Colors.white, width: 0),
                 ),
-                height: MediaQuery.of(context).size.height * .05, //web hiz3l
+                height: MediaQuery.of(context).size.height * .05,
                 child: Row(
                   children: <Widget>[
                     Container(
@@ -178,7 +178,7 @@ class _AddPostState extends State<AddPost> {
                   ],
                 ),
                 otherOptions: OtherOptions(
-                  height: MediaQuery.of(context).size.height * .75, //web hiz3l
+                  height: MediaQuery.of(context).size.height * .75,
                 ),
                 callbacks: Callbacks(
                   onChangeContent: (final String? changed) async {
