@@ -16,4 +16,5 @@ class User {
   static List<String> descriptions = <String>[];
   static List<bool> allowAsk = <bool>[];
   static List<bool> allowSubmission = <bool>[];
+  static List<bool> isPrimary= <bool>[];
 }

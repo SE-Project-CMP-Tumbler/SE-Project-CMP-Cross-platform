@@ -26,6 +26,8 @@ class Api {
   final String _changeEmail     = dotenv.env["changeEmail"] ?? " ";
   final String _changePass      = dotenv.env["changePass"] ?? " ";
   final String _logOut          = dotenv.env["logOut"] ?? " ";
+  final String _published          = dotenv.env["published"] ?? " ";
+  final String _posts          = dotenv.env["posts"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -225,7 +227,7 @@ class Api {
   ///get all blogs of user
   Future<Map<String, dynamic>> getAllBlogs() async {
     final http.Response response = await http.get(
-      Uri.parse(_host + "/blog"),
+      Uri.parse(_host + _blog),
       headers: _headerContentAuth,
     );
     //print(response.body);
@@ -282,7 +284,6 @@ class Api {
       rethrow;
     }
   }
-
   /// GET Notes For the post with [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
@@ -403,7 +404,21 @@ class Api {
     });
     return response;
   }
+  /// to get the posts of a specific blog
+  Future<dynamic> fetchSpecificBlogPost(final int blogId) async {
 
+      final http.Response response = await http.get(
+        Uri.parse(_host + _posts + blogId.toString() + _published),
+        headers: _headerContentAuth,
+      ).onError((final Object? error, final StackTrace stackTrace) {
+        if (error.toString().startsWith("SocketException: Failed host lookup")) {
+          return http.Response(_weirdConnection, 502);
+        } else {
+          return http.Response(_failed, 404);
+        }
+      });
+      return response;
+  }
 
 }
 

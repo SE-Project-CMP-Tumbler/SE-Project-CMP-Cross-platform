@@ -1,6 +1,4 @@
 import "dart:math" as math;
-
-import 'package:enhanced_drop_down/enhanced_drop_down.dart';
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:flutter/painting.dart";
@@ -10,13 +8,11 @@ import 'package:provider/provider.dart';
 import 'package:tumbler/Constants/colors.dart';
 import 'package:tumbler/Models/blog.dart';
 import 'package:tumbler/Models/post.dart';
-import 'package:tumbler/Providers/blogs.dart';
+import 'package:tumbler/Models/user.dart';
 import 'package:tumbler/Providers/posts.dart';
-import 'package:tumbler/Screens/Home_Page/home_page.dart';
 import 'package:tumbler/Screens/Profile/create_new_blog.dart';
 import 'package:tumbler/Screens/Profile/likes_tab.dart';
 import "package:tumbler/Screens/Settings/profile_settings.dart";
-import 'package:tumbler/Widgets/Post/post_overview.dart';
 import 'package:tumbler/Widgets/Post/profile_personal_post.dart';
 
 /// Shows modal bottom sheet when
@@ -91,7 +87,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   TabController? tabController;
   int currentTab = 0;
   final GlobalKey<State<StatefulWidget>> greenKey = GlobalKey();
@@ -103,12 +99,20 @@ class _ProfilePageState extends State<ProfilePage>
   int themeColor = 0xff001935;
   int themeTitleColor = 0xffffffff;
   int accentColor= 0xffffffff;
-  String? _selectedTumbler;
-  List<String> blogUserNames=<String>[];
-  List<Post> posts = <Post>[];
-  List<Blog> blogs=<Blog>[];
-  int? currentProfile;
+  late AnimationController loadingSpinnerAnimationController;
 
+  List<Blog> blogs=<Blog>[];
+  /// true when posts are loading.
+  bool _isLoading = false;
+
+  /// true when error occured
+  bool _error = false;
+
+  ///true after first successful posts fetching.
+  bool _isInit = false;
+
+  /// list of current home posts.
+  List<Post> posts = <Post>[];
   @override
   void initState() {
     super.initState();
@@ -118,54 +122,54 @@ class _ProfilePageState extends State<ProfilePage>
         statusBarColor: Colors.transparent,
       ),
     );
-    refreshHome(context);
-    getAllBlogs(context);
-
-
-  }
-  // TODO(Donia): Remove this
-  Future<void> refreshHome(final BuildContext context) async {
-
-    await Provider.of<Posts>(context, listen: false)
-        .fetchAndSetPosts()
-        .then((final _) {
-      setState(() {
-        posts = Provider.of<Posts>(context, listen: false).homePosts;
-      });
-    }).catchError((final Object? error) {
-      showErrorDialog(context, error.toString());
-    });
+    /// Animation controller for the color varying loading spinner
+    loadingSpinnerAnimationController =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    loadingSpinnerAnimationController.repeat();
+    refreshBlogPosts(context,
+      int.parse(User.blogsIDs[User.currentProfile]),);
   }
 
-  Future<void> getAllBlogs(final BuildContext context) async {
-    await Provider.of<BlogsData>(context, listen: false)
-        .fetchAndSetBlogs().catchError((final Object? error) {
-      showErrorDialog(context, error.toString());
-    });
-    blogs= await Provider.of<BlogsData>(context,listen: false).get_Blogs().then(
-            (value) {
-              setState(() {
-                _selectedTumbler= value[widget.currentBlog!].username;
-              });
-              return value;
-            } );
-
-
-
-  }
 
   @override
   void dispose() {
     super.dispose();
     tabController!.dispose();
     SystemChrome.restoreSystemUIOverlays();
+    loadingSpinnerAnimationController.dispose();
+
   }
+
+  /// Responsible refreshing home page and fetch new post to show.
+  Future<void> refreshBlogPosts(final BuildContext context, final int blogId)
+  async {
+    _error = false;
+    setState(() {
+      _isLoading = true;
+    });
+    await Provider.of<Posts>(context, listen: false)
+        .fetchSpecificBlogPosts(blogId)
+        .then((final _) {
+      setState(() {
+        posts = Provider.of<Posts>(context, listen: false).profilePosts;
+        _isLoading = false;
+      });
+    }).catchError((final Object? error) {
+      setState(() {
+        _isLoading = false;
+        _error = true;
+      });
+      //showErrorDialog(context, error.toString());
+    });
+  }
+
+
+
 
   @override
   Widget build(final BuildContext context) {
-    blogUserNames = blogs.map((e) => e.username!).toList();
-    blogUserNames.add("Create new tumblr");
-    currentProfile= Provider.of<BlogsData>(context).currentBlog;
+    List<String> blogUserNames = User.blogsNames+ <String>["Create new tumblr"];
+    String dropdownValue = User.blogsNames[User.currentProfile];
     final double _height = MediaQuery.of(context).size.height;
     // ignore: unused_local_variable
     final double _width = MediaQuery.of(context).size.width;
@@ -238,7 +242,7 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                   ),
                   Text(
-                    "Untitled",
+                    User.blogsIDs[User.currentProfile],
                     textScaleFactor: 2.4,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
@@ -269,17 +273,14 @@ class _ProfilePageState extends State<ProfilePage>
                                     }
                                   else{
                                     setState(() {
-                                      _selectedTumbler = value;
+                                      dropdownValue = value!;
+                                      User.currentProfile =
+                                          User.blogsNames.indexOf(value);
                                     });
-                                    Provider.of<BlogsData>
-                                      (context,listen: false)
-                                        .updateCurrentBlogIndex(
-                                        blogUserNames.
-                                        indexOf(_selectedTumbler!),
-                                    );
+
                                   }
                                 },
-                                value: _selectedTumbler,
+                                value: dropdownValue,
                                 // Hide the default underline
                                 underline: Container(
                                   height: 0,
@@ -306,11 +307,15 @@ class _ProfilePageState extends State<ProfilePage>
                                                 ,)
                                               else
                                               Image.network(
-                                                blogs[
-                                                  blogs.indexWhere(
-                                                (final Blog element) =>
-                                                element.username==e,)
-                                                ].avatarImageUrl??"https://picsum.photos/200",
+                                                User.avatars[
+                                                  blogUserNames.indexWhere(
+                                                (final String element) =>
+                                                element==e,)
+                                                ]==" "?"https://picsum.photos/200":
+                                                User.avatars[
+                                                User.currentProfile
+                                                ]
+                                                ,
                                                 width: 35,
                                                 height: 35,
                                               ),
@@ -438,7 +443,6 @@ class _ProfilePageState extends State<ProfilePage>
                   ],
                 ),
                 ),
-
               ],
             ),
           ),
@@ -475,7 +479,25 @@ class _ProfilePageState extends State<ProfilePage>
                 // NestedScrollView.
                 builder: (final BuildContext context) {
                   if(name=="Posts")
-                    return CustomScrollView(
+                    {
+                    return _isLoading?
+                    Center(
+                      child: CircularProgressIndicator(
+                        valueColor: loadingSpinnerAnimationController.drive(
+                          ColorTween(
+                            begin: Colors.blueAccent,
+                            end: Colors.red,
+                          ),
+                        ),
+                      ),
+                    )
+                        :RefreshIndicator(
+
+                          onRefresh: ()async{
+                            await refreshBlogPosts
+                            (context, int.parse(User.blogsIDs[User.currentProfile]
+                            ));},
+                          child: CustomScrollView(
                       // The "controller" and "primary" members should be left
                       // unset, so that the NestedScrollView can control this
                       // inner scroll view.
@@ -487,38 +509,40 @@ class _ProfilePageState extends State<ProfilePage>
                       key: PageStorageKey<String>(name),
                       slivers: <Widget>[
 
-                        SliverOverlapInjector(
-                          // This is the flip side of the SliverOverlapAbsorber
-                          // above.
-                          handle: NestedScrollView.
-                          sliverOverlapAbsorberHandleFor(context),
-                        ),
-                        SliverPadding(
-                          padding: const EdgeInsets.only(bottom: 18),
+                          SliverOverlapInjector(
+                            // This is the flip side of the SliverOverlapAbsorber
+                            // above.
+                            handle: NestedScrollView.
+                            sliverOverlapAbsorberHandleFor(context),
+                          ),
+                          SliverPadding(
+                            padding: const EdgeInsets.only(bottom: 18),
 
-                          sliver: SliverList(
+                            sliver: SliverList(
 
-                            delegate: SliverChildBuilderDelegate(
-                                  (final BuildContext context, final int index) {
-                                // This builder is called for each child.
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 18),
-                                  child: PersonalPost(
-                                    showEditPostBottomSheet:
-                                    showEditPostProfileBottomSheet,
-                                    post: posts[index],
-                                  ),
-                                );
-                              },
-                              // The childCount of the SliverChildBuilderDelegate
-                              // specifies how many children this inner list
-                              // has.
-                              childCount: posts.length,
+                              delegate: SliverChildBuilderDelegate(
+                                    (final BuildContext context, final int index) {
+                                  // This builder is called for each child.
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 18),
+                                    child: PersonalPost(
+                                      showEditPostBottomSheet:
+                                      showEditPostProfileBottomSheet,
+                                      post: posts[index],
+                                    ),
+                                  );
+                                },
+                                // The childCount of the SliverChildBuilderDelegate
+                                // specifies how many children this inner list
+                                // has.
+                                childCount: posts.length,
+                              ),
                             ),
                           ),
-                        ),
                       ],
-                    );
+                    ),
+                        );
+                    }
                   else if(name=="Likes")
                     return LikesTab(secondaryTextColor: floatingButtonColor,
                       posts: posts,);

@@ -1,7 +1,9 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import "package:tumbler/Constants/colors.dart";
+import 'package:tumbler/Models/user.dart';
 import 'package:tumbler/Providers/blogs.dart';
 import 'package:tumbler/Screens/Home_Page/home_page.dart';
 /// a page for entering the new blog name
@@ -37,13 +39,11 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
   }
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _textEditingController= TextEditingController();
   }
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _textEditingController!.dispose();
   }
@@ -70,7 +70,34 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: (){},
+            onPressed: ()async{
+              if(isValid())
+              {
+                // TODO(Donia): call postBlog
+                await postBlog(context, _textEditingController!.text);
+
+                if(_succeeded)
+                {
+                  final int length=await Provider.of<BlogsData>
+                    (context, listen: false)
+                      .get_Blogs().then((final value) =>
+                  value.length,);
+                  await Provider.of<BlogsData>
+                    (context, listen: false)
+                      .updateCurrentBlogIndex(
+                    length-1,);
+                  Navigator.pop(context);
+
+                }
+              }
+              else{
+                await Fluttertoast.showToast(
+                  msg: "blog name is empty!",
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black,
+                );
+              }
+            },
               child: Text("Save",
                 style: TextStyle(
                   color: floatingButtonColor,
@@ -112,10 +139,17 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
                               await Provider.of<BlogsData>
                                 (context, listen: false)
                                 .updateCurrentBlogIndex(
-                                length,);
+                                length-1,);
                               Navigator.pop(context);
                             }
                         }
+                      else{
+                        await Fluttertoast.showToast(
+                            msg: "blog name is empty!",
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                        );
+                      }
                     },
                   decoration: InputDecoration(
                     isDense: true,

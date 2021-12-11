@@ -145,7 +145,6 @@ class _SignUpState extends State<SignUp> {
       User.accessToken = response["response"]["access_token"];
       // the index of the primary user
       User.currentProfile = 0;
-
       await LocalDataBase.instance.insertIntoUserTable(
         User.userID,
         User.email,
