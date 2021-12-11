@@ -259,10 +259,9 @@ class Api {
   Future<dynamic> fetchAndPosts() async {
     try {
       final http.Response response = await http.get(
-        Uri.parse(_host + _fetchPost),
-        headers: _headerContentAuth,
+        Uri.parse("https://mock-back-default-rtdb.firebaseio.com/radar.json"),
+        //headers: _headerContentAuth,
       );
-
       return response;
     } on Exception {
       rethrow;
@@ -275,7 +274,7 @@ class Api {
       Uri.parse(
         "https://mock-back-default-rtdb.firebaseio.com/notes/$postID.json",
       ),
-      headers: <String, String>{"Authorization": User.accessToken},
+      //headers: <String, String>{"Authorization": User.accessToken},
     );
     return jsonDecode(response.body);
   }
@@ -287,7 +286,7 @@ class Api {
       Uri.parse(
         "https://mock-back-default-rtdb.firebaseio.com/postLoveStatus/$postID.json",
       ),
-      headers: <String, String>{"Authorization": User.accessToken},
+      // headers: <String, String>{"Authorization": User.accessToken},
     );
     return jsonDecode(response.body);
   }

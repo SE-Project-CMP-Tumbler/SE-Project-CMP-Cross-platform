@@ -44,13 +44,13 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
     //TODO(Waleed): get current blogID and use it to get current like status for a post.
     //widget.blogId = User.userID;
 
-    getLikeStatus(widget.postId % 4 + 1, 0).then((final bool result) {
-      if (this.mounted) {
-        setState(() {
-          isLoved = result;
-        });
-      }
-    });
+    // getLikeStatus(widget.postId % 4 + 1, 0).then((final bool result) {
+    //   if (this.mounted) {
+    //     setState(() {
+    //       isLoved = result;
+    //     });
+    //   }
+    // });
 
      notes = Provider.of<Posts>(context,listen: false).getNotesForSinglePost(widget.postId);
 

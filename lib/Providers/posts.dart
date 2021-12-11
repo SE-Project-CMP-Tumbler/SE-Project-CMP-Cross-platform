@@ -23,7 +23,7 @@ class Posts with ChangeNotifier {
 
   /// Called when the user clicks on favorite icon button
   Future<void> likePost(final int postId) async {
-    // call api().likePost
+    //call api().likePost
 
     // if the prev request was successful make api().getNotes request
     // update notes of post with postId with data returned from api().getNotes
@@ -59,7 +59,9 @@ class Posts with ChangeNotifier {
     final Map<String, dynamic> encodedRes = jsonDecode(res.body);
 
     //set _homePost list.
-    final List<dynamic> postsList = encodedRes["response"]["posts"];
+    final List<dynamic> postsList =
+        encodedRes["response"]["posts"]; // here i should remove .values.single 
+
     for (int i = 0; i < postsList.length; i++) {
       _homePosts.add(
         Post(
@@ -83,15 +85,15 @@ class Posts with ChangeNotifier {
           await Api().getNotes("${i % 2 + 1}");
 
       //check the status code for the received response.
-      if (recievedNotes.values.single["meta"]["status"] == "404")
+      if (recievedNotes["meta"]["status"] == "404")
         throw HttpException("Not Found!");
       else {
         final List<dynamic> likes =
-            recievedNotes.values.single["response"]["likes"] ?? <dynamic>[];
+            recievedNotes["response"]["likes"] ?? <dynamic>[];
         final List<dynamic> reblogs =
-            recievedNotes.values.single["response"]["reblogs"] ?? <dynamic>[];
+            recievedNotes["response"]["reblogs"] ?? <dynamic>[];
         final List<dynamic> replies =
-            recievedNotes.values.single["response"]["replies"] ?? <dynamic>[];
+            recievedNotes["response"]["replies"] ?? <dynamic>[];
 
         _notes[_homePosts[i].postId] =
             Notes(likes: likes, reblogs: reblogs, replies: replies);
