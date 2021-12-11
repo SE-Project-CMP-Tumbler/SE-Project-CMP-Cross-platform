@@ -30,7 +30,6 @@ class _AddPostState extends State<AddPost> {
     final String html = await controller.getText();
     final String postTime = getDate();
     final String processedHtml = await extractMediaFiles(html);
-    print(processedHtml);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
       postOptionChoice = "published";
@@ -39,11 +38,10 @@ class _AddPostState extends State<AddPost> {
     } else if (postType == PostTypes.privatePost) {
       postOptionChoice = "private";
     }
-    //print("salama");
+
     final Map<String, dynamic> response = await Api()
         .addPost(processedHtml, postOptionChoice, "general", postTime);
-    //print(response["meta"]["status"]);
-    //print("lollol");
+
     if (response["meta"]["status"] == "200") {
       await Fluttertoast.showToast(
         msg: "Added Successfully",

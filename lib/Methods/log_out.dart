@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/local_db.dart";
+import "package:tumbler/Models/user.dart";
 
 /// Intermediate function that call [Api.logOut]
 Future<bool> logOut() async {
@@ -10,6 +11,17 @@ Future<bool> logOut() async {
 
   if (response["meta"]["status"] == "200") {
     await LocalDataBase.instance.deleteAllTable();
+
+    User.blogsIDs = <String>[];
+    User.blogsNames = <String>[];
+    User.avatars = <String>[];
+    User.avatarShapes = <String>[];
+    User.headerImages = <String>[];
+    User.titles = <String>[];
+    User.descriptions = <String>[];
+    User.allowAsk = <bool>[];
+    User.allowSubmission = <bool>[];
+
     await Fluttertoast.showToast(
       msg: "Log Out",
       toastLength: Toast.LENGTH_SHORT,

@@ -14,10 +14,9 @@ class ProfilesList extends StatefulWidget {
 /// this menu from which the user can choose which profile the current post
 /// will be published in
 class _ProfilesListState extends State<ProfilesList> {
-  String dropdownValue = User.blogsNames[User.currentProfile];
-
   @override
   Widget build(final BuildContext context) {
+    String dropdownValue = User.blogsNames[User.currentProfile];
     return DropdownButton<String>(
       value: dropdownValue,
       elevation: 16,

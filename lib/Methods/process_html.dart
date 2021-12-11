@@ -11,7 +11,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
   int index2 = 0;
   int x = 0;
   Map<String, dynamic> url;
-  //print(htmlBeforeProcessing);
+
   while (x != -1 && index1 <= html.length - 25) {
     x = html.indexOf("<img src=", index1);
     if (x != -1) {
