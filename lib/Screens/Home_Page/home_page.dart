@@ -236,9 +236,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 Padding(
                                   padding: EdgeInsets.symmetric(vertical: 150),
                                   child: ErrorImage(
-                                    msg:
-                                        "Unexpected error,"
-                                            " please try again later",
+                                    msg: "Unexpected error,"
+                                        " please try again later",
                                   ),
                                 ),
                               ],

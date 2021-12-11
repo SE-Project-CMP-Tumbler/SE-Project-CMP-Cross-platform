@@ -7,7 +7,7 @@ import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
 
 Future<bool> getLikeStatus(final int postId, final int blogId) async {
-  Map<String, dynamic> res = await Api().getPostLikeStatus(postId);
+  final Map<String, dynamic> res = await Api().getPostLikeStatus(postId);
   return res.values.single["response"]["like_status"];
 }
 
@@ -43,11 +43,11 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
 
   @override
   void initState() {
-    //TODO(Waleed): get current blogID and use it to get current like status for a post.
+    // TODO(Waleed): get current blogID and use it to get current like status for a post.
     //widget.blogId = User.userID;
 
     getLikeStatus(widget.postId % 4 + 1, 0).then((final bool result) {
-      if (this.mounted) {
+      if (mounted) {
         setState(() {
           widget.isLoved = result;
         });

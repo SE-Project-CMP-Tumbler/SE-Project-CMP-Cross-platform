@@ -50,10 +50,10 @@ class CustomizedTab extends StatelessWidget {
             Text(
               numFormatter.format(number),
               style: TextStyle(
-                  color: (currIndex == myIndex)
-                      ? color.withOpacity(1)
-                      : Colors.grey,
-                  fontSize: 16,),
+                color:
+                    (currIndex == myIndex) ? color.withOpacity(1) : Colors.grey,
+                fontSize: 16,
+              ),
             ),
           ],
         ),

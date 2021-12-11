@@ -13,7 +13,7 @@ class Api {
 
   final String _host = dotenv.env["host"] ?? " ";
 
-  final String _getTrendingTags = dotenv.env["host"] ?? " ";
+  final String _getTrendingTags = dotenv.env["getTrendingTags"] ?? " ";
   final String _signUp = dotenv.env["signUp"] ?? " ";
   final String _login = dotenv.env["login"] ?? " ";
   final String _forgotPassword = dotenv.env["forgotPassword"] ?? " ";
@@ -58,7 +58,6 @@ class Api {
   /// Make GET Request to the API to get List of
   /// Trending tags.
   Future<Map<String, dynamic>> getTrendingTags() async {
-    // it need Authorization, why ??
     final http.Response response = await http
         .get(Uri.parse(_host + _getTrendingTags))
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -174,7 +173,8 @@ class Api {
       body: json.encode(<String, String>{
         "b64_image": image,
       }),
-    ).onError((final Object? error, final StackTrace stackTrace) {
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {

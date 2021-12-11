@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Constants/colors.dart";
@@ -110,15 +111,18 @@ class _LogINState extends State<LogIN> {
       // the index of the primary user
       User.currentProfile = 0;
 
-      await LocalDataBase.instance.insertIntoUserTable(
-        User.userID,
-        User.email,
-        User.age,
-        User.accessToken,
-        User.currentProfile,
-      );
-
+      // TODO(Ziyad): this should be fixed properly
+      if (!kIsWeb) {
+        await LocalDataBase.instance.insertIntoUserTable(
+          User.userID,
+          User.email,
+          User.age,
+          User.accessToken,
+          User.currentProfile,
+        );
+      }
       await initializeUserBlogs();
+
       await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<MainScreen>(
           builder: (final BuildContext context) => MainScreen(),

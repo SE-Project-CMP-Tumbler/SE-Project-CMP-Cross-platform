@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Methods/api.dart";
@@ -10,7 +11,9 @@ Future<bool> logOut() async {
   final Map<String, dynamic> response = await Api().logOut();
 
   if (response["meta"]["status"] == "200") {
-    await LocalDataBase.instance.deleteAllTable();
+    if (!kIsWeb) {
+      await LocalDataBase.instance.deleteAllTable();
+    }
 
     User.blogsIDs = <String>[];
     User.blogsNames = <String>[];

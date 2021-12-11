@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:provider/provider.dart";
@@ -10,8 +11,10 @@ import "package:tumbler/Screens/main_screen.dart";
 
 Future<void> main() async {
   await dotenv.load();
-  await initializeUserData();
-  await initializeUserBlogs();
+  if(!kIsWeb) {
+    await initializeUserData();
+    await initializeUserBlogs();
+  }
   runApp(MyApp());
 }
 
