@@ -126,17 +126,22 @@ class _ProfilePageState extends State<ProfilePage>
     loadingSpinnerAnimationController =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     loadingSpinnerAnimationController.repeat();
-    refreshBlogPosts(context,
-      int.parse(User.blogsIDs[User.currentProfile]),);
+    print(User.blogsIDs[User.currentProfile]);
+    getBlogPosts();
   }
 
-
+  void getBlogPosts()async{
+    if(int.tryParse(User.blogsIDs[User.currentProfile])!=null) {
+      await refreshBlogPosts(context,
+        int.parse(User.blogsIDs[User.currentProfile]),);
+    }
+  }
   @override
   void dispose() {
-    super.dispose();
     tabController!.dispose();
     SystemChrome.restoreSystemUIOverlays();
     loadingSpinnerAnimationController.dispose();
+    super.dispose();
 
   }
 
@@ -468,7 +473,7 @@ class _ProfilePageState extends State<ProfilePage>
         ),
         ];
         },
-          body: Container(
+        body: Container(
             color: navy,
             child: TabBarView(
               // These are the contents of the tab views, below the tabs.
@@ -543,9 +548,9 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                         );
                     }
-                  else if(name=="Likes")
+                  /**else if(name=="Likes")
                     return LikesTab(secondaryTextColor: floatingButtonColor,
-                      posts: posts,);
+                      posts: posts,);**/
                   else
                     return Container();
                 },
