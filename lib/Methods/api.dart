@@ -14,18 +14,18 @@ class Api {
   final String _host = dotenv.env["host"] ?? " ";
 
   final String _getTrendingTags = dotenv.env["host"] ?? " ";
-  final String _signUp          = dotenv.env["signUp"] ?? " ";
-  final String _login           = dotenv.env["login"] ?? " ";
-  final String _forgotPassword  = dotenv.env["forgotPassword"] ?? " ";
-  final String _uploadImage     = dotenv.env["uploadImage"] ?? " ";
-  final String _uploadVideo     = dotenv.env["uploadVideo"] ?? " ";
-  final String _uploadAudio     = dotenv.env["uploadAudio"] ?? " ";
-  final String _addPost         = dotenv.env["addPost"] ?? " ";
-  final String _blog            = dotenv.env["blog"] ?? " ";
-  final String _fetchPost       = dotenv.env["fetchPost"] ?? " ";
-  final String _changeEmail     = dotenv.env["changeEmail"] ?? " ";
-  final String _changePass      = dotenv.env["changePass"] ?? " ";
-  final String _logOut          = dotenv.env["logOut"] ?? " ";
+  final String _signUp = dotenv.env["signUp"] ?? " ";
+  final String _login = dotenv.env["login"] ?? " ";
+  final String _forgotPassword = dotenv.env["forgotPassword"] ?? " ";
+  final String _uploadImage = dotenv.env["uploadImage"] ?? " ";
+  final String _uploadVideo = dotenv.env["uploadVideo"] ?? " ";
+  final String _uploadAudio = dotenv.env["uploadAudio"] ?? " ";
+  final String _addPost = dotenv.env["addPost"] ?? " ";
+  final String _blog = dotenv.env["blog"] ?? " ";
+  final String _fetchPost = dotenv.env["fetchPost"] ?? " ";
+  final String _changeEmail = dotenv.env["changeEmail"] ?? " ";
+  final String _changePass = dotenv.env["changePass"] ?? " ";
+  final String _logOut = dotenv.env["logOut"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -48,11 +48,6 @@ class Api {
   final Map<String, String> _headerContent = <String, String>{
     io.HttpHeaders.acceptHeader: "application/json",
     io.HttpHeaders.contentTypeHeader: "application/json",
-  };
-  final Map<String, String> _headerContentUpload = <String, String>{
-    io.HttpHeaders.acceptHeader: "application/json",
-    io.HttpHeaders.contentTypeHeader: "application/json",
-    io.HttpHeaders.authorizationHeader: "Bearer " + User.accessToken,
   };
   final Map<String, String> _headerContentAuth = <String, String>{
     io.HttpHeaders.acceptHeader: "application/json",
@@ -93,7 +88,8 @@ class Api {
         "age": age.toString(),
       }),
       headers: _headerContent,
-    ).onError((final Object? error, final StackTrace stackTrace) {
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -222,16 +218,6 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///get all blogs of user
-  Future<Map<String, dynamic>> getAllBlogs() async {
-    final http.Response response = await http.get(
-      Uri.parse(_host + "/blog"),
-      headers: _headerContentAuth,
-    );
-    //print(response.body);
-    return jsonDecode(response.body);
-  }
-
   /// Upload HTML code of the post.
   Future<Map<String, dynamic>> addPost(
     //Future<void> addPost(
@@ -240,16 +226,9 @@ class Api {
     final String postType,
     final String postTime,
   ) async {
-    print("lol");
-    final Map<String, dynamic> blogs = await getAllBlogs();
-    //print(blogs);
-    var decodeResponse = blogs["response"]["blogs"][0]["id"];
-    String blogId = decodeResponse.toString();
-    //print(blogId);
-    //String blogId = "5";
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _addPost + blogId),
+      Uri.parse(_host + _addPost + User.blogsIDs[User.currentProfile]),
       headers: _headerContentAuth,
       body: jsonEncode(<String, String>{
         "post_status": postStatus,
@@ -265,7 +244,6 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
-    //print(response.body);
     return jsonDecode(response.body);
   }
 
