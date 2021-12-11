@@ -152,7 +152,7 @@ class _LogINState extends State<LogIN> {
       centerTitle: true,
       actions: <Widget>[
         TextButton(
-          onPressed: () async{
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
               await logIn();
             }

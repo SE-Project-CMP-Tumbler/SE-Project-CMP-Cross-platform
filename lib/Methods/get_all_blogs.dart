@@ -43,7 +43,6 @@ Future<bool> fillUserBlogs() async {
         User.allowSubmission.insert(0, blog["allow_submittions"] as bool);
         User.descriptions.insert(0, blog["description"] ?? " ");
         User.isPrimary.add(blog["is_primary"] as bool);
-
       }
     }
     return true;

@@ -26,6 +26,7 @@ class _MainScreenState extends State<MainScreen>
   double fButtonDy = 20;
   final GlobalKey _parentKey = GlobalKey();
   int? currentProfile;
+
   @override
   void initState() {
     tabController = TabController(length: 4, vsync: this);
@@ -42,7 +43,7 @@ class _MainScreenState extends State<MainScreen>
   Widget build(final BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
     final double _height = MediaQuery.of(context).size.height;
-    currentProfile= Provider.of<BlogsData>(context).currentBlog;
+    currentProfile = Provider.of<BlogsData>(context).currentBlog;
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
@@ -96,7 +97,9 @@ class _MainScreenState extends State<MainScreen>
                 child: const Center(child: Text("THIS IS CHAT")),
               ),
               // TODO(Ziyad): Replace this with profile page
-              ProfilePage(currentBlog: currentProfile,),
+              ProfilePage(
+                currentBlog: currentProfile,
+              ),
             ],
           ),
           if (selectedIndex == 0 || selectedIndex == 3)

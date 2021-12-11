@@ -827,8 +827,9 @@ class _SearchPageState extends State<SearchPage> {
                                         "#tagOne",
                                         textScaleFactor: 1.2,
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,),
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   )
@@ -884,7 +885,8 @@ class _SearchPageState extends State<SearchPage> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 8,),
+                                          vertical: 8,
+                                        ),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -947,7 +949,8 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                     ClipRRect(
                                       borderRadius: const BorderRadius.all(
-                                          Radius.circular(3),),
+                                        Radius.circular(3),
+                                      ),
                                       child: Image.asset(
                                         "assets/images/intro_1.gif",
                                         width: 100,
@@ -960,7 +963,8 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                     ClipRRect(
                                       borderRadius: const BorderRadius.all(
-                                          Radius.circular(3),),
+                                        Radius.circular(3),
+                                      ),
                                       child: Image.asset(
                                         "assets/images/intro_2.gif",
                                         width: 100,
@@ -973,7 +977,8 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                     ClipRRect(
                                       borderRadius: const BorderRadius.all(
-                                          Radius.circular(3),),
+                                        Radius.circular(3),
+                                      ),
                                       child: Image.asset(
                                         "assets/images/intro_3.jpg",
                                         width: 100,
@@ -986,7 +991,8 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                     ClipRRect(
                                       borderRadius: const BorderRadius.all(
-                                          Radius.circular(3),),
+                                        Radius.circular(3),
+                                      ),
                                       child: Image.asset(
                                         "assets/images/intro_1.gif",
                                         width: 100,

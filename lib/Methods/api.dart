@@ -395,7 +395,6 @@ class Api {
 
   /// to get the posts of a specific blog
   Future<dynamic> fetchSpecificBlogPost(final int blogId) async {
-
     final http.Response response = await http
         .get(
       Uri.parse(_host + _posts + blogId.toString() + _published),
