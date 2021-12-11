@@ -3,13 +3,13 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
-import "package:tumbler/Exceptions_UI/empty_list_exception.dart";
+import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
 import "package:tumbler/Widgets/Notes/Tiles/rebolg_tile_without_comments.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reply_tile.dart";
 import "package:tumbler/Widgets/Notes/customized_tab.dart";
-import "package:tumbler/Widgets/Notes/show_reblog_type_bottomsheet.dart";
+import "package:tumbler/Widgets/Notes/show_reblog_type_bottom_sheet.dart";
 
 /// [blogType] is an Enumerator for specifing two different reblogs types
 enum blogsType {
@@ -216,7 +216,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                     blogTypeToShow == blogsType.withComments.index ||
                 widget.reblogsWithOutCommentsList.isEmpty &&
                     blogTypeToShow == blogsType.others.index)
-              const EmptyBoxImage(msg: "No replies to show")
+              const EmptyBoxImage(msg: "No reblogs to show")
             else
               Padding(
                 padding: EdgeInsets.zero,
@@ -301,7 +301,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                 ),
               ),
             if (widget.likesList.isEmpty)
-              const EmptyBoxImage(msg: "No replies to show")
+              const EmptyBoxImage(msg: "No likes to show")
             else
               Padding(
                 padding: const EdgeInsets.all(5),

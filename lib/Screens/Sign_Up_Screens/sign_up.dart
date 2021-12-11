@@ -4,6 +4,9 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
+import "package:tumbler/Methods/get_all_blogs.dart";
+import "package:tumbler/Methods/initializer.dart";
+import "package:tumbler/Methods/local_db.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Intro_Carousel/intro_carousel.dart";
 import "package:tumbler/Screens/Log_In_Screens/log_in.dart";
@@ -136,21 +139,41 @@ class _SignUpState extends State<SignUp> {
       _emailController.text,
       User.age,
     );
-
     if (response["meta"]["status"] == "200") {
-      User.profilesNames.add(response["response"]["blog_username"]);
       User.email = response["response"]["email"];
       User.userID = response["response"]["id"].toString();
-      User.blogAvatar = response["response"]["blog_avatar"] ?? "";
       User.accessToken = response["response"]["access_token"];
+      // the index of the primary user
       User.currentProfile = 0;
 
-      await Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<IntroCarousel>(
-          builder: (final BuildContext context) => IntroCarousel(),
-        ),
-        (final Route<dynamic> route) => false,
+      await LocalDataBase.instance.insertIntoUserTable(
+        User.userID,
+        User.email,
+        User.age,
+        User.accessToken,
+        User.currentProfile,
       );
+
+      // Note: May be it is not wanted in sign up
+      // he only has one blog
+      if (await fillUserBlogs()) {
+        await initializeUserBlogs();
+        await Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<IntroCarousel>(
+            builder: (final BuildContext context) => IntroCarousel(),
+          ),
+          (final Route<dynamic> route) => false,
+        );
+      } else {
+        await Fluttertoast.showToast(
+          msg: "Failed to get your blogs",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16,
+        );
+      }
     } else {
       await Fluttertoast.showToast(
         msg: response["meta"]["msg"],

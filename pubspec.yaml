@@ -33,6 +33,7 @@ dependencies:
   chewie:
   cupertino_icons: ^1.0.2
   dartdoc: ^4.1.0
+  flutter_dotenv: ^5.0.2
   fluttertoast: ^8.0.8
   flutter_html: ^2.1.5
   flutter_native_splash:
@@ -48,16 +49,10 @@ dependencies:
   like_button: ^2.0.3
   path_provider: ^2.0.7
   provider: ^6.0.1
+  sqflite: ^2.0.1
   video_player: ^2.2.7
   contained_tab_bar_view: ^0.8.0
   enhanced_drop_down: ^0.1.7+1
-
-
-
-
-
-
-
 
 
 dev_dependencies:
@@ -83,6 +78,8 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
+    - assets/env/.env
+
     - assets/images/intro_1.gif
     - assets/images/intro_2.gif
     - assets/images/intro_2.webp

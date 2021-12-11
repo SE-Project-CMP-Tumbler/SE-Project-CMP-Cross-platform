@@ -1,6 +1,3 @@
-import "dart:convert";
-import "dart:io";
-
 import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Methods/Api.dart";
@@ -14,7 +11,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
   int index2 = 0;
   int x = 0;
   Map<String, dynamic> url;
-
+  //print(htmlBeforeProcessing);
   while (x != -1 && index1 <= html.length - 25) {
     x = html.indexOf("<img src=", index1);
     if (x != -1) {
@@ -26,13 +23,10 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
         '"',
         index2,
       ); //repeating this line is important since the html size
-          // changes in each iteration
+      // changes in each iteration
       //var mpf = MultipartFile(field, stream, length)
-      url = await Api().uploadImage(
-        File.fromRawPath(
-          base64Decode(html.substring(index2 + 1, index1).trim()),
-        ),
-      );
+      String image = html.substring(index2 + 1, index1);
+      url = await Api().uploadImage(image);
 
       if (url["meta"]["status"] == "200") {
         html = html.replaceRange(x + 10, index1, "lolphoto");
@@ -67,12 +61,9 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
         '"',
         index2,
       ); //repeating this line is important since the html size
-          // changes in each iteration
-      url = await Api().uploadVideo(
-        File.fromRawPath(
-          base64Decode(html.substring(index2 + 1, index1).trim()),
-        ),
-      );
+      // changes in each iteration
+      String video = html.substring(index2 + 1, index1);
+      url = await Api().uploadVideo(video);
 
       if (url["meta"]["status"] == "200") {
         html = html.replaceRange(x + 24, index1, url["response"]["url"]);
@@ -107,11 +98,8 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
         index2,
       ); //repeating this line is important since the html size
       // changes in each iteration
-      url = await Api().uploadAudio(
-        File.fromRawPath(
-          base64Decode(html.substring(index2 + 1, index1).trim()),
-        ),
-      );
+      String audio = html.substring(index2 + 1, index1);
+      url = await Api().uploadAudio(audio);
 
       if (url["meta"]["status"] == "200") {
         html = html.replaceRange(x + 24, index1, url["response"]["url"]);
