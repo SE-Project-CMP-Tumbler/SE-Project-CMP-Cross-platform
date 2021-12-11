@@ -18,6 +18,9 @@ class _ProfilesListState extends State<ProfilesList> {
   String dropdownValue = User.blogsNames[User.currentProfile];
   @override
   Widget build(final BuildContext context) {
+    print(dropdownValue);
+    print(s);
+    print("lol");
     return DropdownButton<String>(
       value: dropdownValue,
       elevation: 16,

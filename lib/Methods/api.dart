@@ -14,18 +14,18 @@ class Api {
   final String _host = dotenv.env["host"] ?? " ";
 
   final String _getTrendingTags = dotenv.env["host"] ?? " ";
-  final String _signUp          = dotenv.env["signUp"] ?? " ";
-  final String _login           = dotenv.env["login"] ?? " ";
-  final String _forgotPassword  = dotenv.env["forgotPassword"] ?? " ";
-  final String _uploadImage     = dotenv.env["uploadImage"] ?? " ";
-  final String _uploadVideo     = dotenv.env["uploadVideo"] ?? " ";
-  final String _uploadAudio     = dotenv.env["uploadAudio"] ?? " ";
-  final String _addPost         = dotenv.env["addPost"] ?? " ";
-  final String _blog            = dotenv.env["blog"] ?? " ";
-  final String _fetchPost       = dotenv.env["fetchPost"] ?? " ";
-  final String _changeEmail     = dotenv.env["changeEmail"] ?? " ";
-  final String _changePass      = dotenv.env["changePass"] ?? " ";
-  final String _logOut          = dotenv.env["logOut"] ?? " ";
+  final String _signUp = dotenv.env["signUp"] ?? " ";
+  final String _login = dotenv.env["login"] ?? " ";
+  final String _forgotPassword = dotenv.env["forgotPassword"] ?? " ";
+  final String _uploadImage = dotenv.env["uploadImage"] ?? " ";
+  final String _uploadVideo = dotenv.env["uploadVideo"] ?? " ";
+  final String _uploadAudio = dotenv.env["uploadAudio"] ?? " ";
+  final String _addPost = dotenv.env["addPost"] ?? " ";
+  final String _blog = dotenv.env["blog"] ?? " ";
+  final String _fetchPost = dotenv.env["fetchPost"] ?? " ";
+  final String _changeEmail = dotenv.env["changeEmail"] ?? " ";
+  final String _changePass = dotenv.env["changePass"] ?? " ";
+  final String _logOut = dotenv.env["logOut"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -93,7 +93,8 @@ class Api {
         "age": age.toString(),
       }),
       headers: _headerContent,
-    ).onError((final Object? error, final StackTrace stackTrace) {
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -222,13 +223,12 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///get all blogs of user
+  /// Get all blogs of user
   Future<Map<String, dynamic>> getAllBlogs() async {
     final http.Response response = await http.get(
-      Uri.parse(_host + "/blog"),
+      Uri.parse(_host + _blog),
       headers: _headerContentAuth,
     );
-    //print(response.body);
     return jsonDecode(response.body);
   }
 
@@ -290,15 +290,6 @@ class Api {
         "https://mock-back-default-rtdb.firebaseio.com/notes/$postID.json",
       ),
       headers: <String, String>{"Authorization": User.accessToken},
-    );
-    return jsonDecode(response.body);
-  }
-
-  /// Get all blogs of user
-  Future<Map<String, dynamic>> getAllBlogs() async {
-    final http.Response response = await http.get(
-      Uri.parse(_host + _blog),
-      headers: _headerContentAuth,
     );
     return jsonDecode(response.body);
   }
