@@ -14,20 +14,20 @@ class Api {
   final String _host = dotenv.env["host"] ?? " ";
 
   final String _getTrendingTags = dotenv.env["host"] ?? " ";
-  final String _signUp          = dotenv.env["signUp"] ?? " ";
-  final String _login           = dotenv.env["login"] ?? " ";
-  final String _forgotPassword  = dotenv.env["forgotPassword"] ?? " ";
-  final String _uploadImage     = dotenv.env["uploadImage"] ?? " ";
-  final String _uploadVideo     = dotenv.env["uploadVideo"] ?? " ";
-  final String _uploadAudio     = dotenv.env["uploadAudio"] ?? " ";
-  final String _addPost         = dotenv.env["addPost"] ?? " ";
-  final String _blog            = dotenv.env["blog"] ?? " ";
-  final String _fetchPost       = dotenv.env["fetchPost"] ?? " ";
-  final String _changeEmail     = dotenv.env["changeEmail"] ?? " ";
-  final String _changePass      = dotenv.env["changePass"] ?? " ";
-  final String _logOut          = dotenv.env["logOut"] ?? " ";
-  final String _published          = dotenv.env["published"] ?? " ";
-  final String _posts          = dotenv.env["posts"] ?? " ";
+  final String _signUp = dotenv.env["signUp"] ?? " ";
+  final String _login = dotenv.env["login"] ?? " ";
+  final String _forgotPassword = dotenv.env["forgotPassword"] ?? " ";
+  final String _uploadImage = dotenv.env["uploadImage"] ?? " ";
+  final String _uploadVideo = dotenv.env["uploadVideo"] ?? " ";
+  final String _uploadAudio = dotenv.env["uploadAudio"] ?? " ";
+  final String _addPost = dotenv.env["Post"] ?? " ";
+  final String _blog = dotenv.env["blog"] ?? " ";
+  final String _fetchPost = dotenv.env["fetchPost"] ?? " ";
+  final String _changeEmail = dotenv.env["changeEmail"] ?? " ";
+  final String _changePass = dotenv.env["changePass"] ?? " ";
+  final String _logOut = dotenv.env["logOut"] ?? " ";
+  final String _published = dotenv.env["published"] ?? " ";
+  final String _posts = dotenv.env["Post"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -352,13 +352,14 @@ class Api {
     return jsonDecode(response.body);
   }
 
-
   /// blogs
   /// Make GET Request to the API to get List of all blogs (Profiles).
   Future<dynamic> getBlogs() async {
     final http.Response response = await http
-        .get(Uri.parse(_host + _blog),
-              headers: _headerContentAuth,)
+        .get(
+      Uri.parse(_host + _blog),
+      headers: _headerContentAuth,
+    )
         .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
@@ -368,19 +369,21 @@ class Api {
     });
     return response;
   }
+
   /// Post a new blog
   Future<dynamic> postNewBlog(
-      final String blogUserName,
-      ) async {
+    final String blogUserName,
+  ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _blog ),
+      Uri.parse(_host + _blog),
       headers: _headerContentAuth,
       body: jsonEncode(<String, String>{
         "title": "Untitled",
         "blog_username": blogUserName,
       }),
-    ).onError((final Object? error, final StackTrace stackTrace) {
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -389,20 +392,22 @@ class Api {
     });
     return response;
   }
+
   /// to get the posts of a specific blog
   Future<dynamic> fetchSpecificBlogPost(final int blogId) async {
 
-      final http.Response response = await http.get(
-        Uri.parse(_host + _posts + blogId.toString() + _published),
-        headers: _headerContentAuth,
-      ).onError((final Object? error, final StackTrace stackTrace) {
-        if (error.toString().startsWith("SocketException: Failed host lookup")) {
-          return http.Response(_weirdConnection, 502);
-        } else {
-          return http.Response(_failed, 404);
-        }
-      });
-      return response;
+    final http.Response response = await http
+        .get(
+      Uri.parse(_host + _posts + blogId.toString() + _published),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
   }
-
 }

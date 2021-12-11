@@ -1,11 +1,11 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
+import "package:fluttertoast/fluttertoast.dart";
+import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
-import 'package:tumbler/Models/user.dart';
-import 'package:tumbler/Providers/blogs.dart';
-import 'package:tumbler/Screens/Home_Page/home_page.dart';
+import "package:tumbler/Models/blog.dart";
+import "package:tumbler/Providers/blogs.dart";
+import "package:tumbler/Screens/Home_Page/home_page.dart";
 /// a page for entering the new blog name
 class CreateNewBlog extends StatefulWidget {
   /// constructor
@@ -80,7 +80,7 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
                 {
                   final int length=await Provider.of<BlogsData>
                     (context, listen: false)
-                      .get_Blogs().then((final value) =>
+                      .get_Blogs().then((final List<Blog> value) =>
                   value.length,);
                   await Provider.of<BlogsData>
                     (context, listen: false)
@@ -112,7 +112,7 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
           padding: const EdgeInsets.all(8),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: [
+            children: <Widget>[
               // TODO(Donia): make it random
               Image.asset("assets/images/intro_3.jpg",
                 width: 40,height: 40,fit: BoxFit.cover,),
@@ -123,8 +123,7 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
                   controller: _textEditingController,
                     onChanged: (final String val){
                     },
-                    onSubmitted: (val)async{
-                      print(val);
+                    onSubmitted: (final String val)async{
                       if(isValid())
                         {
                           // TODO(Donia): call postBlog
@@ -134,7 +133,7 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
                             {
                               final int length=await Provider.of<BlogsData>
                                 (context, listen: false)
-                                  .get_Blogs().then((final value) =>
+                                  .get_Blogs().then((final List<Blog> value) =>
                               value.length,);
                               await Provider.of<BlogsData>
                                 (context, listen: false)

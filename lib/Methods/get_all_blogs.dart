@@ -46,7 +46,6 @@ Future<bool> fillUserBlogs() async {
 
       }
     }
-    print(User.blogsNames);
     return true;
   } else {
     return false;

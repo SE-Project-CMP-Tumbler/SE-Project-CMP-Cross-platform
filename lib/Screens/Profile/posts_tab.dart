@@ -1,7 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import "package:flutter/cupertino.dart";
 
+/// Profile Posts Tab
 class ProfilePostsTab extends StatefulWidget {
-  const ProfilePostsTab({Key? key}) : super(key: key);
+  /// Constructor
+  const ProfilePostsTab({final Key? key}) : super(key: key);
 
   @override
   _ProfilePostsTabState createState() => _ProfilePostsTabState();
@@ -9,7 +11,7 @@ class ProfilePostsTab extends StatefulWidget {
 
 class _ProfilePostsTabState extends State<ProfilePostsTab> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Column(
 
     );

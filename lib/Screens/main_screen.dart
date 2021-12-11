@@ -1,13 +1,13 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
-import 'package:provider/provider.dart';
+import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
-import 'package:tumbler/Providers/blogs.dart';
+import "package:tumbler/Providers/blogs.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
 import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
-import 'package:tumbler/Screens/Search/search_page.dart';
+import "package:tumbler/Screens/Search/search_page.dart";
 import "package:tumbler/Widgets/Home/draggable_floating_button.dart";
 
 /// The Main Screen That Hold [HomePage],

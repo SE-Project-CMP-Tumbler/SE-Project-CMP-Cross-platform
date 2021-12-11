@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:tumbler/Widgets/Post/post_personal_avatar.dart';
+import "package:flutter/material.dart";
+import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 /// the top bar of personal post in profile page
 class PersonalPostTopBar extends StatefulWidget {
   /// Constructor

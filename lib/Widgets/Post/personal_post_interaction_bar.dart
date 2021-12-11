@@ -1,23 +1,26 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:like_button/like_button.dart';
-/// same as post intercation bar but with som additional features
+import "package:flutter/cupertino.dart";
+import "package:flutter/material.dart";
+import "package:intl/intl.dart";
+import "package:like_button/like_button.dart";
+
+/// same as post interaction bar but with som additional features
 class PersonalPostInteractionBar extends StatefulWidget {
   /// constructor, takes the notes number
-  const PersonalPostInteractionBar(
-      {required final this.notesNum,
-        final Key? key,})
-      : super(key: key);
+  const PersonalPostInteractionBar({
+    required final this.notesNum,
+    final Key? key,
+  }) : super(key: key);
+
   /// count of notes to display on the post
   final int? notesNum;
+
   @override
   _PersonalPostInteractionBarState createState() =>
       _PersonalPostInteractionBarState();
 }
 
-class _PersonalPostInteractionBarState extends State<PersonalPostInteractionBar>
-{
+class _PersonalPostInteractionBarState
+    extends State<PersonalPostInteractionBar> {
   bool isLoved = false;
   NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
 
@@ -31,7 +34,7 @@ class _PersonalPostInteractionBarState extends State<PersonalPostInteractionBar>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             TextButton(
-              onPressed: (){},
+              onPressed: () {},
               child: Text(
                 "${numFormatter.format(widget.notesNum)} notes",
                 style: const TextStyle(
@@ -42,7 +45,7 @@ class _PersonalPostInteractionBarState extends State<PersonalPostInteractionBar>
               ),
             ),
             Row(
-              children: [
+              children: <Widget>[
                 IconButton(
                   onPressed: null,
                   icon: Icon(
@@ -58,7 +61,6 @@ class _PersonalPostInteractionBarState extends State<PersonalPostInteractionBar>
                     color: Colors.grey.shade800,
                   ),
                   iconSize: 20,
-
                 ),
                 IconButton(
                   onPressed: null,
@@ -71,7 +73,8 @@ class _PersonalPostInteractionBarState extends State<PersonalPostInteractionBar>
                 LikeButton(
                   isLiked: isLoved,
                   likeBuilder: (final bool isLoved) {
-                    final Color color = isLoved ? Colors.red : Colors.grey.shade800;
+                    final Color color =
+                        isLoved ? Colors.red : Colors.grey.shade800;
                     return Icon(
                       isLoved ? Icons.favorite : Icons.favorite_border_outlined,
                       color: color,
@@ -97,7 +100,6 @@ class _PersonalPostInteractionBarState extends State<PersonalPostInteractionBar>
                 ),
               ],
             ),
-
           ],
         ),
       ),

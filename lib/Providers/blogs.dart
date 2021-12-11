@@ -2,9 +2,8 @@ import "dart:convert";
 
 import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
-import "package:tumbler/Models/http_requests_exceptions.dart";
 import "package:tumbler/Models/blog.dart";
-import 'package:tumbler/Models/user.dart';
+import "package:tumbler/Models/http_requests_exceptions.dart";
 /// the provider class of all blogs
 class BlogsData with ChangeNotifier{
   /// list of all blogs that belongs to a single user
