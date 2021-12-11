@@ -294,15 +294,6 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Get all blogs of user
-  Future<Map<String, dynamic>> getAllBlogs() async {
-    final http.Response response = await http.get(
-      Uri.parse(_host + _blog),
-      headers: _headerContentAuth,
-    );
-    return jsonDecode(response.body);
-  }
-
   /// PUT request to change the current user Email
   /// with [email]
   Future<Map<String, dynamic>> changeEmail(
@@ -380,7 +371,7 @@ class Api {
   /// Make GET Request to the API to get List of all blogs (Profiles).
   Future<dynamic> getBlogs() async {
     final http.Response response = await http
-        .get(Uri.parse(_host + _getBlogs),
+        .get(Uri.parse(_host + _blog),
               headers: _headerContentAuth,)
         .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
@@ -397,7 +388,7 @@ class Api {
       ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _addBlog ),
+      Uri.parse(_host + _blog ),
       headers: _headerContentAuth,
       body: jsonEncode(<String, String>{
         "title": "Untitled",
