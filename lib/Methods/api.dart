@@ -33,7 +33,7 @@ class Api {
                         "status": "502",
                          "msg": "Weird Connection. Try Again?"
                       }
-            }
+            } 
         ''';
 
   final String _failed = '''
