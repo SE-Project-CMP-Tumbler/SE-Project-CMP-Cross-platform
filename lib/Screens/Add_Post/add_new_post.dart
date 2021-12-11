@@ -159,10 +159,6 @@ class _AddPostState extends State<AddPost> {
                 htmlToolbarOptions: const HtmlToolbarOptions(
                   toolbarPosition: ToolbarPosition.belowEditor,
                   defaultToolbarButtons: <Toolbar>[
-                    //StyleButtons(),
-
-                    //ColorButtons(),
-                    //ListButtons(),
                     FontButtons(
                         italic: true,
                         bold: true,
@@ -190,8 +186,6 @@ class _AddPostState extends State<AddPost> {
                         lineHeight: false,
                         textDirection: false),
                     FontSettingButtons(fontSizeUnit: false),
-
-                    //OtherButtons(),
                   ],
                 ),
                 otherOptions: OtherOptions(
