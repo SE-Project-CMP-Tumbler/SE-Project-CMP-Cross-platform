@@ -173,6 +173,8 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(final BuildContext context) {
+    Posts postsProv= Provider.of<Posts>(context);
+    posts= postsProv.profilePosts;
     List<String> blogUserNames = User.blogsNames+ <String>["Create new tumblr"];
     String dropdownValue = User.blogsNames[User.currentProfile];
     final double _height = MediaQuery.of(context).size.height;
@@ -533,7 +535,7 @@ class _ProfilePageState extends State<ProfilePage>
                                     child: PersonalPost(
                                       showEditPostBottomSheet:
                                       showEditPostProfileBottomSheet,
-                                      post: posts[index],
+                                      post: posts.reversed.toList()[index],
                                     ),
                                   );
                                 },
