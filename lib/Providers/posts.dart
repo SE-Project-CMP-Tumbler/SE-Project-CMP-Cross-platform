@@ -16,8 +16,31 @@ class Posts with ChangeNotifier {
     return <Post>[..._homePosts];
   }
 
+  ///Getter : returns the notes of a certain post
   Notes? getNotesForSinglePost(final int postID) {
     return _notes[postID];
+  }
+
+  /// Called when the user clicks on favorite icon button
+  Future<void> likePost(final int postId) async {
+    // call api().likePost
+
+    // if the prev request was successful make api().getNotes request
+    // update notes of post with postId with data returned from api().getNotes
+    // through _notes[postId] = Notes(................);
+
+    // else return httpException
+  }
+
+  /// Called when the user clicks on un-favorite icon button (filled favorite)
+  Future<void> unlikePost(final int postId) async {
+    // call api().unlikePost
+
+    // if the prev request was successful make api().getNotes request
+    // update notes of post with postId with data returned from api().getNotes
+    // through _notes[postId] = Notes(................);
+
+    // else return httpException
   }
 
   ///fetch posts through http get request.
@@ -63,15 +86,15 @@ class Posts with ChangeNotifier {
       if (recievedNotes.values.single["meta"]["status"] == "404")
         throw HttpException("Not Found!");
       else {
-      final List <dynamic> likes =
+        final List<dynamic> likes =
             recievedNotes.values.single["response"]["likes"] ?? <dynamic>[];
-      final List <dynamic> reblogs =
+        final List<dynamic> reblogs =
             recievedNotes.values.single["response"]["reblogs"] ?? <dynamic>[];
-      final List <dynamic> replies =
+        final List<dynamic> replies =
             recievedNotes.values.single["response"]["replies"] ?? <dynamic>[];
 
-      _notes[_homePosts[i].postId] =
-       Notes(likes: likes,reblogs: reblogs,replies:replies);
+        _notes[_homePosts[i].postId] =
+            Notes(likes: likes, reblogs: reblogs, replies: replies);
       }
     }
 
