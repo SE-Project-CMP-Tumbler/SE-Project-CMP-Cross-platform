@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Methods/Api.dart";
 
@@ -17,14 +18,18 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded image
       index1 = html.indexOf('"', index2); // the end of the encoded image
-      index1 = html.indexOf('"', index2); //repeating this line is important
-      //since the html size changes in each iteration
 
-      final String image = html.substring(index2 + 1, index1);
+      //since the html size changes in each iteration
+      final String image = html.substring(x + 10, index1);
       url = await Api().uploadImage(image);
 
       if (url["meta"]["status"] == "200") {
-        html = html.replaceRange(x + 10, index1, url["response"]["url"]);
+        html = html.replaceRange(
+          x + 10,
+          index1,
+          "${dotenv.env["server"] ?? " "}${url["response"]["url"]}",
+        );
+        index1 = html.indexOf('"', index2); //repeating this line is important
       } else {
         await Fluttertoast.showToast(
           msg: "Failed To Upload Images",
@@ -50,16 +55,18 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded video
       index1 = html.indexOf('"', index2); // the end of the encoded video
-      index1 = html.indexOf(
-        '"',
-        index2,
-      ); //repeating this line is important
+
       //since the html size changes in each iteration
-      final String video = html.substring(index2 + 1, index1);
+      final String video = html.substring(x + 24, index1);
       url = await Api().uploadVideo(video);
 
       if (url["meta"]["status"] == "200") {
-        html = html.replaceRange(x + 24, index1, url["response"]["url"]);
+        html = html.replaceRange(
+          x + 24,
+          index1,
+          "${dotenv.env["server"] ?? " "}${url["response"]["url"]}",
+        );
+        index1 = html.indexOf('"', index2); //repeating this line is important
       } else {
         await Fluttertoast.showToast(
           msg: "Failed To Upload videos",
@@ -84,13 +91,18 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
     if (x != -1) {
       index2 = html.indexOf(",", x); // the start of the encoded audio
       index1 = html.indexOf('"', index2); // the end of the encoded audio
-      index1 = html.indexOf('"', index2); //repeating this line is important
+
       //since the html size changes in each iteration
-      final String audio = html.substring(index2 + 1, index1);
+      final String audio = html.substring(x + 24, index1);
       url = await Api().uploadAudio(audio);
 
       if (url["meta"]["status"] == "200") {
-        html = html.replaceRange(x + 24, index1, url["response"]["url"]);
+        html = html.replaceRange(
+          x + 24,
+          index1,
+          "${dotenv.env["server"] ?? " "}${url["response"]["url"]}",
+        );
+        index1 = html.indexOf('"', index2); //repeating this line is important
       } else {
         await Fluttertoast.showToast(
           msg: "Failed To Upload Audios",
