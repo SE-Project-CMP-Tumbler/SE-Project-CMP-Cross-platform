@@ -3,7 +3,13 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:like_button/like_button.dart";
+import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
+
+Future<bool> getLikeStatus(final int postId, final int blogId) async {
+  final Map<String, dynamic> res = await Api().getPostLikeStatus(postId);
+  return res.values.single["response"]["like_status"];
+}
 
 ///Class for interaction bar exists the bottom of each post in home page
 ///
@@ -12,21 +18,44 @@ import "package:tumbler/Screens/Notes/post_notes.dart";
 ///2-buttons to Favorite and reblog and reply
 class PostInteractionBar extends StatefulWidget {
   ///Constructor takes posts' notes
-   PostInteractionBar({required final this.likes,required final this.reblogs,required final this.replies, final Key? key})
-      : super(key: key);
+  PostInteractionBar({
+    required final this.likes,
+    required final this.reblogs,
+    required final this.replies,
+    required final this.postId,
+    final Key? key,
+  }) : super(key: key);
 
   List<dynamic> likes = <dynamic>[];
   List<dynamic> reblogs = <dynamic>[];
   List<dynamic> replies = <dynamic>[];
 
+  final int postId;
+  late String blogId;
+  bool isLoved = false;
 
   @override
   _PostInteractionBarState createState() => _PostInteractionBarState();
 }
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
-  bool isLoved = false;
   NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
+
+  @override
+  void initState() {
+    // TODO(Waleed): get current blogID and use it to get current like status for a post.
+    //widget.blogId = User.userID;
+
+    getLikeStatus(widget.postId % 4 + 1, 0).then((final bool result) {
+      if (mounted) {
+        setState(() {
+          widget.isLoved = result;
+        });
+      }
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(final BuildContext context) {
@@ -41,13 +70,15 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
               ),
               onPressed: () {
-                   Navigator.of(context).push(
-                                          MaterialPageRoute<Notes>(
-                                            builder:
-                                                (final BuildContext context) =>
-                                                     Notes(likesList:widget.likes,reblogsList: widget.reblogs,repliesList: widget.replies,),
-                                          ),
-                                        );
+                Navigator.of(context).push(
+                  MaterialPageRoute<Notes>(
+                    builder: (final BuildContext context) => Notes(
+                      likesList: widget.likes,
+                      reblogsList: widget.reblogs,
+                      repliesList: widget.replies,
+                    ),
+                  ),
+                );
               },
               child: Image.asset(
                 "assets/images/interactions.jpeg",
@@ -56,7 +87,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
           ),
           Expanded(
             child: Text(
-              "${numFormatter.format(widget.likes.length+widget.replies.length+widget.reblogs.length)} notes",
+              "${numFormatter.format(widget.likes.length + widget.replies.length + widget.reblogs.length)} notes",
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -79,7 +110,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             ),
           ),
           LikeButton(
-            isLiked: isLoved,
+            isLiked: widget.isLoved,
             likeBuilder: (final bool isLoved) {
               final Color color = isLoved ? Colors.red : Colors.black;
               return Icon(

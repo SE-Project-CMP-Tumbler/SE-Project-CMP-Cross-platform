@@ -155,18 +155,19 @@ class LocalDataBase {
   }
 
   /// Delete all rows in User Table
-  Future<void> deleteUserTable()async{
+  Future<void> deleteUserTable() async {
     final Database db = await instance.database;
     await db.delete(_userTable);
   }
+
   /// Delete all rows in User Blog Table
-  Future<void> deleteUserBlogTable()async{
+  Future<void> deleteUserBlogTable() async {
     final Database db = await instance.database;
     await db.delete(_userBlogTable);
   }
 
   /// Delete all both  User Table and User Blog Table
-  Future<void> deleteAllTable()async{
+  Future<void> deleteAllTable() async {
     final Database db = await instance.database;
     await db.delete(_userTable);
     await db.delete(_userBlogTable);

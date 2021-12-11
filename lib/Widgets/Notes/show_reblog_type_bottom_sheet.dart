@@ -7,8 +7,11 @@ enum blogsType {
   others,
 }
 
-void showReblogsCategoriesBottomSheet(final BuildContext ctx,
-    final int currType, final Function changeBlogViewSection,) {
+void showReblogsCategoriesBottomSheet(
+  final BuildContext ctx,
+  final int currType,
+  final Function changeBlogViewSection,
+) {
   showModalBottomSheet<dynamic>(
     isScrollControlled: true,
     context: ctx,
@@ -30,7 +33,7 @@ void showReblogsCategoriesBottomSheet(final BuildContext ctx,
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children:<Widget> [
+                  children: <Widget>[
                     FittedBox(
                       child: Text(
                         "Reblogs with comments",

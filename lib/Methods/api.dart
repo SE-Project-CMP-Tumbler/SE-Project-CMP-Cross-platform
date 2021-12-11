@@ -35,7 +35,7 @@ class Api {
                         "status": "502",
                          "msg": "Weird Connection. Try Again?"
                       }
-            } 
+            }
         ''';
 
   final String _failed = '''
@@ -44,17 +44,12 @@ class Api {
                         "status": "404",
                          "msg": "Failed to Connect to the server"
                       }
-            } 
+            }
         ''';
 
   final Map<String, String> _headerContent = <String, String>{
     io.HttpHeaders.acceptHeader: "application/json",
     io.HttpHeaders.contentTypeHeader: "application/json",
-  };
-  final Map<String, String> _headerContentUpload = <String, String>{
-    io.HttpHeaders.acceptHeader: "application/json",
-    io.HttpHeaders.contentTypeHeader: "application/json",
-    io.HttpHeaders.authorizationHeader: "Bearer " + User.accessToken,
   };
   final Map<String, String> _headerContentAuth = <String, String>{
     io.HttpHeaders.acceptHeader: "application/json",
@@ -65,7 +60,6 @@ class Api {
   /// Make GET Request to the API to get List of
   /// Trending tags.
   Future<Map<String, dynamic>> getTrendingTags() async {
-    // it need Authorization, why ??
     final http.Response response = await http
         .get(Uri.parse(_host + _getTrendingTags))
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -95,7 +89,8 @@ class Api {
         "age": age.toString(),
       }),
       headers: _headerContent,
-    ).onError((final Object? error, final StackTrace stackTrace) {
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -155,13 +150,9 @@ class Api {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadVideo + User.userID),
-      headers: <String, String>{
-        "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: _headerContentAuth,
       body: json.encode(<String, String>{
-        "video": video,
+        "b64_video": video,
       }),
     )
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -180,13 +171,9 @@ class Api {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadImage),
-      headers: <String, String>{
-        "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: _headerContentAuth,
       body: json.encode(<String, String>{
-        "image": image,
+        "b64_image": image,
       }),
     )
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -204,13 +191,9 @@ class Api {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadAudio + User.userID),
-      headers: <String, String>{
-        "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: _headerContentAuth,
       body: json.encode(<String, String>{
-        "audio": audio,
+        "b64_audio": audio,
       }),
     )
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -224,34 +207,25 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///get all blogs of user
+  /// Get all blogs of user
   Future<Map<String, dynamic>> getAllBlogs() async {
     final http.Response response = await http.get(
       Uri.parse(_host + _blog),
       headers: _headerContentAuth,
     );
-    //print(response.body);
     return jsonDecode(response.body);
   }
 
   /// Upload HTML code of the post.
   Future<Map<String, dynamic>> addPost(
-    //Future<void> addPost(
     final String postBody,
     final String postStatus,
     final String postType,
     final String postTime,
   ) async {
-    print("lol");
-    final Map<String, dynamic> blogs = await getAllBlogs();
-    //print(blogs);
-    var decodeResponse = blogs["response"]["blogs"][0]["id"];
-    String blogId = decodeResponse.toString();
-    //print(blogId);
-    //String blogId = "5";
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _addPost + blogId),
+      Uri.parse(_host + _addPost + User.blogsIDs[User.currentProfile]),
       headers: _headerContentAuth,
       body: jsonEncode(<String, String>{
         "post_status": postStatus,
@@ -267,7 +241,6 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
-    //print(response.body);
     return jsonDecode(response.body);
   }
 
@@ -284,11 +257,23 @@ class Api {
       rethrow;
     }
   }
-  /// GET Notes For the post with [postID]
+
+  /// GET Notes For the post with id [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
+      Uri.parse(_firebaseHost + "/notes/$postID.json"),
+      headers: <String, String>{"Authorization": User.accessToken},
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// GET getPostLikeStatus for a post with id [postID]
+  Future<Map<String, dynamic>> getPostLikeStatus(final int postID) async {
+    // note: this is a mock function ,
+    // the real one should accept current blogID beside postID.
+    final http.Response response = await http.get(
       Uri.parse(
-        "https://mock-back-default-rtdb.firebaseio.com/notes/$postID.json",
+        _firebaseHost + "/postLoveStatus/$postID.json",
       ),
       headers: <String, String>{"Authorization": User.accessToken},
     );
@@ -421,4 +406,3 @@ class Api {
   }
 
 }
-

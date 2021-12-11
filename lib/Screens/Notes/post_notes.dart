@@ -2,7 +2,6 @@
 
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
@@ -249,11 +248,14 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                       toolbarHeight: 40,
                       leadingWidth: 10,
                       leading: Container(),
-                      actions: <Widget> [
+                      actions: <Widget>[
                         IconButton(
                           onPressed: () {
                             showReblogsCategoriesBottomSheet(
-                                context, blogTypeToShow, changeBlogViewSection,);
+                              context,
+                              blogTypeToShow,
+                              changeBlogViewSection,
+                            );
                           },
                           icon: const Icon(
                             Icons.arrow_drop_down,

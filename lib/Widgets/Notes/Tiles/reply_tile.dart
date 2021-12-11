@@ -3,7 +3,6 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
-
 class ReplyTile extends StatelessWidget {
   ///
   const ReplyTile({
@@ -33,15 +32,16 @@ class ReplyTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-         PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
+          PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
           const SizedBox(
             width: 15,
           ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black26),
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),),
+                border: Border.all(color: Colors.black26),
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(

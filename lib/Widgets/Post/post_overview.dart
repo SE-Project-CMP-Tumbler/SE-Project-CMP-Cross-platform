@@ -48,6 +48,7 @@ class _PostOutViewState extends State<PostOutView> {
          likes:widget.post.likes,
          reblogs:widget.post.reblogs,
          replies:widget.post.replies,
+         postId: widget.post.postId,
         )
       ],
     );

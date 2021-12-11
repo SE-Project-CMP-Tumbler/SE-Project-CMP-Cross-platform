@@ -17,7 +17,7 @@ class ProfileSettings extends StatelessWidget {
       backgroundColor: appBackgroundColor,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             ElevatedButton(
               onPressed: () {

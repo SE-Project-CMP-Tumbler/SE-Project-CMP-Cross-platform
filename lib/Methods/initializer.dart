@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import "package:tumbler/Methods/get_all_blogs.dart";
 import "package:tumbler/Methods/local_db.dart";
 import "package:tumbler/Models/user.dart";
@@ -21,19 +22,22 @@ Future<void> initializeUserBlogs() async {
   }
 
   await fillUserBlogs();
-  await LocalDataBase.instance.deleteUserBlogTable();
-
-  for (int i = 0; i < User.blogsIDs.length; i++) {
-    await LocalDataBase.instance.insertIntoUserBlogTable(
-      User.blogsIDs[i],
-      User.blogsNames[i],
-      User.avatars[i],
-      User.avatarShapes[i],
-      User.headerImages[i],
-      User.titles[i],
-      User.descriptions[i],
-      User.allowAsk[i],
-      User.allowSubmission[i],
-    );
+  if (!kIsWeb) {
+    await LocalDataBase.instance.deleteUserBlogTable();
   }
+
+  if (!kIsWeb)
+    for (int i = 0; i < User.blogsIDs.length; i++) {
+      await LocalDataBase.instance.insertIntoUserBlogTable(
+        User.blogsIDs[i],
+        User.blogsNames[i],
+        User.avatars[i],
+        User.avatarShapes[i],
+        User.headerImages[i],
+        User.titles[i],
+        User.descriptions[i],
+        User.allowAsk[i],
+        User.allowSubmission[i],
+      );
+    }
 }

@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
@@ -92,7 +93,7 @@ Whatever you're into, you'll find it here. Follow some of the tags below to star
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 itemCount: tagsNames.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
+                  crossAxisCount: (!kIsWeb) ? 3 : 10,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
