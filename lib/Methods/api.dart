@@ -149,11 +149,7 @@ class Api {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadVideo + User.userID),
-      headers: <String, String>{
-        "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: _headerContentAuth,
       body: json.encode(<String, String>{
         "video": video,
       }),
@@ -174,11 +170,7 @@ class Api {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadImage),
-      headers: <String, String>{
-        "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: _headerContentAuth,
       body: json.encode(<String, String>{
         "image": image,
       }),
@@ -198,11 +190,7 @@ class Api {
     final http.Response response = await http
         .post(
       Uri.parse(_host + _uploadAudio + User.userID),
-      headers: <String, String>{
-        "Authorization": "Bearer " + User.accessToken,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
+      headers: _headerContentAuth,
       body: json.encode(<String, String>{
         "audio": audio,
       }),
@@ -229,7 +217,6 @@ class Api {
 
   /// Upload HTML code of the post.
   Future<Map<String, dynamic>> addPost(
-    //Future<void> addPost(
     final String postBody,
     final String postStatus,
     final String postType,
@@ -273,9 +260,7 @@ class Api {
   /// GET Notes For the post with [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
-      Uri.parse(
-        "https://mock-back-default-rtdb.firebaseio.com/notes/$postID.json",
-      ),
+      Uri.parse(_firebaseHost + "/notes/$postID.json"),
       headers: <String, String>{"Authorization": User.accessToken},
     );
     return jsonDecode(response.body);
