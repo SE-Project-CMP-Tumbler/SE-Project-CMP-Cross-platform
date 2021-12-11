@@ -6,6 +6,7 @@ import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/personal_post_interaction_bar.dart";
 import "package:tumbler/Widgets/Post/personal_post_top_bar.dart";
 import "package:tumbler/Widgets/Post/post_top_bar.dart";
+
 /// for the 'Posts' tab in ProfilePage
 class PersonalPost extends StatefulWidget {
   /// constructor
@@ -33,28 +34,27 @@ class _PersonalPostState extends State<PersonalPost> {
   @override
   Widget build(final BuildContext context) {
     return Container(
-          color: Colors.white,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // tumbler user name and profile pic and options
-              PersonalPostTopBar(
-                showEditPostPersonalBottomSheet: showEditPostProfileBottomSheet,
-                avatarPhotoLink: widget.post.blogAvatar,
-                name: widget.post.blogUsername,
-              ),
-              const Divider(
-                color: Colors.grey,
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: HtmlView(htmlData: widget.post.postBody),
-              ),
-              const PersonalPostInteractionBar(notesNum: 11),
-
-            ],
+      color: Colors.white,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          // tumbler user name and profile pic and options
+          PersonalPostTopBar(
+            showEditPostPersonalBottomSheet: showEditPostProfileBottomSheet,
+            avatarPhotoLink: widget.post.blogAvatar,
+            name: widget.post.blogUsername,
           ),
-        );
+          const Divider(
+            color: Colors.grey,
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: HtmlView(htmlData: widget.post.postBody),
+          ),
+          const PersonalPostInteractionBar(notesNum: 11),
+        ],
+      ),
+    );
   }
 }

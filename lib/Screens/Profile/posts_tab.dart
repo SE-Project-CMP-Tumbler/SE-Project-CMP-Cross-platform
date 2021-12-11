@@ -12,8 +12,6 @@ class ProfilePostsTab extends StatefulWidget {
 class _ProfilePostsTabState extends State<ProfilePostsTab> {
   @override
   Widget build(final BuildContext context) {
-    return Column(
-
-    );
+    return Column();
   }
 }

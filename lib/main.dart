@@ -12,7 +12,7 @@ import "package:tumbler/Screens/main_screen.dart";
 
 Future<void> main() async {
   await dotenv.load();
-  if(!kIsWeb) {
+  if (!kIsWeb) {
     await initializeUserData();
     await initializeUserBlogs();
   }

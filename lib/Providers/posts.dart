@@ -9,14 +9,17 @@ import "package:tumbler/Models/post.dart";
 class Posts with ChangeNotifier {
   final List<Post> _homePosts = <Post>[];
   final List<Post> _profilePosts = <Post>[];
+
   ///Returns loaded posts.
   List<Post> get homePosts {
     return <Post>[..._homePosts];
   }
+
   /// Returns all profile 'Posts' tab
   List<Post> get profilePosts {
     return <Post>[..._profilePosts];
   }
+
   ///fetch posts through http get request.
   Future<void> fetchAndSetPosts() async {
     // clear all loaded post.
@@ -82,8 +85,7 @@ class Posts with ChangeNotifier {
       throw HttpException(encodedRes["meta"]["msg"]);
     else if (res.statusCode == 403) {
       throw HttpException(encodedRes["meta"]["msg"]);
-    }
-    else if (res.statusCode == 404) {
+    } else if (res.statusCode == 404) {
       throw HttpException(encodedRes["meta"]["msg"]);
     }
     //set _homePost list.

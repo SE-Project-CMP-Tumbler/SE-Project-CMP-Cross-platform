@@ -170,17 +170,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           _isLoading = false;
         });
       }).catchError((final Object? error) {
-        if(mounted)
+        if (mounted)
           setState(() {
-          _isLoading = false;
-          _error = true;
-        });
+            _isLoading = false;
+            _error = true;
+          });
         //showErrorDialog(context, error.toString());
       });
     }
     _isInit = true;
-    if(mounted)
+    if (mounted) {
       super.didChangeDependencies();
+    }
   }
 
   /// Used to switch from __Following__ section

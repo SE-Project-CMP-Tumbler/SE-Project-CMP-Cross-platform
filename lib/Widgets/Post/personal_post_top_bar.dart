@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
+
 /// the top bar of personal post in profile page
 class PersonalPostTopBar extends StatefulWidget {
   /// Constructor
@@ -32,7 +33,8 @@ class _PersonalPostTopBarState extends State<PersonalPostTopBar> {
       child: Row(
         children: <Widget>[
           PersonAvatar(
-            avatarPhotoLink: widget.avatarPhotoLink,shape:"square",
+            avatarPhotoLink: widget.avatarPhotoLink,
+            shape: "square",
           ),
           Text(
             widget.name,
@@ -42,7 +44,6 @@ class _PersonalPostTopBarState extends State<PersonalPostTopBar> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           Expanded(
             child: Container(
               alignment: Alignment.centerRight,
