@@ -12,13 +12,16 @@ import "package:tumbler/Screens/Notes/post_notes.dart";
 ///2-buttons to Favorite and reblog and reply
 class PostInteractionBar extends StatefulWidget {
   ///Constructor takes posts' notes
-   PostInteractionBar({required final this.likes,required final this.reblogs,required final this.replies, final Key? key})
-      : super(key: key);
+  PostInteractionBar({
+    required final this.likes,
+    required final this.reblogs,
+    required final this.replies,
+    final Key? key,
+  }) : super(key: key);
 
   List<dynamic> likes = <dynamic>[];
   List<dynamic> reblogs = <dynamic>[];
   List<dynamic> replies = <dynamic>[];
-
 
   @override
   _PostInteractionBarState createState() => _PostInteractionBarState();
@@ -41,13 +44,15 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
               ),
               onPressed: () {
-                   Navigator.of(context).push(
-                                          MaterialPageRoute<Notes>(
-                                            builder:
-                                                (final BuildContext context) =>
-                                                     Notes(likesList:widget.likes,reblogsList: widget.reblogs,repliesList: widget.replies,),
-                                          ),
-                                        );
+                Navigator.of(context).push(
+                  MaterialPageRoute<Notes>(
+                    builder: (final BuildContext context) => Notes(
+                      likesList: widget.likes,
+                      reblogsList: widget.reblogs,
+                      repliesList: widget.replies,
+                    ),
+                  ),
+                );
               },
               child: Image.asset(
                 "assets/images/interactions.jpeg",
@@ -56,7 +61,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
           ),
           Expanded(
             child: Text(
-              "${numFormatter.format(widget.likes.length+widget.replies.length+widget.reblogs.length)} notes",
+              "${numFormatter.format(widget.likes.length + widget.replies.length + widget.reblogs.length)} notes",
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
