@@ -3,15 +3,21 @@ import "dart:convert";
 import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/http_requests_exceptions.dart";
+import "package:tumbler/Models/notes.dart";
 import "package:tumbler/Models/post.dart";
 
 ///Posts provider manage the state of posts.
 class Posts with ChangeNotifier {
   final List<Post> _homePosts = <Post>[];
+  final Map<int, Notes> _notes = <int, Notes>{};
 
   ///Returns loaded posts.
   List<Post> get homePosts {
     return <Post>[..._homePosts];
+  }
+
+  Notes? getNotesForSinglePost(final int postID) {
+    return _notes[postID];
   }
 
   ///fetch posts through http get request.
@@ -50,18 +56,22 @@ class Posts with ChangeNotifier {
 
     // setting the notes for each post in _homePosts through http requests.
     for (int i = 0; i < _homePosts.length; i++) {
-      final Map<String, dynamic> notes = await Api().getNotes("${i % 2 + 1}");
+      final Map<String, dynamic> recievedNotes =
+          await Api().getNotes("${i % 2 + 1}");
 
       //check the status code for the received response.
-      if (notes.values.single["meta"]["status"] == "404")
+      if (recievedNotes.values.single["meta"]["status"] == "404")
         throw HttpException("Not Found!");
       else {
-        _homePosts[i].likes =
-            notes.values.single["response"]["likes"] ?? <dynamic>[];
-        _homePosts[i].reblogs =
-            notes.values.single["response"]["reblogs"] ?? <dynamic>[];
-        _homePosts[i].replies =
-            notes.values.single["response"]["replies"] ?? <dynamic>[];
+      final List <dynamic> likes =
+            recievedNotes.values.single["response"]["likes"] ?? <dynamic>[];
+      final List <dynamic> reblogs =
+            recievedNotes.values.single["response"]["reblogs"] ?? <dynamic>[];
+      final List <dynamic> replies =
+            recievedNotes.values.single["response"]["replies"] ?? <dynamic>[];
+
+      _notes[_homePosts[i].postId] =
+       Notes(likes: likes,reblogs: reblogs,replies:replies);
       }
     }
 
