@@ -62,7 +62,7 @@ class HtmlView extends StatelessWidget {
             networkImageRender(width: 500, height: 300),
       },
       onLinkTap: (final String? url, final _, final __, final ___) {
-        //print("opening $url");
+
       },
       onImageTap: (final String? src, final _, final __, final ___) {
         //print(src);

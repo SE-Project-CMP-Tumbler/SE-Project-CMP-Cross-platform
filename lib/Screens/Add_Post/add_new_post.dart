@@ -4,6 +4,7 @@ import "package:fluttertoast/fluttertoast.dart";
 import "package:html_editor_enhanced/html_editor.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/process_html.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Add_Post/popup_menu.dart";
 
@@ -28,8 +29,7 @@ class _AddPostState extends State<AddPost> {
   Future<void> addThePost() async {
     final String html = await controller.getText();
     final String postTime = getDate();
-    //final String processedHtml = await extractMediaFiles(html);
-    //print(processedHtml);
+    final String processedHtml = await extractMediaFiles(html);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
       postOptionChoice = "published";
@@ -38,11 +38,10 @@ class _AddPostState extends State<AddPost> {
     } else if (postType == PostTypes.privatePost) {
       postOptionChoice = "private";
     }
-    //print("salama");
-    final Map<String, dynamic> response =
-        await Api().addPost(html, postOptionChoice, "general", postTime);
-    //print(response["meta"]["status"]);
-    //print("lollol");
+
+    final Map<String, dynamic> response = await Api()
+        .addPost(processedHtml, postOptionChoice, "general", postTime);
+
     if (response["meta"]["status"] == "200") {
       await Fluttertoast.showToast(
         msg: "Added Successfully",
@@ -112,10 +111,11 @@ class _AddPostState extends State<AddPost> {
                   context: context,
                   builder: (final BuildContext context) {
                     return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const <Widget>[
-                          PostTypeMenu(),
-                        ],);
+                      mainAxisSize: MainAxisSize.min,
+                      children: const <Widget>[
+                        PostTypeMenu(),
+                      ],
+                    );
                   },
                 );
               },
@@ -157,14 +157,21 @@ class _AddPostState extends State<AddPost> {
                 htmlToolbarOptions: const HtmlToolbarOptions(
                   toolbarPosition: ToolbarPosition.belowEditor,
                   defaultToolbarButtons: <Toolbar>[
-                    StyleButtons(),
-                    FontSettingButtons(),
-                    FontButtons(clearAll: false),
-                    ColorButtons(),
-                    ListButtons(),
-                    ParagraphButtons(),
-                    InsertButtons(),
-                    OtherButtons(),
+                    FontButtons(
+                        clearAll: false,
+                        strikethrough: false,
+                        subscript: false,
+                        superscript: false,),
+                    InsertButtons(
+                        hr: false,
+                        table: false,),
+                    ParagraphButtons(
+                        caseConverter: false,
+                        decreaseIndent: false,
+                        increaseIndent: false,
+                        lineHeight: false,
+                        textDirection: false,),
+                    FontSettingButtons(fontSizeUnit: false),
                   ],
                 ),
                 otherOptions: OtherOptions(

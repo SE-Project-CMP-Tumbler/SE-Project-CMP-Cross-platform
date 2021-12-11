@@ -11,28 +11,24 @@ class ProfilesList extends StatefulWidget {
   _ProfilesListState createState() => _ProfilesListState();
 }
 
+/// this menu from which the user can choose which profile the current post
+/// will be published in
 class _ProfilesListState extends State<ProfilesList> {
-  List<String> s = User.profilesNames;
-  String dropdownValue = User.profilesNames[User.currentProfile];
   @override
   Widget build(final BuildContext context) {
+    String dropdownValue = User.blogsNames[User.currentProfile];
     return DropdownButton<String>(
       value: dropdownValue,
-      //icon: const Icon(Icons.d),
       elevation: 16,
       style: const TextStyle(color: Colors.black),
-      /* underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),*/
       onChanged: (final String? newValue) {
         setState(() {
           dropdownValue = newValue!;
-          User.currentProfile = User.profilesNames.indexOf(newValue);
-          //print(User.currentProfile);
+          User.currentProfile = User.blogsNames.indexOf(newValue);
         });
       },
-      items: s.map<DropdownMenuItem<String>>((final String value) {
+      items:
+          User.blogsNames.map<DropdownMenuItem<String>>((final String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
