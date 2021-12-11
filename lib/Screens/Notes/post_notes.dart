@@ -20,10 +20,10 @@ enum blogsType {
   others
 }
 
-/// [Notes] is a class handels all stuff related to notes
-class Notes extends StatefulWidget {
+/// [NotesPage] is a class handels all stuff related to notes
+class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
-  Notes({
+  NotesPage({
     required final this.likesList,
     required final this.reblogsList,
     required final this.repliesList,
@@ -46,10 +46,10 @@ class Notes extends StatefulWidget {
   List<dynamic> repliesList = <dynamic>[];
 
   @override
-  _NotesState createState() => _NotesState();
+  _NotesPageState createState() => _NotesPageState();
 }
 
-class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
+class _NotesPageState extends State<NotesPage> with SingleTickerProviderStateMixin {
   late TabController tabController;
 
   //

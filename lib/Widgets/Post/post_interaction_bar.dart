@@ -71,8 +71,8 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               ),
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute<Notes>(
-                    builder: (final BuildContext context) => Notes(
+                  MaterialPageRoute<NotesPage>(
+                    builder: (final BuildContext context) => NotesPage(
                       likesList: widget.likes,
                       reblogsList: widget.reblogs,
                       repliesList: widget.replies,
