@@ -151,7 +151,7 @@ class Api {
       Uri.parse(_host + _uploadVideo + User.userID),
       headers: _headerContentAuth,
       body: json.encode(<String, String>{
-        "video": video,
+        "b64_video": video,
       }),
     )
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -172,10 +172,9 @@ class Api {
       Uri.parse(_host + _uploadImage),
       headers: _headerContentAuth,
       body: json.encode(<String, String>{
-        "image": image,
+        "b64_image": image,
       }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
+    ).onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
         return http.Response(_weirdConnection, 502);
       } else {
@@ -192,7 +191,7 @@ class Api {
       Uri.parse(_host + _uploadAudio + User.userID),
       headers: _headerContentAuth,
       body: json.encode(<String, String>{
-        "audio": audio,
+        "b64_audio": audio,
       }),
     )
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -268,10 +267,11 @@ class Api {
 
   /// GET getPostLikeStatus for a post with id [postID]
   Future<Map<String, dynamic>> getPostLikeStatus(final int postID) async {
-    // note: this is a mock function , the real one should accept current blogID beside postID.
+    // note: this is a mock function ,
+    // the real one should accept current blogID beside postID.
     final http.Response response = await http.get(
       Uri.parse(
-        "https://mock-back-default-rtdb.firebaseio.com/postLoveStatus/$postID.json",
+        _firebaseHost + "/postLoveStatus/$postID.json",
       ),
       headers: <String, String>{"Authorization": User.accessToken},
     );
