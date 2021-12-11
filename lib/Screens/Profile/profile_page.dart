@@ -130,10 +130,14 @@ class _ProfilePageState extends State<ProfilePage>
     getBlogPosts();
   }
 
-  void getBlogPosts()async{
-    if(int.tryParse(User.blogsIDs[User.currentProfile])!=null) {
-      await refreshBlogPosts(context,
+  void getBlogPosts() async{
+    if(Provider.of<Posts>(context,listen: false).profilePosts.isEmpty)
+    {
+      if(int.tryParse(User.blogsIDs[User.currentProfile])!=null)
+        {
+          await refreshBlogPosts(context,
         int.parse(User.blogsIDs[User.currentProfile]),);
+        }
     }
   }
   @override
