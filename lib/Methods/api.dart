@@ -20,7 +20,7 @@ class Api {
   final String _uploadImage = dotenv.env["uploadImage"] ?? " ";
   final String _uploadVideo = dotenv.env["uploadVideo"] ?? " ";
   final String _uploadAudio = dotenv.env["uploadAudio"] ?? " ";
-  final String _addPost = dotenv.env["Post"] ?? " ";
+  final String _addPost = dotenv.env["addPost"] ?? " ";
   final String _blog = dotenv.env["blog"] ?? " ";
   final String _fetchPost = dotenv.env["fetchPost"] ?? " ";
   final String _changeEmail = dotenv.env["changeEmail"] ?? " ";
@@ -251,7 +251,6 @@ class Api {
         Uri.parse(_host + _fetchPost),
         headers: _headerContentAuth,
       );
-
       return response;
     } on Exception {
       rethrow;

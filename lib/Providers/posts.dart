@@ -53,15 +53,14 @@ class Posts with ChangeNotifier {
         ),
       );
     }
-
     // setting the notes for each post in _homePosts through http requests.
     for (int i = 0; i < _homePosts.length; i++) {
       final Map<String, dynamic> notes = await Api().getNotes("${i % 2 + 1}");
 
       //check the status code for the received response.
-      if (notes.values.single["meta"]["status"] == "404")
+      if (notes.values.single["meta"]["status"] == "404") {
         throw HttpException("Not Found!");
-      else {
+      } else {
         _homePosts[i].likes =
             notes.values.single["response"]["likes"] ?? <dynamic>[];
         _homePosts[i].reblogs =
@@ -70,7 +69,6 @@ class Posts with ChangeNotifier {
             notes.values.single["response"]["replies"] ?? <dynamic>[];
       }
     }
-
     notifyListeners();
   }
 
