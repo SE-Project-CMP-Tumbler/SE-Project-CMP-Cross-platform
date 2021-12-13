@@ -45,7 +45,8 @@ class _PostOutViewState extends State<PostOutView> {
           child: HtmlView(htmlData: widget.post.postBody),
         ),
         PostInteractionBar(
-         postId: widget.post.postId,
+          postId: widget.post.postId,
+          key: Key(widget.post.blogId.toString()),
         )
       ],
     );

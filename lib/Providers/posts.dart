@@ -1,6 +1,7 @@
 import "dart:convert";
 
 import "package:flutter/material.dart";
+import 'package:http/http.dart';
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/http_requests_exceptions.dart";
 import "package:tumbler/Models/notes.dart";
@@ -17,13 +18,28 @@ class Posts with ChangeNotifier {
   }
 
   ///Getter : returns the notes of a certain post
-  Notes? getNotesForSinglePost(final int postID) {
-    return _notes[postID];
+  Notes getNotesForSinglePost(final int postID) {
+    return _notes[postID]!;
   }
 
   /// Called when the user clicks on favorite icon button
-  Future<void> likePost(final int postId) async {
-    //call api().likePost
+  Future<bool> likePost(final int postId) async {
+    try {
+      await Api().likePost(postId);
+
+      final Map<String, dynamic> recievedNotes =
+          await Api().getNotes(postId.toString());
+
+      _notes[postId] = Notes(
+        likes: recievedNotes["response"]["likes"],
+        reblogs: recievedNotes["response"]["reblogs"],
+        replies: recievedNotes["response"]["replies"],
+      );
+      return true;
+    } on Exception catch (e) {
+      print(e.toString());
+      return false;
+    }
 
     // if the prev request was successful make api().getNotes request
     // update notes of post with postId with data returned from api().getNotes
@@ -33,9 +49,23 @@ class Posts with ChangeNotifier {
   }
 
   /// Called when the user clicks on un-favorite icon button (filled favorite)
-  Future<void> unlikePost(final int postId) async {
-    // call api().unlikePost
+  Future<bool> unlikePost(final int postId) async {
+    try {
+      await Api().unlikePost(postId);
 
+      final Map<String, dynamic> recievedNotes =
+          await Api().getNotes(postId.toString());
+
+      _notes[postId] = Notes(
+        likes: recievedNotes["response"]["likes"],
+        reblogs: recievedNotes["response"]["reblogs"],
+        replies: recievedNotes["response"]["replies"],
+      );
+      return true;
+    } on Exception catch (e) {
+      print(e.toString());
+      return false;
+    }
     // if the prev request was successful make api().getNotes request
     // update notes of post with postId with data returned from api().getNotes
     // through _notes[postId] = Notes(................);
@@ -60,7 +90,7 @@ class Posts with ChangeNotifier {
 
     //set _homePost list.
     final List<dynamic> postsList =
-        encodedRes["response"]["posts"]; // here i should remove .values.single 
+        encodedRes["response"]["posts"]; // here i should remove .values.single
 
     for (int i = 0; i < postsList.length; i++) {
       _homePosts.add(
@@ -82,7 +112,7 @@ class Posts with ChangeNotifier {
     // setting the notes for each post in _homePosts through http requests.
     for (int i = 0; i < _homePosts.length; i++) {
       final Map<String, dynamic> recievedNotes =
-          await Api().getNotes("${i % 2 + 1}");
+          await Api().getNotes(_homePosts[i].postId.toString());
 
       //check the status code for the received response.
       if (recievedNotes["meta"]["status"] == "404")

@@ -235,10 +235,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               children: const <Widget>[
                                 Padding(
                                   padding: EdgeInsets.symmetric(vertical: 150),
-                                 
                                   child: ErrorImage(
                                     msg:
-                                     // ignore: lines_longer_than_80_chars
+                                        // ignore: lines_longer_than_80_chars
                                         "Unexpected error, please try again later",
                                   ),
                                 ),
@@ -248,19 +247,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               children: <Widget>[
                                 Expanded(
                                   child: ListView.builder(
-                                    itemBuilder: (final BuildContext ctx,
-                                        final int index,) {
+                                    itemBuilder: (
+                                      final BuildContext ctx,
+                                      final int index,
+                                    ) {
                                       return Column(
                                         children: <Widget>[
                                           PostOutView(
                                             showEditPostBottomSheet:
                                                 showEditPostBottomSheet,
                                             post: posts[index],
+                                            key: Key(
+                                              posts[index].postId.toString(),
+                                            ),
                                           ),
                                           Container(
                                             height: 10,
                                             color: const Color.fromRGBO(
-                                                0, 25, 53, 1,),
+                                              0,
+                                              25,
+                                              53,
+                                              1,
+                                            ),
                                           )
                                         ],
                                       );

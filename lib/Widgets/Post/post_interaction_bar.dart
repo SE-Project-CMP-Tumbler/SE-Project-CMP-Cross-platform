@@ -2,7 +2,6 @@
 
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-import "package:like_button/like_button.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/notes.dart";
@@ -36,8 +35,64 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
   NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
 
   late String blogId;
-  bool isLoved = false;
-  Notes? notes ;
+  bool _isLoved = false;
+  late Notes _notes;
+  late int _notesNum;
+  bool onProcessing = false;
+
+  Future<void> likePost() async {
+    setState(() {
+      onProcessing = true;
+    });
+    final bool success = await Provider.of<Posts>(context, listen: false)
+        .likePost(widget.postId);
+
+    _notes = Provider.of<Posts>(context, listen: false)
+        .getNotesForSinglePost(widget.postId);
+
+    if (!success) {
+      setState(() {
+        _isLoved = false;
+        _notesNum =
+            _notes.likes.length + _notes.replies.length + _notes.reblogs.length;
+      });
+    } else {
+      setState(() {
+        _notesNum =
+            _notes.likes.length + _notes.replies.length + _notes.reblogs.length;
+      });
+    }
+    setState(() {
+      onProcessing = false;
+    });
+  }
+
+  Future<void> unlikePost() async {
+    setState(() {
+      onProcessing = true;
+    });
+    final bool success = await Provider.of<Posts>(context, listen: false)
+        .unlikePost(widget.postId);
+
+    _notes = Provider.of<Posts>(context, listen: false)
+        .getNotesForSinglePost(widget.postId);
+
+    if (!success) {
+      setState(() {
+        _isLoved = true;
+        _notesNum =
+            _notes.likes.length + _notes.replies.length + _notes.reblogs.length;
+      });
+    } else {
+      setState(() {
+        _notesNum =
+            _notes.likes.length + _notes.replies.length + _notes.reblogs.length;
+      });
+    }
+    setState(() {
+      onProcessing = false;
+    });
+  }
 
   @override
   void initState() {
@@ -52,9 +107,18 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
     //   }
     // });
 
-     notes = Provider.of<Posts>(context,listen: false).getNotesForSinglePost(widget.postId);
+    _notes = Provider.of<Posts>(context, listen: false)
+        .getNotesForSinglePost(widget.postId);
+
+    _notesNum =
+        _notes.likes.length + _notes.replies.length + _notes.reblogs.length;
 
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override
@@ -69,29 +133,22 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
               ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<NotesPage>(
-                    builder: (final BuildContext context) => NotesPage(
-                      likesList:notes!.likes,
-                      reblogsList: notes!.reblogs,
-                      repliesList: notes!.replies,
-                    ),
-                  ),
-                );
-              },
+              onPressed: () => toNotesPage(context, _notes),
               child: Image.asset(
                 "assets/images/interactions.jpeg",
               ),
             ),
           ),
           Expanded(
-            child: Text(
-              "${numFormatter.format(notes!.likes.length + notes!.replies.length + notes!.reblogs.length)} notes",
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.black45,
+            child: GestureDetector(
+              onTap: () => toNotesPage(context, _notes),
+              child: Text(
+                "${numFormatter.format(_notesNum)} notes",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.black45,
+                ),
               ),
             ),
           ),
@@ -109,15 +166,26 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               color: Colors.black,
             ),
           ),
-          LikeButton(
-            isLiked: isLoved,
-            likeBuilder: (final bool isLoved) {
-              final Color color = isLoved ? Colors.red : Colors.black;
-              return Icon(
-                isLoved ? Icons.favorite : Icons.favorite_border_outlined,
-                color: color,
-              );
+          IconButton(
+            onPressed: () async {
+              if (!_isLoved) {
+                setState(() {
+                  _isLoved = true;
+                  _notesNum++;
+                });
+                if (!onProcessing) await likePost();
+              } else {
+                setState(() {
+                  _isLoved = false;
+                  _notesNum--;
+                });
+                if (!onProcessing) await unlikePost();
+              }
             },
+            icon: Icon(
+              _isLoved ? Icons.favorite : Icons.favorite_border_outlined,
+            ),
+            color: _isLoved ? Colors.red : Colors.black,
           ),
           const IconButton(
             onPressed: null,
@@ -130,4 +198,16 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
       ),
     );
   }
+}
+
+void toNotesPage(final BuildContext context, final Notes notes) {
+  Navigator.of(context).push(
+    MaterialPageRoute<NotesPage>(
+      builder: (final BuildContext context) => NotesPage(
+        likesList: notes.likes,
+        reblogsList: notes.reblogs,
+        repliesList: notes.replies,
+      ),
+    ),
+  );
 }
