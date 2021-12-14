@@ -5,7 +5,7 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/tags_list_and_colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Providers/followed_tags_sign_up.dart";
-import "package:tumbler/Screens/Sign_Up_Screens/sign_up.dart";
+import "package:tumbler/Screens/Sign_Up_Screens/With_Email/sign_up.dart";
 import "package:tumbler/Widgets/Tag_Select/tag_container.dart";
 
 /// Page to Make the User Follow Some Tags

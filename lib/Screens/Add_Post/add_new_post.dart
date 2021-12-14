@@ -1,10 +1,10 @@
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:html_editor_enhanced/html_editor.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Add_Post/popup_menu.dart";
 
@@ -43,24 +43,10 @@ class _AddPostState extends State<AddPost> {
         .addPost(processedHtml, postOptionChoice, "general", postTime);
 
     if (response["meta"]["status"] == "200") {
-      await Fluttertoast.showToast(
-        msg: "Added Successfully",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast( "Added Successfully");
       Navigator.of(context).pop();
     } else {
-      await Fluttertoast.showToast(
-        msg: response["meta"]["msg"],
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast(response["meta"]["msg"]);
     }
   }
 

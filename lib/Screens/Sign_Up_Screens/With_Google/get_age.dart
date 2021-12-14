@@ -4,15 +4,15 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/age_validation.dart";
 import "package:tumbler/Models/user.dart";
-import "package:tumbler/Screens/Sign_Up_Screens/Choose_Tag/tag_page.dart";
+import "package:tumbler/Screens/Sign_Up_Screens/With_Google/sign_up.dart";
 
 /// Page To get The User Age
-class GetAge extends StatefulWidget {
+class GetAgeGoogle extends StatefulWidget {
   @override
-  State<GetAge> createState() => _GetAgeState();
+  State<GetAgeGoogle> createState() => _GetAgeGoogleState();
 }
 
-class _GetAgeState extends State<GetAge> {
+class _GetAgeGoogleState extends State<GetAgeGoogle> {
   late TextEditingController _controller;
   late GlobalKey<FormState> _formKey;
 
@@ -36,35 +36,8 @@ class _GetAgeState extends State<GetAge> {
         backgroundColor: appBackgroundColor,
         appBar: AppBar(
           elevation: 0,
+          title: const Text("Age"),
           backgroundColor: appBackgroundColor,
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  User.age = int.parse(_controller.text);
-                  Navigator.of(context).push(
-                    MaterialPageRoute<TagSelect>(
-                      builder: (final BuildContext context) => TagSelect(),
-                    ),
-                  );
-                }
-              },
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(
-                    "Next",
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: (_controller.text.isEmpty)
-                          ? Colors.blue.withOpacity(0.5)
-                          : Colors.blue,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -72,7 +45,19 @@ class _GetAgeState extends State<GetAge> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const SizedBox(height: 50),
+                const SizedBox(height: 40),
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "How old are you?",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 Form(
                   key: _formKey,
                   child: TextFormField(
@@ -85,23 +70,19 @@ class _GetAgeState extends State<GetAge> {
                     decoration: InputDecoration(
                       enabledBorder: formEnabledFieldBorderStyle,
                       focusedBorder: formFocusedFieldBorderStyle,
-                      hintStyle: const TextStyle(color: Colors.white30),
-                      hintText: "How old are you?",
                     ),
                   ),
                 ),
                 const SizedBox(height: 10),
                 RichText(
-                  textAlign: TextAlign.justify,
+                  textAlign: TextAlign.left,
                   text: const TextSpan(
                     children: <TextSpan>[
                       TextSpan(
-                        text:
-                            "You're almost done. Enter your age, then tap the ",
+                        text: "Enter your age, then tap the ",
                         style: TextStyle(
                           color: Colors.white70,
-                          fontSize: 17,
-                          height: 1.5,
+                          fontSize: 15,
                         ),
                       ),
                       TextSpan(
@@ -109,16 +90,14 @@ class _GetAgeState extends State<GetAge> {
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
                           color: Colors.white70,
-                          fontSize: 17,
-                          height: 1.5,
+                          fontSize: 15,
                         ),
                       ),
                       TextSpan(
                         text: " button to indicate that you've read the ",
                         style: TextStyle(
                           color: Colors.white70,
-                          fontSize: 17,
-                          height: 1.5,
+                          fontSize: 15,
                         ),
                       ),
                       TextSpan(
@@ -126,17 +105,15 @@ class _GetAgeState extends State<GetAge> {
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white70,
-                          fontSize: 17,
-                          height: 1.5,
+                          color: Colors.blue,
+                          fontSize: 15,
                         ),
                       ),
                       TextSpan(
                         text: " and agree to ",
                         style: TextStyle(
                           color: Colors.white70,
-                          fontSize: 17,
-                          height: 1.5,
+                          fontSize: 15,
                         ),
                       ),
                       TextSpan(
@@ -144,14 +121,50 @@ class _GetAgeState extends State<GetAge> {
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white70,
-                          fontSize: 17,
-                          height: 1.5,
+                          color: Colors.blue,
+                          fontSize: 15,
                         ),
                       ),
                     ],
                   ),
-                )
+                ),
+                const SizedBox(height: 50),
+                SizedBox(
+                  height: 40,
+                  width: MediaQuery.of(context).size.width - 100,
+                  child: ElevatedButton(
+                    onPressed: _controller.text.isEmpty
+                        ? null
+                        : () {
+                            if (_formKey.currentState!.validate()) {
+                              User.age = int.parse(_controller.text);
+                              Navigator.of(context).push(
+                                MaterialPageRoute<SignUpGoogle>(
+                                  builder: (final BuildContext context) =>
+                                      SignUpGoogle(),
+                                ),
+                              );
+                            }
+                          },
+                    style: ButtonStyle(
+                      backgroundColor: _controller.text.isEmpty
+                          ? MaterialStateProperty.all<Color>(Colors.grey)
+                          : MaterialStateProperty.all<Color>(Colors.black),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "Next",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

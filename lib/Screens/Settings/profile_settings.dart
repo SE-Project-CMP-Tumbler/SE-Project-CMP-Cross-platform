@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Methods/log_out.dart";
-import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
+import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/Settings/change_email.dart";
 import "package:tumbler/Screens/Settings/change_name.dart";
 import "package:tumbler/Screens/Settings/change_password.dart";

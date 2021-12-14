@@ -1,12 +1,13 @@
+import "package:flutter/cupertino.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
 import "package:tumbler/Methods/initializer.dart";
 import "package:tumbler/Methods/local_db.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Intro_Carousel/intro_carousel.dart";
 import "package:tumbler/Screens/Log_In_Screens/log_in.dart";
@@ -54,6 +55,7 @@ class _SignUpState extends State<SignUp> {
               controller: _emailController,
               onChanged: (final String s) => setState(() {}),
               keyboardType: TextInputType.emailAddress,
+              autofillHints: const <String>[AutofillHints.email],
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 enabledBorder: formEnabledFieldBorderStyle,
@@ -78,6 +80,10 @@ class _SignUpState extends State<SignUp> {
               controller: _passController,
               onChanged: (final String s) => setState(() {}),
               keyboardType: TextInputType.text,
+              autofillHints: const <String>[
+                AutofillHints.password,
+                AutofillHints.newPassword,
+              ],
               style: const TextStyle(color: Colors.white),
               obscureText: _obscureText,
               decoration: InputDecoration(
@@ -98,9 +104,17 @@ class _SignUpState extends State<SignUp> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: TextFormField(
+              textInputAction: TextInputAction.done,
               controller: _nameController,
               onChanged: (final String s) => setState(() {}),
               keyboardType: TextInputType.emailAddress,
+              autofillHints: const <String>[
+                AutofillHints.name,
+                AutofillHints.nameSuffix,
+                AutofillHints.namePrefix,
+                AutofillHints.familyName,
+                AutofillHints.newUsername,
+              ],
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 enabledBorder: formEnabledFieldBorderStyle,
@@ -123,11 +137,6 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  /// Call API Sign Up Function
-  ///
-  /// Get the [response] from the [Api.signU] function
-  /// and sets [User.name], [User.userID], [User.blogAvatar]
-  /// , [User.accessToken] from the database if no error happened.
   /// Call API Sign Up Function
   ///
   /// Get the [response] from the [Api.signU] function
@@ -177,14 +186,7 @@ class _SignUpState extends State<SignUp> {
         );
       }
     } else {
-      await Fluttertoast.showToast(
-        msg: response["meta"]["msg"],
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast(response["meta"]["msg"]);
     }
   }
 

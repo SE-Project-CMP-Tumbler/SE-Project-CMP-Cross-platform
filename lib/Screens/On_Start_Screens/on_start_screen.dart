@@ -4,8 +4,9 @@ import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
+import "package:tumbler/Methods/log_in_with_google.dart";
 import "package:tumbler/Screens/Log_In_Screens/log_in.dart";
-import "package:tumbler/Screens/Sign_Up_Screens/get_age.dart";
+import "package:tumbler/Screens/Sign_Up_Screens/With_Email/get_age.dart";
 import "package:tumbler/Widgets/OnStart/carousel_item_on_start.dart";
 
 /// The Animation Page On Application Starts.
@@ -335,17 +336,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                   onPressed: () {
                                                     if (_currentButtonSet ==
                                                         2) {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute<
-                                                            GetAge>(
-                                                          builder: (
-                                                            final BuildContext
-                                                                context,
-                                                          ) =>
-                                                              GetAge(),
-                                                        ),
-                                                      );
+                                                      signUpWithGoogle(context);
                                                     }
                                                   },
                                                   style: onStartButtonStyle,
@@ -434,17 +425,7 @@ class _OnStartState extends State<OnStart> with TickerProviderStateMixin {
                                                   onPressed: () {
                                                     if (_currentButtonSet ==
                                                         3) {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute<
-                                                            LogIN>(
-                                                          builder: (
-                                                            final BuildContext
-                                                                context,
-                                                          ) =>
-                                                              LogIN(),
-                                                        ),
-                                                      );
+                                                      logInWithGoogle(context);
                                                     }
                                                   },
                                                   style: onStartButtonStyle,

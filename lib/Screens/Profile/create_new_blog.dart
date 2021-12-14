@@ -1,8 +1,8 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Providers/blogs.dart";
 import "package:tumbler/Screens/Home_Page/home_page.dart";
@@ -100,11 +100,7 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
                   Navigator.pop(context);
                 }
               } else {
-                await Fluttertoast.showToast(
-                  msg: "blog name is empty!",
-                  backgroundColor: Colors.white,
-                  textColor: Colors.black,
-                );
+                await showToast("blog name is empty!");
               }
             },
             child: Text(
@@ -156,11 +152,7 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
                           Navigator.pop(context);
                         }
                       } else {
-                        await Fluttertoast.showToast(
-                          msg: "blog name is empty!",
-                          backgroundColor: Colors.white,
-                          textColor: Colors.black,
-                        );
+                        await showToast("blog name is empty!");
                       }
                     },
                     decoration: InputDecoration(
