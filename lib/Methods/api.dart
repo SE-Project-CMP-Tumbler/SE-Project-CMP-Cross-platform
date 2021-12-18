@@ -10,7 +10,7 @@ import "package:tumbler/Models/user.dart";
 class Api {
   static const String _host = "https://api.tumbler.social/api";
   static const String _firebaseHost =
-      "https://mock-back-default-rtdb.firebaseio.com";
+      "https://notesapi-3468c-default-rtdb.firebaseio.com";
   final String _getTrendingTags = "/tag/trending";
   final String _signUp = "/register";
   final String _login = "/login";
@@ -260,7 +260,8 @@ class Api {
     try {
       final http.Response response = await http.get(
         Uri.parse(
-            "https://notesapi-3468c-default-rtdb.firebaseio.com/radar.json"),
+          _firebaseHost + "/radar.json",
+        ),
         //headers: _headerContentAuth,
       );
       return response;
@@ -273,7 +274,7 @@ class Api {
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http.get(
       Uri.parse(
-        "https://notesapi-3468c-default-rtdb.firebaseio.com/notes/$postID.json",
+        _firebaseHost + "/notes/$postID.json",
       ),
       //headers: <String, String>{"Authorization": User.accessToken},
     );
@@ -282,10 +283,11 @@ class Api {
 
   /// GET getPostLikeStatus for a post with id [postID]
   Future<Map<String, dynamic>> getPostLikeStatus(final int postID) async {
-    // note: this is a mock function , the real one should accept current blogID beside postID.
+    // note: this is a mock function , the real one should accept current blogID
+    //beside postID.
     final http.Response response = await http.get(
       Uri.parse(
-        "https://mock-back-default-rtdb.firebaseio.com/postLoveStatus/$postID.json",
+        _firebaseHost + "/postLoveStatus/$postID.json",
       ),
       // headers: <String, String>{"Authorization": User.accessToken},
     );
@@ -296,7 +298,7 @@ class Api {
     try {
       final http.Response response = await http.get(
         Uri.parse(
-          "https://notesapi-3468c-default-rtdb.firebaseio.com/notes.json",
+          _firebaseHost + "/notes.json",
         ),
       );
 
@@ -318,7 +320,6 @@ class Api {
         body: jsonEncode(newList),
       );
     } on Exception catch (e) {
-      print("error happens");
       throw io.HttpException(
         "error happend when doing like for a post with id$postId",
       );
@@ -329,7 +330,7 @@ class Api {
     try {
       final http.Response response = await http.get(
         Uri.parse(
-          "https://notesapi-3468c-default-rtdb.firebaseio.com/notes.json",
+          _firebaseHost + "/notes.json",
         ),
       );
 
@@ -338,12 +339,10 @@ class Api {
       newList[postId]["response"]["likes"].removeAt(newList.length - 2);
 
       await http.put(
-        Uri.parse(
-            "https://notesapi-3468c-default-rtdb.firebaseio.com/notes.json"),
+        Uri.parse(_firebaseHost + "/notes.json"),
         body: jsonEncode(newList),
       );
     } on Exception catch (e) {
-      print("error happend");
       throw io.HttpException(
         "error happend while doing unlike for a post with ID $postId",
       );

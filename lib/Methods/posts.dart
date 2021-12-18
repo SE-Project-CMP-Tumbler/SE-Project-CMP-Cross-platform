@@ -1,29 +1,29 @@
 import "dart:convert";
 
-import "package:flutter/material.dart";
-import 'package:http/http.dart';
+
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/http_requests_exceptions.dart";
 import "package:tumbler/Models/notes.dart";
 import "package:tumbler/Models/post.dart";
 
+// ignore: avoid_classes_with_only_static_members
 ///Posts provider manage the state of posts.
-class Posts with ChangeNotifier {
-  final List<Post> _homePosts = <Post>[];
-  final Map<int, Notes> _notes = <int, Notes>{};
+class Posts  {
+  static List<Post> _homePosts = <Post>[];
+  static  Map<int, Notes> _notes = <int, Notes>{};
 
   ///Returns loaded posts.
-  List<Post> get homePosts {
+  static List<Post> get homePosts {
     return <Post>[..._homePosts];
   }
 
   ///Getter : returns the notes of a certain post
-  Notes getNotesForSinglePost(final int postID) {
+  static Notes getNotesForSinglePost(final int postID) {
     return _notes[postID]!;
   }
 
   /// Called when the user clicks on favorite icon button
-  Future<bool> likePost(final int postId) async {
+  static Future<bool> likePost(final int postId) async {
     try {
       await Api().likePost(postId);
 
@@ -49,7 +49,7 @@ class Posts with ChangeNotifier {
   }
 
   /// Called when the user clicks on un-favorite icon button (filled favorite)
-  Future<bool> unlikePost(final int postId) async {
+  static Future<bool> unlikePost(final int postId) async {
     try {
       await Api().unlikePost(postId);
 
@@ -74,7 +74,7 @@ class Posts with ChangeNotifier {
   }
 
   ///fetch posts through http get request.
-  Future<void> fetchAndSetPosts() async {
+  static Future<void> fetchAndSetPosts() async {
     // clear all loaded post.
     _homePosts.clear();
     final dynamic res = await Api().fetchAndPosts();
@@ -130,6 +130,5 @@ class Posts with ChangeNotifier {
       }
     }
 
-    notifyListeners();
   }
 }
