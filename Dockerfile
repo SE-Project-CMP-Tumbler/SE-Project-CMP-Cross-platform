@@ -3,6 +3,7 @@ FROM nginx
 
 RUN apt-get update 
 RUN apt-get install -y curl git
+RUN apt-get install -y curl unzip
 
 # Set the working directory to the app files within the container
 WORKDIR /flutter
