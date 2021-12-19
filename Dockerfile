@@ -1,6 +1,9 @@
 FROM nginx
 #COPY . /usr/share/nginx/html
 
+RUN apt-get update 
+RUN apt-get install -y curl git
+
 # Set the working directory to the app files within the container
 WORKDIR /flutter
 
@@ -36,3 +39,6 @@ RUN cp -r /flutter/build/web /usr/share/nginx/html
 
 # Document the exposed port
 EXPOSE 80
+
+
+
