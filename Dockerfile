@@ -1,8 +1,10 @@
-# Install dependencies
-FROM ubuntu AS build-env
-RUN apt-get update 
-RUN apt-get install -y curl git wget unzip libgconf-2-4 gdb libstdc++6 libglu1-mesa fonts-droid-fallback lib32stdc++6 python3 psmisc
-RUN apt-get clean
+FROM nginx
+#COPY . /usr/share/nginx/html
+
+# Set the working directory to the app files within the container
+WORKDIR /flutter
+
+COPY . /flutter
 
 # Clone the flutter repo
 RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
@@ -18,12 +20,6 @@ RUN flutter config --enable-web
 # Run flutter doctor
 RUN flutter doctor -v
 
-# Copy the app files to the container
-COPY . /usr/local/bin/app
-
-# Set the working directory to the app files within the container
-WORKDIR /usr/local/bin/app
-
 # Clean the Project
 RUN flutter clean
 
@@ -36,11 +32,7 @@ RUN flutter build apk
 # Build the app for the web
 RUN flutter build web
 
+RUN cp -r /flutter/build/web /usr/share/nginx/html
+
 # Document the exposed port
-EXPOSE 4040
-
-# Set the server startup script as executable
-RUN ["chmod", "+x", "/usr/local/bin/app/server/server.sh"]
-
-# Start the web server
-ENTRYPOINT [ "/usr/local/bin/app/server/server.sh" ]
+EXPOSE 80
