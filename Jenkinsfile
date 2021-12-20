@@ -1,54 +1,55 @@
 pipeline {
   agent any
   stages {
-    stage('Debug Info') {
-      steps {
-        sh 'whoami;hostname;uptime'
-      }
-    }
+//     stage('Debug Info') {
+//       steps {
+//         sh 'whoami;hostname;uptime'
+//       }
+//     }
 
-    stage('Build Docker Image') {
-      steps {
-        sh '''docker build . \\
--f Dockerfile \\
--t tumbler-flutter'''
-      }
-    }
+//     stage('Build Docker Image') {
+//       steps {
+//         sh '''docker build . \\
+// -f Dockerfile \\
+// -t tumbler-flutter'''
+//       }
+//     }
 
-    stage('Run Container') {
-      steps {
-        sh '''docker run \\
---name tumbler-flutter \\
---entrypoint /bin/bash \\
--dt --rm tumbler-flutter'''
-      }
-    }
+//     stage('Run Container') {
+//       steps {
+//         sh '''docker run \\
+// --name tumbler-flutter \\
+// --entrypoint /bin/bash \\
+// -dt --rm tumbler-flutter'''
+//       }
+//     }
 
-    stage('Lint') {
-      steps {
-        sh 'docker exec tumbler-flutter bash -c \'bash lint.sh\''
-      }
-    }
+//     stage('Lint') {
+//       steps {
+//         sh 'docker exec tumbler-flutter bash -c \'bash lint.sh\''
+//       }
+//     }
 
-    stage('Test') {
-      steps {
-        sh 'docker exec tumbler-flutter bash -c \'bash test.sh\''
-      }
-    }
+//     stage('Test') {
+//       steps {
+//         sh 'docker exec tumbler-flutter bash -c \'bash test.sh\''
+//       }
+//     }
 
-    stage('Stop Container & Remove Image') {
-      steps {
-        sh 'docker container stop tumbler-flutter'
-        sh 'docker image remove tumbler-flutter'
-      }
-    }
+//     stage('Stop Container & Remove Image') {
+//       steps {
+//         sh 'docker container stop tumbler-flutter'
+//         sh 'docker image remove tumbler-flutter'
+//         sh 'docker system prune -f'
+//       }
+//     }
 
-    stage('List Docker Images & Containers') {
-      steps {
-        sh 'docker image ls -a'
-        sh 'docker container ls -a'
-      }
-    }
+//     stage('List Docker Images & Containers') {
+//       steps {
+//         sh 'docker image ls -a'
+//         sh 'docker container ls -a'
+//       }
+//     }
 
     stage('Deploy To dev-server') {
       agent {
@@ -86,6 +87,7 @@ docker system prune -f;'''
     unsuccessful {
       sh 'docker container stop tumbler-flutter || true'
       sh 'docker image remove tumbler-flutter || true'
+      sh 'docker system prune -f'
     }
 
     cleanup {
