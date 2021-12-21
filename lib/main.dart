@@ -1,9 +1,8 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Providers/followed_tags_sign_up.dart";
-import 'package:tumbler/Methods/posts.dart';
 import "package:tumbler/Screens/Home_Page/home_page.dart";
-
+import "package:tumbler/Screens/Activity/acitivity_chat_screen.dart";
 
 void main() => runApp(MyApp());
 
@@ -20,7 +19,8 @@ class MyApp extends StatelessWidget {
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         //home: AddPost(),
-        home: HomePage(),
+        //home: HomePage(),
+        home: ActivityAndChatScreen(),
       ),
     );
   }
