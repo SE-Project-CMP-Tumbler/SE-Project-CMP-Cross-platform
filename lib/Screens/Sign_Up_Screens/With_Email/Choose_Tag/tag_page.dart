@@ -92,7 +92,7 @@ Whatever you're into, you'll find it here. Follow some of the tags below to star
                 shrinkWrap: true,
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 itemCount: tagsNames.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: (!kIsWeb) ? 3 : 10,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,

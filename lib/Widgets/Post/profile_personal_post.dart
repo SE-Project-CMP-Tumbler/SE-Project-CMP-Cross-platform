@@ -1,6 +1,6 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:tumbler/Models/post.dart";
+import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/personal_post_interaction_bar.dart";
@@ -24,7 +24,7 @@ class PersonalPost extends StatefulWidget {
   final Function showEditPostBottomSheet;
 
   /// The Content of the Post
-  final Post post;
+  final PostModel post;
 
   @override
   _PersonalPostState createState() => _PersonalPostState();
@@ -41,7 +41,7 @@ class _PersonalPostState extends State<PersonalPost> {
         children: <Widget>[
           // tumbler user name and profile pic and options
           PersonalPostTopBar(
-            showEditPostPersonalBottomSheet: showEditPostProfileBottomSheet,
+            showEditPostPersonalBottomSheet: widget.showEditPostBottomSheet,
             avatarPhotoLink: widget.post.blogAvatar,
             name: widget.post.blogUsername,
           ),

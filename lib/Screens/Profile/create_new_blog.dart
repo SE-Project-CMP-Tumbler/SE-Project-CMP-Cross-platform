@@ -5,7 +5,7 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Providers/blogs.dart";
-import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Widgets/Exceptions_UI/error_dialog.dart";
 
 /// a page for entering the new blog name
 class CreateNewBlog extends StatefulWidget {

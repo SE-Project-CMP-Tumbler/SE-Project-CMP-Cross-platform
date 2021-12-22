@@ -1,11 +1,11 @@
 import "package:flutter/cupertino.dart";
-import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
+import 'package:tumbler/Models/user.dart';
 import "package:tumbler/Providers/blogs.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
-import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Screens/Home_Page/home_page_ziyad.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
 import "package:tumbler/Screens/Search/search_page.dart";
 import "package:tumbler/Widgets/Home/draggable_floating_button.dart";
@@ -83,7 +83,7 @@ class _MainScreenState extends State<MainScreen>
             physics: const NeverScrollableScrollPhysics(),
             controller: tabController,
             children: <Widget>[
-              const HomePage(),
+              const HomePageZiyad(),
               // TODO(Ziyad): Replace this with search page
               Container(
                 color: appBackgroundColor,
@@ -98,7 +98,7 @@ class _MainScreenState extends State<MainScreen>
               ),
               // TODO(Ziyad): Replace this with profile page
               ProfilePage(
-                currentBlog: currentProfile,
+                blogID: int.parse(User.blogsIDs[User.currentProfile]),
               ),
             ],
           ),

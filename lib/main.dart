@@ -6,7 +6,6 @@ import "package:tumbler/Methods/initializer.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Providers/blogs.dart";
 import "package:tumbler/Providers/followed_tags_sign_up.dart";
-import "package:tumbler/Providers/posts.dart";
 import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/main_screen.dart";
 
@@ -27,9 +26,6 @@ class MyApp extends StatelessWidget {
       providers: <ChangeNotifierProvider<dynamic>>[
         ChangeNotifierProvider<FollowedTags>(
           create: (final _) => FollowedTags(),
-        ),
-        ChangeNotifierProvider<Posts>(
-          create: (final _) => Posts(),
         ),
         ChangeNotifierProvider<BlogsData>(
           create: (final _) => BlogsData(),

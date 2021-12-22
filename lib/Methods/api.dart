@@ -11,7 +11,7 @@ class Api {
   static const String _firebaseHost =
       "https://mock-back-default-rtdb.firebaseio.com";
 
-  final String _host = dotenv.env["hostMock"] ?? " ";
+  final String _host = dotenv.env["host"] ?? " ";
   final String _getTrendingTags = dotenv.env["getTrendingTags"] ?? " ";
   final String _signUp = dotenv.env["signUp"] ?? " ";
   final String _signUpWithGoogle = dotenv.env["signUpWithGoogle"] ?? " ";
@@ -23,12 +23,17 @@ class Api {
   final String _uploadAudio = dotenv.env["uploadAudio"] ?? " ";
   final String _addPost = dotenv.env["addPost"] ?? " ";
   final String _blog = dotenv.env["blog"] ?? " ";
-  final String _fetchPost = dotenv.env["fetchPost"] ?? " ";
+  final String _blogsLikes = dotenv.env["blogsLikes"] ?? " ";
+  final String _dashboard = dotenv.env["dashboard"] ?? " ";
   final String _changeEmail = dotenv.env["changeEmail"] ?? " ";
   final String _changePass = dotenv.env["changePass"] ?? " ";
   final String _logOut = dotenv.env["logOut"] ?? " ";
   final String _published = dotenv.env["published"] ?? " ";
+  final String _draft = dotenv.env["draft"] ?? " ";
   final String _posts = dotenv.env["Post"] ?? " ";
+  final String _postNotes = dotenv.env["postNotes"] ?? " ";
+  final String _postLikeStatus = dotenv.env["postLikeStatus"] ?? " ";
+  final String _followings = dotenv.env["followings"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -107,11 +112,12 @@ class Api {
     final String googleAccessToken,
     final int age,
   ) async {
+
     final http.Response response = await http
         .post(
       Uri.parse(_host + _signUpWithGoogle),
       body: jsonEncode(<String, String>{
-        "google_access_token": "googleAccessToken",
+        "google_access_token": googleAccessToken,
         "blog_username": blogUsername,
         "age": age.toString(),
       }),
@@ -156,6 +162,8 @@ class Api {
   Future<Map<String, dynamic>> logInWithGoogle(
     final String googleAccessToken,
   ) async {
+
+
     final http.Response response = await http
         .post(
       Uri.parse(_host + _loginWithGoogle),
@@ -171,6 +179,7 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
+
     return jsonDecode(response.body);
   }
 
@@ -295,37 +304,55 @@ class Api {
   }
 
   /// GET Posts For the Home Page
-  Future<dynamic> fetchAndPosts() async {
-    try {
-      final http.Response response = await http.get(
-        Uri.parse(_host + _fetchPost),
-        headers: _headerContentAuth,
-      );
-      return response;
-    } on Exception {
-      rethrow;
-    }
+  Future<Map<String, dynamic>> fetchHomePosts(final int page) async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(_host + _dashboard + "?page=$page"),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
   }
 
   /// GET Notes For the post with id [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
-    final http.Response response = await http.get(
-      Uri.parse(_firebaseHost + "/notes/$postID.json"),
-      headers: <String, String>{"Authorization": User.accessToken},
-    );
+    final http.Response response = await http
+        .get(
+      Uri.parse(_host + _postNotes + postID),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
     return jsonDecode(response.body);
   }
 
   /// GET getPostLikeStatus for a post with id [postID]
   Future<Map<String, dynamic>> getPostLikeStatus(final int postID) async {
-    // note: this is a mock function ,
-    // the real one should accept current blogID beside postID.
-    final http.Response response = await http.get(
+    final http.Response response = await http
+        .get(
       Uri.parse(
-        _firebaseHost + "/postLoveStatus/$postID.json",
+        _host + _postLikeStatus + User.blogsIDs[0] + "/" + postID.toString(),
       ),
-      headers: <String, String>{"Authorization": User.accessToken},
-    );
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
     return jsonDecode(response.body);
   }
 
@@ -443,10 +470,16 @@ class Api {
   }
 
   /// to get the posts of a specific blog
-  Future<dynamic> fetchSpecificBlogPost(final int blogId) async {
+  Future<Map<String, dynamic>> fetchSpecificBlogPost(final int page) async {
     final http.Response response = await http
         .get(
-      Uri.parse(_host + _posts + blogId.toString() + _published),
+      Uri.parse(
+        _host +
+            _posts +
+            User.blogsIDs[User.currentProfile] +
+            _published +
+            "?page=$page",
+      ),
       headers: _headerContentAuth,
     )
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -456,6 +489,66 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
-    return response;
+
+    return jsonDecode(response.body);
+  }
+
+  /// to get the Liked Posts of a specific blog
+  Future<Map<String, dynamic>> fetchLikedPost(final int page) async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(
+        _host +
+            _blogsLikes +
+            User.blogsIDs[User.currentProfile] +
+            "?page=$page",
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
+  }
+
+  /// to get the Following of a specific blog
+  Future<Map<String, dynamic>> fetchFollowings(final int page) async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(_host + _followings + "?page=$page"),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
+  }
+
+  /// to get the draft posts of a specific blog
+  Future<Map<String, dynamic>> fetchDraftPost() async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(_host + _posts + User.blogsIDs[User.currentProfile] + _draft),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
   }
 }

@@ -1,4 +1,3 @@
-import "package:flutter/cupertino.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:google_sign_in/google_sign_in.dart";
@@ -14,11 +13,17 @@ import "package:tumbler/Screens/main_screen.dart";
 /// to get the user main Data
 /// and the token
 Future<void> signUpWithGoogle(final BuildContext context) async {
+  if (await GoogleSignIn().isSignedIn()) {
+    // To make the user able to chose from the list of the his emails
+    await GoogleSignIn().signOut();
+  }
   await GoogleSignIn()
       .signIn()
       .then((final GoogleSignInAccount? userData) async {
     if (userData != null) {
-      User.googleAccessToken = userData.serverAuthCode.toString();
+      final Map<String, String> x = await userData.authHeaders;
+
+      User.googleAccessToken = x["Authorization"].toString().substring(7);
       await Navigator.of(context).push(
         MaterialPageRoute<GetAgeGoogle>(
           builder: (final BuildContext context) => GetAgeGoogle(),
@@ -26,12 +31,7 @@ Future<void> signUpWithGoogle(final BuildContext context) async {
       );
     } else
       await showToast("Failed to connect to Google");
-  }).timeout(
-    const Duration(seconds: 10),
-    onTimeout: () async {
-      await showToast("Failed to  connect ot google");
-    },
-  ).onError((final Object? error, final StackTrace stackTrace) async {
+  }).onError((final Object? error, final StackTrace stackTrace) async {
     await showToast("Something failed");
   });
 }
@@ -40,11 +40,17 @@ Future<void> signUpWithGoogle(final BuildContext context) async {
 /// to get the user main Data
 /// and the token
 Future<void> logInWithGoogle(final BuildContext context) async {
+  if (await GoogleSignIn().isSignedIn()) {
+    // To make the user able to choose from the list of the his emails
+    await GoogleSignIn().signOut();
+  }
   await GoogleSignIn()
       .signIn()
       .then((final GoogleSignInAccount? userData) async {
     if (userData != null) {
-      User.googleAccessToken = userData.serverAuthCode.toString();
+      final Map<String, String> x = await userData.authHeaders;
+      User.googleAccessToken = x["Authorization"].toString().substring(7);
+
       final Map<String, dynamic> response =
           await Api().logInWithGoogle(User.googleAccessToken);
 
@@ -78,10 +84,5 @@ Future<void> logInWithGoogle(final BuildContext context) async {
       }
     } else
       await showToast("Failed to connect to Google");
-  }).timeout(
-    const Duration(seconds: 10),
-    onTimeout: () async {
-      await showToast("Failed to  connect ot google");
-    },
-  );
+  });
 }

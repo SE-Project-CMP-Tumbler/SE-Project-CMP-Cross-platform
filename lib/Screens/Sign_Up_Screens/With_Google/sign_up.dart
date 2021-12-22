@@ -41,8 +41,8 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
   /// , [User.accessToken] from the database if no error happened.
   Future<void> signUp() async {
     final Map<String, dynamic> response = await Api().signUpWithGoogle(
-      User.googleAccessToken,
       _controller.text,
+      User.googleAccessToken,
       User.age,
     );
 

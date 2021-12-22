@@ -23,9 +23,7 @@ enum blogsType {
 class Notes extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
   Notes({
-    required final this.likesList,
-    required final this.reblogsList,
-    required final this.repliesList,
+    required final this.postID,
     final Key? key,
   }) : super(key: key);
 
@@ -43,6 +41,7 @@ class Notes extends StatefulWidget {
 
   /// contains all replies with their detalis
   List<dynamic> repliesList = <dynamic>[];
+  int postID;
 
   @override
   _NotesState createState() => _NotesState();
@@ -68,7 +67,8 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    // spilt blogs recieved into to sub-categories
+    super.initState();
+    // spilt blogs received into to sub-categories
     for (int i = 0; i < widget.reblogsList.length; i++) {
       if (widget.reblogsList[i]["reblog_content"].isEmpty) {
         widget.reblogsWithOutCommentsList.add(widget.reblogsList[i]);
@@ -77,7 +77,6 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
       }
     }
 
-    super.initState();
     // Start listening to changes.
     replyController.addListener(checkReplyText);
     tabController = TabController(vsync: this, length: 3);

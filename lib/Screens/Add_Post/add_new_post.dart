@@ -18,17 +18,9 @@ class _AddPostState extends State<AddPost> {
   bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
 
-  /// Return the Data in Custom Format
-  String getDate() {
-    final DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat("dd-MM-yyyy");
-    final String formatted = formatter.format(now);
-    return formatted;
-  }
-
   Future<void> addThePost() async {
     final String html = await controller.getText();
-    final String postTime = getDate();
+    final String postTime = DateFormat("yyyy-MM-dd").format(DateTime.now());
     final String processedHtml = await extractMediaFiles(html);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
@@ -68,7 +60,7 @@ class _AddPostState extends State<AddPost> {
               color: Colors.black,
             ),
             onPressed: () {
-              // not complited in back end
+              // not completed in back end
               // TODO(Salama): Alert to save as draft
               Navigator.of(context).pop();
             },
