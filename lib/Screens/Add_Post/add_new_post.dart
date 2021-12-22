@@ -41,7 +41,7 @@ class _AddPostState extends State<AddPost> {
 
     final Map<String, dynamic> response = await Api()
         .addPost(processedHtml, postOptionChoice, "general", postTime);
-
+    print(response);
     if (response["meta"]["status"] == "200") {
       await Fluttertoast.showToast(
         msg: "Added Successfully",
