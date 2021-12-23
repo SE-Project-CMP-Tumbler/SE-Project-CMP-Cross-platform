@@ -40,7 +40,11 @@ class LikeTile extends StatelessWidget {
         // ignore: avoid_redundant_argument_values
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          PersonAvatar(avatarPhotoLink: blogAvatar, shape: avatarShape, blogID: blogID,),
+          PersonAvatar(
+            avatarPhotoLink: blogAvatar,
+            shape: avatarShape,
+            blogID: blogID,
+          ),
           const SizedBox(
             width: 15,
           ),

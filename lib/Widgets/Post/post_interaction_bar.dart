@@ -1,3 +1,4 @@
+import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:like_button/like_button.dart";
 import "package:tumbler/Methods/api.dart";
@@ -99,7 +100,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
           const IconButton(
             onPressed: null,
             icon: Icon(
-              Icons.reply,
+              CupertinoIcons.arrowshape_turn_up_right,
               color: Colors.black,
             ),
           ),
@@ -114,7 +115,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               );
             },
             icon: const Icon(
-              Icons.add_comment_outlined,
+              CupertinoIcons.conversation_bubble,
               color: Colors.black,
             ),
           ),
@@ -143,7 +144,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             const IconButton(
               onPressed: null,
               icon: Icon(
-                Icons.ten_k_outlined,
+                CupertinoIcons.trash,
                 color: Colors.black,
               ),
             ),
@@ -151,7 +152,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             const IconButton(
               onPressed: null,
               icon: Icon(
-                Icons.pin,
+                Icons.edit_outlined,
                 color: Colors.black,
               ),
             ),
