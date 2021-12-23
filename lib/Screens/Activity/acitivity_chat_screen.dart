@@ -48,7 +48,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
     ///////////////TEST////////TEST////////TEST//////////TEST////////////////TEST/
     ///////////////TEST////////TEST////////TEST//////////TEST////////////////TEST/
 
-    List<dynamic> l = [];
+    final List<dynamic> l = <dynamic>[];
     l.add(
       Reply(
         dateTime: DateTime(2020, 9, 8),

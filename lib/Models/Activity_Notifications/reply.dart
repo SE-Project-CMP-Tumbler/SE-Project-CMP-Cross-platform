@@ -4,7 +4,7 @@ class Reply {
       {required final this.dateTime,
       required final this.avatarUrl,
       required final this.userName,
-      required final this.reply});
+      required final this.reply,});
 
   DateTime dateTime;
   String avatarUrl;
