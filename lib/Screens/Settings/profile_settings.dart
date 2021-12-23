@@ -1,10 +1,11 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Methods/log_out.dart";
-import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
+import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/Settings/change_email.dart";
 import "package:tumbler/Screens/Settings/change_name.dart";
 import "package:tumbler/Screens/Settings/change_password.dart";
+import "package:tumbler/Screens/Settings/show_draft.dart";
 
 /// Setting Page
 class ProfileSettings extends StatelessWidget {
@@ -63,6 +64,23 @@ class ProfileSettings extends StatelessWidget {
               },
               child: const Text(
                 "Change Password",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<ShowDraft>(
+                    builder: (final BuildContext context) =>
+                        const ShowDraft(),
+                  ),
+                );
+              },
+              child: const Text(
+                "Draft",
                 style: TextStyle(
                   fontSize: 15,
                   color: Colors.white,

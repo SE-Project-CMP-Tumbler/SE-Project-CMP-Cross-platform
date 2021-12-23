@@ -10,20 +10,24 @@ class ReplyTile extends StatelessWidget {
     required final this.userName,
     required final this.commentText,
     required final this.avatarShape,
+    required final this.blogID,
     final Key? key,
   }) : super(key: key);
 
-  ///
+  /// Avatar Link
   final String avatarUrl;
 
-  ///
+  /// User Name
   final String userName;
 
-  ///
+  /// Comment Text
   final String commentText;
 
-  ///
+  /// Shape
   final String avatarShape;
+
+  /// Blog ID
+  final String blogID;
 
   @override
   Widget build(final BuildContext context) {
@@ -32,7 +36,11 @@ class ReplyTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
+          PersonAvatar(
+            avatarPhotoLink: avatarUrl,
+            shape: avatarShape,
+            blogID: blogID,
+          ),
           const SizedBox(
             width: 15,
           ),

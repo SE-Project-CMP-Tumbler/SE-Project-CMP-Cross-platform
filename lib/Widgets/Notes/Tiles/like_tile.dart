@@ -10,6 +10,7 @@ class LikeTile extends StatelessWidget {
     required final this.blogAvatar,
     required final this.followStatus,
     required final this.avatarShape,
+    required final this.blogID,
     final Key? key,
   }) : super(key: key);
 
@@ -28,6 +29,9 @@ class LikeTile extends StatelessWidget {
   /// avatarShape of who had liked the post
   final String avatarShape;
 
+  /// blog ID of who had liked the post
+  final String blogID;
+
   @override
   Widget build(final BuildContext context) {
     return Padding(
@@ -36,7 +40,11 @@ class LikeTile extends StatelessWidget {
         // ignore: avoid_redundant_argument_values
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          PersonAvatar(avatarPhotoLink: blogAvatar, shape: avatarShape),
+          PersonAvatar(
+            avatarPhotoLink: blogAvatar,
+            shape: avatarShape,
+            blogID: blogID,
+          ),
           const SizedBox(
             width: 15,
           ),
