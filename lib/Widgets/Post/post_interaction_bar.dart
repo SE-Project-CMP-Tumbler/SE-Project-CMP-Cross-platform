@@ -1,12 +1,18 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:like_button/like_button.dart";
+import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/posts.dart";
+import "package:tumbler/Models/notes.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
 
+Future<bool> getLikeStatus(final int postId, final int blogId) async {
+  final Map<String, dynamic> res = await Api().getPostLikeStatus(postId);
+  return res.values.single["response"]["like_status"];
+}
+
 ///Class for interaction bar exists the bottom of each post in home page
-///
-///holds:
+//////Contains:
 ///1-Notes number
 ///2-buttons to Favorite and reblog and reply
 class PostInteractionBar extends StatefulWidget {
@@ -42,12 +48,59 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
       );
   }
 
+  late String blogId;
+  late Notes _notes;
+  late int _notesNum;
+  bool _isLoved = false;
+  bool onProcessing = false;
+  bool isLoveButtonPressedAtleastOne = false;
+
+  Future<void> likePost() async {
+    await Posts.likePost(widget.postId);
+  }
+
+  Future<void> unlikePost() async {
+    await Posts.unlikePost(widget.postId);
+  }
+
   @override
   void initState() {
+    //TODO(Waleed): get current blogID and use it to get current like status for a post.
+
+    //widget.blogId = User.userID;
+    // getLikeStatus(widget.postId % 4 + 1, 0).then((final bool result) {
+    //   if (this.mounted) {
+    //     setState(() {
+    //       isLoved = result;
+    //     });
+    //   }
+    // });
+
+    _notes = Posts.getNotesForSinglePost(widget.postId);
+
+    _notesNum =
+        _notes.likes.length + _notes.replies.length + _notes.reblogs.length;
+
     super.initState();
     if (!widget.isMine) {
       getLikeStatus(widget.postID);
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    if (isLoveButtonPressedAtleastOne) {
+      if (_isLoved)
+        likePost();
+      else
+        unlikePost();
+    }
+    super.dispose();
   }
 
   @override
@@ -104,20 +157,33 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               color: Colors.black,
             ),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<Notes>(
-                  builder: (final BuildContext context) => Notes(
-                    postID: widget.postID,
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(
-              CupertinoIcons.conversation_bubble,
+          const IconButton(
+            onPressed: null,
+            icon: Icon(
+              Icons.repeat,
               color: Colors.black,
             ),
+          ),
+          IconButton(
+            onPressed: () async {
+              if (!_isLoved) {
+                setState(() {
+                  isLoveButtonPressedAtleastOne = true;
+                  _isLoved = true;
+                  _notesNum++;
+                });
+              } else {
+                setState(() {
+                  isLoveButtonPressedAtleastOne = true;
+                  _isLoved = false;
+                  _notesNum--;
+                });
+              }
+            },
+            icon: Icon(
+              _isLoved ? Icons.favorite : Icons.favorite_border_outlined,
+            ),
+            color: _isLoved ? Colors.red : Colors.black,
           ),
           const IconButton(
             onPressed: null,
@@ -160,4 +226,16 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
       ),
     );
   }
+}
+
+void toNotesPage(final BuildContext context, final Notes notes) {
+  Navigator.of(context).push(
+    MaterialPageRoute<NotesPage>(
+      builder: (final BuildContext context) => NotesPage(
+        likesList: notes.likes,
+        reblogsList: notes.reblogs,
+        repliesList: notes.replies,
+      ),
+    ),
+  );
 }

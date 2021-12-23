@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           create: (final _) => BlogsData(),
         ),
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         //home: AddPost(),
         home: User.accessToken.isEmpty ? OnStart() : MainScreen(),
