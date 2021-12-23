@@ -41,7 +41,7 @@ class ReplyTile extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black26),
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),),
+                  borderRadius: const BorderRadius.all(Radius.circular(15),),),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(

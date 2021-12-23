@@ -1,5 +1,15 @@
-import 'package:carousel_slider/carousel_options.dart';
+// ignore_for_file: cascade_invocations
+
 import "package:flutter/material.dart";
+import "package:tumbler/Models/Activity_Notifications/ask.dart";
+import "package:tumbler/Models/Activity_Notifications/follow.dart";
+import "package:tumbler/Models/Activity_Notifications/like.dart";
+import "package:tumbler/Models/Activity_Notifications/mention.dart";
+import "package:tumbler/Models/Activity_Notifications/reblog.dart";
+import "package:tumbler/Models/Activity_Notifications/reply.dart";
+import "package:tumbler/Models/Activity_Notifications/time_packet.dart";
+
+import "package:tumbler/Widgets/Activity_Notifications/time_packet_contianer.dart";
 
 /// [blogType] is an Enumerator for specifing two different reblogs types
 enum ActivityOrChat {
@@ -10,8 +20,10 @@ enum ActivityOrChat {
   chat,
 }
 
+///Activity and Chat screen
 class ActivityAndChatScreen extends StatefulWidget {
-  const ActivityAndChatScreen({Key? key}) : super(key: key);
+  ///
+  const ActivityAndChatScreen({final Key? key}) : super(key: key);
 
   @override
   _ActivityAndChatScreenState createState() => _ActivityAndChatScreenState();
@@ -23,8 +35,88 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
 
   int currTabIndex = ActivityOrChat.activity.index;
 
+  String photo =
+      "https://cdnb.artstation.com/p/assets/images/images/043/342/111/large/hadi-karimi-niet-1.jpg?1637004692";
+
+  List<TimePacket> packets = <TimePacket>[];
+
   @override
   void initState() {
+    ////////////TEST////////TEST////////TEST//////////TEST////////////////TEST////
+    ///////////////TEST////////TEST////////TEST//////////TEST////////////////TEST/
+    ///////////////TEST////////TEST////////TEST//////////TEST////////////////TEST/
+
+    List<dynamic> l = [];
+    l.add(
+      Reply(
+        dateTime: DateTime(2020, 9, 8),
+        reply: "How awesome you are!",
+        avatarUrl: photo,
+        userName: "Salama",
+      ),
+    );
+    l.add(
+      Follow(
+        dateTime: DateTime(2021, 9, 8),
+        avatarUrl: photo,
+        userName: "Salama",
+      ),
+    );
+    l.add(
+      Like(
+        dateTime: DateTime(2000, 9, 8),
+        avatarUrl: photo,
+        userName: "Salama",
+      ),
+    );
+    l.add(
+      Mention(
+        dateTime: DateTime(1999, 9, 8),
+        avatarUrl: photo,
+        userName: "Salama",
+      ),
+    );
+    l.add(
+      Reblog(
+        dateTime: DateTime(2015, 9, 8),
+        avatarUrl: photo,
+        userName: "Salama",
+      ),
+    );
+    l.add(
+      Ask(
+        dateTime: DateTime(2015, 9, 8),
+        quesiton: "How are you?",
+        avatarUrl: photo,
+        userName: "Salama",
+      ),
+    );
+
+    l.sort(
+      (final dynamic a, final dynamic b) => a.dateTime.compareTo(b.dateTime),
+    );
+
+    Map<DateTime, List<dynamic>>? notificationMap = {};
+
+    for (int i = 0; i < l.length; i++) {
+      if (notificationMap[l[i].dateTime] == null) {
+        notificationMap[l[i].dateTime] = <dynamic>[l[i]];
+      } else {
+        notificationMap[l[i].dateTime]!.add(l[i]);
+      }
+    }
+
+    notificationMap.forEach(
+      (final dynamic k, final dynamic v) =>
+          packets.add(TimePacket(packetTime: k, packet: v)),
+    );
+
+    packets = packets.reversed.toList();
+
+    ////////////TEST////////TEST////////TEST//////////TEST////////////////TEST/
+    ///////////////TEST////////TEST////////TEST//////////TEST////////////////TEST/
+    ///////////////TEST////////TEST////////TEST//////////TEST////////////////TEST/
+
     tabController = TabController(vsync: this, length: 2);
     super.initState();
   }
@@ -103,45 +195,16 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
             Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
-                children: [
+                children: <Widget>[
                   Expanded(
                     child: ListView.builder(
                       itemBuilder: (final BuildContext ctx, final int index) {
-                        return Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5),
-                                child: Text(
-                                  "Sunday, December 19",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              Divider(
-                                height: 10,
-                                thickness: 5,
-                                color: Colors.grey.withOpacity(0.1),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  LikeNotificationWidget(
-                                    avatarUrl:
-                                        "https://cdnb.artstation.com/p/assets/images/images/043/342/111/large/hadi-karimi-niet-1.jpg?1637004692",
-                                    userName: "wemoOper",
-                                  ),
-                                  //TOBECONTINUED
-                                ],
-                              )
-                            ],
-                          ),
+                        return TimePacketContainer(
+                          packetTime: packets[index].packetTime,
+                          notificaitons: packets[index].packet,
                         );
                       },
-                      itemCount: 10,
+                      itemCount: packets.length,
                     ),
                   )
                 ],
@@ -152,93 +215,6 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class LikeNotificationWidget extends StatelessWidget {
-  const LikeNotificationWidget({
-    required final this.avatarUrl,
-    required final this.userName,
-    Key? key,
-  }) : super(key: key);
-
-  final String avatarUrl;
-  final String userName;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        children: [
-          AvatarWithIcon(
-            avatarUrl: avatarUrl,
-            iconType: "like",
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          RichText(
-            text: TextSpan(
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-              ),
-              children: <TextSpan>[
-                TextSpan(
-                  text: userName,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const TextSpan(
-                  text: " liked your post",
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class AvatarWithIcon extends StatelessWidget {
-  AvatarWithIcon(
-      {required final this.avatarUrl, required final this.iconType, Key? key})
-      : super(key: key);
-
-  final String avatarUrl;
-  final String iconType;
-
-  final Map<String, String> images = <String, String>{
-    "reply": "icons8-speech-15.png",
-    "like": "icons8-love-circled-15.png",
-    "reblog": "icons8-repeat-15.png",
-    "follow": "icons8-plus-+-15.png",
-  };
-
-  @override
-  Widget build(final BuildContext context) {
-    return SizedBox(
-      height: 40,
-      width: 40,
-      child: Stack(
-        alignment: AlignmentDirectional.bottomEnd,
-        overflow: Overflow.visible,
-        children: [
-          Image.network(
-            avatarUrl,
-            fit: BoxFit.cover,
-          ),
-          Positioned(
-            bottom: -5,
-            right: -5,
-            child: Image.asset("./assets/images/${images[iconType]}"),
-          )
-        ],
       ),
     );
   }
