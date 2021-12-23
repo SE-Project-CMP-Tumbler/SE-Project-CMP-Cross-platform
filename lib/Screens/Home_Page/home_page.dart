@@ -18,6 +18,9 @@ enum HomeSection {
   stuffForYou,
 }
 
+/// list of current home posts.
+List<PostModel> homePosts = <PostModel>[];
+
 /// Show Posts Page (Dashboard)
 class HomePage extends StatefulWidget {
   /// Constructor
@@ -27,8 +30,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ///saying which section the user is surfing.
   Enum section = HomeSection.following;
 
@@ -41,9 +43,6 @@ class _HomePageState extends State<HomePage>
   /// Indicate that more posts are fetched
   bool _gettingPosts = false;
 
-  /// list of current home posts.
-  List<PostModel> posts = <PostModel>[];
-
   late AnimationController loadingSpinnerAnimationController;
 
   /// for Pagination
@@ -54,7 +53,7 @@ class _HomePageState extends State<HomePage>
   Future<void> fetchPosts() async {
     setState(() => _isLoading = true);
     setState(() => _error = false);
-    posts.clear();
+    homePosts.clear();
     currentPage = 0;
     final Map<String, dynamic> response =
         await Api().fetchHomePosts(currentPage + 1);
@@ -62,7 +61,9 @@ class _HomePageState extends State<HomePage>
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPage++;
-        posts.addAll(PostModel.fromJSON(response["response"]["posts"]));
+        homePosts.addAll(
+          await PostModel.fromJSON(response["response"]["posts"], true),
+        );
       }
     } else {
       await showToast(response["meta"]["msg"]);
@@ -83,7 +84,9 @@ class _HomePageState extends State<HomePage>
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPage++;
         setState(
-          () => posts.addAll(PostModel.fromJSON(response["response"]["posts"])),
+          () async => homePosts.addAll(
+            await PostModel.fromJSON(response["response"]["posts"], true),
+          ),
         );
       }
     } else
@@ -124,7 +127,9 @@ class _HomePageState extends State<HomePage>
     loadingSpinnerAnimationController =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     loadingSpinnerAnimationController.repeat();
-    fetchPosts();
+    if (homePosts.isEmpty) {
+      fetchPosts();
+    }
   }
 
   @override
@@ -178,13 +183,14 @@ class _HomePageState extends State<HomePage>
                             )
                           : ListView.builder(
                               controller: _controller,
-                              itemCount: posts.length,
+                              itemCount: homePosts.length,
                               itemBuilder: (
                                 final BuildContext ctx,
                                 final int index,
                               ) {
                                 return PostOutView(
-                                  post: posts[index],
+                                  post: homePosts[index],
+                                  index: index,
                                 );
                               },
                             ),

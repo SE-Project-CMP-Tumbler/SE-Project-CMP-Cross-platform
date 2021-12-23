@@ -11,11 +11,15 @@ class PostOutView extends StatefulWidget {
   ///*Post model contains all data about the post
   const PostOutView({
     required final this.post,
+    required final this.index,
     final Key? key,
   }) : super(key: key);
 
   /// The Content of the Post
   final PostModel post;
+
+  /// index of the post in the home page
+  final int index;
 
   @override
   _PostOutViewState createState() => _PostOutViewState();
@@ -40,9 +44,8 @@ class _PostOutViewState extends State<PostOutView> {
           child: HtmlView(htmlData: widget.post.postBody),
         ),
         PostInteractionBar(
-          notesCount: widget.post.notes,
-          postID: widget.post.postId,
           isMine: User.blogsNames.contains(widget.post.blogUsername),
+          index: widget.index,
         ),
         Container(
           height: 10,

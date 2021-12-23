@@ -100,7 +100,9 @@ class _ProfilePageState extends State<ProfilePage>
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPagePosts++;
-        postsTabPosts.addAll(PostModel.fromJSON(response["response"]["posts"]));
+        postsTabPosts.addAll(
+          await PostModel.fromJSON(response["response"]["posts"], false),
+        );
       }
     } else {
       await showToast(response["meta"]["msg"]);
@@ -120,8 +122,9 @@ class _ProfilePageState extends State<ProfilePage>
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPagePosts++;
         setState(
-          () => postsTabPosts
-              .addAll(PostModel.fromJSON(response["response"]["posts"])),
+          () async => postsTabPosts.addAll(
+            await PostModel.fromJSON(response["response"]["posts"], false),
+          ),
         );
       }
     } else
@@ -139,7 +142,9 @@ class _ProfilePageState extends State<ProfilePage>
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPageLiked++;
-        postsTabLiked.addAll(PostModel.fromJSON(response["response"]["posts"]));
+        postsTabLiked.addAll(
+          await PostModel.fromJSON(response["response"]["posts"], false),
+        );
       }
     } else {
       await showToast(response["meta"]["msg"]);
@@ -159,8 +164,9 @@ class _ProfilePageState extends State<ProfilePage>
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPageLiked++;
         setState(
-          () => postsTabLiked
-              .addAll(PostModel.fromJSON(response["response"]["posts"])),
+          () async => postsTabLiked.addAll(
+            await PostModel.fromJSON(response["response"]["posts"], false),
+          ),
         );
       }
     } else
@@ -251,7 +257,8 @@ class _ProfilePageState extends State<ProfilePage>
           dense: true,
           leading: PersonAvatar(
             avatarPhotoLink: blogAvatar,
-            shape: blogAvatarShape, blogID: blogId.toString(),
+            shape: blogAvatarShape,
+            blogID: blogId.toString(),
           ),
           title: Text(blogUsername),
           subtitle: Text(blogTitle),
@@ -352,6 +359,7 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                               child: PostOutView(
                                 post: postsTabPosts[index],
+                                index: index, // dump
                               ),
                             );
                           },
@@ -466,6 +474,7 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                               child: PostOutView(
                                 post: postsTabLiked[index],
+                                index: index, // dump , not used in this case
                               ),
                             );
                           },
