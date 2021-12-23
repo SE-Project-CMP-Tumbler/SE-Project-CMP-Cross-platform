@@ -28,6 +28,7 @@ class _PostOutViewState extends State<PostOutView> {
       children: <Widget>[
         PostTopBar(
           avatarPhotoLink: widget.post.blogAvatar,
+          avatarShape: widget.post.blogAvatarShape,
           name: widget.post.blogUsername,
         ),
         const Divider(

@@ -46,6 +46,7 @@ class _PersonAvatarState extends State<PersonAvatar> {
                       ? "https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg"
                       : widget.avatarPhotoLink,
                   fit: BoxFit.cover,
+
                 ),
               ),
       ),

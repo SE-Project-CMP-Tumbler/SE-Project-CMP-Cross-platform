@@ -1,4 +1,3 @@
-import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:tumbler/Methods/Api.dart";
 import "package:tumbler/Methods/show_toast.dart";
 
@@ -26,7 +25,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
         html = html.replaceRange(
           x + 10,
           index1,
-          "${dotenv.env["server"] ?? " "}${url["response"]["url"]}",
+          "${url["response"]["url"]}",
         );
         index1 = html.indexOf('"', index2); //repeating this line is important
       } else {
@@ -51,12 +50,11 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
       //since the html size changes in each iteration
       final String video = html.substring(x + 24, index1);
       url = await Api().uploadVideo(video);
-
       if (url["meta"]["status"] == "200") {
         html = html.replaceRange(
           x + 24,
           index1,
-          "${dotenv.env["server"] ?? " "}${url["response"]["url"]}",
+          "${url["response"]["url"]}",
         );
         index1 = html.indexOf('"', index2); //repeating this line is important
       } else {
@@ -85,7 +83,7 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
         html = html.replaceRange(
           x + 24,
           index1,
-          "${dotenv.env["server"] ?? " "}${url["response"]["url"]}",
+          "${url["response"]["url"]}",
         );
         index1 = html.indexOf('"', index2); //repeating this line is important
       } else {

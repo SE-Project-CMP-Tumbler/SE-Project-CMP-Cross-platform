@@ -39,8 +39,10 @@ class Notes extends StatefulWidget {
   ///contains all likes without comments their detalis
   List<dynamic> reblogsWithOutCommentsList = <dynamic>[];
 
-  /// contains all replies with their detalis
+  /// contains all replies with their details
   List<dynamic> repliesList = <dynamic>[];
+
+  /// Post ID
   int postID;
 
   @override

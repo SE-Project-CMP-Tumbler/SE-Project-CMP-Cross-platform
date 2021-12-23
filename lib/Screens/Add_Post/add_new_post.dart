@@ -5,8 +5,10 @@ import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
 import "package:tumbler/Methods/show_toast.dart";
+import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Add_Post/popup_menu.dart";
+import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 /// Page to Add New Post
 class AddPost extends StatefulWidget {
@@ -35,7 +37,7 @@ class _AddPostState extends State<AddPost> {
         .addPost(processedHtml, postOptionChoice, "general", postTime);
 
     if (response["meta"]["status"] == "200") {
-      await showToast( "Added Successfully");
+      await showToast("Added Successfully");
       Navigator.of(context).pop();
     } else {
       await showToast(response["meta"]["msg"]);
@@ -109,16 +111,12 @@ class _AddPostState extends State<AddPost> {
                   color: Colors.white,
                   border: Border.all(color: Colors.white, width: 0),
                 ),
-                height: MediaQuery.of(context).size.height * .05,
+                height: MediaQuery.of(context).size.height * .06,
                 child: Row(
                   children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.all(10),
-                      child: const CircleAvatar(
-                        radius: 20,
-                        backgroundImage:
-                            AssetImage("assets/images/profile_pic.png"),
-                      ),
+                    PersonAvatar(
+                      avatarPhotoLink: User.avatars[User.currentProfile],
+                      shape: User.avatarShapes[User.currentProfile],
                     ),
                     const ProfilesList(),
                   ],

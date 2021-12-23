@@ -7,12 +7,16 @@ class PostTopBar extends StatefulWidget {
   /// Constructor
   const PostTopBar({
     required final this.avatarPhotoLink,
+    required final this.avatarShape,
     required final this.name,
     final Key? key,
   }) : super(key: key);
 
   /// Link for the Avatar Photo
   final String avatarPhotoLink;
+
+  /// Avatar Shape
+  final String avatarShape;
 
   /// Name of the user published the Post
   final String name;
@@ -33,7 +37,7 @@ class _PostTopBarState extends State<PostTopBar> {
           height: 200,
           color: Colors.black45,
           child: SingleChildScrollView(
-            child: (widget.name == User.blogsNames[User.currentProfile])
+            child: (User.blogsNames.contains(widget.name))
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -110,7 +114,7 @@ class _PostTopBarState extends State<PostTopBar> {
         children: <Widget>[
           PersonAvatar(
             avatarPhotoLink: widget.avatarPhotoLink,
-            shape: "square",
+            shape: widget.avatarShape,
           ),
           Text(
             widget.name,

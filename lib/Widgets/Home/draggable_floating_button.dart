@@ -1,7 +1,6 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
-import "package:flutter/painting.dart";
 import "package:tumbler/Constants/colors.dart";
 
 /// Class for Draggable Floating Action Bar

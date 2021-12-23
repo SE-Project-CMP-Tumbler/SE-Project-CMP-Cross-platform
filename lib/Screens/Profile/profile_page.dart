@@ -24,7 +24,7 @@ class ProfilePage extends StatefulWidget {
   }) : super(key: key);
 
   /// takes the current blog index
-  final int blogID;
+  final String blogID;
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -33,20 +33,32 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   TabController? tabController;
-  final GlobalKey<State<StatefulWidget>> greenKey = GlobalKey();
-  final GlobalKey<State<StatefulWidget>> blueKey = GlobalKey();
-  final GlobalKey<State<StatefulWidget>> orangeKey = GlobalKey();
-  final GlobalKey<State<StatefulWidget>> yellowKey = GlobalKey();
-  final GlobalKey<State<StatefulWidget>> purpleKey = GlobalKey();
-  int currentOption = 0;
   int themeColor = 0xff001935;
   int themeTitleColor = 0xffffffff;
   int accentColor = 0xffffffff;
   late AnimationController loadingSpinnerAnimationController;
 
+  /// Bool to indicate if the Blog is mine
+  bool _isMine = false;
+
+  /// Used if the blog is mine
   List<Blog> blogs = <Blog>[];
 
-  final List<String> _tabs = <String>["Posts", "Likes", "Following"];
+  /// Data of the Displayed Blog
+  Blog displayedBlog = Blog(
+    blogId: "",
+    isPrimary: false,
+    username: "",
+    avatarImageUrl: "",
+    avatarShape: "",
+    headerImage: "",
+    blogTitle: "",
+    allowAsk: false,
+    allowSubmission: false,
+    blogDescription: "",
+  );
+
+  final List<String> _tabs = <String>["Posts"];
 
   /// current opened tab
   late String currentTab;
@@ -83,10 +95,10 @@ class _ProfilePageState extends State<ProfilePage>
     postsTabPosts.clear();
     currentPagePosts = 0;
     final Map<String, dynamic> response =
-        await Api().fetchSpecificBlogPost(currentPagePosts + 1);
+        await Api().fetchSpecificBlogPost(widget.blogID, currentPagePosts + 1);
 
     if (response["meta"]["status"] == "200") {
-      if (response["response"] != <dynamic>{}) {
+      if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPagePosts++;
         postsTabPosts.addAll(PostModel.fromJSON(response["response"]["posts"]));
       }
@@ -102,10 +114,10 @@ class _ProfilePageState extends State<ProfilePage>
     }
     _gettingPosts = true;
     final Map<String, dynamic> response =
-        await Api().fetchSpecificBlogPost(currentPagePosts + 1);
+        await Api().fetchSpecificBlogPost(widget.blogID, currentPagePosts + 1);
 
     if (response["meta"]["status"] == "200") {
-      if (response["response"] != <dynamic>{}) {
+      if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPagePosts++;
         setState(
           () => postsTabPosts
@@ -125,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage>
         await Api().fetchLikedPost(currentPageLiked + 1);
 
     if (response["meta"]["status"] == "200") {
-      if (response["response"] != <dynamic>{}) {
+      if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPageLiked++;
         postsTabLiked.addAll(PostModel.fromJSON(response["response"]["posts"]));
       }
@@ -144,7 +156,7 @@ class _ProfilePageState extends State<ProfilePage>
         await Api().fetchLikedPost(currentPageLiked + 1);
 
     if (response["meta"]["status"] == "200") {
-      if (response["response"] != <dynamic>{}) {
+      if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPageLiked++;
         setState(
           () => postsTabLiked
@@ -164,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage>
         await Api().fetchFollowings(currentPageFollowing + 1);
 
     if (response["meta"]["status"] == "200") {
-      if (response["response"] != <dynamic>{}) {
+      if ((response["response"]["followings"] as List<dynamic>).isNotEmpty) {
         currentPageFollowing++;
         for (final Map<String, dynamic> follow in response["response"]
             ["followings"]) {
@@ -227,8 +239,14 @@ class _ProfilePageState extends State<ProfilePage>
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ListTile(
-          onTap: (){
+          onTap: () {
             // TODO(Ziyad): go to his profile
+            Navigator.of(context).push(
+              MaterialPageRoute<ProfilePage>(
+                builder: (final BuildContext context) =>
+                    ProfilePage(blogID: blogId.toString()),
+              ),
+            );
           },
           dense: true,
           leading: PersonAvatar(
@@ -264,36 +282,43 @@ class _ProfilePageState extends State<ProfilePage>
               ),
             )
           : postsTabPosts.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Text(
-                        "This is your Tumbler, and you",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(height: 3),
-                      const Text(
-                        "can fill it with whatever you want.",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<AddPost>(
-                              builder: (final BuildContext context) =>
-                                  AddPost(),
+              ? _isMine
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            "This is your Tumbler, and you",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 3),
+                          const Text(
+                            "can fill it with whatever you want.",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<AddPost>(
+                                  builder: (final BuildContext context) =>
+                                      AddPost(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Make a post",
+                              style: TextStyle(color: Colors.blue),
                             ),
-                          );
-                        },
-                        child: const Text(
-                          "Make a post",
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )
+                    )
+                  : const Center(
+                      child: Text(
+                        "This Tumbler has no posts",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    )
               : CustomScrollView(
                   // The "controller" and "primary" members should be left
                   // unset, so that the NestedScrollView can control this
@@ -356,32 +381,58 @@ class _ProfilePageState extends State<ProfilePage>
                 ),
               ),
             )
-          : postsTabPosts.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Text(
-                        "Aw. You don't like anything",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<SearchPage>(
-                              builder: (final BuildContext context) =>
-                                  const SearchPage(),
+          : postsTabLiked.isEmpty
+              ? _isMine
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            "Aw. You don't like anything",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<SearchPage>(
+                                  builder: (final BuildContext context) =>
+                                      const SearchPage(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Find something to like",
+                              style: TextStyle(color: Colors.blue),
                             ),
-                          );
-                        },
-                        child: const Text(
-                          "Find something to like",
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )
+                    )
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            "Aw. This Tumbler don't like anything",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<SearchPage>(
+                                  builder: (final BuildContext context) =>
+                                      const SearchPage(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Find something to like",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
               : CustomScrollView(
                   // The "controller" and "primary" members should be left
                   // unset, so that the NestedScrollView can control this
@@ -445,31 +496,57 @@ class _ProfilePageState extends State<ProfilePage>
               ),
             )
           : followingTabList.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Text(
-                        "Aw. You don't follow anyone",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<SearchPage>(
-                              builder: (final BuildContext context) =>
-                                  const SearchPage(),
+              ? _isMine
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            "Aw. You don't follow anyone",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<SearchPage>(
+                                  builder: (final BuildContext context) =>
+                                      const SearchPage(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Find something to follow",
+                              style: TextStyle(color: Colors.blue),
                             ),
-                          );
-                        },
-                        child: const Text(
-                          "Find something to follow",
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )
+                    )
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            "Aw. This Tumbler don't follow anyone",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<SearchPage>(
+                                  builder: (final BuildContext context) =>
+                                      const SearchPage(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Find something to follow",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
               : CustomScrollView(
                   // The "controller" and "primary" members should be left
                   // unset, so that the NestedScrollView can control this
@@ -516,6 +593,69 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
+  Future<void> initializeBlog() async {
+    // if it is one of my Blogs
+    if (User.blogsIDs.contains(widget.blogID)) {
+      final int index = User.blogsIDs.indexOf(widget.blogID);
+
+      _isMine = true;
+      displayedBlog = Blog(
+        blogId: widget.blogID,
+        isPrimary: widget.blogID == User.blogsIDs[0],
+        username: User.blogsNames[index],
+        avatarImageUrl: User.avatars[index],
+        avatarShape: User.avatars[index],
+        headerImage: User.headerImages[index],
+        blogTitle: User.titles[index],
+        allowAsk: false,
+        // Both 'allowAsk' and 'allowSubmission' won't be used in this case
+        allowSubmission: false,
+        blogDescription: User.descriptions[index],
+      );
+
+      // If it is my main Blog
+      if (widget.blogID == User.blogsIDs[0])
+        _tabs.addAll(<String>["Likes", "Following"]);
+    } else {
+      _isMine = false;
+      final Map<String, dynamic> response =
+          await Api().getBlogInformation(widget.blogID);
+
+      if (response["meta"]["status"] == "200") {
+        final Map<String, dynamic> data = response["response"];
+        displayedBlog = Blog(
+          blogId: widget.blogID,
+          isPrimary: false,
+          username: data["username"],
+          avatarImageUrl: data["avatar"],
+          avatarShape: data["avatar_shape"],
+          headerImage: data["header_image"],
+          blogTitle: data["title"],
+          allowAsk: data["allow_ask"],
+          allowSubmission: data["allow_submittions"],
+          blogDescription: data["description"],
+        );
+      }
+      /*  UNCOMMENT THIS IF get Likes and Following of other Blog is Working  */
+      // response = await Api().getBlogSetting(widget.blogID);
+      // if (response["meta"]["status"] == "200") {
+      //   if (response["meta"]["share_likes"] != null) {
+      //     if (response["meta"]["share_likes"] as bool) {
+      //       _tabs.add("Likes");
+      //     }
+      //   }
+      //
+      //   if (response["meta"]["share_followings"] != null) {
+      //     if (response["meta"]["share_followings"] as bool) {
+      //       _tabs.add("Following");
+      //     }
+      //   }
+      // }
+    }
+
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
@@ -544,6 +684,8 @@ class _ProfilePageState extends State<ProfilePage>
     loadingSpinnerAnimationController =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     loadingSpinnerAnimationController.repeat();
+
+    initializeBlog();
     fetchProfilePosts();
   }
 
@@ -596,12 +738,14 @@ class _ProfilePageState extends State<ProfilePage>
                   sliver: SliverList(
                     delegate: SliverChildListDelegate(
                       <Widget>[
+                        // All Upper Widgets
                         Container(
                           height: 0.35 * _height,
-                          decoration: const BoxDecoration(
+                          // Header image
+                          decoration: BoxDecoration(
                             image: DecorationImage(
-                              image:
-                                  ExactAssetImage("assets/images/intro_3.jpg"),
+                              image: Image.network(displayedBlog.headerImage!)
+                                  .image,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -617,6 +761,7 @@ class _ProfilePageState extends State<ProfilePage>
                                   height: 0.8 * _height,
                                 ),
                               ),
+                              // Profile Pic
                               Positioned(
                                 bottom: 0.085 * _height - 25,
                                 child: Container(
@@ -631,18 +776,31 @@ class _ProfilePageState extends State<ProfilePage>
                                     ),
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(50),
-                                    ), //editable
-                                    child: Image.asset(
-                                      "assets/images/intro_3.jpg",
+                                    borderRadius:
+                                        displayedBlog.avatarShape == "square"
+                                            ? null
+                                            : const BorderRadius.all(
+                                                Radius.circular(50),
+                                              ), //editable
+                                    child: Image.network(
+                                      displayedBlog.avatarImageUrl!,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                               ),
+                              // Title
                               Text(
-                                User.titles[User.currentProfile],
+                                displayedBlog.blogTitle!,
+                                textScaleFactor: 2.4,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(themeTitleColor),
+                                ),
+                              ),
+                              // Description
+                              Text(
+                                displayedBlog.blogDescription!,
                                 textScaleFactor: 2.4,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
@@ -654,215 +812,342 @@ class _ProfilePageState extends State<ProfilePage>
                                 left: 0,
                                 right: 0,
                                 child: SafeArea(
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        flex: 4,
-                                        child: SizedBox(
-                                          width: _width / 2,
-                                          child: DropdownButton<String>(
-                                            onChanged: (final String? value) {
-                                              if (value ==
-                                                  blogUserNames[
-                                                      blogUserNames.length -
-                                                          1]) {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute<
-                                                      CreateNewBlog>(
-                                                    builder: (
+                                  child: _isMine
+                                      ? Row(
+                                          children: <Widget>[
+                                            // Drop Down Menu of My Blogs
+                                            Expanded(
+                                              flex: 4,
+                                              child: SizedBox(
+                                                width: _width / 2,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    left: 8,
+                                                  ),
+                                                  child: DropdownButton<String>(
+                                                    onChanged:
+                                                        (final String? value) {
+                                                      if (value ==
+                                                          blogUserNames[
+                                                              blogUserNames
+                                                                      .length -
+                                                                  1]) {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute<
+                                                              CreateNewBlog>(
+                                                            builder: (
+                                                              final BuildContext
+                                                                  context,
+                                                            ) =>
+                                                                const CreateNewBlog(),
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        setState(() {
+                                                          dropdownValue =
+                                                              value!;
+                                                          User.currentProfile =
+                                                              User.blogsNames
+                                                                  .indexOf(
+                                                            value,
+                                                          );
+                                                        });
+                                                      }
+                                                    },
+                                                    value: dropdownValue,
+                                                    // Hide the default underline
+                                                    underline: Container(
+                                                      height: 0,
+                                                    ),
+                                                    icon: const Icon(
+                                                      Icons
+                                                          .arrow_drop_down_outlined,
+                                                      color: Colors.white,
+                                                    ),
+                                                    isExpanded: true,
+                                                    // The list of options
+                                                    items: blogUserNames
+                                                        .map(
+                                                          (final String e) =>
+                                                              DropdownMenuItem<
+                                                                  String>(
+                                                            value: e,
+                                                            child: Container(
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                              child: Row(
+                                                                children: <
+                                                                    Widget>[
+                                                                  if (e ==
+                                                                      blogUserNames[
+                                                                          blogUserNames.length -
+                                                                              1])
+                                                                    const Icon(
+                                                                      Icons
+                                                                          .add_circle_outline,
+                                                                    )
+                                                                  else
+                                                                    Image
+                                                                        .network(
+                                                                      User.avatars[blogUserNames.indexWhere(
+                                                                                (
+                                                                                  final String element,
+                                                                                ) =>
+                                                                                    element == e,
+                                                                              )] ==
+                                                                              " "
+                                                                          ? "https://picsum.photos/200"
+                                                                          : User.avatars[User.currentProfile],
+                                                                      width: 35,
+                                                                      height:
+                                                                          35,
+                                                                    ),
+                                                                  const SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      e,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                        .toList(),
+
+                                                    // Customize the selected item
+                                                    selectedItemBuilder: (
                                                       final BuildContext
                                                           context,
                                                     ) =>
-                                                        const CreateNewBlog(),
-                                                  ),
-                                                );
-                                              } else {
-                                                setState(() {
-                                                  dropdownValue = value!;
-                                                  User.currentProfile = User
-                                                      .blogsNames
-                                                      .indexOf(value);
-                                                });
-                                              }
-                                            },
-                                            value: dropdownValue,
-                                            // Hide the default underline
-                                            underline: Container(
-                                              height: 0,
-                                            ),
-                                            icon: const Icon(
-                                              Icons.arrow_drop_down_outlined,
-                                              color: Colors.white,
-                                            ),
-                                            isExpanded: true,
-                                            // The list of options
-                                            items: blogUserNames
-                                                .map(
-                                                  (final String e) =>
-                                                      DropdownMenuItem<String>(
-                                                    value: e,
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          if (e ==
-                                                              blogUserNames[
-                                                                  blogUserNames
-                                                                          .length -
-                                                                      1])
-                                                            const Icon(
-                                                              Icons
-                                                                  .add_circle_outline,
+                                                        blogUserNames
+                                                            .map(
+                                                              (
+                                                                final String e,
+                                                              ) =>
+                                                                  Align(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                    8,
+                                                                  ),
+                                                                  child: Text(
+                                                                    e,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .left,
+                                                                  ),
+                                                                ),
+                                                              ),
                                                             )
-                                                          else
-                                                            Image.network(
-                                                              User.avatars[blogUserNames
-                                                                          .indexWhere(
-                                                                        (
-                                                                          final String
-                                                                              element,
-                                                                        ) =>
-                                                                            element ==
-                                                                            e,
-                                                                      )] ==
-                                                                      " "
-                                                                  ? "https://picsum.photos/200"
-                                                                  : User.avatars[
-                                                                      User.currentProfile],
-                                                              width: 35,
-                                                              height: 35,
-                                                            ),
-                                                          const SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Expanded(
-                                                            child: Text(
-                                                              e,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ),
-                                                        ],
+                                                            .toList(),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            // Search Icon
+                                            Expanded(
+                                              child: Material(
+                                                type: MaterialType.transparency,
+                                                shape: const CircleBorder(),
+                                                clipBehavior: Clip.hardEdge,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.search_outlined,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onPressed: () {
+                                                    // TODO(Ziyad): Implement this
+                                                  },
+                                                  splashColor: Colors.white10,
+                                                ),
+                                              ),
+                                            ),
+                                            // Appearance Icon
+                                            Expanded(
+                                              child: Material(
+                                                type: MaterialType.transparency,
+                                                shape: const CircleBorder(),
+                                                clipBehavior: Clip.hardEdge,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.color_lens,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onPressed: () {
+                                                    // TODO(Ziyad): Implement this
+                                                  },
+                                                  splashColor: Colors.white10,
+                                                ),
+                                              ),
+                                            ),
+                                            // Share Icon
+                                            Expanded(
+                                              child: Material(
+                                                type: MaterialType.transparency,
+                                                shape: const CircleBorder(),
+                                                clipBehavior: Clip.hardEdge,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.share,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onPressed: () {
+                                                    // TODO(Ziyad): Implement this
+                                                  },
+                                                  splashColor: Colors.white10,
+                                                ),
+                                              ),
+                                            ),
+                                            // Settings Icon
+                                            Expanded(
+                                              child: Material(
+                                                type: MaterialType.transparency,
+                                                shape: const CircleBorder(),
+                                                clipBehavior: Clip.hardEdge,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.settings,
+                                                    size: 25,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute<
+                                                          ProfileSettings>(
+                                                        builder: (
+                                                          final BuildContext
+                                                              context,
+                                                        ) =>
+                                                            const ProfileSettings(),
                                                       ),
+                                                    );
+                                                  },
+                                                  splashColor: Colors.white10,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : Row(
+                                          // If Showing someone Blog
+                                          children: <Widget>[
+                                            // Back Icon
+                                            Expanded(
+                                              child: Material(
+                                                type: MaterialType.transparency,
+                                                shape: const CircleBorder(),
+                                                clipBehavior: Clip.hardEdge,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.arrow_back_outlined,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  splashColor: Colors.white10,
+                                                ),
+                                              ),
+                                            ),
+                                            // User Name
+                                            Expanded(
+                                              flex: 4,
+                                              child: SizedBox(
+                                                width: _width / 2,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    left: 8,
+                                                  ),
+                                                  child: Text(
+                                                    displayedBlog.username!,
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20,
                                                     ),
                                                   ),
-                                                )
-                                                .toList(),
-
-                                            // Customize the selected item
-                                            selectedItemBuilder: (
-                                              final BuildContext context,
-                                            ) =>
-                                                blogUserNames
-                                                    .map(
-                                                      (final String e) => Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(
-                                                            8,
-                                                          ),
-                                                          child: Text(
-                                                            e,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 16,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                    .toList(),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Material(
-                                          type: MaterialType.transparency,
-                                          shape: const CircleBorder(),
-                                          clipBehavior: Clip.hardEdge,
-                                          child: IconButton(
-                                            icon: const Icon(
-                                              Icons.search_outlined,
-                                              color: Colors.white,
-                                            ),
-                                            onPressed: () {},
-                                            splashColor: Colors.white10,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Material(
-                                          type: MaterialType.transparency,
-                                          shape: const CircleBorder(),
-                                          clipBehavior: Clip.hardEdge,
-                                          child: IconButton(
-                                            icon: const Icon(
-                                              Icons.color_lens,
-                                              color: Colors.white,
-                                            ),
-                                            onPressed: () {},
-                                            splashColor: Colors.white10,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Material(
-                                          type: MaterialType.transparency,
-                                          shape: const CircleBorder(),
-                                          clipBehavior: Clip.hardEdge,
-                                          child: IconButton(
-                                            icon: const Icon(
-                                              Icons.share,
-                                              color: Colors.white,
-                                            ),
-                                            onPressed: () {},
-                                            splashColor: Colors.white10,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Material(
-                                          type: MaterialType.transparency,
-                                          shape: const CircleBorder(),
-                                          clipBehavior: Clip.hardEdge,
-                                          child: IconButton(
-                                            icon: const Icon(
-                                              Icons.settings,
-                                              size: 25,
-                                              color: Colors.white,
-                                            ),
-                                            onPressed: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute<
-                                                    ProfileSettings>(
-                                                  builder: (
-                                                    final BuildContext context,
-                                                  ) =>
-                                                      const ProfileSettings(),
                                                 ),
-                                              );
-                                            },
-                                            splashColor: Colors.white10,
-                                          ),
+                                              ),
+                                            ),
+                                            // Search Icon
+                                            Expanded(
+                                              child: Material(
+                                                type: MaterialType.transparency,
+                                                shape: const CircleBorder(),
+                                                clipBehavior: Clip.hardEdge,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.search_outlined,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onPressed: () {
+                                                    // TODO(Ziyad): Implement this
+                                                  },
+                                                  splashColor: Colors.white10,
+                                                ),
+                                              ),
+                                            ),
+                                            // Message
+                                            Expanded(
+                                              child: Material(
+                                                type: MaterialType.transparency,
+                                                shape: const CircleBorder(),
+                                                clipBehavior: Clip.hardEdge,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.email_rounded,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onPressed: () {
+                                                    // TODO(Ziyad): Implement this
+                                                  },
+                                                  splashColor: Colors.white10,
+                                                ),
+                                              ),
+                                            ),
+                                            // Profile Icon
+                                            Expanded(
+                                              child: Material(
+                                                type: MaterialType.transparency,
+                                                shape: const CircleBorder(),
+                                                clipBehavior: Clip.hardEdge,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.person,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onPressed: () {
+                                                    // TODO(Ziyad): Implement this
+                                                  },
+                                                  splashColor: Colors.white10,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),

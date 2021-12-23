@@ -23,6 +23,7 @@ class Api {
   final String _uploadAudio = dotenv.env["uploadAudio"] ?? " ";
   final String _addPost = dotenv.env["addPost"] ?? " ";
   final String _blog = dotenv.env["blog"] ?? " ";
+  final String _blogSettings = dotenv.env["blog_settings"] ?? " ";
   final String _blogsLikes = dotenv.env["blogsLikes"] ?? " ";
   final String _dashboard = dotenv.env["dashboard"] ?? " ";
   final String _changeEmail = dotenv.env["changeEmail"] ?? " ";
@@ -112,7 +113,6 @@ class Api {
     final String googleAccessToken,
     final int age,
   ) async {
-
     final http.Response response = await http
         .post(
       Uri.parse(_host + _signUpWithGoogle),
@@ -162,8 +162,6 @@ class Api {
   Future<Map<String, dynamic>> logInWithGoogle(
     final String googleAccessToken,
   ) async {
-
-
     final http.Response response = await http
         .post(
       Uri.parse(_host + _loginWithGoogle),
@@ -208,7 +206,7 @@ class Api {
   Future<Map<String, dynamic>> uploadVideo(final String video) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _uploadVideo + User.userID),
+      Uri.parse(_host + _uploadVideo),
       headers: _headerContentAuth,
       body: json.encode(<String, String>{
         "b64_video": video,
@@ -242,6 +240,7 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
+
     return jsonDecode(response.body);
   }
 
@@ -249,7 +248,7 @@ class Api {
   Future<Map<String, dynamic>> uploadAudio(final String audio) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _uploadAudio + User.userID),
+      Uri.parse(_host + _uploadAudio),
       headers: _headerContentAuth,
       body: json.encode(<String, String>{
         "b64_audio": audio,
@@ -469,16 +468,14 @@ class Api {
     return response;
   }
 
-  /// to get the posts of a specific blog
-  Future<Map<String, dynamic>> fetchSpecificBlogPost(final int page) async {
+  /// to get the Information of a specific blog
+  Future<Map<String, dynamic>> getBlogInformation(
+    final String blogID,
+  ) async {
     final http.Response response = await http
         .get(
       Uri.parse(
-        _host +
-            _posts +
-            User.blogsIDs[User.currentProfile] +
-            _published +
-            "?page=$page",
+        _host + _blog + "/" + blogID,
       ),
       headers: _headerContentAuth,
     )
@@ -493,7 +490,52 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the Liked Posts of a specific blog
+  /// to get the Settings of a specific blog
+  Future<Map<String, dynamic>> getBlogSetting(
+    final String blogID,
+  ) async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(
+        _host + _blogSettings + blogID,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
+  }
+
+  /// to get the posts of a specific blog
+  Future<Map<String, dynamic>> fetchSpecificBlogPost(
+    final String blogID,
+    final int page,
+  ) async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(
+        _host + _posts + blogID + _published + "?page=$page",
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
+  }
+
+  /// to get the Liked Posts of a My blog
   Future<Map<String, dynamic>> fetchLikedPost(final int page) async {
     final http.Response response = await http
         .get(
