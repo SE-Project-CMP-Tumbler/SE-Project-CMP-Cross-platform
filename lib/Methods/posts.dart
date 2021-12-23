@@ -1,6 +1,5 @@
 import "dart:convert";
 
-
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/http_requests_exceptions.dart";
 import "package:tumbler/Models/notes.dart";
@@ -8,9 +7,9 @@ import "package:tumbler/Models/post.dart";
 
 // ignore: avoid_classes_with_only_static_members
 ///Posts provider manage the state of posts.
-class Posts  {
+class Posts {
   static List<Post> _homePosts = <Post>[];
-  static  Map<int, Notes> _notes = <int, Notes>{};
+  static Map<int, Notes> _notes = <int, Notes>{};
 
   ///Returns loaded posts.
   static List<Post> get homePosts {
@@ -77,7 +76,7 @@ class Posts  {
   static Future<void> fetchAndSetPosts() async {
     // clear all loaded post.
     _homePosts.clear();
-    final dynamic res = await Api().fetchAndPosts();
+    final dynamic res = await Api().fetchPosts();
 
     //checking the status code of the received response.
     if (res.statusCode == 401)
@@ -129,6 +128,5 @@ class Posts  {
             Notes(likes: likes, reblogs: reblogs, replies: replies);
       }
     }
-
   }
 }

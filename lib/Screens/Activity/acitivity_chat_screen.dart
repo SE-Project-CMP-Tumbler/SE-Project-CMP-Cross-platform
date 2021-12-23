@@ -1,6 +1,7 @@
 // ignore_for_file: cascade_invocations
 
 import "package:flutter/material.dart";
+
 import "package:tumbler/Models/Activity_Notifications/ask.dart";
 import "package:tumbler/Models/Activity_Notifications/follow.dart";
 import "package:tumbler/Models/Activity_Notifications/like.dart";
@@ -10,6 +11,7 @@ import "package:tumbler/Models/Activity_Notifications/reply.dart";
 import "package:tumbler/Models/Activity_Notifications/time_packet.dart";
 
 import "package:tumbler/Widgets/Activity_Notifications/time_packet_contianer.dart";
+import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 
 /// [blogType] is an Enumerator for specifing two different reblogs types
 enum ActivityOrChat {
@@ -170,17 +172,18 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(0, 25, 53, 1),
+          backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
           titleSpacing: 30,
-          title: const Text(
-            "Drop list... ",
-          ),
+          title: const ProfilesList(),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 20),
               child: GestureDetector(
                 onTap: () {},
-                child: const Icon(Icons.more_vert),
+                child: const Icon(
+                  Icons.more_vert,
+                  color: Colors.black,
+                ),
               ),
             ),
           ],

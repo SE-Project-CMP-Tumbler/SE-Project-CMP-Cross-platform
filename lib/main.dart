@@ -19,8 +19,8 @@ class MyApp extends StatelessWidget {
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         //home: AddPost(),
-        //home: HomePage(),
-        home: ActivityAndChatScreen(),
+        home: HomePage(),
+        //home: ActivityAndChatScreen(),
       ),
     );
   }

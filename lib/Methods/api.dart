@@ -256,7 +256,7 @@ class Api {
   }
 
   /// GET Posts For the Home Page
-  Future<dynamic> fetchAndPosts() async {
+  Future<dynamic> fetchPosts() async {
     try {
       final http.Response response = await http.get(
         Uri.parse(
