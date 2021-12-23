@@ -125,11 +125,11 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               color: Colors.black,
             ),
           ),
-          if (widget.isMine)
+          if (!widget.isMine)
             LikeButton(
               isLiked: isLoved,
               // onTap: (final bool x){
-              // TODO(Ziyad): Make the Request
+              // TODO(Waleed): Make the Request
               // },
               likeBuilder: (final bool isLoved) {
                 final Color color = isLoved ? Colors.red : Colors.black;
@@ -139,7 +139,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 );
               },
             ),
-          if (!widget.isMine)
+          if (widget.isMine)
             const IconButton(
               onPressed: null,
               icon: Icon(
@@ -147,7 +147,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 color: Colors.black,
               ),
             ),
-          if (!widget.isMine)
+          if (widget.isMine)
             const IconButton(
               onPressed: null,
               icon: Icon(

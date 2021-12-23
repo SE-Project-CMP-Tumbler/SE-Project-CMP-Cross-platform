@@ -30,6 +30,7 @@ class _PostOutViewState extends State<PostOutView> {
           avatarPhotoLink: widget.post.blogAvatar,
           avatarShape: widget.post.blogAvatarShape,
           name: widget.post.blogUsername,
+          blogID: widget.post.blogId.toString(),
         ),
         const Divider(
           color: Colors.grey,

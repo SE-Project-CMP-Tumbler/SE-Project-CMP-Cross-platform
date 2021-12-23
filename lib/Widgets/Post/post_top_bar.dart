@@ -9,6 +9,7 @@ class PostTopBar extends StatefulWidget {
     required final this.avatarPhotoLink,
     required final this.avatarShape,
     required final this.name,
+    required final this.blogID,
     final Key? key,
   }) : super(key: key);
 
@@ -20,6 +21,9 @@ class PostTopBar extends StatefulWidget {
 
   /// Name of the user published the Post
   final String name;
+
+  /// blog ID of the user published the Post
+  final String blogID;
 
   @override
   _PostTopBarState createState() => _PostTopBarState();
@@ -34,44 +38,12 @@ class _PostTopBarState extends State<PostTopBar> {
       context: ctx,
       builder: (final _) {
         return Container(
-          height: 200,
+          height: (User.blogsNames.contains(widget.name)) ? 170 : 200,
           color: Colors.black45,
           child: SingleChildScrollView(
             child: (User.blogsNames.contains(widget.name))
                 ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      ListTile(
-                        onTap: () {},
-                        title: const Text(
-                          "Report sensitive content",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                      ),
-                      ListTile(
-                        onTap: () {},
-                        title: const Text(
-                          "Repost spam",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                      ),
-                      ListTile(
-                        onTap: () {},
-                        title: const Text(
-                          "Report something else",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                      ),
-                      ListTile(
-                        onTap: () {},
-                        title: const Text(
-                          "Copy link",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                      ),
-                    ],
-                  )
-                : Column( // if it is my post
+                    // if it is my post
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       ListTile(
@@ -84,14 +56,59 @@ class _PostTopBarState extends State<PostTopBar> {
                         ),
                       ),
                       ListTile(
-                        onTap: () {},
+                        onTap: () {
+                          // TODO(Ziyad): Make The Request
+                        },
                         title: const Text(
                           "Mute notifications",
                           style: TextStyle(color: Colors.white, fontSize: 15),
                         ),
                       ),
                       ListTile(
-                        onTap: () {},
+                        onTap: () {
+                          // TODO(Ziyad): Make The Request
+                        },
+                        title: const Text(
+                          "Copy link",
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      ListTile(
+                        onTap: () {
+                          // TODO(Ziyad): Make The Request
+                        },
+                        title: const Text(
+                          "Report sensitive content",
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
+                      ),
+                      ListTile(
+                        onTap: () {
+                          // TODO(Ziyad): Make The Request
+                        },
+                        title: const Text(
+                          "Repost spam",
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
+                      ),
+                      ListTile(
+                        onTap: () {
+                          // TODO(Ziyad): Make The Request
+                        },
+                        title: const Text(
+                          "Report something else",
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
+                      ),
+                      ListTile(
+                        onTap: () {
+                          // TODO(Ziyad): Make The Request
+                        },
                         title: const Text(
                           "Copy link",
                           style: TextStyle(color: Colors.white, fontSize: 15),
@@ -115,6 +132,7 @@ class _PostTopBarState extends State<PostTopBar> {
           PersonAvatar(
             avatarPhotoLink: widget.avatarPhotoLink,
             shape: widget.avatarShape,
+            blogID: widget.blogID,
           ),
           Text(
             widget.name,

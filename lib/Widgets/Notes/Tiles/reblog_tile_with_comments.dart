@@ -11,6 +11,7 @@ class ReblogTileWithComments extends StatelessWidget {
     required final this.userName,
     required final this.htmlData,
     required final this.avatarShape,
+    required final this.blogID,
     final Key? key,
   }) : super(key: key);
 
@@ -18,6 +19,7 @@ class ReblogTileWithComments extends StatelessWidget {
   final String userName;
   final String htmlData;
   final String avatarShape;
+  final String blogID;
 
   @override
   Widget build(final BuildContext context) {
@@ -27,7 +29,11 @@ class ReblogTileWithComments extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              PersonAvatar(avatarPhotoLink: avatarUrl, shape: avatarShape),
+              PersonAvatar(
+                avatarPhotoLink: avatarUrl,
+                shape: avatarShape,
+                blogID: blogID,
+              ),
               const SizedBox(
                 width: 2,
               ),

@@ -57,24 +57,24 @@ class HtmlView extends StatelessWidget {
         "img": Style(alignment: Alignment.center)
       },
       // ignore: always_specify_types
-      customImageRenders: {
-        (final Map<String, String> attr, final __) => attr["src"] != null:
-            networkImageRender(width: 500, height: 300),
-      },
-      onLinkTap: (final String? url, final _, final __, final ___) {},
-      onImageTap: (final String? src, final _, final __, final ___) {
-        //print(src);
-      },
-      onImageError: (final Object exception, final StackTrace? stackTrace) {
-        //print(exception);
-      },
-      onCssParseError: (final String css, final List<Message> messages) {
-        //print("css that error: $css");
-        //print("error messages:");
-        // for (var element in messages) {
-        //   //print(element);
-        // }
-      },
+      // customImageRenders: {
+      //   (final Map<String, String> attr, final __) => attr["src"] != null:
+      //       networkImageRender(width: 500, height: 300),
+      // },
+      // onLinkTap: (final String? url, final _, final __, final ___) {},
+      // onImageTap: (final String? src, final _, final __, final ___) {
+      //   //print(src);
+      // },
+      // onImageError: (final Object exception, final StackTrace? stackTrace) {
+      //   //print(exception);
+      // },
+      // onCssParseError: (final String css, final List<Message> messages) {
+      //   //print("css that error: $css");
+      //   //print("error messages:");
+      //   // for (var element in messages) {
+      //   //   //print(element);
+      //   // }
+      // },
     );
   }
 }

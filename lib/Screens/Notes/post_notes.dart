@@ -27,7 +27,7 @@ class Notes extends StatefulWidget {
     final Key? key,
   }) : super(key: key);
 
-  /// contains all likes with their detalis
+  /// contains all likes with their details
   List<dynamic> likesList = <dynamic>[];
 
   ///contains all reblogs with their detalis
@@ -173,6 +173,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                             avatarUrl: widget.repliesList[index]["blog_avatar"],
                             avatarShape: widget.repliesList[index]
                                 ["blog_avatar_shape"],
+                            blogID: "", // TODO(Waleed): pass BlogID
                           );
                         },
                         itemCount: widget.repliesList.length,
@@ -282,17 +283,20 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                                     avatarShape:
                                         widget.reblogsWithCommentsList[index]
                                             ["blog_avatar_shape"],
+                                    blogID: "", // TODO(Waleed): pass BlogID
                                   )
                                 : ReblogTileWithOutComments(
                                     userName:
                                         widget.reblogsWithOutCommentsList[index]
                                             ["blog_username"],
-                                    avatartUrl:
+                                    avatarUrl:
                                         widget.reblogsWithOutCommentsList[index]
                                             ["blog_avatar"],
                                     avatarShape:
                                         widget.reblogsWithOutCommentsList[index]
                                             ["blog_avatar_shape"],
+                                    blogID: "", // TODO(Waleed): pass BlogID
+                                    commentText: "", // TODO(Waleed): pass Text
                                   ),
                         childCount:
                             (blogTypeToShow == blogsType.withComments.index)
@@ -316,6 +320,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                       followStatus: widget.likesList[index]["followed"],
                       userName: widget.likesList[index]["blog_username"],
                       avatarShape: widget.likesList[index]["blog_avatar_shape"],
+                      blogID: "", // TODO(Waleed): pass BlogID
                     );
                   },
                   itemCount: widget.likesList.length,

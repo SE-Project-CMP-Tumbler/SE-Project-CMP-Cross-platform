@@ -251,7 +251,7 @@ class _ProfilePageState extends State<ProfilePage>
           dense: true,
           leading: PersonAvatar(
             avatarPhotoLink: blogAvatar,
-            shape: blogAvatarShape,
+            shape: blogAvatarShape, blogID: blogId.toString(),
           ),
           title: Text(blogUsername),
           subtitle: Text(blogTitle),

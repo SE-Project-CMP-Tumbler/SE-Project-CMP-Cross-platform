@@ -117,6 +117,7 @@ class _AddPostState extends State<AddPost> {
                     PersonAvatar(
                       avatarPhotoLink: User.avatars[User.currentProfile],
                       shape: User.avatarShapes[User.currentProfile],
+                      blogID: User.blogsIDs[User.currentProfile],
                     ),
                     const ProfilesList(),
                   ],
