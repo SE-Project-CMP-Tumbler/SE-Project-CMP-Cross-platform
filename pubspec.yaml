@@ -32,7 +32,7 @@ dependencies:
   carousel_slider: ^4.0.0
   chewie:
   cupertino_icons: ^1.0.2
-  dartdoc: ^4.1.0
+  # dartdoc: ^4.1.0
   fluttertoast: ^8.0.8
   flutter_html: ^2.1.5
   flutter_native_splash:

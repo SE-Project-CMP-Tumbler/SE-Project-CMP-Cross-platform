@@ -45,10 +45,8 @@ class _PostOutViewState extends State<PostOutView> {
           child: HtmlView(htmlData: widget.post.postBody),
         ),
         PostInteractionBar(
-         likes:widget.post.likes,
-         reblogs:widget.post.reblogs,
-         replies:widget.post.replies,
-         postId: widget.post.postId,
+          postId: widget.post.postId,
+          key: Key(widget.post.blogId.toString()),
         )
       ],
     );

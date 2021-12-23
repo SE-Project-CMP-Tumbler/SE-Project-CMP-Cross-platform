@@ -12,9 +12,6 @@ class Post {
     required final this.blogAvatarShape,
     required final this.blogTitle,
     required final this.postTime,
-    final this.likes = const <dynamic>[],
-    final this.reblogs = const <dynamic>[],
-    final this.replies = const <dynamic>[],
   });
 
   final int postId;
@@ -27,7 +24,4 @@ class Post {
   final String blogAvatarShape;
   final String blogTitle;
   final String postTime;
-  List<dynamic> likes = <dynamic>[];
-  List<dynamic> reblogs = <dynamic>[];
-  List<dynamic> replies = <dynamic>[];
 }

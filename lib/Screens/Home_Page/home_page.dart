@@ -3,10 +3,9 @@ import "dart:ui";
 
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
-import "package:provider/provider.dart";
 import "package:tumbler/Exceptions_UI/generic_exception.dart";
+import "package:tumbler/Methods/posts.dart";
 import "package:tumbler/Models/post.dart";
-import "package:tumbler/Providers/posts.dart";
 import "package:tumbler/Widgets/Home/home_sliver_app_bar.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 
@@ -143,11 +142,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {
       _isLoading = true;
     });
-    await Provider.of<Posts>(context, listen: false)
-        .fetchAndSetPosts()
+    await Posts.fetchAndSetPosts()
         .then((final _) {
       setState(() {
-        posts = Provider.of<Posts>(context, listen: false).homePosts;
+        posts = Posts.homePosts;
         _isLoading = false;
       });
     }).catchError((final Object? error) {
@@ -164,9 +162,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (!_isInit) {
       setState(() => _isLoading = true);
 
-      await Provider.of<Posts>(context).fetchAndSetPosts().then((final _) {
+      await Posts.fetchAndSetPosts().then((final _) {
         setState(() {
-          posts = Provider.of<Posts>(context, listen: false).homePosts;
+          posts = Posts.homePosts;
           _isLoading = false;
         });
       }).catchError((final Object? error) {
@@ -235,10 +233,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               children: const <Widget>[
                                 Padding(
                                   padding: EdgeInsets.symmetric(vertical: 150),
-                                 
                                   child: ErrorImage(
                                     msg:
-                                     // ignore: lines_longer_than_80_chars
+                                        // ignore: lines_longer_than_80_chars
                                         "Unexpected error, please try again later",
                                   ),
                                 ),
@@ -248,19 +245,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               children: <Widget>[
                                 Expanded(
                                   child: ListView.builder(
-                                    itemBuilder: (final BuildContext ctx,
-                                        final int index,) {
+                                    itemBuilder: (
+                                      final BuildContext ctx,
+                                      final int index,
+                                    ) {
                                       return Column(
                                         children: <Widget>[
                                           PostOutView(
                                             showEditPostBottomSheet:
                                                 showEditPostBottomSheet,
                                             post: posts[index],
+                                            key: Key(
+                                              posts[index].postId.toString(),
+                                            ),
                                           ),
                                           Container(
                                             height: 10,
                                             color: const Color.fromRGBO(
-                                                0, 25, 53, 1,),
+                                              0,
+                                              25,
+                                              53,
+                                              1,
+                                            ),
                                           )
                                         ],
                                       );

@@ -2,37 +2,28 @@
 
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-import "package:like_button/like_button.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/posts.dart";
+import "package:tumbler/Models/notes.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
 
 Future<bool> getLikeStatus(final int postId, final int blogId) async {
-  Map<String, dynamic> res = await Api().getPostLikeStatus(postId);
+  final Map<String, dynamic> res = await Api().getPostLikeStatus(postId);
   return res.values.single["response"]["like_status"];
 }
 
 ///Class for interaction bar exists the bottom of each post in home page
-///
-///holds:
+//////Contains:
 ///1-Notes number
 ///2-buttons to Favorite and reblog and reply
 class PostInteractionBar extends StatefulWidget {
   ///Constructor takes posts' notes
-  PostInteractionBar({
-    required final this.likes,
-    required final this.reblogs,
-    required final this.replies,
+  const PostInteractionBar({
     required final this.postId,
     final Key? key,
   }) : super(key: key);
 
-  List<dynamic> likes = <dynamic>[];
-  List<dynamic> reblogs = <dynamic>[];
-  List<dynamic> replies = <dynamic>[];
-
   final int postId;
-  late String blogId;
-  bool isLoved = false;
 
   @override
   _PostInteractionBarState createState() => _PostInteractionBarState();
@@ -41,20 +32,56 @@ class PostInteractionBar extends StatefulWidget {
 class _PostInteractionBarState extends State<PostInteractionBar> {
   NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
 
+  late String blogId;
+  late Notes _notes;
+  late int _notesNum;
+  bool _isLoved = false;
+  bool onProcessing = false;
+  bool isLoveButtonPressedAtleastOne = false;
+
+  Future<void> likePost() async {
+    await Posts.likePost(widget.postId);
+  }
+
+  Future<void> unlikePost() async {
+    await Posts.unlikePost(widget.postId);
+  }
+
   @override
   void initState() {
     //TODO(Waleed): get current blogID and use it to get current like status for a post.
-    //widget.blogId = User.userID;
 
-    getLikeStatus(widget.postId % 4 + 1, 0).then((final bool result) {
-      if (this.mounted) {
-        setState(() {
-          widget.isLoved = result;
-        });
-      }
-    });
+    //widget.blogId = User.userID;
+    // getLikeStatus(widget.postId % 4 + 1, 0).then((final bool result) {
+    //   if (this.mounted) {
+    //     setState(() {
+    //       isLoved = result;
+    //     });
+    //   }
+    // });
+
+    _notes = Posts.getNotesForSinglePost(widget.postId);
+
+    _notesNum =
+        _notes.likes.length + _notes.replies.length + _notes.reblogs.length;
 
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    if (isLoveButtonPressedAtleastOne) {
+      if (_isLoved)
+        likePost();
+      else
+        unlikePost();
+    }
+    super.dispose();
   }
 
   @override
@@ -69,29 +96,22 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
               ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<NotesPage>(
-                    builder: (final BuildContext context) => NotesPage(
-                      likesList: widget.likes,
-                      reblogsList: widget.reblogs,
-                      repliesList: widget.replies,
-                    ),
-                  ),
-                );
-              },
+              onPressed: () => toNotesPage(context, _notes),
               child: Image.asset(
                 "assets/images/interactions.jpeg",
               ),
             ),
           ),
           Expanded(
-            child: Text(
-              "${numFormatter.format(widget.likes.length + widget.replies.length + widget.reblogs.length)} notes",
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.black45,
+            child: GestureDetector(
+              onTap: () => toNotesPage(context, _notes),
+              child: Text(
+                "${numFormatter.format(_notesNum)} notes",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.black45,
+                ),
               ),
             ),
           ),
@@ -109,15 +129,26 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               color: Colors.black,
             ),
           ),
-          LikeButton(
-            isLiked: widget.isLoved,
-            likeBuilder: (final bool isLoved) {
-              final Color color = isLoved ? Colors.red : Colors.black;
-              return Icon(
-                isLoved ? Icons.favorite : Icons.favorite_border_outlined,
-                color: color,
-              );
+          IconButton(
+            onPressed: () async {
+              if (!_isLoved) {
+                setState(() {
+                  isLoveButtonPressedAtleastOne = true;
+                  _isLoved = true;
+                  _notesNum++;
+                });
+              } else {
+                setState(() {
+                  isLoveButtonPressedAtleastOne = true;
+                  _isLoved = false;
+                  _notesNum--;
+                });
+              }
             },
+            icon: Icon(
+              _isLoved ? Icons.favorite : Icons.favorite_border_outlined,
+            ),
+            color: _isLoved ? Colors.red : Colors.black,
           ),
           const IconButton(
             onPressed: null,
@@ -130,4 +161,16 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
       ),
     );
   }
+}
+
+void toNotesPage(final BuildContext context, final Notes notes) {
+  Navigator.of(context).push(
+    MaterialPageRoute<NotesPage>(
+      builder: (final BuildContext context) => NotesPage(
+        likesList: notes.likes,
+        reblogsList: notes.reblogs,
+        repliesList: notes.replies,
+      ),
+    ),
+  );
 }
