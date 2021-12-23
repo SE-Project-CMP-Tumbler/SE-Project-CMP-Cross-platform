@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs
+import "package:tumbler/Methods/api.dart";
+
 ///Post Model
 class PostModel {
   PostModel({
@@ -13,6 +15,7 @@ class PostModel {
     required final this.blogTitle,
     required final this.postTime,
     required final this.notes,
+    required final this.isLoved,
   });
 
   final int postId;
@@ -25,12 +28,24 @@ class PostModel {
   final String blogAvatarShape;
   final String blogTitle;
   final String postTime;
-  final int notes;
+  int notes;
+  bool isLoved;
 
   /// Converts JSON["response"]["posts"] to List of Posts
-  static List<PostModel> fromJSON(final List<dynamic> json) {
+  static Future<List<PostModel>> fromJSON(
+    final List<dynamic> json,
+    final bool wantLove,
+  ) async {
     final List<PostModel> temp = <PostModel>[];
     for (int i = 0; i < json.length; i++) {
+      bool x = false;
+      if (wantLove) {
+        final Map<String, dynamic> res =
+            await Api().getPostLikeStatus(json[i]["post_id"] as int);
+        if (res["meta"]["status"] == "200")
+          x = (res["response"]["like_status"] ?? false) as bool;
+      }
+
       temp.add(
         PostModel(
           postId: json[i]["post_id"] as int,
@@ -44,6 +59,7 @@ class PostModel {
           blogTitle: json[i]["blog_title"] ?? "",
           postTime: json[i]["post_time"] ?? "",
           notes: (json[i]["notes"] ?? 0) as int,
+          isLoved: x,
         ),
       );
     }

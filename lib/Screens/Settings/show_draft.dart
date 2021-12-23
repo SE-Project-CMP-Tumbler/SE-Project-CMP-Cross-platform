@@ -25,8 +25,8 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
 
     if (response["meta"]["status"] == "200") {
       setState(
-        () => _posts.addAll(
-          PostModel.fromJSON(response["response"]["posts"]),
+        () async => _posts.addAll(
+          await PostModel.fromJSON(response["response"]["posts"], false),
         ),
       );
     } else
@@ -133,6 +133,7 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
                             children: <Widget>[
                               PostOutView(
                                 post: _posts[index],
+                                index: index, // not used
                               ),
                               Container(
                                 height: 10,

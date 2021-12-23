@@ -11,7 +11,6 @@ class ReblogTileWithOutComments extends StatelessWidget {
     required final this.userName,
     required final this.avatarShape,
     required final this.blogID,
-    required final this.commentText,
     final Key? key,
   }) : super(key: key);
 
@@ -20,10 +19,6 @@ class ReblogTileWithOutComments extends StatelessWidget {
 
   /// User Name
   final String userName;
-
-  /// Comment Text
-  final String commentText;
-
   /// Shape
   final String avatarShape;
 

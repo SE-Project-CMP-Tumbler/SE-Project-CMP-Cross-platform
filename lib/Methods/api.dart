@@ -35,6 +35,7 @@ class Api {
   final String _postNotes = dotenv.env["postNotes"] ?? " ";
   final String _postLikeStatus = dotenv.env["postLikeStatus"] ?? " ";
   final String _followings = dotenv.env["followings"] ?? " ";
+  final String _likePost = dotenv.env["likePost"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -344,6 +345,42 @@ class Api {
         _host + _postLikeStatus + User.blogsIDs[0] + "/" + postID.toString(),
       ),
       headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
+  /// To make Like on Post
+  Future<Map<String,dynamic>> likePost(final int postId) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(
+        _host + _likePost + postId.toString(),
+      ),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
+  /// To Make Unlike on post
+  Future<Map<String,dynamic>> unlikePost(final int postId) async {
+    final http.Response response = await http
+        .delete(
+      Uri.parse(
+        _host + _likePost + postId.toString(),
+      ),
     )
         .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
