@@ -35,6 +35,7 @@ class Api {
   final String _postNotes = dotenv.env["postNotes"] ?? " ";
   final String _postLikeStatus = dotenv.env["postLikeStatus"] ?? " ";
   final String _followings = dotenv.env["followings"] ?? " ";
+  final String _likePost = dotenv.env["likePost"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -355,59 +356,38 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  Future<void> likePost(final int postId) async {
-    try {
-      final http.Response response = await http.get(
-        Uri.parse(
-          _firebaseHost + "/notes.json",
-        ),
-      );
-
-      dynamic newList = jsonDecode(response.body);
-
-      newList[postId]["response"]["likes"].add(<String, dynamic>{
-        "blog_avatar":
-            "https://cdnb.artstation.com/p/assets/images/images/041/557/389/large/mickael-lelievre-chaar-03.jpg?1632050610",
-        "blog_avatar_shape": "circle",
-        "blog_id": 1032,
-        "blog_title": "Positivee Quotes",
-        "blog_username": "radwa-ahmed213",
-        "followed": false
-      });
-
-      await http.put(
-        Uri.parse(
-            "https://notesapi-3468c-default-rtdb.firebaseio.com/notes.json"),
-        body: jsonEncode(newList),
-      );
-    } on Exception catch (e) {
-      throw io.HttpException(
-        "error happend when doing like for a post with id$postId",
-      );
-    }
+  Future<Map<String,dynamic>> likePost(final int postId) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(
+        _host + _likePost + postId.toString(),
+      ),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
   }
 
-  Future<void> unlikePost(final int postId) async {
-    try {
-      final http.Response response = await http.get(
-        Uri.parse(
-          _firebaseHost + "/notes.json",
-        ),
-      );
-
-      dynamic newList = jsonDecode(response.body);
-
-      newList[postId]["response"]["likes"].removeAt(newList.length - 2);
-
-      await http.put(
-        Uri.parse(_firebaseHost + "/notes.json"),
-        body: jsonEncode(newList),
-      );
-    } on Exception catch (e) {
-      throw io.HttpException(
-        "error happend while doing unlike for a post with ID $postId",
-      );
-    }
+  Future<Map<String,dynamic>> unlikePost(final int postId) async {
+    final http.Response response = await http
+        .delete(
+      Uri.parse(
+        _host + _likePost + postId.toString(),
+      ),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
   }
 
   /// PUT request to change the current user Email
