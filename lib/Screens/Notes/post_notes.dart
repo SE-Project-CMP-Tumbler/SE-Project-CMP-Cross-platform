@@ -4,6 +4,8 @@ import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/http_requests_exceptions.dart";
+import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
@@ -26,11 +28,15 @@ class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
   NotesPage({
     required final this.postID,
+    required final this.index,
     final Key? key,
   }) : super(key: key);
 
   /// Post ID
   int postID;
+
+  /// Post Index
+  int index;
 
   @override
   _NotesPageState createState() => _NotesPageState();
@@ -85,6 +91,12 @@ class _NotesPageState extends State<NotesPage>
 
   void checkReplyText() {
     setState(() {});
+  }
+
+  Future<void> refresh() async {
+    setState(() async {
+      await initialize();
+    });
   }
 
   void changeBlogViewSection(final Enum type) {
@@ -173,23 +185,17 @@ class _NotesPageState extends State<NotesPage>
           children: <Widget>[
             if (repliesList.isEmpty)
               Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   const Spacer(),
                   if (MediaQuery.of(context).viewInsets.bottom < 10)
                     const EmptyBoxImage(msg: "No replies to show"),
                   const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: TextField(
-                      controller: replyController,
-                      decoration: const InputDecoration(
-                        hintText: "Unleash a compliment...",
-                        hintStyle: TextStyle(color: Colors.black54),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
+                  ReplyTextField(
+                    replyController: replyController,
+                    postId: widget.postID.toString(),
+                    refresh: refresh,
+                    index: widget.index,
+                  )
                 ],
               )
             else
@@ -212,36 +218,11 @@ class _NotesPageState extends State<NotesPage>
                         itemCount: repliesList.length,
                       ),
                     ),
-                    Row(
-                      children: <Widget>[
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: replyController,
-                            decoration: const InputDecoration(
-                              hintText: "Unleash a compliment...",
-                              hintStyle: TextStyle(color: Colors.black54),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Reply",
-                            style: TextStyle(
-                              color: (replyController.text.isNotEmpty)
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            ),
-                          ),
-                        )
-                      ],
+                    ReplyTextField(
+                      replyController: replyController,
+                      postId: widget.postID.toString(),
+                      refresh: refresh,
+                      index: widget.index,
                     ),
                   ],
                 ),
@@ -359,6 +340,77 @@ class _NotesPageState extends State<NotesPage>
           ],
         ),
       ),
+    );
+  }
+}
+
+///
+class ReplyTextField extends StatelessWidget {
+  ///
+  const ReplyTextField({
+    required final this.replyController,
+    required final this.postId,
+    required final this.refresh,
+    required final this.index,
+    final Key? key,
+  }) : super(key: key);
+
+  ///
+  final TextEditingController replyController;
+
+  ///
+  final String postId;
+
+  ///
+  final Function refresh;
+
+  ///
+  final int index;
+
+  @override
+  Widget build(final BuildContext context) {
+    return Row(
+      children: <Widget>[
+        const SizedBox(
+          width: 5,
+        ),
+        Expanded(
+          child: TextField(
+            controller: replyController,
+            decoration: const InputDecoration(
+              hintText: "Unleash a compliment...",
+              hintStyle: TextStyle(color: Colors.black54),
+              border: InputBorder.none,
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 15,
+        ),
+        TextButton(
+          onPressed: () async {
+            final dynamic response =
+                await Api().replyOnPost(postId, replyController.text);
+            if (response["meta"]["response"] == "200") {
+              // call function refresh in the NotesPage widget to fetch new replies and setState()
+              //update number of notes locally....
+              await refresh();
+              homePosts[index].notes++;
+            } else {
+              // show toast ? to say retry again late
+              replyController.clear();
+              await showToast("Failed operation, try again later");
+            }
+          },
+          child: Text(
+            "Reply",
+            style: TextStyle(
+              color:
+                  (replyController.text.isNotEmpty) ? Colors.blue : Colors.grey,
+            ),
+          ),
+        )
+      ],
     );
   }
 }
