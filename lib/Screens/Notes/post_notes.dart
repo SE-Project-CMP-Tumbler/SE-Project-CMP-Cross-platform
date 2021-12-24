@@ -172,24 +172,25 @@ class _NotesPageState extends State<NotesPage>
           controller: tabController,
           children: <Widget>[
             if (repliesList.isEmpty)
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  const Spacer(),
+                  if (MediaQuery.of(context).viewInsets.bottom < 10)
                     const EmptyBoxImage(msg: "No replies to show"),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: TextField(
-                        controller: replyController,
-                        decoration: const InputDecoration(
-                          hintText: "Unleash a compliment...",
-                          hintStyle: TextStyle(color: Colors.black54),
-                          border: InputBorder.none,
-                        ),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: TextField(
+                      controller: replyController,
+                      decoration: const InputDecoration(
+                        hintText: "Unleash a compliment...",
+                        hintStyle: TextStyle(color: Colors.black54),
+                        border: InputBorder.none,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               )
             else
               Padding(

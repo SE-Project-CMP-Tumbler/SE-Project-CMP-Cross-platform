@@ -357,7 +357,7 @@ class Api {
   }
 
   /// To make Like on Post
-  Future<Map<String,dynamic>> likePost(final int postId) async {
+  Future<Map<String, dynamic>> likePost(final int postId) async {
     final http.Response response = await http
         .post(
       Uri.parse(
@@ -375,7 +375,7 @@ class Api {
   }
 
   /// To Make Unlike on post
-  Future<Map<String,dynamic>> unlikePost(final int postId) async {
+  Future<Map<String, dynamic>> unlikePost(final int postId) async {
     final http.Response response = await http
         .delete(
       Uri.parse(
