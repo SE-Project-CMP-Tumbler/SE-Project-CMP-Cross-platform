@@ -1,9 +1,8 @@
-import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/show_toast.dart";
 
 /// Forget Password Page
 class ForgetPassWord extends StatefulWidget {
@@ -43,14 +42,7 @@ class _ForgetPassWordState extends State<ForgetPassWord> {
     if (response["meta"]["status"] == "200")
       setState(() => firstHomePage = false);
     else
-      await Fluttertoast.showToast(
-        msg: response["meta"]["msg"],
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast(response["meta"]["msg"]);
   }
 
   @override

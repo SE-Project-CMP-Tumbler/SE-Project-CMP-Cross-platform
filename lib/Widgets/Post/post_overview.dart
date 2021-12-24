@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "package:tumbler/Models/post.dart";
-import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Models/post_model.dart";
+import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_interaction_bar.dart";
 import "package:tumbler/Widgets/Post/post_top_bar.dart";
@@ -8,20 +8,18 @@ import "package:tumbler/Widgets/Post/post_top_bar.dart";
 ///Shows the overview of the post in the home page
 class PostOutView extends StatefulWidget {
   ///takes
-  ///*showEditPostBottomSheet function that responsible for showing
-  ///some options about the post by clicking on more vert icon
   ///*Post model contains all data about the post
   const PostOutView({
-    required final this.showEditPostBottomSheet,
     required final this.post,
+    required final this.index,
     final Key? key,
   }) : super(key: key);
 
-  /// to be passed to [PostTopBar]
-  final Function showEditPostBottomSheet;
-
   /// The Content of the Post
-  final Post post;
+  final PostModel post;
+
+  /// index of the post in the home page
+  final int index;
 
   @override
   _PostOutViewState createState() => _PostOutViewState();
@@ -33,9 +31,10 @@ class _PostOutViewState extends State<PostOutView> {
     return Column(
       children: <Widget>[
         PostTopBar(
-          showEditPostBottomSheet: showEditPostBottomSheet,
           avatarPhotoLink: widget.post.blogAvatar,
+          avatarShape: widget.post.blogAvatarShape,
           name: widget.post.blogUsername,
+          blogID: widget.post.blogId.toString(),
         ),
         const Divider(
           color: Colors.grey,
@@ -45,10 +44,17 @@ class _PostOutViewState extends State<PostOutView> {
           child: HtmlView(htmlData: widget.post.postBody),
         ),
         PostInteractionBar(
-          likes: widget.post.likes,
-          reblogs: widget.post.reblogs,
-          replies: widget.post.replies,
-          postId: widget.post.postId,
+          isMine: User.blogsNames.contains(widget.post.blogUsername),
+          index: widget.index,
+        ),
+        Container(
+          height: 10,
+          color: const Color.fromRGBO(
+            0,
+            25,
+            53,
+            1,
+          ),
         )
       ],
     );

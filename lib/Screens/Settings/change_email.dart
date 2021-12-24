@@ -2,11 +2,11 @@ import "dart:io";
 
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/main_screen.dart";
 
@@ -40,15 +40,8 @@ class _ChangeEmailState extends State<ChangeEmail> {
     if (response["meta"]["status"] == "200") {
       User.email = response["response"]["email"];
 
-      await Fluttertoast.showToast(
-        msg: "You successfully updated your Email!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
-
+      await showToast("You successfully updated your Email!");
+      
       // TODO(Ziyad): Restart the app? or log out ?
       await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<MainScreen>(
@@ -58,14 +51,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
       );
       return;
     } else {
-      await Fluttertoast.showToast(
-        msg: response["meta"]["msg"],
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast(response["meta"]["msg"]);
     }
   }
 

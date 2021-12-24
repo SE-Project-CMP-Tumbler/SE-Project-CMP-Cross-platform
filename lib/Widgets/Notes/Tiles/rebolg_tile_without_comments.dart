@@ -7,20 +7,23 @@ import "Package:tumbler/Widgets/Post/post_personal_avatar.dart";
 class ReblogTileWithOutComments extends StatelessWidget {
   ///
   const ReblogTileWithOutComments({
-    required final this.avatartUrl,
+    required final this.avatarUrl,
     required final this.userName,
     required final this.avatarShape,
+    required final this.blogID,
     final Key? key,
   }) : super(key: key);
 
-  ///
-  final String avatartUrl;
+  /// Avatar Link
+  final String avatarUrl;
 
-  ///
+  /// User Name
   final String userName;
-
-  ///
+  /// Shape
   final String avatarShape;
+
+  /// Blog ID
+  final String blogID;
 
   @override
   Widget build(final BuildContext context) {
@@ -30,7 +33,11 @@ class ReblogTileWithOutComments extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: <Widget>[
-            PersonAvatar(avatarPhotoLink: avatartUrl, shape: avatarShape),
+            PersonAvatar(
+              avatarPhotoLink: avatarUrl,
+              shape: avatarShape,
+              blogID: blogID,
+            ),
             const SizedBox(
               width: 1,
             ),

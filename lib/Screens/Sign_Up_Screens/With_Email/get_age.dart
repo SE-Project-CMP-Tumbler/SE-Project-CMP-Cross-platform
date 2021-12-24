@@ -1,10 +1,9 @@
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/age_validation.dart";
 import "package:tumbler/Models/user.dart";
-import "package:tumbler/Screens/Sign_Up_Screens/Choose_Tag/tag_page.dart";
+import "package:tumbler/Screens/Sign_Up_Screens/With_Email/Choose_Tag/tag_page.dart";
 
 /// Page To get The User Age
 class GetAge extends StatefulWidget {

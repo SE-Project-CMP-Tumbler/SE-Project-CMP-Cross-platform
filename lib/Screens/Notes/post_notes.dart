@@ -2,6 +2,8 @@
 
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Models/http_requests_exceptions.dart";
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
@@ -19,21 +21,33 @@ enum blogsType {
   others
 }
 
-/// [Notes] is a class handels all stuff related to notes
-class Notes extends StatefulWidget {
+/// [NotesPage] is a class handels all stuff related to notes
+class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
-  Notes({
-    required final this.likesList,
-    required final this.reblogsList,
-    required final this.repliesList,
+  NotesPage({
+    required final this.postID,
     final Key? key,
   }) : super(key: key);
 
-  /// contains all likes with their detalis
+  /// Post ID
+  int postID;
+
+  @override
+  _NotesPageState createState() => _NotesPageState();
+}
+
+class _NotesPageState extends State<NotesPage>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController;
+
+  /// contains all likes with their details
   List<dynamic> likesList = <dynamic>[];
 
   ///contains all reblogs with their detalis
   List<dynamic> reblogsList = <dynamic>[];
+
+  /// contains all replies with their details
+  List<dynamic> repliesList = <dynamic>[];
 
   /// contains all reblogs with comments with their detalis
   List<dynamic> reblogsWithCommentsList = <dynamic>[];
@@ -41,15 +55,28 @@ class Notes extends StatefulWidget {
   ///contains all likes without comments their detalis
   List<dynamic> reblogsWithOutCommentsList = <dynamic>[];
 
-  /// contains all replies with their detalis
-  List<dynamic> repliesList = <dynamic>[];
+  Future<void> initialize() async {
+    final Map<String, dynamic> recievedNotes =
+        await Api().getNotes(widget.postID.toString());
 
-  @override
-  _NotesState createState() => _NotesState();
-}
+    //check the status code for the received response.
+    if (recievedNotes["meta"]["status"] == "404")
+      throw HttpException("Not Found!");
+    else {
+      likesList = recievedNotes["response"]["likes"] ?? <dynamic>[];
+      reblogsList = recievedNotes["response"]["reblogs"] ?? <dynamic>[];
+      repliesList = recievedNotes["response"]["replies"] ?? <dynamic>[];
 
-class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
-  late TabController tabController;
+      // spilt blogs received into to sub-categories
+      for (int i = 0; i < reblogsList.length; i++) {
+        if (reblogsList[i]["reblog_content"].isEmpty) {
+          reblogsWithOutCommentsList.add(reblogsList[i]);
+        } else {
+          reblogsWithCommentsList.add(reblogsList[i]);
+        }
+      }
+    }
+  }
 
   //
   final TextEditingController replyController = TextEditingController();
@@ -68,16 +95,8 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    // spilt blogs recieved into to sub-categories
-    for (int i = 0; i < widget.reblogsList.length; i++) {
-      if (widget.reblogsList[i]["reblog_content"].isEmpty) {
-        widget.reblogsWithOutCommentsList.add(widget.reblogsList[i]);
-      } else {
-        widget.reblogsWithCommentsList.add(widget.reblogsList[i]);
-      }
-    }
-
     super.initState();
+    initialize();
     // Start listening to changes.
     replyController.addListener(checkReplyText);
     tabController = TabController(vsync: this, length: 3);
@@ -103,21 +122,21 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
         tabs: <Widget>[
           CustomizedTab(
             iconType: Icons.comment,
-            number: widget.repliesList.length,
+            number: repliesList.length,
             color: Colors.blue,
             currIndex: tabController.index,
             myIndex: 0,
           ),
           CustomizedTab(
             iconType: Icons.repeat,
-            number: widget.reblogsList.length,
+            number: reblogsList.length,
             color: Colors.green,
             currIndex: tabController.index,
             myIndex: 1,
           ),
           CustomizedTab(
             iconType: Icons.favorite_outline_outlined,
-            number: widget.likesList.length,
+            number: likesList.length,
             color: Colors.red,
             currIndex: tabController.index,
             myIndex: 2,
@@ -139,9 +158,7 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
             children: <Widget>[
               Text(
                 "${numFormatter.format(
-                  widget.likesList.length +
-                      widget.repliesList.length +
-                      widget.reblogsList.length,
+                  likesList.length + repliesList.length + reblogsList.length,
                 )} notes",
               ),
             ],
@@ -154,8 +171,26 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
         body: TabBarView(
           controller: tabController,
           children: <Widget>[
-            if (widget.repliesList.isEmpty)
-              const EmptyBoxImage(msg: "No replies to show")
+            if (repliesList.isEmpty)
+              SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    const EmptyBoxImage(msg: "No replies to show"),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: TextField(
+                        controller: replyController,
+                        decoration: const InputDecoration(
+                          hintText: "Unleash a compliment...",
+                          hintStyle: TextStyle(color: Colors.black54),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
             else
               Padding(
                 padding: const EdgeInsets.all(15),
@@ -165,16 +200,15 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                       child: ListView.builder(
                         itemBuilder: (final BuildContext ctx, final int index) {
                           return ReplyTile(
-                            commentText: widget.repliesList[index]
-                                ["reply_text"],
-                            userName: widget.repliesList[index]
-                                ["blog_username"],
-                            avatarUrl: widget.repliesList[index]["blog_avatar"],
-                            avatarShape: widget.repliesList[index]
+                            commentText: repliesList[index]["reply_text"],
+                            userName: repliesList[index]["blog_username"],
+                            avatarUrl: repliesList[index]["blog_avatar"],
+                            avatarShape: repliesList[index]
                                 ["blog_avatar_shape"],
+                            blogID: repliesList[index]["blog_id"].toString(),
                           );
                         },
-                        itemCount: widget.repliesList.length,
+                        itemCount: repliesList.length,
                       ),
                     ),
                     Row(
@@ -211,9 +245,9 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                   ],
                 ),
               ),
-            if (widget.reblogsWithCommentsList.isEmpty &&
+            if (reblogsWithCommentsList.isEmpty &&
                     blogTypeToShow == blogsType.withComments.index ||
-                widget.reblogsWithOutCommentsList.isEmpty &&
+                reblogsWithOutCommentsList.isEmpty &&
                     blogTypeToShow == blogsType.others.index)
               const EmptyBoxImage(msg: "No reblogs to show")
             else
@@ -269,40 +303,40 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                         (final BuildContext context, final int index) =>
                             (blogTypeToShow == blogsType.withComments.index)
                                 ? ReblogTileWithComments(
-                                    avatarUrl:
-                                        widget.reblogsWithCommentsList[index]
-                                            ["blog_avatar"],
-                                    htmlData:
-                                        widget.reblogsWithCommentsList[index]
-                                            ["reblog_content"],
-                                    userName:
-                                        widget.reblogsWithCommentsList[index]
-                                            ["blog_username"],
-                                    avatarShape:
-                                        widget.reblogsWithCommentsList[index]
-                                            ["blog_avatar_shape"],
+                                    avatarUrl: reblogsWithCommentsList[index]
+                                        ["blog_avatar"],
+                                    htmlData: reblogsWithCommentsList[index]
+                                        ["reblog_content"],
+                                    userName: reblogsWithCommentsList[index]
+                                        ["blog_username"],
+                                    avatarShape: reblogsWithCommentsList[index]
+                                        ["blog_avatar_shape"],
+                                    blogID: reblogsWithCommentsList[index]
+                                            ["blog_id"]
+                                        .toString(),
                                   )
                                 : ReblogTileWithOutComments(
-                                    userName:
-                                        widget.reblogsWithOutCommentsList[index]
-                                            ["blog_username"],
-                                    avatartUrl:
-                                        widget.reblogsWithOutCommentsList[index]
-                                            ["blog_avatar"],
+                                    userName: reblogsWithOutCommentsList[index]
+                                        ["blog_username"],
+                                    avatarUrl: reblogsWithOutCommentsList[index]
+                                        ["blog_avatar"],
                                     avatarShape:
-                                        widget.reblogsWithOutCommentsList[index]
+                                        reblogsWithOutCommentsList[index]
                                             ["blog_avatar_shape"],
+                                    blogID: reblogsWithOutCommentsList[index]
+                                            ["blog_id"]
+                                        .toString(),
                                   ),
                         childCount:
                             (blogTypeToShow == blogsType.withComments.index)
-                                ? widget.reblogsWithCommentsList.length
-                                : widget.reblogsWithOutCommentsList.length,
+                                ? reblogsWithCommentsList.length
+                                : reblogsWithOutCommentsList.length,
                       ),
                     )
                   ],
                 ),
               ),
-            if (widget.likesList.isEmpty)
+            if (likesList.isEmpty)
               const EmptyBoxImage(msg: "No likes to show")
             else
               Padding(
@@ -310,14 +344,15 @@ class _NotesState extends State<Notes> with SingleTickerProviderStateMixin {
                 child: ListView.builder(
                   itemBuilder: (final BuildContext ctx, final int index) {
                     return LikeTile(
-                      blogAvatar: widget.likesList[index]["blog_avatar"],
-                      blogTitle: widget.likesList[index]["blog_title"],
-                      followStatus: widget.likesList[index]["followed"],
-                      userName: widget.likesList[index]["blog_username"],
-                      avatarShape: widget.likesList[index]["blog_avatar_shape"],
+                      blogAvatar: likesList[index]["blog_avatar"],
+                      blogTitle: likesList[index]["blog_title"],
+                      followStatus: likesList[index]["followed"],
+                      userName: likesList[index]["blog_username"],
+                      avatarShape: likesList[index]["blog_avatar_shape"],
+                      blogID: likesList[index]["blog_id"].toString(),
                     );
                   },
-                  itemCount: widget.likesList.length,
+                  itemCount: likesList.length,
                 ),
               ),
           ],

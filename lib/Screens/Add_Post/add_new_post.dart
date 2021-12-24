@@ -1,12 +1,14 @@
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:html_editor_enhanced/html_editor.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
+import "package:tumbler/Methods/show_toast.dart";
+import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Add_Post/popup_menu.dart";
+import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 /// Page to Add New Post
 class AddPost extends StatefulWidget {
@@ -18,17 +20,9 @@ class _AddPostState extends State<AddPost> {
   bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
 
-  /// Return the Data in Custom Format
-  String getDate() {
-    final DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat("dd-MM-yyyy");
-    final String formatted = formatter.format(now);
-    return formatted;
-  }
-
   Future<void> addThePost() async {
     final String html = await controller.getText();
-    final String postTime = getDate();
+    final String postTime = DateFormat("yyyy-MM-dd").format(DateTime.now());
     final String processedHtml = await extractMediaFiles(html);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
@@ -43,24 +37,10 @@ class _AddPostState extends State<AddPost> {
         .addPost(processedHtml, postOptionChoice, "general", postTime);
     print(response);
     if (response["meta"]["status"] == "200") {
-      await Fluttertoast.showToast(
-        msg: "Added Successfully",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast("Added Successfully");
       Navigator.of(context).pop();
     } else {
-      await Fluttertoast.showToast(
-        msg: response["meta"]["msg"],
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast(response["meta"]["msg"]);
     }
   }
 
@@ -82,7 +62,7 @@ class _AddPostState extends State<AddPost> {
               color: Colors.black,
             ),
             onPressed: () {
-              // not complited in back end
+              // not completed in back end
               // TODO(Salama): Alert to save as draft
               Navigator.of(context).pop();
             },
@@ -131,16 +111,13 @@ class _AddPostState extends State<AddPost> {
                   color: Colors.white,
                   border: Border.all(color: Colors.white, width: 0),
                 ),
-                height: MediaQuery.of(context).size.height * .05,
+                height: MediaQuery.of(context).size.height * .06,
                 child: Row(
                   children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.all(10),
-                      child: const CircleAvatar(
-                        radius: 20,
-                        backgroundImage:
-                            AssetImage("assets/images/profile_pic.png"),
-                      ),
+                    PersonAvatar(
+                      avatarPhotoLink: User.avatars[User.currentProfile],
+                      shape: User.avatarShapes[User.currentProfile],
+                      blogID: User.blogsIDs[User.currentProfile],
                     ),
                     const ProfilesList(),
                   ],

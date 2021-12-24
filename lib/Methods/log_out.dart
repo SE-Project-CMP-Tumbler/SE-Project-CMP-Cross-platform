@@ -1,8 +1,8 @@
 import "package:flutter/foundation.dart";
-import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
+import "package:google_sign_in/google_sign_in.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/local_db.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 
 /// Intermediate function that call [Api.logOut]
@@ -15,6 +15,17 @@ Future<bool> logOut() async {
       await LocalDataBase.instance.deleteAllTable();
     }
 
+    if (await GoogleSignIn().isSignedIn()) {
+      await GoogleSignIn().signOut();
+    }
+
+    User.currentProfile = 0;
+    User.age = 0;
+    User.email = "";
+    User.userID = "";
+    User.accessToken = "";
+    User.googleAccessToken = "";
+
     User.blogsIDs = <String>[];
     User.blogsNames = <String>[];
     User.avatars = <String>[];
@@ -24,25 +35,13 @@ Future<bool> logOut() async {
     User.descriptions = <String>[];
     User.allowAsk = <bool>[];
     User.allowSubmission = <bool>[];
+    User.isPrimary = <bool>[];
 
-    await Fluttertoast.showToast(
-      msg: "Log Out",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.black,
-      textColor: Colors.white,
-      fontSize: 16,
-    );
+
+    await showToast("Logged Out");
     return true;
   } else {
-    await Fluttertoast.showToast(
-      msg: response["meta"]["msg"],
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.black,
-      textColor: Colors.white,
-      fontSize: 16,
-    );
+    await showToast(response["meta"]["msg"]);
     return false;
   }
 }

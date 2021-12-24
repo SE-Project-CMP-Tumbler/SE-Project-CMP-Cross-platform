@@ -1,7 +1,5 @@
-import "package:flutter/material.dart";
-import "package:flutter_dotenv/flutter_dotenv.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Methods/Api.dart";
+import "package:tumbler/Methods/show_toast.dart";
 
 /// Get URL for all the Encoded Images, Videos, Audios
 /// in [htmlBeforeProcessing] from [Api]
@@ -27,18 +25,11 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
         html = html.replaceRange(
           x + 10,
           index1,
-          "${dotenv.env["server"] ?? " "}${url["response"]["url"]}",
+          "${url["response"]["url"]}",
         );
         index1 = html.indexOf('"', index2); //repeating this line is important
       } else {
-        await Fluttertoast.showToast(
-          msg: "Failed To Upload Images",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 16,
-        );
+        await showToast("Failed To Upload Images");
       }
     }
   }
@@ -59,23 +50,15 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
       //since the html size changes in each iteration
       final String video = html.substring(x + 24, index1);
       url = await Api().uploadVideo(video);
-
       if (url["meta"]["status"] == "200") {
         html = html.replaceRange(
           x + 24,
           index1,
-          "${dotenv.env["server"] ?? " "}${url["response"]["url"]}",
+          "${url["response"]["url"]}",
         );
         index1 = html.indexOf('"', index2); //repeating this line is important
       } else {
-        await Fluttertoast.showToast(
-          msg: "Failed To Upload videos",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 16,
-        );
+        await showToast("Failed To Upload videos");
       }
     }
   }
@@ -100,18 +83,11 @@ Future<String> extractMediaFiles(final String htmlBeforeProcessing) async {
         html = html.replaceRange(
           x + 24,
           index1,
-          "${dotenv.env["server"] ?? " "}${url["response"]["url"]}",
+          "${url["response"]["url"]}",
         );
         index1 = html.indexOf('"', index2); //repeating this line is important
       } else {
-        await Fluttertoast.showToast(
-          msg: "Failed To Upload Audios",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 16,
-        );
+        await showToast("Failed To Upload Audios");
       }
     }
   }

@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:tumbler/Screens/Profile/profile_page.dart";
 
 ///Responsible for displaying user's avatar
 class PersonAvatar extends StatefulWidget {
@@ -6,6 +7,7 @@ class PersonAvatar extends StatefulWidget {
   const PersonAvatar({
     required final this.avatarPhotoLink,
     required final this.shape,
+    required final this.blogID,
     final Key? key,
   }) : super(key: key);
 
@@ -14,6 +16,9 @@ class PersonAvatar extends StatefulWidget {
 
   /// shape of the avatar
   final String shape;
+
+  /// Blog ID
+  final String blogID;
 
   @override
   _PersonAvatarState createState() => _PersonAvatarState();
@@ -25,29 +30,33 @@ class _PersonAvatarState extends State<PersonAvatar> {
     return GestureDetector(
       onTap: () {
         // TODO(Waleed): Navigate to user's profile
+        Navigator.of(context).push(
+          MaterialPageRoute<ProfilePage>(
+            builder: (final BuildContext context) => ProfilePage(
+              blogID: widget.blogID,
+            ),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.all(7),
-        child: (widget.shape == "circle")
-            ? CircleAvatar(
-                backgroundImage: NetworkImage(widget.avatarPhotoLink),
-                radius: 19,
-              )
-            : Container(
-                height: 40,
-                width: 40,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(
+        child: Container(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            borderRadius: (widget.shape == "circle")
+                ? const BorderRadius.all(
                     Radius.circular(20),
-                  ),
-                ),
-                child: Image.network(
-                  widget.avatarPhotoLink.isEmpty
-                      ? "https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg"
-                      : widget.avatarPhotoLink,
-                  fit: BoxFit.cover,
-                ),
-              ),
+                  )
+                : null,
+          ),
+          child: Image.network(
+            widget.avatarPhotoLink.isEmpty
+                ? "https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg"
+                : widget.avatarPhotoLink,
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
     );
   }
