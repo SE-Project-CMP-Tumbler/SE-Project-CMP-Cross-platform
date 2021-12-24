@@ -97,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage>
 
   /// list of Following Users.
   /// Type is [followListTile]
-  List<dynamic> followingTabList = <dynamic>[];
+  List<Map<String, dynamic>> followingTabList = <Map<String, dynamic>>[];
 
   /// for Pagination Likes Tab
   int currentPageFollowing = 0;
@@ -196,21 +196,15 @@ class _ProfilePageState extends State<ProfilePage>
         .fetchFollowings(displayedBlog.blogId!, currentPageFollowing + 1);
 
     if (response["meta"]["status"] == "200") {
-      if ((response["response"]["followings"] as List<dynamic>).isNotEmpty) {
+      final List<dynamic> x =
+          response["response"]["followings"] as List<dynamic>;
+      if (x.isNotEmpty) {
         currentPageFollowing++;
-        for (final Map<String, dynamic> follow in response["response"]
-            ["followings"]) {
-          followingTabList.add(
-            followListTile(
-              follow["blog_avatar"],
-              follow["blog_avatar_shape"],
-              follow["blog_username"],
-              follow["title"] ?? "Untitled",
-              follow["blog_id"] as int,
-              follow["is_followed"] as bool,
-            ),
-          );
+
+        for (final dynamic element in x) {
+          followingTabList.add(element);
         }
+
         setState(() {}); // to update the list
       }
     } else {
@@ -228,21 +222,14 @@ class _ProfilePageState extends State<ProfilePage>
         .fetchFollowings(displayedBlog.blogId!, currentPageFollowing + 1);
 
     if (response["meta"]["status"] == "200") {
-      if ((response["response"]["followings"] as List<dynamic>).isNotEmpty) {
+      final List<dynamic> x =
+          response["response"]["followings"] as List<dynamic>;
+      if (x.isNotEmpty) {
         currentPageFollowing++;
-        for (final Map<String, dynamic> follow in response["response"]
-            ["followings"]) {
-          followingTabList.add(
-            followListTile(
-              follow["blog_avatar"],
-              follow["blog_avatar_shape"],
-              follow["blog_username"],
-              follow["title"] ?? "Untitled",
-              follow["blog_id"] as int,
-              follow["is_followed"] as bool,
-            ),
-          );
+        for (final dynamic element in x) {
+          followingTabList.add(element);
         }
+
         setState(() {}); // to update the list
       }
     } else
@@ -251,14 +238,16 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   Widget followListTile(
-    final String blogAvatar,
-    final String blogAvatarShape,
-    final String blogUsername,
-    final String blogTitle,
-    final int blogId,
-    final bool isFollowed,
+    final int index,
   ) {
-    bool _isFollowed = isFollowed;
+    // followListTile(
+    //   follow["blog_avatar"],
+    //   follow["blog_avatar_shape"],
+    //   follow["blog_username"],
+    //   follow["title"] ?? "Untitled",
+    //   follow["blog_id"] as int,
+    //   follow["is_followed"] as bool,
+    // ),
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -266,33 +255,39 @@ class _ProfilePageState extends State<ProfilePage>
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute<ProfilePage>(
-                builder: (final BuildContext context) =>
-                    ProfilePage(blogID: blogId.toString()),
+                builder: (final BuildContext context) => ProfilePage(
+                  blogID: followingTabList[index]["blog_id"].toString(),
+                ),
               ),
             );
           },
           dense: true,
           leading: PersonAvatar(
-            avatarPhotoLink: blogAvatar,
-            shape: blogAvatarShape,
-            blogID: blogId.toString(),
+            avatarPhotoLink: followingTabList[index]["blog_avatar"],
+            shape: followingTabList[index]["blog_avatar_shape"],
+            blogID: followingTabList[index]["blog_id"].toString(),
           ),
-          title: Text(blogUsername),
-          subtitle: Text(blogTitle),
+          title: Text(followingTabList[index]["blog_username"]),
+          subtitle: Text(followingTabList[index]["title"] ?? "Untitled"),
           trailing: TextButton(
             onPressed: () async {
               Map<String, dynamic> response = <String, dynamic>{};
-              if (_isFollowed)
-                response = await Api().unFollowBlog(blogId);
+              if (followingTabList[index]["is_followed"] as bool)
+                response = await Api()
+                    .unFollowBlog(followingTabList[index]["blog_id"]);
               else
-                response = await Api().followBlog(blogId);
+                response =
+                    await Api().followBlog(followingTabList[index]["blog_id"]);
 
               if (response["meta"]["status"] == "200")
-                setState(() => _isFollowed = !_isFollowed);
+                setState(
+                  () => followingTabList[index]["is_followed"] =
+                      !followingTabList[index]["is_followed"],
+                );
               else
                 await showToast(response["meta"]["msg"]);
             },
-            child: _isFollowed
+            child: followingTabList[index]["is_followed"] as bool
                 ? const Text(
                     "Unfollow",
                     style: TextStyle(color: Colors.red),
@@ -621,7 +616,7 @@ class _ProfilePageState extends State<ProfilePage>
                               padding: const EdgeInsets.only(
                                 bottom: 18,
                               ),
-                              child: followingTabList[index],
+                              child: followListTile(index),
                             );
                           },
                           // The childCount of the SliverChildBuilderDelegate
