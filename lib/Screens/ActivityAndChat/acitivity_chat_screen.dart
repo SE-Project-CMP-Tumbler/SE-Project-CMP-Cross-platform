@@ -13,6 +13,8 @@ import "package:tumbler/Models/Activity_Notifications/time_packet.dart";
 import "package:tumbler/Widgets/Activity_Notifications/time_packet_contianer.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 
+import "package:tumbler/Screens/ActivityAndChat/chat_out_view.dart";
+
 /// [blogType] is an Enumerator for specifing two different reblogs types
 enum ActivityOrChat {
   ///reblogs with comments
@@ -214,7 +216,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
               ),
             ),
             const Center(
-              child: Text("Chat Page"),
+              child: ChatOutView(),
             )
           ],
         ),
