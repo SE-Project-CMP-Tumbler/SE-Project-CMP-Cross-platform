@@ -4,14 +4,13 @@ import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/http_requests_exceptions.dart";
-import "package:tumbler/Screens/Home_Page/home_page.dart";
-import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
 import "package:tumbler/Widgets/Notes/Tiles/rebolg_tile_without_comments.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reply_tile.dart";
 import "package:tumbler/Widgets/Notes/customized_tab.dart";
+import "package:tumbler/Widgets/Notes/reply_textfield.dart";
 import "package:tumbler/Widgets/Notes/show_reblog_type_bottom_sheet.dart";
 
 /// [blogType] is an Enumerator for specifing two different reblogs types
@@ -340,77 +339,6 @@ class _NotesPageState extends State<NotesPage>
           ],
         ),
       ),
-    );
-  }
-}
-
-///
-class ReplyTextField extends StatelessWidget {
-  ///
-  const ReplyTextField({
-    required final this.replyController,
-    required final this.postId,
-    required final this.refresh,
-    required final this.index,
-    final Key? key,
-  }) : super(key: key);
-
-  ///
-  final TextEditingController replyController;
-
-  ///
-  final String postId;
-
-  ///
-  final Function refresh;
-
-  ///
-  final int index;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Row(
-      children: <Widget>[
-        const SizedBox(
-          width: 5,
-        ),
-        Expanded(
-          child: TextField(
-            controller: replyController,
-            decoration: const InputDecoration(
-              hintText: "Unleash a compliment...",
-              hintStyle: TextStyle(color: Colors.black54),
-              border: InputBorder.none,
-            ),
-          ),
-        ),
-        const SizedBox(
-          width: 15,
-        ),
-        TextButton(
-          onPressed: () async {
-            final dynamic response =
-                await Api().replyOnPost(postId, replyController.text);
-            if (response["meta"]["response"] == "200") {
-              // call function refresh in the NotesPage widget to fetch new replies and setState()
-              //update number of notes locally....
-              await refresh();
-              homePosts[index].notes++;
-            } else {
-              // show toast ? to say retry again late
-              replyController.clear();
-              await showToast("Failed operation, try again later");
-            }
-          },
-          child: Text(
-            "Reply",
-            style: TextStyle(
-              color:
-                  (replyController.text.isNotEmpty) ? Colors.blue : Colors.grey,
-            ),
-          ),
-        )
-      ],
     );
   }
 }
