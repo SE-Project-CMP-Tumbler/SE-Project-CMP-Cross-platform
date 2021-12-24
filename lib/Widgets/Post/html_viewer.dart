@@ -9,18 +9,14 @@ String process(final String htmlBeforeProcessing) {
   int x = 0;
   while (x != -1 && index1 <= html.length - 5) {
     x = html.indexOf("@", index1);
-    print("here3 $x");
     if (x != -1) {
       index1 = html.indexOf(" ", x);
       if (index1 == -1)
         index1 = html.indexOf("<", x);
 
-      print("here4 $index1");
-      String mention = html.substring(x,index1);
+      final String mention = html.substring(x,index1);
       html = html.replaceRange(x, index1, "<a href='post'>$mention</a>");
-      print(html);
       index1 += 18;
-      print("index = ${html[index1-1]}");
     }
   }
 

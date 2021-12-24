@@ -33,7 +33,6 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        //home: AddPost(),
         home: User.accessToken.isEmpty ? OnStart() : MainScreen(),
       ),
     );

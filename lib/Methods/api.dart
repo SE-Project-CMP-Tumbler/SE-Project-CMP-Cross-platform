@@ -36,6 +36,7 @@ class Api {
   final String _postLikeStatus = dotenv.env["postLikeStatus"] ?? " ";
   final String _followings = dotenv.env["followings"] ?? " ";
   final String _likePost = dotenv.env["likePost"] ?? " ";
+  final String _followBlog = dotenv.env["follow_blog"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -357,7 +358,7 @@ class Api {
   }
 
   /// To make Like on Post
-  Future<Map<String,dynamic>> likePost(final int postId) async {
+  Future<Map<String, dynamic>> likePost(final int postId) async {
     final http.Response response = await http
         .post(
       Uri.parse(
@@ -375,7 +376,7 @@ class Api {
   }
 
   /// To Make Unlike on post
-  Future<Map<String,dynamic>> unlikePost(final int postId) async {
+  Future<Map<String, dynamic>> unlikePost(final int postId) async {
     final http.Response response = await http
         .delete(
       Uri.parse(
@@ -573,14 +574,14 @@ class Api {
   }
 
   /// to get the Liked Posts of a My blog
-  Future<Map<String, dynamic>> fetchLikedPost(final int page) async {
+  Future<Map<String, dynamic>> fetchLikedPost(
+    final String blogID,
+    final int page,
+  ) async {
     final http.Response response = await http
         .get(
       Uri.parse(
-        _host +
-            _blogsLikes +
-            User.blogsIDs[User.currentProfile] +
-            "?page=$page",
+        _host + _blogsLikes + blogID + "?page=$page",
       ),
       headers: _headerContentAuth,
     )
@@ -596,10 +597,13 @@ class Api {
   }
 
   /// to get the Following of a specific blog
-  Future<Map<String, dynamic>> fetchFollowings(final int page) async {
+  Future<Map<String, dynamic>> fetchFollowings(
+    final String blogID,
+    final int page,
+  ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(_host + _followings + "?page=$page"),
+      Uri.parse(_host + _followings + blogID + "?page=$page"),
       headers: _headerContentAuth,
     )
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -628,6 +632,41 @@ class Api {
       }
     });
 
+    return jsonDecode(response.body);
+  }
+
+  /// to follow specific blog
+  Future<Map<String, dynamic>> followBlog(final int blogID) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(_host + _followBlog + blogID.toString()),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return jsonDecode(response.body);
+  }
+
+  /// to unfollow specific blog
+  Future<Map<String, dynamic>> unFollowBlog(final int blogID) async {
+    final http.Response response = await http
+        .delete(
+      Uri.parse(_host + _followBlog + blogID.toString()),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
     return jsonDecode(response.body);
   }
 }

@@ -60,6 +60,20 @@ class _ProfilePageState extends State<ProfilePage>
 
   final List<String> _tabs = <String>["Posts"];
 
+  final List<String> _messageOptions = <String>["Send a message"];
+  final List<String> _personIconOptions = <String>[
+    "Share",
+    "Get Notifications",
+    "Block",
+    "Report"
+  ];
+
+  final List<String> blogUserNames =
+      User.blogsNames + <String>["Create new tumblr"];
+  String dropdownValue = User.blogsNames[User.currentProfile];
+
+  Widget? myBlogsDropDown;
+
   /// current opened tab
   late String currentTab;
 
@@ -137,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage>
     postsTabLiked.clear();
     currentPageLiked = 0;
     final Map<String, dynamic> response =
-        await Api().fetchLikedPost(currentPageLiked + 1);
+        await Api().fetchLikedPost(displayedBlog.blogId!, currentPageLiked + 1);
 
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
@@ -158,7 +172,7 @@ class _ProfilePageState extends State<ProfilePage>
     }
     _gettingPosts = true;
     final Map<String, dynamic> response =
-        await Api().fetchLikedPost(currentPageLiked + 1);
+        await Api().fetchLikedPost(displayedBlog.blogId!, currentPageLiked + 1);
 
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
@@ -178,8 +192,8 @@ class _ProfilePageState extends State<ProfilePage>
     setState(() => _isLoading = true);
     followingTabList.clear();
     currentPageFollowing = 0;
-    final Map<String, dynamic> response =
-        await Api().fetchFollowings(currentPageFollowing + 1);
+    final Map<String, dynamic> response = await Api()
+        .fetchFollowings(displayedBlog.blogId!, currentPageFollowing + 1);
 
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["followings"] as List<dynamic>).isNotEmpty) {
@@ -193,6 +207,7 @@ class _ProfilePageState extends State<ProfilePage>
               follow["blog_username"],
               follow["title"] ?? "Untitled",
               follow["blog_id"] as int,
+              follow["is_followed"] as bool,
             ),
           );
         }
@@ -209,8 +224,8 @@ class _ProfilePageState extends State<ProfilePage>
       return;
     }
     _gettingPosts = true;
-    final Map<String, dynamic> response =
-        await Api().fetchFollowings(currentPageFollowing + 1);
+    final Map<String, dynamic> response = await Api()
+        .fetchFollowings(displayedBlog.blogId!, currentPageFollowing + 1);
 
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["followings"] as List<dynamic>).isNotEmpty) {
@@ -224,6 +239,7 @@ class _ProfilePageState extends State<ProfilePage>
               follow["blog_username"],
               follow["title"] ?? "Untitled",
               follow["blog_id"] as int,
+              follow["is_followed"] as bool,
             ),
           );
         }
@@ -240,13 +256,14 @@ class _ProfilePageState extends State<ProfilePage>
     final String blogUsername,
     final String blogTitle,
     final int blogId,
+    final bool isFollowed,
   ) {
+    bool _isFollowed = isFollowed;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ListTile(
           onTap: () {
-            // TODO(Ziyad): go to his profile
             Navigator.of(context).push(
               MaterialPageRoute<ProfilePage>(
                 builder: (final BuildContext context) =>
@@ -262,11 +279,28 @@ class _ProfilePageState extends State<ProfilePage>
           ),
           title: Text(blogUsername),
           subtitle: Text(blogTitle),
-          trailing: IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              // TODO(Ziyad): implement this
+          trailing: TextButton(
+            onPressed: () async {
+              Map<String, dynamic> response = <String, dynamic>{};
+              if (_isFollowed)
+                response = await Api().unFollowBlog(blogId);
+              else
+                response = await Api().followBlog(blogId);
+
+              if (response["meta"]["status"] == "200")
+                setState(() => _isFollowed = !_isFollowed);
+              else
+                await showToast(response["meta"]["msg"]);
             },
+            child: _isFollowed
+                ? const Text(
+                    "Unfollow",
+                    style: TextStyle(color: Colors.red),
+                  )
+                : const Text(
+                    "Follow",
+                    style: TextStyle(color: Colors.blue),
+                  ),
           ),
         ),
         const Divider(thickness: 1),
@@ -602,6 +636,69 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
+  void showMessagesOption() {
+    showMenu<String>(
+      context: context,
+      position: const RelativeRect.fromLTRB(
+        25,
+        25,
+        0,
+        0,
+      ),
+      //position where you want to show the menu on screen
+      items: _messageOptions
+          .map(
+            (final String e) => PopupMenuItem<String>(
+              value: e,
+              child: Text(e),
+            ),
+          )
+          .toList(),
+      elevation: 8,
+    ).then((final String? itemSelected) async {
+      if (itemSelected == _messageOptions[0]) {
+        // TODO(Ziyad): Go To Chat
+      } else if (itemSelected == _messageOptions[1]) {
+        // TODO(Ziyad): Ask
+      } else if (itemSelected == _messageOptions[2]) {
+        // TODO(Ziyad): Submit a Post
+      }
+    });
+  }
+
+  void showProfileIconOption() {
+    showMenu<String>(
+      context: context,
+      position: const RelativeRect.fromLTRB(
+        25,
+        25,
+        0,
+        0,
+      ),
+      //position where you want to show the menu on screen
+      items: _personIconOptions
+          .map(
+            (final String e) => PopupMenuItem<String>(
+              value: e,
+              child: Text(e),
+            ),
+          )
+          .toList(),
+      elevation: 8,
+    ).then((final String? itemSelected) async {
+      if (itemSelected == "Share") {
+        // TODO(Ziyad): Share
+      } else if (itemSelected == "Get Notifications") {
+      } else if (itemSelected == "Block") {
+      } else if (itemSelected == "Report") {
+      } else if (itemSelected == "Unfollow") {
+        // TODO(Ziyad): Unfollow
+      } else if (itemSelected == "Follow") {
+        // TODO(Ziyad): Follow
+      }
+    });
+  }
+
   Future<void> initializeBlog() async {
     // if it is one of my Blogs
     if (User.blogsIDs.contains(widget.blogID)) {
@@ -622,9 +719,7 @@ class _ProfilePageState extends State<ProfilePage>
         blogDescription: User.descriptions[index],
       );
 
-      // If it is my main Blog
-      if (widget.blogID == User.blogsIDs[0])
-        _tabs.addAll(<String>["Likes", "Following"]);
+      _tabs.addAll(<String>["Likes", "Following"]);
     } else {
       _isMine = false;
       final Map<String, dynamic> response =
@@ -645,29 +740,143 @@ class _ProfilePageState extends State<ProfilePage>
           blogDescription: data["description"],
         );
       }
-      /*  UNCOMMENT THIS IF get Likes and Following of other Blog is Working  */
-      // response = await Api().getBlogSetting(widget.blogID);
-      // if (response["meta"]["status"] == "200") {
-      //   if (response["meta"]["share_likes"] != null) {
-      //     if (response["meta"]["share_likes"] as bool) {
-      //       _tabs.add("Likes");
-      //     }
-      //   }
-      //
-      //   if (response["meta"]["share_followings"] != null) {
-      //     if (response["meta"]["share_followings"] as bool) {
-      //       _tabs.add("Following");
-      //     }
-      //   }
-      // }
+
+      if ((response["meta"]["share_likes"] ?? false) as bool) {
+        _tabs.add("Likes");
+      }
+
+      if ((response["meta"]["share_followings"] ?? false) as bool) {
+        _tabs.add("Following");
+      }
+
+      if ((response["meta"]["followed"] ?? false) as bool) {
+        _personIconOptions.add("Unfollow");
+      } else {
+        _personIconOptions.add("Follow");
+      }
+
+      if (displayedBlog.allowAsk!) {
+        _messageOptions.add("Ask");
+      }
+
+      if (displayedBlog.allowSubmission!) {
+        _messageOptions.add("Submit a post");
+      }
     }
 
     setState(() {});
   }
 
+  Widget initializeMyBlogsDropDownMenu() {
+    return DropdownButton<String>(
+      onChanged: (final String? value) {
+        if (value == blogUserNames[blogUserNames.length - 1]) {
+          Navigator.push(
+            context,
+            MaterialPageRoute<CreateNewBlog>(
+              builder: (
+                final BuildContext context,
+              ) =>
+                  const CreateNewBlog(),
+            ),
+          );
+        } else {
+          setState(() {
+            dropdownValue = value!;
+            User.currentProfile = User.blogsNames.indexOf(
+              value,
+            );
+          });
+        }
+      },
+      value: dropdownValue,
+      // Hide the default underline
+      underline: Container(
+        height: 0,
+      ),
+      icon: const Icon(
+        Icons.arrow_drop_down_outlined,
+        color: Colors.white,
+      ),
+      isExpanded: true,
+      // The list of options
+      items: blogUserNames
+          .map(
+            (final String e) => DropdownMenuItem<String>(
+              value: e,
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: <Widget>[
+                    if (e == blogUserNames[blogUserNames.length - 1])
+                      const Icon(
+                        Icons.add_circle_outline,
+                      )
+                    else
+                      Image.network(
+                        User.avatars[blogUserNames.indexWhere(
+                                  (
+                                    final String element,
+                                  ) =>
+                                      element == e,
+                                )] ==
+                                " "
+                            ? "https://picsum.photos/200"
+                            : User.avatars[User.currentProfile],
+                        width: 35,
+                        height: 35,
+                      ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Text(
+                        e,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+          .toList(),
+
+      // Customize the selected item
+      selectedItemBuilder: (
+        final BuildContext context,
+      ) =>
+          blogUserNames
+              .map(
+                (
+                  final String e,
+                ) =>
+                    Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(
+                      8,
+                    ),
+                    child: Text(
+                      e,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    myBlogsDropDown = initializeMyBlogsDropDownMenu();
     currentTab = _tabs[0];
     tabController = TabController(length: 3, vsync: this);
     SystemChrome.setSystemUIOverlayStyle(
@@ -708,9 +917,6 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(final BuildContext context) {
-    final List<String> blogUserNames =
-        User.blogsNames + <String>["Create new tumblr"];
-    String dropdownValue = User.blogsNames[User.currentProfile];
     final double _height = MediaQuery.of(context).size.height;
     final double _width = MediaQuery.of(context).size.width;
     return RefreshIndicator(
@@ -753,9 +959,21 @@ class _ProfilePageState extends State<ProfilePage>
                           // Header image
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: Image.network(displayedBlog.headerImage!)
-                                  .image,
-                              fit: BoxFit.cover,
+                              image: FadeInImage(
+                                fit: BoxFit.cover,
+                                imageErrorBuilder:
+                                    (final _, final __, final ___) {
+                                  return Image.asset(
+                                    "assets/images/profile_Placeholder.png",
+                                  );
+                                },
+                                placeholder: const AssetImage(
+                                  "assets/images/profile_Placeholder.png",
+                                ),
+                                image: Image.network(
+                                  displayedBlog.avatarImageUrl!,
+                                ).image,
+                              ).image,
                             ),
                           ),
                           child: Stack(
@@ -791,9 +1009,20 @@ class _ProfilePageState extends State<ProfilePage>
                                             : const BorderRadius.all(
                                                 Radius.circular(50),
                                               ), //editable
-                                    child: Image.network(
-                                      displayedBlog.avatarImageUrl!,
+                                    child: FadeInImage(
                                       fit: BoxFit.cover,
+                                      imageErrorBuilder:
+                                          (final _, final __, final ___) {
+                                        return Image.asset(
+                                          "assets/images/profile_Placeholder.png",
+                                        );
+                                      },
+                                      placeholder: const AssetImage(
+                                        "assets/images/profile_Placeholder.png",
+                                      ),
+                                      image: Image.network(
+                                        displayedBlog.avatarImageUrl!,
+                                      ).image,
                                     ),
                                   ),
                                 ),
@@ -834,143 +1063,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                       const EdgeInsets.only(
                                                     left: 8,
                                                   ),
-                                                  child: DropdownButton<String>(
-                                                    onChanged:
-                                                        (final String? value) {
-                                                      if (value ==
-                                                          blogUserNames[
-                                                              blogUserNames
-                                                                      .length -
-                                                                  1]) {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute<
-                                                              CreateNewBlog>(
-                                                            builder: (
-                                                              final BuildContext
-                                                                  context,
-                                                            ) =>
-                                                                const CreateNewBlog(),
-                                                          ),
-                                                        );
-                                                      } else {
-                                                        setState(() {
-                                                          dropdownValue =
-                                                              value!;
-                                                          User.currentProfile =
-                                                              User.blogsNames
-                                                                  .indexOf(
-                                                            value,
-                                                          );
-                                                        });
-                                                      }
-                                                    },
-                                                    value: dropdownValue,
-                                                    // Hide the default underline
-                                                    underline: Container(
-                                                      height: 0,
-                                                    ),
-                                                    icon: const Icon(
-                                                      Icons
-                                                          .arrow_drop_down_outlined,
-                                                      color: Colors.white,
-                                                    ),
-                                                    isExpanded: true,
-                                                    // The list of options
-                                                    items: blogUserNames
-                                                        .map(
-                                                          (final String e) =>
-                                                              DropdownMenuItem<
-                                                                  String>(
-                                                            value: e,
-                                                            child: Container(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              child: Row(
-                                                                children: <
-                                                                    Widget>[
-                                                                  if (e ==
-                                                                      blogUserNames[
-                                                                          blogUserNames.length -
-                                                                              1])
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .add_circle_outline,
-                                                                    )
-                                                                  else
-                                                                    Image
-                                                                        .network(
-                                                                      User.avatars[blogUserNames.indexWhere(
-                                                                                (
-                                                                                  final String element,
-                                                                                ) =>
-                                                                                    element == e,
-                                                                              )] ==
-                                                                              " "
-                                                                          ? "https://picsum.photos/200"
-                                                                          : User.avatars[User.currentProfile],
-                                                                      width: 35,
-                                                                      height:
-                                                                          35,
-                                                                    ),
-                                                                  const SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  Expanded(
-                                                                    child: Text(
-                                                                      e,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                        .toList(),
-
-                                                    // Customize the selected item
-                                                    selectedItemBuilder: (
-                                                      final BuildContext
-                                                          context,
-                                                    ) =>
-                                                        blogUserNames
-                                                            .map(
-                                                              (
-                                                                final String e,
-                                                              ) =>
-                                                                  Align(
-                                                                alignment: Alignment
-                                                                    .centerLeft,
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                    8,
-                                                                  ),
-                                                                  child: Text(
-                                                                    e,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          16,
-                                                                      color: Colors
-                                                                          .white,
-                                                                    ),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .left,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            )
-                                                            .toList(),
-                                                  ),
+                                                  child: myBlogsDropDown,
                                                 ),
                                               ),
                                             ),
@@ -1128,9 +1221,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                     Icons.email_rounded,
                                                     color: Colors.white,
                                                   ),
-                                                  onPressed: () {
-                                                    // TODO(Ziyad): Implement this
-                                                  },
+                                                  onPressed: showMessagesOption,
                                                   splashColor: Colors.white10,
                                                 ),
                                               ),
@@ -1146,9 +1237,8 @@ class _ProfilePageState extends State<ProfilePage>
                                                     Icons.person,
                                                     color: Colors.white,
                                                   ),
-                                                  onPressed: () {
-                                                    // TODO(Ziyad): Implement this
-                                                  },
+                                                  onPressed:
+                                                      showProfileIconOption,
                                                   splashColor: Colors.white10,
                                                 ),
                                               ),
