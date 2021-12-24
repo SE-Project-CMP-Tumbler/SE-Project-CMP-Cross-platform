@@ -10,6 +10,7 @@ import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
 import "package:tumbler/Widgets/Notes/Tiles/rebolg_tile_without_comments.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reply_tile.dart";
 import "package:tumbler/Widgets/Notes/customized_tab.dart";
+import "package:tumbler/Widgets/Notes/reply_textfield.dart";
 import "package:tumbler/Widgets/Notes/show_reblog_type_bottom_sheet.dart";
 
 /// [blogType] is an Enumerator for specifing two different reblogs types
@@ -26,11 +27,15 @@ class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
   NotesPage({
     required final this.postID,
+    required final this.index,
     final Key? key,
   }) : super(key: key);
 
   /// Post ID
   int postID;
+
+  /// Post Index
+  int index;
 
   @override
   _NotesPageState createState() => _NotesPageState();
@@ -85,6 +90,12 @@ class _NotesPageState extends State<NotesPage>
 
   void checkReplyText() {
     setState(() {});
+  }
+
+  Future<void> refresh() async {
+    setState(() async {
+      await initialize();
+    });
   }
 
   void changeBlogViewSection(final Enum type) {
@@ -172,24 +183,19 @@ class _NotesPageState extends State<NotesPage>
           controller: tabController,
           children: <Widget>[
             if (repliesList.isEmpty)
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
+              Column(
+                children: [
+                  const Spacer(),
+                  if (MediaQuery.of(context).viewInsets.bottom < 10)
                     const EmptyBoxImage(msg: "No replies to show"),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: TextField(
-                        controller: replyController,
-                        decoration: const InputDecoration(
-                          hintText: "Unleash a compliment...",
-                          hintStyle: TextStyle(color: Colors.black54),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  const Spacer(),
+                  ReplyTextField(
+                    replyController: replyController,
+                    postId: widget.postID.toString(),
+                    refresh: refresh,
+                    index: widget.index,
+                  )
+                ],
               )
             else
               Padding(
@@ -211,36 +217,11 @@ class _NotesPageState extends State<NotesPage>
                         itemCount: repliesList.length,
                       ),
                     ),
-                    Row(
-                      children: <Widget>[
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: replyController,
-                            decoration: const InputDecoration(
-                              hintText: "Unleash a compliment...",
-                              hintStyle: TextStyle(color: Colors.black54),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Reply",
-                            style: TextStyle(
-                              color: (replyController.text.isNotEmpty)
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            ),
-                          ),
-                        )
-                      ],
+                    ReplyTextField(
+                      replyController: replyController,
+                      postId: widget.postID.toString(),
+                      refresh: refresh,
+                      index: widget.index,
                     ),
                   ],
                 ),

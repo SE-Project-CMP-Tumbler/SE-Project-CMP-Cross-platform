@@ -95,6 +95,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                   MaterialPageRoute<Notes>(
                     builder: (final BuildContext context) => NotesPage(
                       postID: postID,
+                      index: index,
                     ),
                   ),
                 );
@@ -111,6 +112,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                   MaterialPageRoute<NotesPage>(
                     builder: (final BuildContext context) => NotesPage(
                       postID: postID,
+                      index: index,
                     ),
                   ),
                 );
@@ -145,6 +147,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 MaterialPageRoute<NotesPage>(
                   builder: (final BuildContext context) => NotesPage(
                     postID: postID,
+                    index: index,
                   ),
                 ),
               );
