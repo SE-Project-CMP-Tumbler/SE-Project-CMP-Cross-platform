@@ -33,6 +33,7 @@ dependencies:
   chewie:
   cupertino_icons: ^1.0.2
   dartdoc: ^4.1.0
+  flutter_colorpicker: ^1.0.3
   flutter_dotenv: ^5.0.2
   fluttertoast: ^8.0.8
   flutter_html: ^2.1.5

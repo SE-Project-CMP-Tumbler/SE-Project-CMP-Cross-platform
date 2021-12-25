@@ -3,6 +3,7 @@ import "dart:math" as math;
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:flutter_colorpicker/flutter_colorpicker.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/blog.dart";
@@ -33,9 +34,9 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   TabController? tabController;
-  int themeColor = 0xff001935;
-  int themeTitleColor = 0xffffffff;
-  int accentColor = 0xffffffff;
+  Color themeColor = const Color(0xff001935);
+  Color themeTitleColor = const Color(0xffffffff);
+  Color accentColor = const Color(0xffffffff);
   late AnimationController loadingSpinnerAnimationController;
 
   /// Bool to indicate if the Blog is mine
@@ -694,6 +695,203 @@ class _ProfilePageState extends State<ProfilePage>
     });
   }
 
+  /*
+  Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              index == 0 ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                          onPressed: () => myState(() => index = 0),
+                          child: const Text("themeColor"),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              index == 1 ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                          onPressed: () => myState(() => index = 1),
+                          child: const Text("accentColor"),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              index == 2 ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                          onPressed: () => myState(() => index = 2),
+                          child: const Text("themeTitleColor"),
+                        ),
+                      ],
+                    ),
+                    ColorPicker(
+                      enableAlpha: false,
+                      paletteType: PaletteType.hsv,
+                      pickerColor: themeColor,
+                      onColorChanged: (final Color colorPicked) {
+                        setState(() {
+                          if (index == 0)
+                            themeColor = colorPicked;
+                          else if (index == 1)
+                            accentColor = colorPicked;
+                          else
+                            themeTitleColor = colorPicked;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: _titleController,
+                      onChanged: (final String s) {
+                        setState(() {
+                          displayedBlog.blogTitle = s;
+                        });
+                      },
+                    ),
+                  ],
+                )
+  * */
+
+  void showEditAppearance() {
+    // index = 0 => change themeColor
+    // index = 1 => change accentColor
+    // index = 2 => change themeTitleColor
+    bool color = true;
+    int _index = 0;
+    final TextEditingController _titleController =
+        TextEditingController(text: displayedBlog.blogTitle);
+    final TextEditingController _descriptionController =
+        TextEditingController(text: displayedBlog.blogDescription);
+    showModalBottomSheet<void>(
+      isDismissible: false,
+      constraints: const BoxConstraints(minHeight: 500),
+      barrierColor: Colors.transparent,
+      context: context,
+      builder: (final BuildContext context) {
+        return StatefulBuilder(
+          builder: (final BuildContext context, final StateSetter myState) {
+            return SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            color ? Colors.blue : Colors.black,
+                          ),
+                        ),
+                        onPressed: () => myState(() => color = true),
+                        child: const Text("Colors"),
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            color ? Colors.black : Colors.blue,
+                          ),
+                        ),
+                        onPressed: () => myState(() => color = false),
+                        child: const Text("Text"),
+                      )
+                    ],
+                  ),
+                  AnimatedCrossFade(
+                    crossFadeState: color
+                        ? CrossFadeState.showFirst
+                        : CrossFadeState.showSecond,
+                    duration: const Duration(seconds: 1),
+                    firstChild: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                      _index == 0 ? Colors.blue : Colors.black,
+                                ),
+                              ),
+                              onPressed: () => myState(() => _index = 0),
+                              child: const Text("themeColor"),
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                      _index == 1 ? Colors.blue : Colors.black,
+                                ),
+                              ),
+                              onPressed: () => myState(() => _index = 1),
+                              child: const Text("accentColor"),
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                      _index == 2 ? Colors.blue : Colors.black,
+                                ),
+                              ),
+                              onPressed: () => myState(() => _index = 2),
+                              child: const Text("themeTitleColor"),
+                            ),
+                          ],
+                        ),
+                        ColorPicker(
+                          enableAlpha: false,
+                          paletteType: PaletteType.hsv,
+                          pickerColor: themeColor,
+                          onColorChanged: (final Color colorPicked) {
+                            setState(() {
+                              if (_index == 0)
+                                themeColor = colorPicked;
+                              else if (_index == 1)
+                                accentColor = colorPicked;
+                              else
+                                themeTitleColor = colorPicked;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    secondChild: Column(
+                      children: <Widget>[
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: _titleController,
+                          onChanged: (final String s) {
+                            setState(() {
+                              displayedBlog.blogTitle = s;
+                            });
+                          },
+                        ),
+                        TextFormField(
+                          controller: _descriptionController,
+                          onChanged: (final String s) {
+                            setState(() {
+                              displayedBlog.blogDescription = s;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> initializeBlog() async {
     // if it is one of my Blogs
     if (User.blogsIDs.contains(widget.blogID)) {
@@ -927,7 +1125,7 @@ class _ProfilePageState extends State<ProfilePage>
       child: DefaultTabController(
         length: _tabs.length, // This is the number of tabs.
         child: Scaffold(
-          backgroundColor: Color(themeColor),
+          backgroundColor: themeColor,
           body: NestedScrollView(
             controller: _controller,
             floatHeaderSlivers: true,
@@ -979,7 +1177,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 left: 0,
                                 right: 0,
                                 child: Container(
-                                  color: Color(themeColor),
+                                  color: themeColor,
                                   height: 0.8 * _height,
                                 ),
                               ),
@@ -990,11 +1188,11 @@ class _ProfilePageState extends State<ProfilePage>
                                   height: 100,
                                   width: 100,
                                   decoration: BoxDecoration(
-                                    color: Color(themeColor),
+                                    color: themeColor,
                                     shape: BoxShape.circle, //editable
                                     border: Border.all(
                                       width: 3,
-                                      color: Color(themeColor),
+                                      color: themeColor,
                                     ),
                                   ),
                                   child: ClipRRect(
@@ -1028,7 +1226,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 textScaleFactor: 2.4,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  color: Color(themeTitleColor),
+                                  color: themeTitleColor,
                                 ),
                               ),
                               // Description
@@ -1037,7 +1235,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 textScaleFactor: 2.4,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  color: Color(themeTitleColor),
+                                  color: themeTitleColor,
                                 ),
                               ),
                               Positioned(
@@ -1091,9 +1289,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                     Icons.color_lens,
                                                     color: Colors.white,
                                                   ),
-                                                  onPressed: () {
-                                                    // TODO(Ziyad): Implement this
-                                                  },
+                                                  onPressed: showEditAppearance,
                                                   splashColor: Colors.white10,
                                                 ),
                                               ),
@@ -1256,11 +1452,11 @@ class _ProfilePageState extends State<ProfilePage>
                     minHeight: 80,
                     maxHeight: 80,
                     child: Container(
-                      color: Color(themeColor),
+                      color: themeColor,
                       child: TabBar(
                         padding: const EdgeInsets.only(top: 32),
-                        indicatorColor: Color(accentColor),
-                        labelColor: Color(accentColor),
+                        indicatorColor: accentColor,
+                        labelColor: accentColor,
                         onTap: (final int index) async {
                           if (index == 0 && postsTabPosts.isEmpty)
                             await fetchProfilePosts();
