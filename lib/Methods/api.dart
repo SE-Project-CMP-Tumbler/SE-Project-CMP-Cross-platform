@@ -37,6 +37,7 @@ class Api {
   final String _followings = dotenv.env["followings"] ?? " ";
   final String _likePost = dotenv.env["likePost"] ?? " ";
   final String _replyPost = dotenv.env["replyPost"] ?? " ";
+  final String _followBlog = dotenv.env["followBlog"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -417,6 +418,49 @@ class Api {
     });
     return jsonDecode(response.body);
   }
+
+  ///Sends a post request to follow a blog.
+  Future<Map<String, dynamic>> followBlog(
+    final String blogId,
+  ) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(
+        _host + _followBlog + blogId,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
+    ///Sends a post request to unfollow a blog.
+  Future<Map<String, dynamic>> unfollowBlog(
+    final String blogId,
+  ) async {
+    final http.Response response = await http
+        .delete(
+      Uri.parse(
+        _host + _followBlog + blogId,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
 
   /// PUT request to change the current user Email
   /// with [email]
