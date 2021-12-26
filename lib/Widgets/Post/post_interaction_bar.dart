@@ -141,6 +141,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 MaterialPageRoute<Reblog>(
                   builder: (final BuildContext context) => Reblog(
                     originalPost: homePosts[index].postBody,
+                    parentPostId : homePosts[index].postId.toString(),
                   ),
                 ),
               );

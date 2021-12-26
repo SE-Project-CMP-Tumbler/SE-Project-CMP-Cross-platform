@@ -1,7 +1,6 @@
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:html_editor_enhanced/html_editor.dart";
-import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
 import "package:tumbler/Methods/show_toast.dart";
@@ -14,22 +13,27 @@ import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 /// Page to Add New Post
 class Reblog extends StatefulWidget {
   ///takes the html of the original post.
-  const Reblog({required final this.originalPost});
+  const Reblog({
+    required final this.originalPost,
+    required final this.parentPostId,
+  });
 
   /// Html of the original post.
   final String originalPost;
+
+  /// parent post id
+  final String parentPostId;
 
   @override
   _ReblogState createState() => _ReblogState();
 }
 
 class _ReblogState extends State<Reblog> {
-  bool isPostButtonDisabled = true;
+  //bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
 
-  Future<void> addThePost() async {
+  Future<void> addTheReblog() async {
     final String html = await controller.getText();
-    final String postTime = DateFormat("yyyy-MM-dd").format(DateTime.now());
     final String processedHtml = await extractMediaFiles(html);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
@@ -40,8 +44,12 @@ class _ReblogState extends State<Reblog> {
       postOptionChoice = "private";
     }
 
-    final Map<String, dynamic> response = await Api()
-        .addPost(processedHtml, postOptionChoice, "general", postTime);
+    final Map<String, dynamic> response = await Api().reblog(
+        User.blogsIDs[User.currentProfile],
+        widget.parentPostId,
+        processedHtml,
+        postOptionChoice,
+        "general");
 
     if (response["meta"]["status"] == "200") {
       await showToast("Added Successfully");
@@ -78,7 +86,7 @@ class _ReblogState extends State<Reblog> {
             Container(
               margin: const EdgeInsets.all(10),
               child: ElevatedButton(
-                onPressed: isPostButtonDisabled ? null : addThePost,
+                onPressed: addTheReblog,
                 style: ElevatedButton.styleFrom(
                   onPrimary: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -168,11 +176,11 @@ class _ReblogState extends State<Reblog> {
                 callbacks: Callbacks(
                   onChangeContent: (final String? changed) async {
                     final String html = await controller.getText();
-                    if (html.isEmpty) {
-                      setState(() => isPostButtonDisabled = true);
-                    } else {
-                      setState(() => isPostButtonDisabled = false);
-                    }
+                    // if (html.isEmpty) {
+                    //   setState(() => isPostButtonDisabled = true);
+                    // } else {
+                    //   setState(() => isPostButtonDisabled = false);
+                    // }
                   },
                 ),
               ),

@@ -38,6 +38,7 @@ class Api {
   final String _likePost = dotenv.env["likePost"] ?? " ";
   final String _replyPost = dotenv.env["replyPost"] ?? " ";
   final String _followBlog = dotenv.env["followBlog"] ?? " ";
+  final String _reblog = dotenv.env["reblog"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -574,6 +575,35 @@ class Api {
       }
     };
     //return jsonDecode(response.body);
+  }
+
+  
+  /// Upload HTML code of the reblog.
+  Future<Map<String, dynamic>> reblog(
+    final String blogId,
+    final String parentPostId,
+    final String postBody,
+    final String postStatus,
+    final String postType,
+  ) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(_host + _reblog + blogId + "/" + parentPostId),
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, String>{
+        "post_status": postStatus,
+        "post_type": postType,
+        "post_body": postBody
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
   }
 
   /// PUT request to change the current user Email
