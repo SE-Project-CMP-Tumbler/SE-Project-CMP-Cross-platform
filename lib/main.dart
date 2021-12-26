@@ -6,15 +6,8 @@ import "package:tumbler/Methods/initializer.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Providers/blogs.dart";
 import "package:tumbler/Providers/followed_tags_sign_up.dart";
-import "package:tumbler/Providers/posts.dart";
-import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
-import 'package:tumbler/Screens/Search/search_page.dart';
-import 'package:tumbler/Screens/Search/search_query.dart';
-import 'package:tumbler/Screens/Search/search_result.dart';
-import 'package:tumbler/Screens/Search/tag_posts.dart';
+import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/main_screen.dart";
-
-import 'Providers/tags.dart';
 
 Future<void> main() async {
   await dotenv.load();
@@ -23,7 +16,6 @@ Future<void> main() async {
     await initializeUserBlogs();
   }
   runApp(MyApp());
-
 }
 
 /// The Start of the Application
@@ -35,21 +27,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<FollowedTags>(
           create: (final _) => FollowedTags(),
         ),
-        ChangeNotifierProvider<Posts>(
-          create: (final _) => Posts(),
-        ),
         ChangeNotifierProvider<BlogsData>(
           create: (final _) => BlogsData(),
-        ),
-        ChangeNotifierProvider<Tags>(
-          create: (final _) => Tags(),
         ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         //home: AddPost(),
         home: User.accessToken.isEmpty ? OnStart() : MainScreen(),
-
       ),
     );
   }

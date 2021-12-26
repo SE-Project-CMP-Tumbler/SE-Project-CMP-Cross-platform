@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "542961071315-6utad766ka0brkmv7840hjrvn3d1id40.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tumbler",
+            "certificate_hash": "56b81a85bdb9bca20131bdd6bebfd3b3879dad78"
+          }
+        },
+        {
           "client_id": "542961071315-ir2vc72qs0li6ddj9uc1d0j7bj6c39ec.apps.googleusercontent.com",
           "client_type": 3
         }

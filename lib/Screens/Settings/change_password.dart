@@ -2,12 +2,12 @@ import "dart:io";
 
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
-import "package:tumbler/Screens/Intro_Screens/on_start_screen.dart";
+import "package:tumbler/Methods/show_toast.dart";
+import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 
 /// Change Password Page
 class ChangePassword extends StatefulWidget {
@@ -38,14 +38,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     );
 
     if (response["meta"]["status"] == "200") {
-      await Fluttertoast.showToast(
-        msg: "You successfully updated your Password!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast("You successfully updated your Password!");
 
       // TODO(Ziyad): Restart the app? or log out ?
       await Navigator.of(context).pushAndRemoveUntil(
@@ -56,14 +49,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       );
       return;
     } else {
-      await Fluttertoast.showToast(
-        msg: response["meta"]["msg"],
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast(response["meta"]["msg"]);
     }
   }
 

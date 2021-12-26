@@ -16,7 +16,7 @@ class Blog {
   });
 
   /// blog id
-  int? blogId;
+  String? blogId;
 
   /// is this the primary blog or not
   bool? isPrimary;

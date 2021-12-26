@@ -1,60 +1,81 @@
-// ignore_for_file: must_be_immutable, public_member_api_docs, lines_longer_than_80_chars
-
+import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
 import "package:like_button/like_button.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Models/notes.dart";
+import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
 
-Future<bool> getLikeStatus(final int postId, final int blogId) async {
-  final Map<String, dynamic> res = await Api().getPostLikeStatus(postId);
-  return res.values.single["response"]["like_status"];
-}
-
 ///Class for interaction bar exists the bottom of each post in home page
-///
-///holds:
+//////Contains:
 ///1-Notes number
 ///2-buttons to Favorite and reblog and reply
 class PostInteractionBar extends StatefulWidget {
   ///Constructor takes posts' notes
-  PostInteractionBar({
-    required final this.likes,
-    required final this.reblogs,
-    required final this.replies,
-    required final this.postId,
+  const PostInteractionBar({
+    required final this.index,
+    required final this.isMine,
     final Key? key,
   }) : super(key: key);
 
-  List<dynamic> likes = <dynamic>[];
-  List<dynamic> reblogs = <dynamic>[];
-  List<dynamic> replies = <dynamic>[];
+  /// the index of the post in the page
+  final int index;
 
-  final int postId;
-  late String blogId;
-  bool isLoved = false;
+  /// to indicate if the post is mine
+  final bool isMine;
 
   @override
   _PostInteractionBarState createState() => _PostInteractionBarState();
 }
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
-  NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
+  int index = 0;
+  late int _notesNum;
+  bool _isLoved = false;
+  late int postID;
+  bool onProcessing = false;
+  bool isLoveButtonPressedAtLeastOne = false;
+
+  /// Called when the user clicks on favorite icon button
+  Future<void> likePost() async {
+    final Map<String, dynamic> response =
+        await Api().likePost(homePosts[index].postId);
+
+    if (response["meta"]["status"] == "200") {
+      homePosts[index].notes++;
+      homePosts[index].isLoved = true;
+    }
+  }
+
+  /// Called when the user clicks on un-favorite icon button (filled favorite)
+  Future<void> unlikePost() async {
+    final Map<String, dynamic> response =
+        await Api().unlikePost(homePosts[index].postId);
+
+    if (response["meta"]["status"] == "200") {
+      homePosts[index].notes--;
+      homePosts[index].isLoved = false;
+    }
+  }
 
   @override
   void initState() {
-    // TODO(Waleed): get current blogID and use it to get current like status for a post.
-    //widget.blogId = User.userID;
-
-    getLikeStatus(widget.postId % 4 + 1, 0).then((final bool result) {
-      if (mounted) {
-        setState(() {
-          widget.isLoved = result;
-        });
-      }
-    });
-
+    index = widget.index;
+    _notesNum = homePosts[index].notes;
+    _isLoved = homePosts[index].isLoved;
+    postID = homePosts[index].postId;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (isLoveButtonPressedAtLeastOne) {
+      if (_isLoved)
+        likePost();
+      else
+        unlikePost();
+    }
+    super.dispose();
   }
 
   @override
@@ -72,10 +93,9 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<Notes>(
-                    builder: (final BuildContext context) => Notes(
-                      likesList: widget.likes,
-                      reblogsList: widget.reblogs,
-                      repliesList: widget.replies,
+                    builder: (final BuildContext context) => NotesPage(
+                      postID: postID,
+                      index: index,
                     ),
                   ),
                 );
@@ -86,19 +106,31 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             ),
           ),
           Expanded(
-            child: Text(
-              "${numFormatter.format(widget.likes.length + widget.replies.length + widget.reblogs.length)} notes",
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.black45,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<NotesPage>(
+                    builder: (final BuildContext context) => NotesPage(
+                      postID: postID,
+                      index: index,
+                    ),
+                  ),
+                );
+              },
+              child: Text(
+                "$_notesNum notes",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.black45,
+                ),
               ),
             ),
           ),
           const IconButton(
             onPressed: null,
             icon: Icon(
-              Icons.reply,
+              CupertinoIcons.arrowshape_turn_up_right,
               color: Colors.black,
             ),
           ),
@@ -109,23 +141,64 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               color: Colors.black,
             ),
           ),
-          LikeButton(
-            isLiked: widget.isLoved,
-            likeBuilder: (final bool isLoved) {
-              final Color color = isLoved ? Colors.red : Colors.black;
-              return Icon(
-                isLoved ? Icons.favorite : Icons.favorite_border_outlined,
-                color: color,
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<NotesPage>(
+                  builder: (final BuildContext context) => NotesPage(
+                    postID: postID,
+                    index: index,
+                  ),
+                ),
               );
             },
-          ),
-          const IconButton(
-            onPressed: null,
-            icon: Icon(
-              Icons.add_comment_outlined,
+            icon: const Icon(
+              CupertinoIcons.conversation_bubble,
               color: Colors.black,
             ),
           ),
+          if (!widget.isMine)
+            LikeButton(
+              isLiked: _isLoved,
+              onTap: (final _) async {
+                isLoveButtonPressedAtLeastOne = true;
+                if (!_isLoved) {
+                  setState(() {
+                    _notesNum++;
+                    _isLoved = true;
+                  });
+                } else {
+                  setState(() {
+                    _notesNum--;
+                    _isLoved = false;
+                  });
+                }
+                return _isLoved;
+              },
+              likeBuilder: (final bool isLoved) {
+                final Color color = isLoved ? Colors.red : Colors.black;
+                return Icon(
+                  isLoved ? Icons.favorite : Icons.favorite_border_outlined,
+                  color: color,
+                );
+              },
+            ),
+          if (widget.isMine)
+            const IconButton(
+              onPressed: null,
+              icon: Icon(
+                CupertinoIcons.trash,
+                color: Colors.black,
+              ),
+            ),
+          if (widget.isMine)
+            const IconButton(
+              onPressed: null,
+              icon: Icon(
+                Icons.edit_outlined,
+                color: Colors.black,
+              ),
+            ),
         ],
       ),
     );

@@ -1,10 +1,10 @@
 import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/tags_list_and_colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Providers/followed_tags_sign_up.dart";
 
 /// Page to add User's Own Tag
@@ -31,14 +31,7 @@ class _AddYourOwnTagState extends State<AddYourOwnTag> {
             .addAll(json.map((final dynamic e) => e["tag_description"])),
       );
     } else {
-      await Fluttertoast.showToast(
-        msg: response["meta"]["msg"],
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
+      await showToast(response["meta"]["msg"]);
     }
   }
 

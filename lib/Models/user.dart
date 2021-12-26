@@ -6,6 +6,7 @@ class User {
   static String email = "";
   static String userID = "";
   static String accessToken = "";
+  static String googleAccessToken = "";
 
   static List<String> blogsIDs = <String>[];
   static List<String> blogsNames = <String>[];
