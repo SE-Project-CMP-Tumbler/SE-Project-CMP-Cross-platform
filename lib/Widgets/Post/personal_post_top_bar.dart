@@ -49,7 +49,7 @@ class _PersonalPostTopBarState extends State<PersonalPostTopBar> {
               alignment: Alignment.centerRight,
               child: IconButton(
                 onPressed: () =>
-                    widget.showEditPostPersonalBottomSheet(context),
+                    widget.showEditPostPersonalBottomSheet,
                 icon: const Icon(
                   Icons.more_horiz,
                   color: Colors.black87,

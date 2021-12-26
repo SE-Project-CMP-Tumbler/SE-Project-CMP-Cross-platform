@@ -48,47 +48,62 @@ Future<void> showErrorDialog(
 
 /// Shows modal bottom sheet when
 /// the user clicks on more vert icon button in a post.
-void showEditPostBottomSheet(final BuildContext ctx) {
+void showEditPostBottomSheet(final BuildContext ctx,final String postDate) {
   showModalBottomSheet<dynamic>(
     isScrollControlled: true,
     context: ctx,
     builder: (final _) {
-      return Container(
-        height: 200,
-        color: Colors.black38,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                "Report sensitive content",
-                style: TextStyle(color: Colors.white),
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            postDate,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(20),
+                topLeft: Radius.circular(20),
               ),
             ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                "Repost spam",
-                style: TextStyle(color: Colors.white),
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ListTile(
+                  onTap: () {},
+                  title: const Text(
+                    "Pin post",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                ListTile(
+                  onTap: () {},
+                  title: const Text(
+                    "Mute notifications",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                ListTile(
+                  onTap: () {},
+                  title: const Text(
+                    "Copy Link",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                "Report something else",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                "Copy link",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       );
     },
   );
@@ -257,7 +272,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         children: <Widget>[
                                           PostOutView(
                                             showEditPostBottomSheet:
-                                                showEditPostBottomSheet,
+                                          (){showEditPostBottomSheet(context, posts[index].postTime);},
                                             post: posts[index],
                                           ),
                                           Container(

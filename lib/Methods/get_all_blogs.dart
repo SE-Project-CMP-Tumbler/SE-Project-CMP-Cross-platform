@@ -1,4 +1,8 @@
+import "dart:convert";
+
+import "package:http/http.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/user.dart";
 
 /// Fill the User model class with the
@@ -49,4 +53,44 @@ Future<bool> fillUserBlogs() async {
   } else {
     return false;
   }
+}
+/// to get the "blogs" in "check out blogs section
+Future<List<Blog>> getRandomBlogs() async
+{
+  final List<Blog> checkoutBlogs=<Blog>[
+  ];
+  final Response res = await Api().fetchCheckOutBlogs();
+  final Map<String, dynamic> response= jsonDecode(res.body);
+  final List<dynamic> blogs = response["response"]["blogs"];
+  if (response["meta"]["status"] == "200") {
+    for (final Map<String, dynamic> blog in blogs) {
+      print(blog.toString());
+      final Blog coBlog = Blog(
+        isPrimary: false,
+        // don't care
+        allowAsk: false,
+        // don't care
+        allowSubmission: false,
+        // don't care
+        avatarImageUrl: blog["avatar"]
+            .toString()
+            .isNotEmpty
+            ? blog["avatar"].toString()
+            : "https://i.pinimg.com/736x/89/90/48/899048ab0cc455154006fdb9676964b3.jpg",
+        avatarShape: blog["avatar_shape"] ?? "circle",
+        headerImage: blog["header_image"]
+            .toString()
+            .isNotEmpty
+            ? blog["header_image"].toString()
+            : "https://picsum.photos/200",
+        blogDescription: blog["description"] ?? "",
+        blogTitle: blog["title"] ?? "",
+        blogId: blog["id"],
+        username: blog["username"] ?? "",
+      );
+      checkoutBlogs.add(coBlog);
+    }
+  }
+
+  return checkoutBlogs;
 }

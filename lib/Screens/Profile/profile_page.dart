@@ -15,6 +15,7 @@ import "package:tumbler/Providers/posts.dart";
 import "package:tumbler/Screens/Profile/create_new_blog.dart";
 import "package:tumbler/Screens/Settings/profile_settings.dart";
 import "package:tumbler/Widgets/Post/profile_personal_post.dart";
+import 'package:tumbler/Widgets/Utils/sliver_app_bar.dart';
 
 /// Shows modal bottom sheet when
 /// the user clicks on more vert icon button in a post.
@@ -491,7 +492,7 @@ class _ProfilePageState extends State<ProfilePage>
               SliverPersistentHeader(
                 pinned: true,
                 floating: true,
-                delegate: _SliverAppBarDelegate(
+                delegate: SliverAppBarDelegate(
                   minHeight: 80,
                   maxHeight: 80,
                   child: Container(
@@ -615,36 +616,3 @@ class _ProfilePageState extends State<ProfilePage>
   }
 }
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({
-    required final this.minHeight,
-    required final this.maxHeight,
-    required final this.child,
-  });
-
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
-
-  @override
-  double get minExtent => minHeight;
-
-  @override
-  double get maxExtent => math.max(maxHeight, minHeight);
-
-  @override
-  Widget build(
-    final BuildContext context,
-    final double shrinkOffset,
-    final bool overlapsContent,
-  ) {
-    return SizedBox.expand(child: child);
-  }
-
-  @override
-  bool shouldRebuild(final _SliverAppBarDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
-  }
-}

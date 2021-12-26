@@ -33,3 +33,4 @@ InputBorder formEnabledFieldBorderStyle = const UnderlineInputBorder(
 /// Text Form Style Used in [Register], [GetAge],
 /// [LogIN], [ForgetPassWord] for TextFormFields
 InputBorder formFocusedFieldBorderStyle = const UnderlineInputBorder();
+

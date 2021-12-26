@@ -41,7 +41,7 @@ class _PersonalPostState extends State<PersonalPost> {
         children: <Widget>[
           // tumbler user name and profile pic and options
           PersonalPostTopBar(
-            showEditPostPersonalBottomSheet: showEditPostProfileBottomSheet,
+            showEditPostPersonalBottomSheet: widget.showEditPostBottomSheet,
             avatarPhotoLink: widget.post.blogAvatar,
             name: widget.post.blogUsername,
           ),

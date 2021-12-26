@@ -59,7 +59,7 @@ class _PostTopBarState extends State<PostTopBar> {
             child: Container(
               alignment: Alignment.centerRight,
               child: IconButton(
-                onPressed: () => widget.showEditPostBottomSheet(context),
+                onPressed: () => widget.showEditPostBottomSheet,
                 icon: const Icon(
                   Icons.more_horiz,
                   color: Colors.black87,

@@ -33,7 +33,7 @@ class _PostOutViewState extends State<PostOutView> {
     return Column(
       children: <Widget>[
         PostTopBar(
-          showEditPostBottomSheet: showEditPostBottomSheet,
+          showEditPostBottomSheet: widget.showEditPostBottomSheet,
           avatarPhotoLink: widget.post.blogAvatar,
           name: widget.post.blogUsername,
         ),
