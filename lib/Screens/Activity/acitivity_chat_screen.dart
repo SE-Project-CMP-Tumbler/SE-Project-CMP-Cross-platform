@@ -1,6 +1,7 @@
 // ignore_for_file: cascade_invocations
 
 import "package:flutter/material.dart";
+import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/Activity_Notifications/ask.dart";
 import "package:tumbler/Models/Activity_Notifications/follow.dart";
@@ -11,8 +12,7 @@ import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Activity_Notifications/time_packet_contianer.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
-import "package:tumbler/Widgets/Exceptions_UI/error_dialog.dart";
-import 'package:tumbler/Widgets/Exceptions_UI/generic_exception.dart';
+import "package:tumbler/Widgets/Exceptions_UI/generic_exception.dart";
 
 /// [blogType] is an Enumerator for specifing two different reblogs types
 enum ActivityOrChat {
@@ -46,8 +46,12 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
 
   List<TimePacket> packets = <TimePacket>[];
   final List<dynamic> bigSack = <dynamic>[]; //list of notification models
+  final DateFormat formatter = DateFormat("yyyy-MM-dd");
 
   Future<bool> getActivity() async {
+    packets.clear();
+    bigSack.clear();
+
     setState(() {
       _isEmpty = false;
       _isLoading = true;
@@ -96,11 +100,16 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
         }
       }
 
+      for (int i = 0; i < bigSack.length; i++) {
+        bigSack[i].dateTime =
+            DateTime.parse(formatter.format(bigSack[i].dateTime));
+      }
+
       bigSack.sort(
         (final dynamic a, final dynamic b) => a.dateTime.compareTo(b.dateTime),
       );
 
-      Map<DateTime, List<dynamic>>? notificationMap =
+      final Map<DateTime, List<dynamic>> notificationMap =
           <DateTime, List<dynamic>>{};
 
       for (int i = 0; i < bigSack.length; i++) {
@@ -208,7 +217,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
           backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
           titleSpacing: 30,
           title: const ProfilesList(),
-          actions: [
+          actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 20),
               child: GestureDetector(
@@ -251,8 +260,10 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
                                 children: <Widget>[
                                   Expanded(
                                     child: ListView.builder(
-                                      itemBuilder: (final BuildContext ctx,
-                                          final int index) {
+                                      itemBuilder: (
+                                        final BuildContext ctx,
+                                        final int index,
+                                      ) {
                                         return TimePacketContainer(
                                           packetTime: packets[index].packetTime,
                                           notificaitons: packets[index].packet,

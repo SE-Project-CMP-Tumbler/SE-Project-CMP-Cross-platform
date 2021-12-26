@@ -49,7 +49,7 @@ class _ReblogState extends State<Reblog> {
         widget.parentPostId,
         processedHtml,
         postOptionChoice,
-        "general");
+        "general",);
 
     if (response["meta"]["status"] == "200") {
       await showToast("Added Successfully");
@@ -175,12 +175,7 @@ class _ReblogState extends State<Reblog> {
                 ),
                 callbacks: Callbacks(
                   onChangeContent: (final String? changed) async {
-                    final String html = await controller.getText();
-                    // if (html.isEmpty) {
-                    //   setState(() => isPostButtonDisabled = true);
-                    // } else {
-                    //   setState(() => isPostButtonDisabled = false);
-                    // }
+                    
                   },
                 ),
               ),

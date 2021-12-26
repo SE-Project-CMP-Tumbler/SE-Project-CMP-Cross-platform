@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
+import 'package:tumbler/Models/user.dart';
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 // ignore: public_member_api_docs
@@ -94,18 +95,19 @@ class _LikeTileState extends State<LikeTile> {
             child: Container(
               alignment: Alignment.centerRight,
               child: TextButton(
-                child: _followStatus
-                    //TODO(Ziyad): you cannot follow yourself,
-                    ? const Text(
-                        "Unfollow",
-                        style: TextStyle(fontSize: 18),
-                      )
-                    : const Text(
-                        "Follow",
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
+                child: (User.blogsIDs[User.currentProfile] == widget.blogID)
+                    ? Container()
+                    : _followStatus
+                        ? const Text(
+                            "Unfollow",
+                            style: TextStyle(fontSize: 18),
+                          )
+                        : const Text(
+                            "Follow",
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
                 onPressed: () async {
                   // make the request to follow/unfollow.
                   // if successufl : update the UI and update the data locally.

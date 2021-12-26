@@ -53,7 +53,8 @@ class ReplyTextField extends StatelessWidget {
               final dynamic response =
                   await Api().replyOnPost(postId, replyController.text);
               if (response["meta"]["response"] == "200") {
-                // call function refresh in the NotesPage widget to fetch new replies and setState()
+                // call function refresh in the NotesPage widget to fetch new 
+                //replies and setState()
                 //update number of notes locally....
                 await refresh();
                 homePosts[index].notes++;

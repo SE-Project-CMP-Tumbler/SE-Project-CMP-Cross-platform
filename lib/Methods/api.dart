@@ -464,7 +464,8 @@ class Api {
 
   ///Get notifications for activity page.
   Future<Map<String, dynamic>> getActivityNotifications(
-      final String blogId) async {
+    final String blogId,
+  ) async {
     final http.Response response = await http
         .get(
       Uri.parse(
@@ -481,10 +482,15 @@ class Api {
     });
 
     return <String, dynamic>{
+      // ignore: always_specify_types
       "meta": {"status": "200", "msg": "ok"},
+      // ignore: always_specify_types
       "response": {
+        // ignore: always_specify_types
         "notifications": {
+          // ignore: always_specify_types
           "answers": [
+            // ignore: always_specify_types
             {
               "blog_avatar":
                   "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
@@ -492,14 +498,16 @@ class Api {
               "blog_username": "radwa-ahmed213",
               "blog_title": "Positive Quotes",
               "blog_id": 1032,
-              "answer_time": "2012-02-20 00:22",
+              "answer_time": "2021-05-05 00:11",
               "post_id": 5,
               "post_body":
                   "<div><h1>What's Artificial intellegence? </h1><img src='https://modo3.com/thumbs/fit630x300/84738/1453981470/%D8%A8%D8%AD%D8%AB_%D8%B9%D9%86_Google.jpg' alt=''><p>It's the weapon that'd end the humanity!!</p><video width='320' height='240' controls><source src='movie.mp4' type='video/mp4'><source src='movie.ogg' type='video/ogg'>Your browser does not support the video tag.</video><p>#AI #humanity #freedom</p></div>",
               "post_type": "text"
             }
           ],
+          // ignore: always_specify_types
           "reblogs": [
+            // ignore: always_specify_types
             {
               "blog_avatar":
                   "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
@@ -507,19 +515,21 @@ class Api {
               "blog_username": "radwa-ahmed213",
               "blog_title": "Positive Quotes",
               "blog_id": 1032,
-              "post_time": "2020-02-20 00:22",
+              "post_time": "2021-08-12 00:23",
               "post_id": 5,
               "post_body":
                   "<div><h1>What's Artificial intellegence? </h1><img src='https://modo3.com/thumbs/fit630x300/84738/1453981470/%D8%A8%D8%AD%D8%AB_%D8%B9%D9%86_Google.jpg' alt=''><p>It's the weapon that'd end the humanity!!</p><video width='320' height='240' controls><source src='movie.mp4' type='video/mp4'><source src='movie.ogg' type='video/ogg'>Your browser does not support the video tag.</video><p>#AI #humanity #freedom</p></div>",
               "post_type": "text"
             }
           ],
+          // ignore: always_specify_types
           "asks": [
+            // ignore: always_specify_types
             {
               "question_body": "How are you?",
               "question_id": 5,
               "flag": false,
-              "ask_time": "2010-02-20 00:22",
+              "ask_time": "2021-09-05 00:22",
               "blog_avatar":
                   "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
               "blog_avatar_shape": "circle",
@@ -527,9 +537,11 @@ class Api {
               "blog_id": 1032
             }
           ],
+          // ignore: always_specify_types
           "follows": [
+            // ignore: always_specify_types
             {
-              "follow_time": "2013-02-20 00:22",
+              "follow_time": "2021-08-12 00:17",
               "blog_avatar":
                   "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
               "blog_avatar_shape": "circle",
@@ -537,9 +549,11 @@ class Api {
               "blog_id": 1032
             }
           ],
+          // ignore: always_specify_types
           "mentions_posts": [
+            // ignore: always_specify_types
             {
-              "mention_time": "2012-02-20 00:22",
+              "mention_time": "2021-07-15 00:19",
               "blog_avatar_mentioning": "/storage/imgname2.extension",
               "blog_avatar_shape_mentioning": "circle",
               "blog_username_mentioning": "radwa-ahmed213",
@@ -555,9 +569,11 @@ class Api {
               "post_type ": "text"
             }
           ],
+          // ignore: always_specify_types
           "mentions_replies": [
+            // ignore: always_specify_types
             {
-              "mention_time": "2010-02-20 00:22",
+              "mention_time": "2021-02-20 00:21",
               "blog_avatar_mentioning": "/storage/imgname2.extension",
               "blog_avatar_shape_mentioning": "circle",
               "blog_username_mentioning": "radwa-ahmed213",
@@ -577,7 +593,6 @@ class Api {
     //return jsonDecode(response.body);
   }
 
-  
   /// Upload HTML code of the reblog.
   Future<Map<String, dynamic>> reblog(
     final String blogId,

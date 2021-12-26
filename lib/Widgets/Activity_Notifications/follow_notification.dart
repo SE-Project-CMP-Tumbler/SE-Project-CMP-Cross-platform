@@ -22,7 +22,7 @@ class FollowNotificationWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
-        children: [
+        children: <Widget> [
           AvatarWithIcon(
             avatarUrl: avatarUrl,
             iconType: "follow",
