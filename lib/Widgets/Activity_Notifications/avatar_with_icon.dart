@@ -34,8 +34,9 @@ class AvatarWithIcon extends StatelessWidget {
       width: 40,
       child: Stack(
         alignment: AlignmentDirectional.bottomEnd,
+        // ignore: deprecated_member_use
         overflow: Overflow.visible,
-        children: [
+        children: <Widget>[
           Image.network(
             avatarUrl,
             fit: BoxFit.cover,
