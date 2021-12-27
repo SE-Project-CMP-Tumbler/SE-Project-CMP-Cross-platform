@@ -1,56 +1,92 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:pusher_client/pusher_client.dart';
+import "package:tumbler/Models/http_requests_exceptions.dart";
 import "package:tumbler/Models/message.dart";
+import "../../Methods/api.dart";
+import "../../Models/user.dart";
+//import 'package:tumbler/Widgets/Post/post_personal_avatar.dart';
+import '../../Widgets/Post/post_personal_avatar.dart';
 
-
-List<Message> messages = [
-  Message("Salama", "Waleed",
-      "Hello, Welcome my friend Waleed , Hello Hello Hello "),
-  Message("Waleed", "Salama", "Hello"),
-  Message("Waleed", "Salama", "How are you?"),
-  Message("Salama", "Waleed", "Iam fine"),
-  Message("Salama", "Waleed", "What about you?"),
-  Message("Waleed", "Salama", "Iam fine thanks"),
-  Message("Salama", "Waleed", "I just want to ask you a question"),
-  Message("Waleed", "Salama", "??"),
-  Message("Salama", "Waleed", "why should we learn flutter?"),
-  Message("Waleed", "Salama", "Ooh"),
-  Message("Waleed", "Salama", "good Question.."),
-  Message("Waleed", "Salama",
-      "That is because flutter has many advantges as laylo laylo laylo la la la"),
-  Message("Waleed", "Salama", "That is because flutter has many advantges as "),
-  Message("Salama", "Waleed", "Great answer, Than you"),
-  Message("Waleed", "Salama", "<3"),
-];
+List<Message> messages = [];
 
 ///Chat screen
-class Chat extends StatefulWidget {
+class ChatScreen extends StatefulWidget {
   @override
-  _ChatState createState() => _ChatState();
+  String with_blog_id;
+  ChatScreen(this.with_blog_id);
+  _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatState extends State<Chat> {
+class _ChatScreenState extends State<ChatScreen> {
+  late PusherClient pusher;
+  late Channel channel;
+  late String friendName;
+  late String friendAvatar;
+  String chatTitle = " ";
+  void bindEvent(String channelName, String eventName) async {
+    await initPusher();
+    pusher.connect();
+    channel = await pusher.subscribe(channelName);
+    await channel.bind(eventName, (final last) {
+      final String data = last!.data.toString();
+      final encodedRes = jsonDecode(data);
+      if (encodedRes["from_blog_id"].toString() !=
+          User.blogsIDs[User.currentProfile]) {
+        messages.insert(
+            0,
+            Message(encodedRes["from_blog_username"].toString(), "",
+                encodedRes["text"]));
+        setState(() {});
+      }
+    });
+  }
+
+  Future<void> initPusher() async {
+    pusher = PusherClient(
+      "a59193c9ecc2d49635c0",
+      PusherOptions(
+        auth: PusherAuth(
+          "https://api.dev.tumbler.social/broadcasting/auth",
+          headers: {"Authorization": "Bearer ${User.accessToken}"},
+        ),
+        cluster: "eu",
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialzeMe();
+    setState(() {});
+  }
+
   bool hasContent = false;
   _buildMessage(Message message, bool Change) {
     return Container(
-      // margin: EdgeInsets.only(right: 30),
-      //width: MediaQuery.of(context).size.width * 0.65,
       child: Change
           ? Container(
-              //margin: EdgeInsets.only(top: 1.0, bottom: 1.0),
-              //padding: EdgeInsets.symmetric(vertical: 1.0, horizontal: 1.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 5.0, bottom: 2.0),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
-                    width: 41,
-                    height: 42,
-                    child: Image(
-                      image: AssetImage("assets/images/profile_pic.png"),
-                    ),
-                  ),
+                      margin: EdgeInsets.only(top: 5.0, bottom: 2.0),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
+                      width: 41,
+                      height: 42,
+                      child: (message.sender ==
+                              User.blogsNames[User.currentProfile])
+                          ? PersonAvatar(
+                              avatarPhotoLink:
+                                  User.avatars[User.currentProfile],
+                              shape: "",
+                              blogID: User.blogsIDs[User.currentProfile])
+                          : PersonAvatar(
+                              avatarPhotoLink: friendAvatar,
+                              shape: "",
+                              blogID: widget.with_blog_id)),
                   Container(
                     margin: EdgeInsets.only(top: 5.0, bottom: 2.0),
                     padding:
@@ -74,20 +110,14 @@ class _ChatState extends State<Chat> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        // Flexible(
-                        // child:
                         Container(
                           constraints: BoxConstraints(
                             maxWidth: MediaQuery.of(context).size.width * 0.65,
                           ),
-                          //width:
-                          //MediaQuery.of(context).size.width * 0.65, ////
-                          //margin: EdgeInsets.only(right: 25),
                           padding: EdgeInsets.symmetric(
                               vertical: 1.0, horizontal: 1.0),
                           child: Text(message.text),
                         ),
-                        //),
                       ],
                     ),
                   ),
@@ -95,10 +125,8 @@ class _ChatState extends State<Chat> {
               ),
             )
           : Row(
-              //mainAxisSize: MediaQuery.of(context).size.width * 0.65,
               children: [
                 Container(
-                    //width: MediaQuery.of(context).size.width * 0.65, ////
                     constraints: BoxConstraints(
                       maxWidth: MediaQuery.of(context).size.width * 0.65,
                     ),
@@ -113,8 +141,6 @@ class _ChatState extends State<Chat> {
                           bottomRight: Radius.circular(15.0),
                           topRight: Radius.circular(15.0),
                         )),
-                    //margin: EdgeInsets.only(right: 25.0),
-
                     child: Text(message.text)),
               ],
             ),
@@ -122,9 +148,22 @@ class _ChatState extends State<Chat> {
   }
 
   final _messageController = new TextEditingController();
-  submitMessage() {
-    setState(() =>
-        messages.add(Message("Salama", "Waleed", _messageController.text)));
+  submitMessage() async {
+    messages.insert(
+        0,
+        Message(
+            User.blogsNames[User.currentProfile], "", _messageController.text));
+    final dynamic res =
+        await Api().sendMessages(_messageController.text, "", roomId);
+    //checking the status code of the received response.
+    if (res.statusCode == 401)
+      throw HttpException("You are not authorized");
+    else if (res.statusCode == 404) {
+      throw HttpException("Not Found!");
+    }
+    _messageController.clear();
+    hasContent = false;
+    setState(() => {});
   }
 
   _buildMessageComposer() {
@@ -163,7 +202,8 @@ class _ChatState extends State<Chat> {
                 icon: Icon(Icons.send),
                 color: Colors.purple,
                 iconSize: 25.0,
-                onPressed: hasContent ? submitMessage : null,
+                onPressed:
+                    _messageController.text.isNotEmpty ? submitMessage : null,
               ),
             ],
           ),
@@ -172,9 +212,52 @@ class _ChatState extends State<Chat> {
     );
   }
 
+  void loadMessages(String roomId) async {
+    final dynamic res = await Api().getMessages(roomId);
+    //checking the status code of the received response.F
+    if (res.statusCode == 401)
+      throw HttpException("You are not authorized");
+    else if (res.statusCode == 404) {
+      throw HttpException("Not Found!");
+    }
+    messages.clear();
+    final Map<String, dynamic> encodedRes = jsonDecode(res.body);
+    final List<dynamic> messagesList = encodedRes["response"]["chat_messages"];
+    for (int i = 0; i < messagesList.length; i++) {
+      String sender = messagesList[i]["from_blog_username"];
+      String rec = "";
+      messages.insert(
+        0,
+        Message(
+          sender,
+          rec,
+          messagesList[i]["text"],
+        ),
+      );
+    }
+    setState(() {});
+  }
+
+  String roomId = "";
+  dynamic initialzeMe() async {
+    final dynamic response = await Api().getRoomId(widget.with_blog_id);
+    final Map<String, dynamic> encodedRes = jsonDecode(response.body);
+    dynamic droomId = encodedRes["response"]["chat_room_id"];
+    roomId = droomId.toString();
+    final Map<String, dynamic> res =
+        await Api().getBlogInformation(widget.with_blog_id.toString());
+    friendName = res["response"]["username"];
+    friendAvatar = res["response"]["avatar"];
+    chatTitle = User.blogsNames[User.currentProfile] + " + " + friendName;
+    loadMessages(roomId);
+  }
+
   final _controller = ScrollController();
+
   @override
   Widget build(final BuildContext context) {
+    String channelName = "private-channel-" + roomId;
+    bindEvent(channelName, 'chat-update');
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -189,7 +272,7 @@ class _ChatState extends State<Chat> {
               Navigator.of(context).pop();
             },
           ),
-          title: Text("Salama" + " + " + "Waleed"),
+          title: Text(chatTitle),
           actions: <Widget>[
             PopupMenuButton<dynamic>(
               itemBuilder: (final BuildContext context) =>
@@ -215,19 +298,15 @@ class _ChatState extends State<Chat> {
             Expanded(
               child: Container(
                 child: ListView.builder(
-                  //reverse: true,
+                  reverse: true,
                   controller: _controller,
                   padding: EdgeInsets.only(top: 15.0),
                   itemCount: messages.length,
-                  // shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
-                    print(index);
-                    // _controller.jumpTo(_controller.position.maxScrollExtent);
-
                     final Message message = messages[index];
                     bool change = true;
-                    if (index != 0 &&
-                        messages[index - 1].sender == messages[index].sender) {
+                    if (index != messages.length - 1 &&
+                        messages[index + 1].sender == messages[index].sender) {
                       change = false;
                     }
                     return _buildMessage(message, change);
