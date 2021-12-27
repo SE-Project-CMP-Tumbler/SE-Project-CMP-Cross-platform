@@ -10,7 +10,9 @@ import "package:tumbler/Models/user.dart";
 class Api {
   static const String _firebaseHost =
       "https://mock-back-default-rtdb.firebaseio.com";
-
+  static const String _postmanMockHost="http://ba5d-41-68-74-128.ngrok.io";
+  static const String _autocompleteMock= "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
+  static const String _mockSearch ="https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
   final String _host = dotenv.env["host"] ?? " ";
   final String _getTrendingTags = dotenv.env["getTrendingTags"] ?? " ";
   final String _signUp = dotenv.env["signUp"] ?? " ";
@@ -32,6 +34,15 @@ class Api {
   final String _published = dotenv.env["published"] ?? " ";
   final String _draft = dotenv.env["draft"] ?? " ";
   final String _posts = dotenv.env["Post"] ?? " ";
+  final String _followedTags= dotenv.env["followTag"]??" ";
+  final String _checkOutBlogs= dotenv.env["checkOutBlogs"]??" ";
+  final String _randomPosts= dotenv.env["randomPosts"]??"";
+  final String _checkOutTags= dotenv.env["checkOutTags"]??"";
+  final String _tagPosts= dotenv.env["tagPosts"]??"";
+  final String _topPosts= dotenv.env["topPosts"]??"";
+  final String _recentPosts= dotenv.env["recentPosts"]??"";
+  final String _autoComplete= dotenv.env["searchAutoComplete"]??"";
+  final String _search= dotenv.env["search"]??"";
   final String _postNotes = dotenv.env["postNotes"] ?? " ";
   final String _postLikeStatus = dotenv.env["postLikeStatus"] ?? " ";
   final String _followings = dotenv.env["followings"] ?? " ";
@@ -675,5 +686,224 @@ class Api {
     });
 
     return jsonDecode(response.body);
+  }
+
+  /// Tags requests
+  /// fetch all the tags that a specific blog follows
+  Future<dynamic> fetchTagsFollowed({final bool mock= true}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _followedTags),
+      headers: _headerContentAuth,
+    )
+
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    // print("tags followes");
+    return response;
+  }
+  /// get the details of a specific tag
+  Future<dynamic> fetchTagsDetails({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _followedTags),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
+  }
+  /// get "Check out these tags"
+  Future<dynamic> fetchCheckOutTags({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _checkOutTags),
+      headers: _headerContentAuth,
+    )
+
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    // print("check out tags");
+    // print(response.body);
+    return response;
+  }
+  /// get "Check out these blogs"
+  Future<dynamic> fetchCheckOutBlogs({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _checkOutBlogs),
+      headers: _headerContentAuth,
+    )
+
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    // print("check out blogs");
+    // print(response.body);
+
+    return response;
+  }
+
+  /// get random posts
+  Future<dynamic> fetchRandomPosts({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _randomPosts),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    // print("random posts results");
+    // print(response.body);
+
+    return response;
+  }
+
+  /// get trending tags to follow
+  Future<dynamic> fetchTrendingTags({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http
+        .get(Uri.parse(host + _getTrendingTags),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    // print("trending tags results");
+    // print(response.body);
+
+    return response;
+  }
+
+  /// get posts of specific tag
+  Future<dynamic> fetchTagPosts(final String tagDescription,
+      {final bool mock= false, final bool recent=true,}) async {
+
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http
+        .get(Uri.parse(host + _tagPosts+
+        tagDescription +(recent?_recentPosts:_topPosts),),
+        headers: _headerContentAuth,)
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    // print("tag posts results");
+    // print(response.body);
+
+    return response;
+  }
+  /// fetching words for auto complete search text field
+  Future<dynamic> fetchAutoComplete(final String word,{final bool mock=false})
+  async{
+    final String host= mock? _autocompleteMock: _host;
+    final http.Response response = await http
+        .get(Uri.parse(host + _autoComplete + word),
+        headers: _headerContentAuth,)
+        .onError((final Object? error, final StackTrace stackTrace) {
+      // print(error.toString());
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    // print("words autocomplete results");
+    // print(response.body);
+
+    return response;
+
+  }
+
+  /// fetching words for search results
+  Future<dynamic> fetchSearchResults(final String word,{final bool mock=false})
+  async{
+    final String host= mock? _mockSearch: _host;
+    final http.Response response = await http
+        .get(Uri.parse(host + _search + word,),
+        headers: _headerContentAuth,)
+        .onError((final Object? error, final StackTrace stackTrace) {
+
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    // print("words search results");
+    // print(response.body);
+
+    return response;
+
+  }
+
+  /// follow specific tag
+  Future<dynamic> followTag(final String tagDescription,{final bool mock=false})
+  async{
+    final String host= mock? _mockSearch: _host;
+    final http.Response response = await http
+        .post(Uri.parse(host + _followedTags + tagDescription,),
+      headers: _headerContentAuth,)
+        .onError((final Object? error, final StackTrace stackTrace) {
+
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
+
+  }
+  /// un follows specific tag
+  Future<dynamic> unFollowTag(final String tagDescription,
+      {final bool mock=false,})
+  async{
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http
+        .delete(Uri.parse(host + _followedTags + tagDescription,),
+      headers: _headerContentAuth,)
+        .onError((final Object? error, final StackTrace stackTrace) {
+
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return response;
+
   }
 }

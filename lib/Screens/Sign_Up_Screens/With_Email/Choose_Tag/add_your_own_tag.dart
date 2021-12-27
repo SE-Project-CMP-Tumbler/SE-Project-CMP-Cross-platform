@@ -21,7 +21,8 @@ class _AddYourOwnTagState extends State<AddYourOwnTag> {
   late List<String> _trending;
 
   Future<void> initializeTrending() async {
-    final Map<String, dynamic> response = await Api().getTrendingTags();
+    final Map<String, dynamic> response = await
+    Api().getTrendingTags();
 
     if (response["meta"]["status"] == "200") {
       final List<dynamic> json = response["response"]["tags"] as List<dynamic>;
