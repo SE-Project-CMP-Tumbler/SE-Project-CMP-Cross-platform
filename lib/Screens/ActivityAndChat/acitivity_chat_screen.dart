@@ -14,6 +14,8 @@ import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Exceptions_UI/generic_exception.dart";
 
+import "package:tumbler/Screens/ActivityAndChat/chat_out_view.dart";
+
 /// [blogType] is an Enumerator for specifing two different reblogs types
 enum ActivityOrChat {
   ///reblogs with comments
@@ -277,7 +279,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
                             ),
             ),
             const Center(
-              child: Text("Chat Page"),
+              child: ChatOutView(),
             )
           ],
         ),

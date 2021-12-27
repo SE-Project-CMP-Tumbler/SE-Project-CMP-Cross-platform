@@ -39,7 +39,7 @@ class Api {
   final String _replyPost = dotenv.env["replyPost"] ?? " ";
   final String _followBlog = dotenv.env["followBlog"] ?? " ";
   final String _reblog = dotenv.env["reblog"] ?? " ";
-
+  final String _chats = dotenv.env["chats"] ?? " ";
   final String _weirdConnection = '''
             {
               "meta": {
@@ -226,6 +226,25 @@ class Api {
 
     return jsonDecode(response.body);
   }
+
+
+  ///get chats for that chats choose
+  Future<dynamic> getChats() async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(_host + _chats),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
+  }
+
 
   /// Upload [image] to our server to get url of this image.
   Future<dynamic> uploadImage(final String image) async {
