@@ -35,7 +35,7 @@ class _AddPostState extends State<AddPost> {
 
     final Map<String, dynamic> response = await Api()
         .addPost(processedHtml, postOptionChoice, "general", postTime);
-
+    print(response);
     if (response["meta"]["status"] == "200") {
       await showToast("Added Successfully");
       Navigator.of(context).pop();
