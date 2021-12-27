@@ -48,6 +48,8 @@ class Api {
   final String _followings = dotenv.env["followings"] ?? " ";
   final String _likePost = dotenv.env["likePost"] ?? " ";
   final String _replyPost = dotenv.env["replyPost"] ?? " ";
+  final String _followBlog = dotenv.env["followBlog"] ?? " ";
+  final String _reblog = dotenv.env["reblog"] ?? " ";
   final String _chats = dotenv.env["chats"] ?? " ";
   final String _followBlog = dotenv.env["follow_blog"] ?? " ";
   final String _followTag = dotenv.env["follow_tag"] ?? " ";
@@ -413,6 +415,207 @@ class Api {
         "reply_text": text,
       }),
       headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
+  ///Sends a post request to follow a blog.
+  Future<Map<String, dynamic>> followBlog(
+    final String blogId,
+  ) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(
+        _host + _followBlog + blogId,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
+  ///Sends a post request to unfollow a blog.
+  Future<Map<String, dynamic>> unfollowBlog(
+    final String blogId,
+  ) async {
+    final http.Response response = await http
+        .delete(
+      Uri.parse(
+        _host + _followBlog + blogId,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
+  ///Get notifications for activity page.
+  Future<Map<String, dynamic>> getActivityNotifications(
+    final String blogId,
+  ) async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(
+        _host + _blog + "/" + blogId + "/notifications",
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
+    return <String, dynamic>{
+      // ignore: always_specify_types
+      "meta": {"status": "200", "msg": "ok"},
+      // ignore: always_specify_types
+      "response": {
+        // ignore: always_specify_types
+        "notifications": {
+          // ignore: always_specify_types
+          "answers": [
+            // ignore: always_specify_types
+            {
+              "blog_avatar":
+                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
+              "blog_avatar_shape": "circle",
+              "blog_username": "radwa-ahmed213",
+              "blog_title": "Positive Quotes",
+              "blog_id": 1032,
+              "answer_time": "2021-05-05 00:11",
+              "post_id": 5,
+              "post_body":
+                  "<div><h1>What's Artificial intellegence? </h1><img src='https://modo3.com/thumbs/fit630x300/84738/1453981470/%D8%A8%D8%AD%D8%AB_%D8%B9%D9%86_Google.jpg' alt=''><p>It's the weapon that'd end the humanity!!</p><video width='320' height='240' controls><source src='movie.mp4' type='video/mp4'><source src='movie.ogg' type='video/ogg'>Your browser does not support the video tag.</video><p>#AI #humanity #freedom</p></div>",
+              "post_type": "text"
+            }
+          ],
+          // ignore: always_specify_types
+          "reblogs": [
+            // ignore: always_specify_types
+            {
+              "blog_avatar":
+                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
+              "blog_avatar_shape": "circle",
+              "blog_username": "radwa-ahmed213",
+              "blog_title": "Positive Quotes",
+              "blog_id": 1032,
+              "post_time": "2021-08-12 00:23",
+              "post_id": 5,
+              "post_body":
+                  "<div><h1>What's Artificial intellegence? </h1><img src='https://modo3.com/thumbs/fit630x300/84738/1453981470/%D8%A8%D8%AD%D8%AB_%D8%B9%D9%86_Google.jpg' alt=''><p>It's the weapon that'd end the humanity!!</p><video width='320' height='240' controls><source src='movie.mp4' type='video/mp4'><source src='movie.ogg' type='video/ogg'>Your browser does not support the video tag.</video><p>#AI #humanity #freedom</p></div>",
+              "post_type": "text"
+            }
+          ],
+          // ignore: always_specify_types
+          "asks": [
+            // ignore: always_specify_types
+            {
+              "question_body": "How are you?",
+              "question_id": 5,
+              "flag": false,
+              "ask_time": "2021-09-05 00:22",
+              "blog_avatar":
+                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
+              "blog_avatar_shape": "circle",
+              "blog_username": "radwa-ahmed213",
+              "blog_id": 1032
+            }
+          ],
+          // ignore: always_specify_types
+          "follows": [
+            // ignore: always_specify_types
+            {
+              "follow_time": "2021-08-12 00:17",
+              "blog_avatar":
+                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
+              "blog_avatar_shape": "circle",
+              "blog_username": "radwa-ahmed213",
+              "blog_id": 1032
+            }
+          ],
+          // ignore: always_specify_types
+          "mentions_posts": [
+            // ignore: always_specify_types
+            {
+              "mention_time": "2021-07-15 00:19",
+              "blog_avatar_mentioning": "/storage/imgname2.extension",
+              "blog_avatar_shape_mentioning": "circle",
+              "blog_username_mentioning": "radwa-ahmed213",
+              "blog_id_mentioning": 1032,
+              "blog_avatar":
+                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
+              "blog_avatar_shape": "circle",
+              "blog_username": "radwa-ahmed213",
+              "blog_id": 1032,
+              "post_id": 5,
+              "post_body":
+                  "<div><h1>What's Artificial intellegence? </h1><img src='https://modo3.com/thumbs/fit630x300/84738/1453981470/%D8%A8%D8%AD%D8%AB_%D8%B9%D9%86_Google.jpg' alt=''><p>It's the weapon that'd end the humanity!!</p><video width='320' height='240' controls><source src='movie.mp4' type='video/mp4'><source src='movie.ogg' type='video/ogg'>Your browser does not support the video tag.</video><p>#AI #humanity #freedom</p></div>",
+              "post_type ": "text"
+            }
+          ],
+          // ignore: always_specify_types
+          "mentions_replies": [
+            // ignore: always_specify_types
+            {
+              "mention_time": "2021-02-20 00:21",
+              "blog_avatar_mentioning": "/storage/imgname2.extension",
+              "blog_avatar_shape_mentioning": "circle",
+              "blog_username_mentioning": "radwa-ahmed213",
+              "blog_id_mentioning": 1032,
+              "blog_avatar":
+                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
+              "blog_avatar_shape": "circle",
+              "blog_username": "radwa-ahmed213",
+              "blog_id": 1032,
+              "reply_id": 5,
+              "reply_text": "Hello "
+            }
+          ]
+        }
+      }
+    };
+    //return jsonDecode(response.body);
+  }
+
+  /// Upload HTML code of the reblog.
+  Future<Map<String, dynamic>> reblog(
+    final String blogId,
+    final String parentPostId,
+    final String postBody,
+    final String postStatus,
+    final String postType,
+  ) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(_host + _reblog + blogId + "/" + parentPostId),
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, String>{
+        "post_status": postStatus,
+        "post_type": postType,
+        "post_body": postBody
+      }),
     )
         .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {

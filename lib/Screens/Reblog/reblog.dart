@@ -1,41 +1,39 @@
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:html_editor_enhanced/html_editor.dart";
-import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
+import "package:tumbler/Widgets/Add_Post/popup_menu.dart";
+import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
-
-/// Type of Post
-enum PostTypes {
-  /// Default Post type (published)
-  defaultPost,
-  /// When Saved as Draft
-  draftPost,
-  /// When Posted as private
-  privatePost
-}
-
 /// Page to Add New Post
-class AddPost extends StatefulWidget {
+class Reblog extends StatefulWidget {
+  ///takes the html of the original post.
+  const Reblog({
+    required final this.originalPost,
+    required final this.parentPostId,
+  });
+
+  /// Html of the original post.
+  final String originalPost;
+
+  /// parent post id
+  final String parentPostId;
+
   @override
-  _AddPostState createState() => _AddPostState();
+  _ReblogState createState() => _ReblogState();
 }
 
-class _AddPostState extends State<AddPost> {
-  bool isPostButtonDisabled = true;
+class _ReblogState extends State<Reblog> {
+  //bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
-  String postButtonText = "Post";
-  /// the current post type
-  PostTypes postType = PostTypes.defaultPost;
 
-  Future<void> addThePost() async {
+  Future<void> addTheReblog() async {
     final String html = await controller.getText();
-    final String postTime = DateFormat("yyyy-MM-dd").format(DateTime.now());
     final String processedHtml = await extractMediaFiles(html);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
@@ -46,153 +44,19 @@ class _AddPostState extends State<AddPost> {
       postOptionChoice = "private";
     }
 
-    final Map<String, dynamic> response = await Api()
-        .addPost(processedHtml, postOptionChoice, "general", postTime);
-    print(response);
+    final Map<String, dynamic> response = await Api().reblog(
+        User.blogsIDs[User.currentProfile],
+        widget.parentPostId,
+        processedHtml,
+        postOptionChoice,
+        "general",);
+
     if (response["meta"]["status"] == "200") {
       await showToast("Added Successfully");
       Navigator.of(context).pop();
     } else {
       await showToast(response["meta"]["msg"]);
     }
-  }
-
-  Widget postTypeMenu(){
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Center(
-              child: Text(
-                "                   Post options                              ",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 19,
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topRight,
-              child: TextButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  onPrimary: Colors.blue[400],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text("Done"),
-              ),
-            ),
-          ],
-        ),
-        const Divider(
-          thickness: 0.4,
-          color: Colors.black45,
-        ),
-        ListTile(
-          onTap: () {
-            setState(() {
-              postButtonText = "Post";
-              postType = PostTypes.defaultPost;
-            });
-            Navigator.of(context).pop();
-          },
-          title: Row(
-            children: const <Widget>[
-              Icon(
-                Icons.post_add,
-                color: Colors.black,
-              ),
-              Text("   Post now"),
-            ],
-          ),
-          trailing: Radio<PostTypes>(
-            value: PostTypes.defaultPost,
-            groupValue: postType,
-            onChanged: (final PostTypes? value) {
-              setState(() {
-                postButtonText = "Post";
-                postType = value!;
-              });
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        const Divider(
-          thickness: 0.3,
-          color: Colors.black45,
-        ),
-        ListTile(
-          onTap: () {
-            setState(() {
-              postButtonText = "Save draft";
-              postType = PostTypes.draftPost;
-            });
-            Navigator.of(context).pop();
-          },
-          title: Row(
-            children: const <Widget>[
-              Icon(
-                Icons.save,
-                color: Colors.black,
-              ),
-              Text("   Save as draft"),
-            ],
-          ),
-          trailing: Radio<PostTypes>(
-            value: PostTypes.draftPost,
-            groupValue: postType,
-            onChanged: (final PostTypes? value) {
-              setState(() {
-                postButtonText = "Save draft";
-                postType = value!;
-              });
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        const Divider(
-          thickness: 0.32,
-          color: Colors.black45,
-        ),
-        ListTile(
-          onTap: () {
-            setState(() {
-              postButtonText = "Post Privately";
-              postType = PostTypes.privatePost;
-            });
-            Navigator.of(context).pop();
-          },
-          title: Row(
-            children: const <Widget>[
-              Icon(
-                Icons.lock,
-                color: Colors.black,
-              ),
-              Text("   Post privately"),
-            ],
-          ),
-          trailing: Radio<PostTypes>(
-            value: PostTypes.privatePost,
-            groupValue: postType,
-            onChanged: (final PostTypes? value) {
-              setState(() {
-                postButtonText = "Post privately";
-                postType = value!;
-              });
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        const Divider(
-          thickness: 0.32,
-          color: Colors.black45,
-        ),
-      ],
-    );
   }
 
   @override
@@ -222,14 +86,14 @@ class _AddPostState extends State<AddPost> {
             Container(
               margin: const EdgeInsets.all(10),
               child: ElevatedButton(
-                onPressed: isPostButtonDisabled ? null : addThePost,
+                onPressed: addTheReblog,
                 style: ElevatedButton.styleFrom(
                   onPrimary: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text(postButtonText),
+                child: const Text("Reblog"),
               ),
             ),
             IconButton(
@@ -243,8 +107,8 @@ class _AddPostState extends State<AddPost> {
                   builder: (final BuildContext context) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        postTypeMenu(),
+                      children: const <Widget>[
+                        PostTypeMenu(),
                       ],
                     );
                   },
@@ -274,6 +138,7 @@ class _AddPostState extends State<AddPost> {
                   ],
                 ),
               ),
+              HtmlView(htmlData: widget.originalPost),
               HtmlEditor(
                 controller: controller,
                 htmlEditorOptions: const HtmlEditorOptions(
@@ -310,12 +175,7 @@ class _AddPostState extends State<AddPost> {
                 ),
                 callbacks: Callbacks(
                   onChangeContent: (final String? changed) async {
-                    final String html = await controller.getText();
-                    if (html.isEmpty) {
-                      setState(() => isPostButtonDisabled = true);
-                    } else {
-                      setState(() => isPostButtonDisabled = false);
-                    }
+                    
                   },
                 ),
               ),

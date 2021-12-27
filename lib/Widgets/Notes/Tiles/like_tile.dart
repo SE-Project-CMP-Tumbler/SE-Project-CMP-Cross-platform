@@ -1,8 +1,11 @@
 import "package:flutter/material.dart";
+import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/show_toast.dart";
+import 'package:tumbler/Models/user.dart';
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 // ignore: public_member_api_docs
-class LikeTile extends StatelessWidget {
+class LikeTile extends StatefulWidget {
   ///
   const LikeTile({
     required final this.userName,
@@ -11,6 +14,7 @@ class LikeTile extends StatelessWidget {
     required final this.followStatus,
     required final this.avatarShape,
     required final this.blogID,
+    required final this.updateFollowStatusLocally,
     final Key? key,
   }) : super(key: key);
 
@@ -32,6 +36,22 @@ class LikeTile extends StatelessWidget {
   /// blog ID of who had liked the post
   final String blogID;
 
+  ///update follow status locally
+  final Function updateFollowStatusLocally;
+
+  @override
+  State<LikeTile> createState() => _LikeTileState();
+}
+
+class _LikeTileState extends State<LikeTile> {
+  late bool _followStatus;
+
+  @override
+  void initState() {
+    _followStatus = widget.followStatus;
+    super.initState();
+  }
+
   @override
   Widget build(final BuildContext context) {
     return Padding(
@@ -41,9 +61,9 @@ class LikeTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           PersonAvatar(
-            avatarPhotoLink: blogAvatar,
-            shape: avatarShape,
-            blogID: blogID,
+            avatarPhotoLink: widget.blogAvatar,
+            shape: widget.avatarShape,
+            blogID: widget.blogID,
           ),
           const SizedBox(
             width: 15,
@@ -55,14 +75,14 @@ class LikeTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    userName,
+                    widget.userName,
                     style: const TextStyle(
                       color: Colors.black87,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    blogTitle,
+                    widget.blogTitle,
                     style: const TextStyle(
                       color: Colors.black45,
                     ),
@@ -75,18 +95,47 @@ class LikeTile extends StatelessWidget {
             child: Container(
               alignment: Alignment.centerRight,
               child: TextButton(
-                child: followStatus
-                    ? const Text(
-                        "Unfollow",
-                        style: TextStyle(fontSize: 18),
-                      )
-                    : const Text(
-                        "Follow",
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                onPressed: () {},
+                child: (User.blogsIDs[User.currentProfile] == widget.blogID)
+                    ? Container()
+                    : _followStatus
+                        ? const Text(
+                            "Unfollow",
+                            style: TextStyle(fontSize: 18),
+                          )
+                        : const Text(
+                            "Follow",
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                onPressed: () async {
+                  // make the request to follow/unfollow.
+                  // if successufl : update the UI and update the data locally.
+                  //else don't update the UI and show toast.
+                  if (_followStatus) {
+                    final Map<String, dynamic> response =
+                        await Api().unfollowBlog(widget.blogID);
+                    if (response["meta"]["status"] == "200") {
+                      setState(() {
+                        _followStatus = false;
+                      });
+                      widget.updateFollowStatusLocally(widget.blogID, false);
+                    } else {
+                      await showToast("Failed operation,try again later");
+                    }
+                  } else {
+                    final Map<String, dynamic> response =
+                        await Api().followBlog(widget.blogID);
+                    if (response["meta"]["status"] == "200") {
+                      setState(() {
+                        _followStatus = true;
+                      });
+                      widget.updateFollowStatusLocally(widget.blogID, true);
+                    } else {
+                      await showToast("Failed operation,try again later");
+                    }
+                  }
+                },
               ),
             ),
           )
