@@ -36,6 +36,8 @@ class Api {
   final String _postLikeStatus = dotenv.env["postLikeStatus"] ?? " ";
   final String _followings = dotenv.env["followings"] ?? " ";
   final String _likePost = dotenv.env["likePost"] ?? " ";
+  final String _replyPost = dotenv.env["replyPost"] ?? " ";
+  final String _chats = dotenv.env["chats"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -224,6 +226,25 @@ class Api {
     return jsonDecode(response.body);
   }
 
+
+  ///get chats for that chats choose
+  Future<dynamic> getChats() async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(_host + _chats),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
+  }
+
+
   /// Upload [image] to our server to get url of this image.
   Future<dynamic> uploadImage(final String image) async {
     final http.Response response = await http
@@ -357,7 +378,7 @@ class Api {
   }
 
   /// To make Like on Post
-  Future<Map<String,dynamic>> likePost(final int postId) async {
+  Future<Map<String, dynamic>> likePost(final int postId) async {
     final http.Response response = await http
         .post(
       Uri.parse(
@@ -375,12 +396,37 @@ class Api {
   }
 
   /// To Make Unlike on post
-  Future<Map<String,dynamic>> unlikePost(final int postId) async {
+  Future<Map<String, dynamic>> unlikePost(final int postId) async {
     final http.Response response = await http
         .delete(
       Uri.parse(
         _host + _likePost + postId.toString(),
       ),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
+  ///Sends a post request to reply on a post.
+  Future<Map<String, dynamic>> replyOnPost(
+    final String postId,
+    final String text,
+  ) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(
+        _host + _replyPost + postId,
+      ),
+      body: jsonEncode(<String, String>{
+        "reply_text": text,
+      }),
+      headers: _headerContentAuth,
     )
         .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
