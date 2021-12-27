@@ -686,7 +686,6 @@ class Api {
     });
 
     return jsonDecode(response.body);
-    return response;
   }
 
   /// Tags requests
@@ -891,7 +890,7 @@ class Api {
   Future<dynamic> unFollowTag(final String tagDescription,
       {final bool mock=false,})
   async{
-    final String host= mock? _mockSearch: _host;
+    final String host= mock? _postmanMockHost: _host;
     final http.Response response = await http
         .delete(Uri.parse(host + _followedTags + tagDescription,),
       headers: _headerContentAuth,)

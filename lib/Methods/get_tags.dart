@@ -1,7 +1,7 @@
 import "dart:convert";
 import "package:http/http.dart";
 import "package:tumbler/Methods/api.dart";
-import "package:tumbler/Models/post.dart";
+import 'package:tumbler/Models/post_model.dart';
 import "package:tumbler/Models/tag.dart";
 
 
@@ -55,31 +55,16 @@ Future<List<Tag>> getTrendingTagsToFollow() async
 
 
 /// to get the "posts" of each tag
-Future<List<Post>> getTagPosts(final String tagDescription,
+Future<List<PostModel>> getTagPosts(final String tagDescription,
     {final bool recent=true,}) async
 {
-  final List<Post> tagPosts=<Post>[
+  List<PostModel> tagPosts=<PostModel>[
   ];
   final Response res = await Api().fetchTagPosts(tagDescription,recent: recent);
   final Map<String, dynamic> response= jsonDecode(res.body);
   final List<dynamic> posts = response["response"]["posts"];
   if (response["meta"]["status"] == "200") {
-    for (final Map<String, dynamic> post in posts) {
-      final Post tagPost = Post(
-          postId: post["post_id"],
-          postBody: post["post_body"],
-          postStatus: post["post_status"],
-          postType: post["post_type"],
-          blogId: post["blog_id"],
-          blogUsername: post["blog_username"],
-          blogAvatar: post["blog_avatar"],
-          blogAvatarShape: post["blog_avatar_shape"],
-          blogTitle: post["blog_title"],
-          postTime: post["post_time"],
-      );
-
-      tagPosts.add(tagPost);
-    }
+    tagPosts= await PostModel.fromJSON(posts, true);
   }
 
   return tagPosts;

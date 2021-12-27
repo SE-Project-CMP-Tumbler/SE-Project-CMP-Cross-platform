@@ -1,4 +1,4 @@
-import "package:tumbler/Models/post.dart";
+import "package:tumbler/Models/post_model.dart";
 
 /// the tags that appear on the search page
 class Tag{
@@ -25,7 +25,7 @@ class Tag{
   int? followersCount;
 
   /// list of the posts associated with this tag
-  List<Post>? tagPosts;
+  List<PostModel>? tagPosts;
 
   /// count of posts that has this tag
   int? postsCount;

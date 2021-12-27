@@ -3,7 +3,7 @@ import "package:flutter/material.dart";
 import "package:flutter_html/flutter_html.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:tumbler/Constants/colors.dart";
-import "package:tumbler/Models/post.dart";
+import 'package:tumbler/Models/post_model.dart';
 import "package:tumbler/Models/tag.dart";
 /// the component of each trending tag
 class TrendingComponent extends StatelessWidget {
@@ -22,7 +22,7 @@ class TrendingComponent extends StatelessWidget {
   ///
   final List<Color> numberColors;
   ///
-  final List<Post> posts;
+  final List<PostModel> posts;
   ///
   static const List<Color> colors=<Color>[
      Color(0xff7F00FF),
@@ -125,7 +125,7 @@ class TrendingComponent extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(left: 53),
             child: Row(
-              children: posts.map((final Post item) =>
+              children: posts.map((final PostModel item) =>
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ClipRRect(

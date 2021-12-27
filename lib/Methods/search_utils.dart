@@ -1,9 +1,8 @@
 import "dart:convert";
-import 'package:flutter/material.dart';
 import "package:http/http.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/blog.dart";
-import "package:tumbler/Models/post.dart";
+import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 
 
@@ -31,7 +30,7 @@ Future<List<String>> getAutoComplete(final String word,) async
 /// to get the "autocomplete words"
 Future<List<List<dynamic>>> getSearchResults(final String word,) async
 {
-  final List<Post> postsResults=<Post>[
+  List<PostModel> postsResults=<PostModel>[
   ];
   final List<Tag> tagsResults=<Tag>[
   ];
@@ -44,24 +43,9 @@ Future<List<List<dynamic>>> getSearchResults(final String word,) async
     final List<dynamic> tags = response["response"]["tags"]["tags"];
     final List<dynamic> blogs = response["response"]["blogs"]["blogs"];
     if (response["meta"]["status"] == "200") {
-      for (final Map<String, dynamic> postResult in posts) {
-        print(postResult);
-        final Post post = Post(
-          postId: postResult["post_id"],
-          postBody: postResult["post_body"],
-          postStatus: postResult["post_status"],
-          postType: postResult["post_type"],
-          blogId: postResult["blog_id"],
-          blogUsername: postResult["blog_username"],
-          blogAvatar: postResult["blog_avatar"],
-          blogAvatarShape: postResult["blog_avatar_shape"],
-          blogTitle: postResult["blog_title"],
-          postTime: postResult["post_time"],
-        );
-      postsResults.add(post);
-      }
+      postsResults= await PostModel.fromJSON(posts, true);
+
       for (final Map<String, dynamic> tagResult in tags) {
-        print(tagResult);
         final Tag tag = Tag(
           tagDescription: tagResult["tag_description"],
           tagImgUrl: tagResult["tag_image"],
@@ -70,7 +54,6 @@ Future<List<List<dynamic>>> getSearchResults(final String word,) async
         tagsResults.add(tag);
       }
       for (final Map<String, dynamic> blogResult in blogs) {
-        print(blogResult);
         final Blog blog = Blog(
           isPrimary: false,
           // don't care
@@ -91,7 +74,7 @@ Future<List<List<dynamic>>> getSearchResults(final String word,) async
               : "https://picsum.photos/200",
           blogDescription: blogResult["description"] ?? "",
           blogTitle: blogResult["title"] ?? "",
-          blogId: blogResult["id"],
+          blogId: blogResult["id"].toString(),
           username: blogResult["username"] ?? "",
         );
         blogResults.add(blog);

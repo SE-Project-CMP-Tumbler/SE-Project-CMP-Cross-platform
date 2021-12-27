@@ -1,6 +1,7 @@
 import "package:flutter/foundation.dart" show kIsWeb;
 
 import "package:flutter/material.dart";
+import 'package:tumbler/Constants/colors.dart';
 import "package:tumbler/Constants/urls.dart";
 import "package:tumbler/Methods/follow_tags.dart";
 import "package:tumbler/Models/tag.dart";
@@ -214,8 +215,9 @@ void _showToast(final BuildContext context, final String msg) {
   scaffold.showSnackBar(
     SnackBar(
       content: Text(msg),
-      backgroundColor: Colors.white,
+      backgroundColor: navy,
       action: SnackBarAction(label: "Got it!",
+          textColor: floatingButtonColor,
           onPressed: scaffold.hideCurrentSnackBar,),
     ),
   );

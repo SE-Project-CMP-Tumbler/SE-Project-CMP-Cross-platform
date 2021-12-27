@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:tumbler/Models/post.dart";
+import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Widgets/Search/trending_comp.dart";
 /// to show trendings tags
@@ -15,7 +15,7 @@ class Trending extends StatelessWidget {
   final List<Tag> trendingTags;
 
   /// map of each tag with its posts
-  final Map<Tag, List<Post>> tagPosts;
+  final Map<Tag, List<PostModel>> tagPosts;
   @override
   Widget build(final BuildContext context) {
     return Padding(
@@ -40,7 +40,7 @@ class Trending extends StatelessWidget {
                 TrendingComponent(
                   tag: item,
                   index: trendingTags.indexOf(item),
-                  posts:tagPosts[item]??<Post>[],),
+                  posts:tagPosts[item]??<PostModel>[],),
             )
                 .toList(),
           ),

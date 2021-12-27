@@ -6,7 +6,7 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/urls.dart";
 import "package:tumbler/Methods/search_utils.dart";
 import "package:tumbler/Models/blog.dart";
-import "package:tumbler/Models/post.dart";
+import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Screens/Search/search_result.dart";
 /// The page that enables user to enter a search keyword
@@ -36,7 +36,7 @@ class _SearchQueryState extends State<SearchQuery> {
   bool _startedSearching= false;
   List<String> autoCompWords=<String>[];
   List<List<dynamic>> searchResults=<List<dynamic>>[];
-  List<Post> postsRes=<Post>[];
+  List<PostModel> postsRes=<PostModel>[];
   List<Tag> tagRes= <Tag>[];
   List<Blog> blogResults=<Blog>[];
   @override
@@ -88,7 +88,7 @@ class _SearchQueryState extends State<SearchQuery> {
                                 searchResults= await getSearchResults(value);
                                 if(mounted)
                                   setState(() {
-                                  postsRes= searchResults[0] as List<Post>;
+                                  postsRes= searchResults[0] as List<PostModel>;
                                   tagRes= searchResults[1] as List<Tag>;
                                   blogResults= searchResults[2] as List<Blog>;
                                 });

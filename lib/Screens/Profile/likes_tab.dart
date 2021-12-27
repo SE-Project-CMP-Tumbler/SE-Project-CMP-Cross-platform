@@ -1,13 +1,13 @@
 // ignore_for_file: sort_constructors_first
 
 import "package:flutter/material.dart";
-import 'package:tumbler/Models/post.dart';
-import 'package:tumbler/Widgets/Post/post_overview.dart';
+import "package:tumbler/Models/post_model.dart";
+import "package:tumbler/Widgets/Post/post_overview.dart";
 // ignore: public_member_api_docs
 class LikesTab extends StatefulWidget {
   // ignore: public_member_api_docs
   final Color secondaryTextColor;
-  final List<Post> posts;
+  final List<PostModel> posts;
   // ignore: public_member_api_docs
   const LikesTab({ required final this.secondaryTextColor,
     required final this.posts,
@@ -51,9 +51,7 @@ class _LikesTabState extends State<LikesTab> {
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 18),
                   child: PostOutView(
-                    showEditPostBottomSheet:
-                    (){},
-                    post: widget.posts[0],
+                    post: widget.posts[0], index: 0,
                   ),
                 ),
             )

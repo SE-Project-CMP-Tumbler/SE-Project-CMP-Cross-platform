@@ -9,10 +9,10 @@ import "package:tumbler/Methods/get_all_blogs.dart";
 import "package:tumbler/Methods/get_tags.dart";
 import "package:tumbler/Methods/random_posts.dart";
 import "package:tumbler/Models/blog.dart";
-import "package:tumbler/Models/post.dart";
+import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Providers/tags.dart";
-import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Widgets/Exceptions_UI/error_dialog.dart";
 import "package:tumbler/Widgets/Search/check_out_blogs.dart";
 import "package:tumbler/Widgets/Search/check_out_tags.dart";
 import "package:tumbler/Widgets/Search/search_header.dart";
@@ -49,12 +49,12 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
   List<Tag> tags = <Tag>[];
   List<Blog> checkOutBlogs=<Blog>[];
   List<String> randomPostsImgUrl=<String>[];
-  List<Post> randomPosts=<Post>[];
+  List<PostModel> randomPosts=<PostModel>[];
   List<Tag> tagsToFollow=<Tag>[];
   List<Tag> trendingTags=<Tag>[];
   Map<Blog,Color> blogsBgColors=<Blog,Color>{};
   Map<Tag,Color> tagsBgColors=<Tag,Color>{};
-  Map<Tag, List<Post>> tagsPosts=<Tag, List<Post>>{};
+  Map<Tag, List<PostModel>> tagsPosts=<Tag, List<PostModel>>{};
   @override
   void initState() {
 
@@ -99,17 +99,17 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         _error = true;
         _isLoading = false;
       });
-      showErrorDialog(context, "error on check out blogs${error.toString()}");
+      showErrorDialog(context, "error on check out blogs\n${error.toString()}");
     });
     /// get random posts "try these posts"
-    await getRandomPosts().then((final List<Post> value) {
+    await getRandomPosts().then((final List<PostModel> value) {
       setState((){randomPosts= value;});
     }).catchError((final Object? error) {
       setState(() {
         _error = true;
         _isLoading = false;
       });
-      showErrorDialog(context,  "error on check out posts${error.toString()}");
+      showErrorDialog(context,  "error on check out posts\n${error.toString()}");
     });
     /// get random suggesting tags
     await getTagsToFollow().then((final List<Tag> value) {
@@ -125,7 +125,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         _error = true;
         _isLoading = false;
       });
-      showErrorDialog(context, "error on random suggesting tags"
+      showErrorDialog(context, "error on random suggesting tags\n"
           "${error.toString()}",);
 
     });
@@ -144,14 +144,15 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
       /// for each trending tag, get their posts
       for (final Tag tTag in trendingTags)
       {
-        await getTagPosts(tTag.tagDescription!).then((final List<Post> value) {
+        await getTagPosts(tTag.tagDescription!).then(
+                (final List<PostModel> value) {
           setState((){tagsPosts[tTag]= value;});
         }).catchError((final Object? error) {
           setState(() {
             _error = true;
             _isLoading = false;
           });
-          showErrorDialog(context, "from get tag posts ${error.toString()}");
+          showErrorDialog(context, "from get tag posts \n${error.toString()}");
         });
       }
     }).catchError((final Object? error) {
@@ -159,7 +160,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         _error = true;
         _isLoading = false;
       });
-      showErrorDialog(context,"from get trending tags ${error.toString()}");
+      showErrorDialog(context,"from get trending tags \n${error.toString()}");
     });
 
     /// get followed tags
@@ -177,7 +178,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         _isLoading = false;
         _error = true;
       });
-      showErrorDialog(context, "error from getting followed tags${error.toString()}");
+      showErrorDialog(context, "error from getting followed tags\n${error.toString()}");
     });
 
 

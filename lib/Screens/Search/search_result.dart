@@ -5,9 +5,8 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/urls.dart";
 import "package:tumbler/Methods/search_utils.dart";
 import "package:tumbler/Models/blog.dart";
-import "package:tumbler/Models/post.dart";
+import 'package:tumbler/Models/post_model.dart';
 import "package:tumbler/Models/tag.dart";
-import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 
@@ -35,7 +34,7 @@ class _SearchResultState extends State<SearchResult>
   final bool _error = false;
 
   List<List<dynamic>> searchResults=<List<dynamic>>[];
-  List<Post> postsRes=<Post>[];
+  List<PostModel> postsRes=<PostModel>[];
   List<Tag> tagRes= <Tag>[];
   List<Blog> blogResults=<Blog>[];
   List<Color> blogsBgColors=<Color>[RandomColor().randomColor()];
@@ -62,7 +61,7 @@ class _SearchResultState extends State<SearchResult>
     });
     searchResults= await getSearchResults(word);
     setState(() {
-      postsRes= searchResults[0] as List<Post>;
+      postsRes= searchResults[0] as List<PostModel>;
       tagRes= searchResults[1] as List<Tag>;
       blogResults= searchResults[2] as List<Blog>;
       blogsBgColors=<Color>[];
@@ -196,7 +195,7 @@ body: SafeArea(
                           child: Center(
                             child: Column(
 
-                              children: postsRes.map((final Post post) =>
+                              children: postsRes.map((final PostModel post) =>
                                   SizedBox(
                                     width: kIsWeb?500:_width,
                                     child: Padding(
@@ -205,13 +204,10 @@ body: SafeArea(
                                       ),
                                       child: Container(
                                         color: Colors.white,
-                                        child: PostOutView(
-                                          showEditPostBottomSheet: (){
-                                            showEditPostBottomSheet
-                                              (context, post.postTime);
-                                          },
+                                        child:Container() /**PostOutView(
                                           post: post,
-                                        ),
+                                          index: postsRes.indexOf(post),
+                                        ),**/
                                       ),
                                     ),
                                   ),)

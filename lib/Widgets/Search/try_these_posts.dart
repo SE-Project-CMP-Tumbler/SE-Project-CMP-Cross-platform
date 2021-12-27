@@ -3,7 +3,7 @@ import "package:flutter/foundation.dart" show kIsWeb;
 import "package:flutter/material.dart";
 import "package:flutter_html/flutter_html.dart";
 import "package:flutter_html/style.dart";
-import "package:tumbler/Models/post.dart";
+import "package:tumbler/Models/post_model.dart";
 /// to display random post images in the search page
 class TryThesePosts extends StatelessWidget {
 
@@ -13,7 +13,7 @@ class TryThesePosts extends StatelessWidget {
     final Key? key,
   }) : super(key: key);
   /// the url of images extracted from the random posts
-  final List<Post> randomPosts;
+  final List<PostModel> randomPosts;
   @override
   Widget build(final BuildContext context) {
     return Padding(

@@ -85,7 +85,7 @@ Future<List<Blog>> getRandomBlogs() async
             : "https://picsum.photos/200",
         blogDescription: blog["description"] ?? "",
         blogTitle: blog["title"] ?? "",
-        blogId: blog["id"],
+        blogId: blog["id"].toString(),
         username: blog["username"] ?? "",
       );
       checkoutBlogs.add(coBlog);
