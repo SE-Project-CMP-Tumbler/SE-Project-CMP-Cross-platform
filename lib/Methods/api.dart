@@ -51,6 +51,9 @@ class Api {
   final String _replyPost = dotenv.env["replyPost"] ?? " ";
   final String _reblog = dotenv.env["reblog"] ?? " ";
   final String _chats = dotenv.env["chats"] ?? " ";
+  final String _chatRoom = dotenv.env["chatRoom"] ?? " ";
+  final String _chatMessages = dotenv.env["chatMessages"] ?? " ";
+  final String _sendMessage = dotenv.env["sendMessage"] ?? " ";
   final String _followBlog = dotenv.env["follow_blog"] ?? " ";
   final String _followTag = dotenv.env["follow_tag"] ?? " ";
 
@@ -202,11 +205,10 @@ class Api {
     return jsonDecode(response.body);
   }
 
-
   ///get chats for that chats choose
   Future<dynamic> getChats() async {
     final http.Response response = await http
-        .get(
+        .post(
       Uri.parse(_host + _chats),
       headers: _headerContentAuth,
     )
@@ -214,6 +216,70 @@ class Api {
     return response;
   }
 
+  ///get chat messages
+  Future<dynamic> getMessages(String roomId) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(_host + _chatMessages + roomId),
+      headers: _headerContentAuth,
+      body: json.encode(<String, String>{
+        "from_blog_id": User.blogsIDs[User.currentProfile],
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
+  }
+
+  /// send message
+  Future<dynamic> sendMessages(String text, String photo, String roomId) async {
+    final http.Response response = await http
+        .post(
+      Uri.parse(_host + _sendMessage + roomId),
+      headers: _headerContentAuth,
+      body: json.encode(<String, String>{
+        "text": text
+        //, "photo": photo
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
+  }
+
+  ///get room id for chat
+  Future<dynamic> getRoomId(String to_blog_id) async {
+    print(User.blogsIDs[User.currentProfile]);
+    print(to_blog_id);
+    print("7araaaam");
+    final http.Response response = await http
+        .post(
+      Uri.parse(_host + _chatRoom),
+      headers: _headerContentAuth,
+      body: json.encode(<String, String>{
+        "from_blog_id": User.blogsIDs[User.currentProfile],
+        "to_blog_id": to_blog_id,
+      }),
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return response;
+  }
 
   /// Upload [image] to our server to get url of this image.
   Future<dynamic> uploadImage(final String image) async {
