@@ -1,6 +1,3 @@
-import "dart:convert";
-
-import "package:http/http.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/user.dart";
@@ -54,17 +51,15 @@ Future<bool> fillUserBlogs() async {
     return false;
   }
 }
+
 /// to get the "blogs" in "check out blogs section
-Future<List<Blog>> getRandomBlogs() async
-{
-  final List<Blog> checkoutBlogs=<Blog>[
-  ];
-  final Response res = await Api().fetchCheckOutBlogs();
-  final Map<String, dynamic> response= jsonDecode(res.body);
+Future<List<Blog>> getRandomBlogs() async {
+  final List<Blog> checkoutBlogs = <Blog>[];
+  final Map<String, dynamic> response = await Api().fetchCheckOutBlogs();
   final List<dynamic> blogs = response["response"]["blogs"];
   if (response["meta"]["status"] == "200") {
     for (final Map<String, dynamic> blog in blogs) {
-      print(blog.toString());
+      // print(blog.toString());
       final Blog coBlog = Blog(
         isPrimary: false,
         // don't care
@@ -72,15 +67,11 @@ Future<List<Blog>> getRandomBlogs() async
         // don't care
         allowSubmission: false,
         // don't care
-        avatarImageUrl: blog["avatar"]
-            .toString()
-            .isNotEmpty
+        avatarImageUrl: blog["avatar"].toString().isNotEmpty
             ? blog["avatar"].toString()
             : "https://i.pinimg.com/736x/89/90/48/899048ab0cc455154006fdb9676964b3.jpg",
         avatarShape: blog["avatar_shape"] ?? "circle",
-        headerImage: blog["header_image"]
-            .toString()
-            .isNotEmpty
+        headerImage: blog["header_image"].toString().isNotEmpty
             ? blog["header_image"].toString()
             : "https://picsum.photos/200",
         blogDescription: blog["description"] ?? "",

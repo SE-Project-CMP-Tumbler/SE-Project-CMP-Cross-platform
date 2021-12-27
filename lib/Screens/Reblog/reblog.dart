@@ -9,13 +9,14 @@ import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
-
 /// Type of Post
 enum PostTypes {
   /// Default Post type (Reblog)
   defaultPost,
+
   /// When Saved as Draft
   draftPost,
+
   /// When Posted as private
   privatePost
 }
@@ -42,6 +43,7 @@ class _ReblogState extends State<Reblog> {
   //bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
   String postButtonText = "Post";
+
   /// the current post type
   PostTypes postType = PostTypes.defaultPost;
 
@@ -58,11 +60,12 @@ class _ReblogState extends State<Reblog> {
     }
 
     final Map<String, dynamic> response = await Api().reblog(
-        User.blogsIDs[User.currentProfile],
-        widget.parentPostId,
-        processedHtml,
-        postOptionChoice,
-        "general",);
+      User.blogsIDs[User.currentProfile],
+      widget.parentPostId,
+      processedHtml,
+      postOptionChoice,
+      "general",
+    );
 
     if (response["meta"]["status"] == "200") {
       await showToast("Added Successfully");
@@ -72,7 +75,7 @@ class _ReblogState extends State<Reblog> {
     }
   }
 
-  Widget postTypeMenu(){
+  Widget postTypeMenu() {
     return Column(
       children: <Widget>[
         Row(
@@ -325,9 +328,7 @@ class _ReblogState extends State<Reblog> {
                   height: MediaQuery.of(context).size.height * .75,
                 ),
                 callbacks: Callbacks(
-                  onChangeContent: (final String? changed) async {
-                    
-                  },
+                  onChangeContent: (final String? changed) async {},
                 ),
               ),
             ],

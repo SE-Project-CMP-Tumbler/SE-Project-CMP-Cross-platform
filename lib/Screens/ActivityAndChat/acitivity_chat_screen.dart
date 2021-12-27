@@ -3,18 +3,18 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/Activity_Notifications/ask.dart";
 import "package:tumbler/Models/Activity_Notifications/follow.dart";
 import "package:tumbler/Models/Activity_Notifications/mention.dart";
 import "package:tumbler/Models/Activity_Notifications/reblog.dart";
 import "package:tumbler/Models/Activity_Notifications/time_packet.dart";
 import "package:tumbler/Models/user.dart";
+import "package:tumbler/Screens/ActivityAndChat/chat_out_view.dart";
 import "package:tumbler/Widgets/Activity_Notifications/time_packet_contianer.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Exceptions_UI/generic_exception.dart";
-
-import "package:tumbler/Screens/ActivityAndChat/chat_out_view.dart";
 
 /// [blogType] is an Enumerator for specifing two different reblogs types
 enum ActivityOrChat {
@@ -143,6 +143,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
 
       return true;
     } else {
+      await showToast(response["meta"]["msg"]);
       setState(() {
         _isEmpty = false;
         _isLoading = false;
@@ -154,16 +155,16 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
 
   @override
   void initState() {
-    getActivity().then((final _) {
-      setState(() {});
-    });
+    super.initState();
     tabController = TabController(vsync: this, length: 2);
 
     /// Animation controller for the color varying loading spinner
     loadingSpinnerAnimationController =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     loadingSpinnerAnimationController.repeat();
-    super.initState();
+    getActivity().then((final _) {
+      setState(() {});
+    });
   }
 
   @override

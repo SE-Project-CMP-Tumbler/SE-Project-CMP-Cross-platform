@@ -3,6 +3,7 @@ import "package:flutter/material.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Screens/Search/search_query.dart";
+
 ///  This is the search header , it contains
 ///  the randomly changed background and the search bar
 class SearchHeader extends StatelessWidget {
@@ -15,15 +16,19 @@ class SearchHeader extends StatelessWidget {
     required final this.isExpanded,
     required final this.recommendedTags,
     final Key? key,
-
-  }) : _height = height, _width = width, super(key: key);
+  })  : _height = height,
+        _width = width,
+        super(key: key);
 
   final double _height;
   final double _width;
+
   /// backGrounds to display
   final String backGround;
+
   /// to indicate whether the app is scrolled or not
   final bool isExpanded;
+
   /// a list of recommended tags to be used a recommended words to search about
   final List<Tag> recommendedTags;
 
@@ -58,20 +63,22 @@ class SearchHeader extends StatelessWidget {
                     right: 16,
                   ),
                   child: GestureDetector(
-                    onTap: (){
-                      Navigator.push(context,
-                      MaterialPageRoute<SearchQuery>(
-                          builder:
-                      (final BuildContext context)
-                      => SearchQuery(recommendedTags: recommendedTags,),),);
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<SearchQuery>(
+                          builder: (final BuildContext context) => SearchQuery(
+                            recommendedTags: recommendedTags,
+                          ),
+                        ),
+                      );
                     },
                     child: AnimatedContainer(
                       curve: Curves.fastOutSlowIn,
                       duration: const Duration(milliseconds: 300),
                       decoration: const BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(25)),
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
                       ),
                       width: isExpanded ? _width * 0.7 : _width,
                       child: Padding(

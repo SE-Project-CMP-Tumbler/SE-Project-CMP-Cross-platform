@@ -19,6 +19,7 @@ class ReblogTileWithOutComments extends StatelessWidget {
 
   /// User Name
   final String userName;
+
   /// Shape
   final String avatarShape;
 

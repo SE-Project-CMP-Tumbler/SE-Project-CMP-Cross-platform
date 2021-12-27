@@ -8,11 +8,11 @@ import "package:tumbler/Models/user.dart";
 
 /// Class [Api] is used for all GET, POST, PUT, Delete request from the backend.
 class Api {
-  static const String _firebaseHost =
-      "https://mock-back-default-rtdb.firebaseio.com";
-  static const String _postmanMockHost="http://ba5d-41-68-74-128.ngrok.io";
-  static const String _autocompleteMock= "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
-  static const String _mockSearch ="https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
+  static const String _postmanMockHost = "http://ba5d-41-68-74-128.ngrok.io";
+  static const String _autocompleteMock =
+      "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
+  static const String _mockSearch =
+      "https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
 
   final String _host = dotenv.env["host"] ?? " ";
   final String _getTrendingTags = dotenv.env["getTrendingTags"] ?? " ";
@@ -35,15 +35,15 @@ class Api {
   final String _published = dotenv.env["published"] ?? " ";
   final String _draft = dotenv.env["draft"] ?? " ";
   final String _posts = dotenv.env["Posts"] ?? " ";
-  final String _followedTags= dotenv.env["follow_Tag"]??" ";
-  final String _checkOutBlogs= dotenv.env["checkOutBlogs"]??" ";
-  final String _randomPosts= dotenv.env["randomPosts"]??"";
-  final String _checkOutTags= dotenv.env["checkOutTags"]??"";
-  final String _tagPosts= dotenv.env["tagPosts"]??"";
-  final String _topPosts= dotenv.env["topPosts"]??"";
-  final String _recentPosts= dotenv.env["recentPosts"]??"";
-  final String _autoComplete= dotenv.env["searchAutoComplete"]??"";
-  final String _search= dotenv.env["search"]??"";
+  final String _followedTags = dotenv.env["follow_tag"] ?? " ";
+  final String _checkOutBlogs = dotenv.env["checkOutBlogs"] ?? " ";
+  final String _randomPosts = dotenv.env["randomPosts"] ?? "";
+  final String _checkOutTags = dotenv.env["checkOutTags"] ?? "";
+  final String _tagPosts = dotenv.env["tagPosts"] ?? "";
+  final String _topPosts = dotenv.env["topPosts"] ?? "";
+  final String _recentPosts = dotenv.env["recentPosts"] ?? "";
+  final String _autoComplete = dotenv.env["searchAutoComplete"] ?? "";
+  final String _search = dotenv.env["search"] ?? "";
   final String _postNotes = dotenv.env["postNotes"] ?? " ";
   final String _postLikeStatus = dotenv.env["postLikeStatus"] ?? " ";
   final String _followings = dotenv.env["followings"] ?? " ";
@@ -206,83 +206,63 @@ class Api {
   }
 
   ///get chats for that chats choose
-  Future<dynamic> getChats() async {
+  Future<Map<String, dynamic>> getChats() async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _chats),
-      headers: _headerContentAuth,
-    )
+          Uri.parse(_host + _chats),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
-    return response;
+    return jsonDecode(response.body);
   }
 
   ///get chat messages
-  Future<dynamic> getMessages(String roomId) async {
+  Future<Map<String, dynamic>> getMessages(final String roomId) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _chatMessages + roomId),
-      headers: _headerContentAuth,
-      body: json.encode(<String, String>{
-        "from_blog_id": User.blogsIDs[User.currentProfile],
-      }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    return response;
+          Uri.parse(_host + _chatMessages + roomId),
+          headers: _headerContentAuth,
+          body: json.encode(<String, String>{
+            "from_blog_id": User.blogsIDs[User.currentProfile],
+          }),
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
   }
 
   /// send message
-  Future<dynamic> sendMessages(String text, String photo, String roomId) async {
+  Future<Map<String, dynamic>> sendMessages(
+    final String text,
+    final String photo,
+    final String roomId,
+  ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _sendMessage + roomId),
-      headers: _headerContentAuth,
-      body: json.encode(<String, String>{
-        "text": text
-        //, "photo": photo
-      }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    return response;
+          Uri.parse(_host + _sendMessage + roomId),
+          headers: _headerContentAuth,
+          body: json.encode(<String, String>{"text": text}),
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
   }
 
   ///get room id for chat
-  Future<dynamic> getRoomId(String to_blog_id) async {
-    print(User.blogsIDs[User.currentProfile]);
-    print(to_blog_id);
-    print("7araaaam");
+  Future<Map<String, dynamic>> getRoomId(final String toBlogId) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _chatRoom),
-      headers: _headerContentAuth,
-      body: json.encode(<String, String>{
-        "from_blog_id": User.blogsIDs[User.currentProfile],
-        "to_blog_id": to_blog_id,
-      }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    return response;
+          Uri.parse(_host + _chatRoom),
+          headers: _headerContentAuth,
+          body: json.encode(<String, String>{
+            "from_blog_id": User.blogsIDs[User.currentProfile],
+            "to_blog_id": toBlogId,
+          }),
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
   }
 
   /// Upload [image] to our server to get url of this image.
-  Future<dynamic> uploadImage(final String image) async {
+  Future<Map<String, dynamic>> uploadImage(final String image) async {
     final http.Response response = await http
         .post(
           Uri.parse(_host + _uploadImage),
@@ -391,7 +371,6 @@ class Api {
 
   /// GET Posts For the Home Page
   Future<Map<String, dynamic>> fetchHomePosts(final int page) async {
-    print(_host + _dashboard + "?page=$page");
     final http.Response response = await http
         .get(
           Uri.parse(_host + _dashboard + "?page=$page"),
@@ -460,14 +439,14 @@ class Api {
   ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(
-        _host + _replyPost + postId,
-      ),
-      body: jsonEncode(<String, String>{
-        "reply_text": text,
-      }),
-      headers: _headerContentAuth,
-    )
+          Uri.parse(
+            _host + _replyPost + postId,
+          ),
+          body: jsonEncode(<String, String>{
+            "reply_text": text,
+          }),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
@@ -478,11 +457,11 @@ class Api {
   ) async {
     final http.Response response = await http
         .delete(
-      Uri.parse(
-        _host + _followBlog + blogId,
-      ),
-      headers: _headerContentAuth,
-    )
+          Uri.parse(
+            _host + _followBlog + blogId,
+          ),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
@@ -493,123 +472,13 @@ class Api {
   ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(
-        _host + _blog + "/" + blogId + "/notifications",
-      ),
-      headers: _headerContentAuth,
-    )
+          Uri.parse(
+            _host + _blog + "/" + blogId + "/notifications",
+          ),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
-
-    return <String, dynamic>{
-      // ignore: always_specify_types
-      "meta": {"status": "200", "msg": "ok"},
-      // ignore: always_specify_types
-      "response": {
-        // ignore: always_specify_types
-        "notifications": {
-          // ignore: always_specify_types
-          "answers": [
-            // ignore: always_specify_types
-            {
-              "blog_avatar":
-                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
-              "blog_avatar_shape": "circle",
-              "blog_username": "radwa-ahmed213",
-              "blog_title": "Positive Quotes",
-              "blog_id": 1032,
-              "answer_time": "2021-05-05 00:11",
-              "post_id": 5,
-              "post_body":
-                  "<div><h1>What's Artificial intellegence? </h1><img src='https://modo3.com/thumbs/fit630x300/84738/1453981470/%D8%A8%D8%AD%D8%AB_%D8%B9%D9%86_Google.jpg' alt=''><p>It's the weapon that'd end the humanity!!</p><video width='320' height='240' controls><source src='movie.mp4' type='video/mp4'><source src='movie.ogg' type='video/ogg'>Your browser does not support the video tag.</video><p>#AI #humanity #freedom</p></div>",
-              "post_type": "text"
-            }
-          ],
-          // ignore: always_specify_types
-          "reblogs": [
-            // ignore: always_specify_types
-            {
-              "blog_avatar":
-                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
-              "blog_avatar_shape": "circle",
-              "blog_username": "radwa-ahmed213",
-              "blog_title": "Positive Quotes",
-              "blog_id": 1032,
-              "post_time": "2021-08-12 00:23",
-              "post_id": 5,
-              "post_body":
-                  "<div><h1>What's Artificial intellegence? </h1><img src='https://modo3.com/thumbs/fit630x300/84738/1453981470/%D8%A8%D8%AD%D8%AB_%D8%B9%D9%86_Google.jpg' alt=''><p>It's the weapon that'd end the humanity!!</p><video width='320' height='240' controls><source src='movie.mp4' type='video/mp4'><source src='movie.ogg' type='video/ogg'>Your browser does not support the video tag.</video><p>#AI #humanity #freedom</p></div>",
-              "post_type": "text"
-            }
-          ],
-          // ignore: always_specify_types
-          "asks": [
-            // ignore: always_specify_types
-            {
-              "question_body": "How are you?",
-              "question_id": 5,
-              "flag": false,
-              "ask_time": "2021-09-05 00:22",
-              "blog_avatar":
-                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
-              "blog_avatar_shape": "circle",
-              "blog_username": "radwa-ahmed213",
-              "blog_id": 1032
-            }
-          ],
-          // ignore: always_specify_types
-          "follows": [
-            // ignore: always_specify_types
-            {
-              "follow_time": "2021-08-12 00:17",
-              "blog_avatar":
-                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
-              "blog_avatar_shape": "circle",
-              "blog_username": "radwa-ahmed213",
-              "blog_id": 1032
-            }
-          ],
-          // ignore: always_specify_types
-          "mentions_posts": [
-            // ignore: always_specify_types
-            {
-              "mention_time": "2021-07-15 00:19",
-              "blog_avatar_mentioning": "/storage/imgname2.extension",
-              "blog_avatar_shape_mentioning": "circle",
-              "blog_username_mentioning": "radwa-ahmed213",
-              "blog_id_mentioning": 1032,
-              "blog_avatar":
-                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
-              "blog_avatar_shape": "circle",
-              "blog_username": "radwa-ahmed213",
-              "blog_id": 1032,
-              "post_id": 5,
-              "post_body":
-                  "<div><h1>What's Artificial intellegence? </h1><img src='https://modo3.com/thumbs/fit630x300/84738/1453981470/%D8%A8%D8%AD%D8%AB_%D8%B9%D9%86_Google.jpg' alt=''><p>It's the weapon that'd end the humanity!!</p><video width='320' height='240' controls><source src='movie.mp4' type='video/mp4'><source src='movie.ogg' type='video/ogg'>Your browser does not support the video tag.</video><p>#AI #humanity #freedom</p></div>",
-              "post_type ": "text"
-            }
-          ],
-          // ignore: always_specify_types
-          "mentions_replies": [
-            // ignore: always_specify_types
-            {
-              "mention_time": "2021-02-20 00:21",
-              "blog_avatar_mentioning": "/storage/imgname2.extension",
-              "blog_avatar_shape_mentioning": "circle",
-              "blog_username_mentioning": "radwa-ahmed213",
-              "blog_id_mentioning": 1032,
-              "blog_avatar":
-                  "https://cdnb.artstation.com/p/assets/images/images/043/022/785/large/giovani-kososki-joao-close-face.jpg?1636070573",
-              "blog_avatar_shape": "circle",
-              "blog_username": "radwa-ahmed213",
-              "blog_id": 1032,
-              "reply_id": 5,
-              "reply_text": "Hello "
-            }
-          ]
-        }
-      }
-    };
-    //return jsonDecode(response.body);
+    return jsonDecode(response.body);
   }
 
   /// Upload HTML code of the reblog.
@@ -622,14 +491,14 @@ class Api {
   ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _reblog + blogId + "/" + parentPostId),
-      headers: _headerContentAuth,
-      body: jsonEncode(<String, String>{
-        "post_status": postStatus,
-        "post_type": postType,
-        "post_body": postBody
-      }),
-    )
+          Uri.parse(_host + _reblog + blogId + "/" + parentPostId),
+          headers: _headerContentAuth,
+          body: jsonEncode(<String, String>{
+            "post_status": postStatus,
+            "post_type": postType,
+            "post_body": postBody
+          }),
+        )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
@@ -690,18 +559,18 @@ class Api {
 
   /// blogs
   /// Make GET Request to the API to get List of all blogs (Profiles).
-  Future<dynamic> getBlogs() async {
+  Future<Map<String, dynamic>> getBlogs() async {
     final http.Response response = await http
         .get(
           Uri.parse(_host + _blog),
           headers: _headerContentAuth,
         )
         .onError(errorFunction);
-    return response;
+    return jsonDecode(response.body);
   }
 
   /// Post a new blog
-  Future<dynamic> postNewBlog(
+  Future<Map<String, dynamic>> postNewBlog(
     final String blogUserName,
   ) async {
     final http.Response response = await http
@@ -714,7 +583,7 @@ class Api {
           }),
         )
         .onError(errorFunction);
-    return response;
+    return jsonDecode(response.body);
   }
 
   /// to get the Information of a specific blog
@@ -762,7 +631,6 @@ class Api {
           headers: _headerContentAuth,
         )
         .onError(errorFunction);
-
     return jsonDecode(response.body);
   }
 
@@ -837,160 +705,176 @@ class Api {
   }
 
   /// to unfollows specific tag
-  Future<Map<String, dynamic>> unFollowTag(final String tagDescription,
-      {final bool mock=false,})
-  async{
-    final String host= mock? _postmanMockHost: _host;
+  Future<Map<String, dynamic>> unFollowTag(
+    final String tagDescription, {
+    final bool mock = false,
+  }) async {
+    final String host = mock ? _postmanMockHost : _host;
     final http.Response response = await http
-        .delete(Uri.parse(host + _followedTags + tagDescription,),
-      headers: _headerContentAuth,)
-        .onError((final Object? error, final StackTrace stackTrace) {
-
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+        .delete(
+          Uri.parse(
+            host + _followedTags + tagDescription,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
-
   }
 
   /// to unfollow specific blog
   Future<Map<String, dynamic>> unFollowBlog(final int blogID) async {
     final http.Response response = await http
         .delete(
-      Uri.parse(_host + _followBlog + blogID.toString()),
-      headers: _headerContentAuth,
-    )
+          Uri.parse(_host + _followBlog + blogID.toString()),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
   /// get posts of specific tag
-  Future<dynamic> fetchTagPosts(final String tagDescription,
-      {final bool mock= false, final bool recent=true,}) async {
-
-    final String host= mock? _postmanMockHost: _host;
+  Future<Map<String, dynamic>> fetchTagPosts(
+    final String tagDescription, {
+    final bool mock = false,
+    final bool recent = true,
+  }) async {
+    final String host = mock ? _postmanMockHost : _host;
     final http.Response response = await http
-        .get(Uri.parse(host + _tagPosts+
-        tagDescription +(recent?_recentPosts:_topPosts),),
-      headers: _headerContentAuth,)
+        .get(
+          Uri.parse(
+            host +
+                _tagPosts +
+                tagDescription +
+                (recent ? _recentPosts : _topPosts),
+          ),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
-    return response;
+    return jsonDecode(response.body);
   }
+
   /// fetching words for auto complete search text field
-  Future<dynamic> fetchAutoComplete(final String word,{final bool mock=false})
-  async{
-    final String host= mock? _autocompleteMock: _host;
+  Future<Map<String, dynamic>> fetchAutoComplete(
+    final String word, {
+    final bool mock = false,
+  }) async {
+    final String host = mock ? _autocompleteMock : _host;
     final http.Response response = await http
-        .get(Uri.parse(host + _autoComplete + word),
-      headers: _headerContentAuth,)
+        .get(
+          Uri.parse(host + _autoComplete + word),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
     // print("words autocomplete results");
-    // print(response.body);
-
-    return response;
-
-  }
-
-  /// Tags requests
-  /// fetch all the tags that a specific blog follows
-  Future<dynamic> fetchTagsFollowed({final bool mock= true}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _followedTags),
-      headers: _headerContentAuth,
-    )
-
-        .onError(errorFunction);
-    // print("tags followes");
-    return response;
-  }
-  /// get the details of a specific tag
-  Future<dynamic> fetchTagsDetails({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _followedTags),
-      headers: _headerContentAuth,
-    )
-        .onError(errorFunction);
-    return response;
-  }
-  /// get "Check out these tags"
-  Future<dynamic> fetchCheckOutTags({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _checkOutTags),
-      headers: _headerContentAuth,
-    )
-
-        .onError(errorFunction);
-    // print("check out tags");
-    // print(response.body);
-    return response;
-  }
-  /// get "Check out these blogs"
-  Future<dynamic> fetchCheckOutBlogs({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _checkOutBlogs),
-      headers: _headerContentAuth,
-    )
-
-        .onError(errorFunction);
-    // print("check out blogs");
-    // print(response.body);
-
-    return response;
-  }
-
-  /// get random posts
-  Future<dynamic> fetchRandomPosts({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _randomPosts),
-      headers: _headerContentAuth,
-    )
-        .onError(errorFunction);
-
-    return response;
-  }
-
-  /// get trending tags to follow
-  Future<dynamic> fetchTrendingTags({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http
-        .get(Uri.parse(host + _getTrendingTags),
-      headers: _headerContentAuth,
-    )
-        .onError(errorFunction);
-    // print("trending tags results");
     // print(response.body);
 
     return jsonDecode(response.body);
   }
 
-  /// fetching words for search results
-  Future<dynamic> fetchSearchResults(final String word,{final bool mock=false})
-  async{
-    final String host= mock? _mockSearch: _host;
+  /// Tags requests
+  /// fetch all the tags that a specific blog follows
+  Future<Map<String, dynamic>> fetchTagsFollowed({
+    final bool mock = false,
+  }) async {
+    final String host = mock ? _postmanMockHost : _host;
     final http.Response response = await http
-        .get(Uri.parse(host + _search + word,),
-      headers: _headerContentAuth,)
-        .onError((final Object? error, final StackTrace stackTrace) {
+        .get(
+          Uri.parse(host + _followedTags),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
 
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    // print("words search results");
+  /// get the details of a specific tag
+  Future<Map<String, dynamic>> fetchTagsDetails({
+    final bool mock = false,
+  }) async {
+    final String host = mock ? _postmanMockHost : _host;
+    final http.Response response = await http
+        .get(
+          Uri.parse(host + _followedTags),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// get "Check out these tags"
+  Future<Map<String, dynamic>> fetchCheckOutTags({
+    final bool mock = false,
+  }) async {
+    final String host = mock ? _postmanMockHost : _host;
+    final http.Response response = await http
+        .get(
+          Uri.parse(host + _checkOutTags),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    // print("check out tags");
     // print(response.body);
+    return jsonDecode(response.body);
+  }
 
-    return response;
+  /// get "Check out these blogs"
+  Future<Map<String, dynamic>> fetchCheckOutBlogs({
+    final bool mock = false,
+  }) async {
+    final String host = mock ? _postmanMockHost : _host;
+    final http.Response response = await http
+        .get(
+          Uri.parse(host + _checkOutBlogs),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
+    return jsonDecode(response.body);
+  }
+
+  /// get random posts
+  Future<Map<String, dynamic>> fetchRandomPosts({
+    final bool mock = false,
+  }) async {
+    final String host = mock ? _postmanMockHost : _host;
+    final http.Response response = await http
+        .get(
+          Uri.parse(host + _randomPosts),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+
+    return jsonDecode(response.body);
+  }
+
+  /// get trending tags to follow
+  Future<Map<String, dynamic>> fetchTrendingTags({
+    final bool mock = false,
+  }) async {
+    final String host = mock ? _postmanMockHost : _host;
+    final http.Response response = await http
+        .get(
+          Uri.parse(host + _getTrendingTags),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// fetching words for search results
+  Future<Map<String, dynamic>> fetchSearchResults(
+    final String word, {
+    final bool mock = false,
+  }) async {
+    final String host = mock ? _mockSearch : _host;
+    final http.Response response = await http
+        .get(
+          Uri.parse(
+            host + _search + word,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
   }
 }

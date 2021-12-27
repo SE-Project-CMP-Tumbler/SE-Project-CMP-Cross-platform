@@ -1,15 +1,14 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
+import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/show_toast.dart";
+import "package:tumbler/Models/chat.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
-import 'package:tumbler/Methods/api.dart';
-import "package:tumbler/Models/chat.dart";
-import "package:tumbler/Models/http_requests_exceptions.dart";
-import 'package:tumbler/Widgets/Post/post_personal_avatar.dart';
 
+/// Chat Page
 class Chats extends StatefulWidget {
-  const Chats({Key? key}) : super(key: key);
+  /// Constructor
+  const Chats({final Key? key}) : super(key: key);
 
   @override
   _ChatsState createState() => _ChatsState();
@@ -23,87 +22,97 @@ String photo1 =
     "https://deadline.com/wp-content/uploads/2020/11/Stephen-Lang-Headshot-Matt-Sayles-e1605093774374.jpg";
 //Chat(this.last_message, this.photo, this.blog_id, this.blog_username,
 // this.blog_avatar, this.blog_avatar_shape, this.blog_title);
-List<Chat> chats = [
+List<Chat> chats = <Chat>[
   Chat("salam now", "", 15, "el7ag abbas", photo1, "", "", true),
   Chat("gmadan", "", 13, "Waleed", photo2, "", "", false),
   Chat("<3", "", 12, "Ziyad Hassan", photo3, "", "", true),
-  Chat("a5oia", "", 12, "El-NeBo",
-      "https://avatars.githubusercontent.com/u/62252633?v=4", "", "", true),
+  Chat(
+    "a5oia",
+    "",
+    12,
+    "El-NeBo",
+    "https://avatars.githubusercontent.com/u/62252633?v=4",
+    "",
+    "",
+    true,
+  ),
 ];
-void loadChats() async {
+
+Future<void> loadChats() async {
   // clear all loaded post.
-  final dynamic res = await Api().getChats();
-  print(res.body);
+  final Map<String, dynamic> response = await Api().getChats();
   //checking the status code of the received response.
-  if (res.statusCode == 401)
-    throw HttpException("You are not authorized");
-  else if (res.statusCode == 404) {
-    throw HttpException("Not Found!");
-  }
-  chats.clear();
-  final Map<String, dynamic> encodedRes = jsonDecode(res.body);
-  final dynamic response = await Api().getChats();
-  final List<dynamic> chatsList = encodedRes["response"]["chat_messages"];
-  for (int i = 0; i < chatsList.length; i++) {
-    chats.add(
-      Chat(
-        chatsList[i]["text"],
-        chatsList[i]["photo"],
-        chatsList[i]["blog_id"] as int,
-        chatsList[i]["blog_username"],
-        chatsList[i]["blog_avatar"],
-        chatsList[i]["blog_avatar_shape"],
-        chatsList[i]["blog_title"],
-        chatsList[i]["read"] as bool,
-      ),
-    );
-  }
+  if (response["meta"]["status"] == "200") {
+    chats.clear();
+    final List<dynamic> chatsList = response["response"]["chat_messages"];
+    for (int i = 0; i < chatsList.length; i++) {
+      chats.add(
+        Chat(
+          chatsList[i]["text"],
+          chatsList[i]["photo"],
+          chatsList[i]["blog_id"] as int,
+          chatsList[i]["blog_username"],
+          chatsList[i]["blog_avatar"],
+          chatsList[i]["blog_avatar_shape"],
+          chatsList[i]["blog_title"],
+          chatsList[i]["read"] as bool,
+        ),
+      );
+    }
+  } else
+    await showToast(response["meta"]["msg"]);
 }
 
 class _ChatsState extends State<Chats> {
+  @override
   void initState() {
     super.initState();
 
     //setState(() => loadChats());
   }
 
-  _buildChat(Chat chat) {
+  Widget _buildChat(final Chat chat) {
     return Column(
-      children: [
+      children: <Widget>[
         GestureDetector(
           onTap: () {
-            print(chat.blog_username);
+            // print(chat.blogUsername);
           },
           child: Row(
-            children: [
+            children: <Widget>[
               PersonAvatar(
-                avatarPhotoLink: chat.blog_avatar,
-                shape: chat.blog_avatar_shape,
-                blogID: chat.blog_id.toString(),
+                avatarPhotoLink: chat.blogAvatar,
+                shape: chat.blogAvatarShape,
+                blogID: chat.blogID.toString(),
               ),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 10),
+                margin: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
-                  children: [
-                    chat.read
-                        ? Row(children: [
-                            Text(
-                              chat.blog_username,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            )
-                          ])
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                                Text(
-                                  chat.blog_username,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blue),
-                                ),
-                              ]),
+                  children: <Widget>[
+                    if (chat.read)
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            chat.blogUsername,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      )
+                    else
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            chat.blogUsername,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
                     Row(
-                      children: [Text(chat.last_message)],
+                      children: <Widget>[Text(chat.lastMessage)],
                     ),
                   ],
                 ),
@@ -111,29 +120,27 @@ class _ChatsState extends State<Chats> {
             ],
           ),
         ),
-        Container(
-          child: Divider(
-            //height: 10,
-            thickness: 1,
-            color: Colors.grey.withOpacity(0.3),
-          ),
+        Divider(
+          //height: 10,
+          thickness: 1,
+          color: Colors.grey.withOpacity(0.3),
         ),
       ],
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           //leading: ProfilesList(),
-          title: ProfilesList(),
+          title: const ProfilesList(),
           actions: <Widget>[
             PopupMenuButton<dynamic>(
-              icon: Icon(
+              icon: const Icon(
                 Icons.more_vert,
                 color: Colors.black,
               ),
@@ -152,19 +159,17 @@ class _ChatsState extends State<Chats> {
           ],
         ),
         body: Column(
-          children: [
-            Row(children: [Text("From Waleed")]),
+          children: <Widget>[
+            Row(children: const <Widget>[Text("From Waleed")]),
             Expanded(
-              child: Container(
-                child: ListView.builder(
-                  padding: EdgeInsets.only(top: 15.0),
-                  itemCount: chats.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final chat = chats[index];
+              child: ListView.builder(
+                padding: const EdgeInsets.only(top: 15),
+                itemCount: chats.length,
+                itemBuilder: (final BuildContext context, final int index) {
+                  final Chat chat = chats[index];
 
-                    return _buildChat(chat);
-                  },
-                ),
+                  return _buildChat(chat);
+                },
               ),
             ),
           ],
@@ -173,4 +178,3 @@ class _ChatsState extends State<Chats> {
     );
   }
 }
-

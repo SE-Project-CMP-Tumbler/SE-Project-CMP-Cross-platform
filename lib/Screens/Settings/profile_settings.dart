@@ -76,8 +76,7 @@ class ProfileSettings extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<ShowDraft>(
-                    builder: (final BuildContext context) =>
-                        const ShowDraft(),
+                    builder: (final BuildContext context) => const ShowDraft(),
                   ),
                 );
               },

@@ -5,7 +5,7 @@ import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/post_model.dart";
-import 'package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart';
+import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Exceptions_UI/generic_exception.dart";
 import "package:tumbler/Widgets/Home/home_sliver_app_bar.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
@@ -151,9 +151,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: NestedScrollView(
                 floatHeaderSlivers: true,
                 controller: ScrollController(),
-                headerSliverBuilder:
-                    (final BuildContext context, final bool innerBoxIsScrolled) =>
-                        <Widget>[
+                headerSliverBuilder: (final BuildContext context,
+                        final bool innerBoxIsScrolled,) =>
+                    <Widget>[
                   HomePageAppBar(
                     section: section,
                     changeSection: changeSection,

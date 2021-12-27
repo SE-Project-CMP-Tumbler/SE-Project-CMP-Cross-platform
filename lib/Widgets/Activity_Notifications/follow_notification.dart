@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Activity_Notifications/avatar_with_icon.dart";
 
-
 /// Widget that represent the new following notification in activity page
 class FollowNotificationWidget extends StatelessWidget {
   ///taked the user name and avatar url
@@ -22,7 +21,7 @@ class FollowNotificationWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
-        children: <Widget> [
+        children: <Widget>[
           AvatarWithIcon(
             avatarUrl: avatarUrl,
             iconType: "follow",

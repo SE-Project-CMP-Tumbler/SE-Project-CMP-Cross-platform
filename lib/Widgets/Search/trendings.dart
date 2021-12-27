@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Widgets/Search/trending_comp.dart";
+
 /// to show trendings tags
 class Trending extends StatelessWidget {
   /// constructor takes a list of trending tags
@@ -16,6 +17,7 @@ class Trending extends StatelessWidget {
 
   /// map of each tag with its posts
   final Map<Tag, List<PostModel>> tagPosts;
+
   @override
   Widget build(final BuildContext context) {
     return Padding(
@@ -24,8 +26,7 @@ class Trending extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const Padding(
-            padding:
-            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
               "Trending now",
               textScaleFactor: 1.4,
@@ -36,12 +37,14 @@ class Trending extends StatelessWidget {
             ),
           ),
           Column(
-            children: trendingTags.map((final Tag item) =>
-                TrendingComponent(
-                  tag: item,
-                  index: trendingTags.indexOf(item),
-                  posts:tagPosts[item]??<PostModel>[],),
-            )
+            children: trendingTags
+                .map(
+                  (final Tag item) => TrendingComponent(
+                    tag: item,
+                    index: trendingTags.indexOf(item),
+                    posts: tagPosts[item] ?? <PostModel>[],
+                  ),
+                )
                 .toList(),
           ),
         ],
@@ -49,4 +52,3 @@ class Trending extends StatelessWidget {
     );
   }
 }
-
