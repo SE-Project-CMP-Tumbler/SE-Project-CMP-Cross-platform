@@ -1,8 +1,25 @@
-// ignore_for_file: lines_longer_than_80_chars
-
+import "dart:math";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:random_color/random_color.dart";
 import "package:tumbler/Constants/colors.dart";
+import "package:tumbler/Constants/random_bg.dart";
+import "package:tumbler/Methods/get_all_blogs.dart";
+import "package:tumbler/Methods/get_tags.dart";
+import "package:tumbler/Methods/random_posts.dart";
+import "package:tumbler/Models/blog.dart";
+import "package:tumbler/Models/post_model.dart";
+import "package:tumbler/Models/tag.dart";
+import "package:tumbler/Providers/tags.dart";
+import "package:tumbler/Widgets/Exceptions_UI/error_dialog.dart";
+import "package:tumbler/Widgets/Search/check_out_blogs.dart";
+import "package:tumbler/Widgets/Search/check_out_tags.dart";
+import "package:tumbler/Widgets/Search/search_header.dart";
+import "package:tumbler/Widgets/Search/tags_you_follow.dart";
+import "package:tumbler/Widgets/Search/trendings.dart";
+import "package:tumbler/Widgets/Search/try_these_posts.dart";
+
 
 /// to search for tumblers
 class SearchPage extends StatefulWidget {
@@ -13,12 +30,163 @@ class SearchPage extends StatefulWidget {
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
-  final List<String> _tabs = <String>["Posts", "Likes", "Following"];
+class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
   bool isExpanded = true;
+  /// true when posts are loading.
+  bool _isLoading = false;
+
+  /// true when error occurred
+  bool _error = false;
+
+  /// true when it's first time to load
+  bool _firstTime =true;
+
+  /// random index of background
+  int _bgIndex= 1;
+  AnimationController? loadingSpinnerAnimationController;
+
+  final List<String> backGrounds = randomBg;
+  List<Tag> tags = <Tag>[];
+  List<Blog> checkOutBlogs=<Blog>[];
+  List<String> randomPostsImgUrl=<String>[];
+  List<PostModel> randomPosts=<PostModel>[];
+  List<Tag> tagsToFollow=<Tag>[];
+  List<Tag> trendingTags=<Tag>[];
+  Map<Blog,Color> blogsBgColors=<Blog,Color>{};
+  Map<Tag,Color> tagsBgColors=<Tag,Color>{};
+  Map<Tag, List<PostModel>> tagsPosts=<Tag, List<PostModel>>{};
+  @override
+  void initState() {
+
+    super.initState();
+    /// Animation controller for the color varying loading spinner
+    loadingSpinnerAnimationController =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    loadingSpinnerAnimationController!.repeat();
+    getFollowedTags();
+  }
 
   @override
+  void dispose() {
+    loadingSpinnerAnimationController!.dispose();
+    super.dispose();
+  }
+
+  Future<void> getFollowedTags() async {
+    if (Provider.of<Tags>(context, listen: false).followedTags.isEmpty) {
+        await refreshSearchPage(
+          context,
+        );
+    }
+  }
+  /// Responsible refreshing search page
+  Future<void> refreshSearchPage(final BuildContext context,)
+  async {
+    _error = false;
+    setState((){
+      _isLoading = true;
+
+    });
+    /// get random blogs
+    await getRandomBlogs().then((final List<Blog> value) {
+      setState((){checkOutBlogs= value;});
+      for(int i =0; i<value.length; i++)
+        {
+          blogsBgColors[value[i]]= RandomColor().randomColor();
+        }
+    }).catchError((final Object? error) {
+      setState(() {
+        _error = true;
+        _isLoading = false;
+      });
+      showErrorDialog(context, "error on check out blogs\n${error.toString()}");
+    });
+    /// get random posts "try these posts"
+    await getRandomPosts().then((final List<PostModel> value) {
+      setState((){randomPosts= value;});
+    }).catchError((final Object? error) {
+      setState(() {
+        _error = true;
+        _isLoading = false;
+      });
+      showErrorDialog(context,  "error on check out posts\n${error.toString()}");
+    });
+    /// get random suggesting tags
+    await getTagsToFollow().then((final List<Tag> value) {
+      setState((){tagsToFollow= value;});
+      for(int i =0; i<value.length; i++)
+      {
+        setState(() {
+          tagsBgColors[value[i]]= RandomColor().randomColor();
+        });
+      }
+    }).catchError((final Object? error) {
+      setState(() {
+        _error = true;
+        _isLoading = false;
+      });
+      showErrorDialog(context, "error on random suggesting tags\n"
+          "${error.toString()}",);
+
+    });
+    /// get trending tags
+    await getTrendingTagsToFollow().then((final List<Tag> value) async{
+      setState((){
+      if(value.length<=9)
+        trendingTags= value;
+      else {
+        trendingTags=<Tag>[];
+        for (int i = 0; i < 9; i++) {
+          trendingTags.add(value[i]);
+        }
+      }
+      });
+      /// for each trending tag, get their posts
+      for (final Tag tTag in trendingTags)
+      {
+        await getTagPosts(tTag.tagDescription!).then(
+                (final List<PostModel> value) {
+          setState((){tagsPosts[tTag]= value;});
+        }).catchError((final Object? error) {
+          setState(() {
+            _error = true;
+            _isLoading = false;
+          });
+          showErrorDialog(context, "from get tag posts \n${error.toString()}");
+        });
+      }
+    }).catchError((final Object? error) {
+      setState(() {
+        _error = true;
+        _isLoading = false;
+      });
+      showErrorDialog(context,"from get trending tags \n${error.toString()}");
+    });
+
+    /// get followed tags
+    await Provider.of<Tags>(context, listen: false)
+        .fetchAndSetFollowedTags()
+        .then((final _) {
+      setState(() {
+        tags = Provider.of<Tags>(context,listen: false).followedTags;
+        _isLoading = false;
+        if(_firstTime)
+          _firstTime= false;
+      });
+    }).catchError((final Object? error) {
+      setState(() {
+        _isLoading = false;
+        _error = true;
+      });
+      showErrorDialog(context, "error from getting followed tags\n${error.toString()}");
+    });
+
+
+  }
+  @override
   Widget build(final BuildContext context) {
+    /// listening on changes
+    tags = Provider.of<Tags>(context).followedTags;
     final double _height = MediaQuery.of(context).size.height;
     final double _width = MediaQuery.of(context).size.width;
 
@@ -33,12 +201,7 @@ class _SearchPageState extends State<SearchPage> {
       });
     }
 
-    final List<String> backGrounds = <String>[
-      "search_1.jpg",
-      "search_2.jpg",
-      "search_3.jpg",
-      "search_4.jpg"
-    ];
+
     return Scaffold(
       backgroundColor: navy,
       body: NotificationListener<ScrollNotification>(
@@ -48,976 +211,79 @@ class _SearchPageState extends State<SearchPage> {
           }
           return false;
         },
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              elevation: 0,
-              pinned: true,
-              expandedHeight: _height * 0.26,
-              flexibleSpace: Flex(
-                direction: Axis.vertical,
-                children: <Widget>[
-                  Flexible(
-                    fit: FlexFit.tight,
-                    child: Container(
-                      width: _width,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            "assets/images/${backGrounds[2]}",
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 25,
-                            left: 16,
-                            right: 16,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: AnimatedContainer(
-                              curve: Curves.fastOutSlowIn,
-                              duration: const Duration(milliseconds: 300),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(25)),
-                              ),
-                              width: isExpanded ? _width * 0.7 : _width,
-                              child: Padding(
-                                padding: const EdgeInsets.all(6),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      CupertinoIcons.search,
-                                      color: Colors.grey.shade700,
-                                    ),
-                                    const SizedBox(
-                                      width: 3,
-                                    ),
-                                    Text(
-                                      "Search Tumbler",
-                                      style: TextStyle(
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await refreshSearchPage(
+              context,
+            );
+
+            setState(() {
+            _bgIndex= Random().nextInt(10000)%backGrounds.length;
+            });
+          },
+          edgeOffset:_height * 0.3,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SearchHeader(height: _height, width: _width,
+                  backGround: backGrounds[_bgIndex],
+                  isExpanded: isExpanded,
+                  recommendedTags: trendingTags,),
+              SliverList(
+                delegate: SliverChildListDelegate(<Widget>[
+                  if (_isLoading&& _firstTime) Center(
+                    heightFactor: 15,
+                    child: CircularProgressIndicator(
+                      valueColor:
+                      loadingSpinnerAnimationController!.drive(
+                        ColorTween(
+                          begin: Colors.blueAccent,
+                          end: Colors.red,
                         ),
                       ),
                     ),
+                  ) else SingleChildScrollView(
+                    child:Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                      // tags you follow
+                        if (tags.isNotEmpty)
+                          TagsYouFollow(tags:tags, width: _width)
+                        else Container(),
+                      // check out these tags section
+                        if (tagsToFollow.isNotEmpty) CheckOutTags(
+                        width: _width,
+                        tagsToFollow:tagsToFollow,
+                        tagsBg: tagsBgColors,) else Container(),
+                      // check out these blogs
+                        if (checkOutBlogs.isNotEmpty) CheckOutBlogs(
+                        width: _width,
+                        blogs: checkOutBlogs,
+                        blogsBg: blogsBgColors,) else Container(),
+                      // try these posts
+                        if (randomPosts.isNotEmpty)
+                          TryThesePosts(randomPosts:randomPosts,)
+                        else Container(),
+                      // trending now
+                        if (trendingTags.isNotEmpty)
+                          Trending(trendingTags: trendingTags,
+                              tagPosts: tagsPosts,)
+                        else Container(),
+                    ],),
                   ),
-                ],
+                ]),
               ),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(<Widget>[
-                //tags you follow
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, top: 16),
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            const Text(
-                              "Tags you follow",
-                              textScaleFactor: 1.4,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {},
-                              child: Text(
-                                "Manage",
-                                style: TextStyle(
-                                  color: Colors.grey.withOpacity(0.6),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/${backGrounds[1]}",
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Container(
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    color: Colors.black26,
-                                    child: const Center(
-                                      child: Text(
-                                        "#tagOne",
-                                        textScaleFactor: 1.2,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/${backGrounds[1]}",
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Container(
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    color: Colors.black26,
-                                    child: const Center(
-                                      child: Text(
-                                        "#tagOne",
-                                        textScaleFactor: 1.2,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/${backGrounds[1]}",
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Container(
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    color: Colors.black26,
-                                    child: const Center(
-                                      child: Text(
-                                        "#tagOne",
-                                        textScaleFactor: 1.2,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/${backGrounds[1]}",
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Container(
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    color: Colors.black26,
-                                    child: const Center(
-                                      child: Text(
-                                        "#tagOne",
-                                        textScaleFactor: 1.2,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                //check out these tags
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, top: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        child: Text(
-                          "Check out these tags",
-                          textScaleFactor: 1.4,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              decoration: BoxDecoration(
-                                // TODO(DONIA): make it random
-                                color: Colors.red,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
-                                // TODO(DONIA): make it depends
-                                //  on the random background color
-                                border: Border.all(
-                                  color: Colors.redAccent,
-                                  width: 1.5,
-                                ),
-                              ),
-                              width: (_width / 3) + 15,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  const Padding(
-                                    padding: EdgeInsets.only(
-                                      top: 16,
-                                      bottom: 8,
-                                      left: 8,
-                                      right: 8,
-                                    ),
-                                    child: Text(
-                                      "#cats",
-                                      textScaleFactor: 1.1,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        flex: 2,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                              Radius.circular(5),
-                                            ),
-                                            child: Image.asset(
-                                              "assets/images/${backGrounds[2]}",
-                                              height: 65,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 6,
-                                            top: 6,
-                                            bottom: 6,
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                              Radius.circular(5),
-                                            ),
-                                            child: Image.asset(
-                                              "assets/images/${backGrounds[3]}",
-                                              height: 65,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 6,
-                                        right: 6,
-                                        bottom: 4,
-                                      ),
-                                      child: ElevatedButton(
-                                        onPressed: () {},
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              //compute Luminance, if >0.4
-                                              // then make it black,
-                                              // else make it white
-                                              MaterialStateProperty.all<Color>(
-                                            Colors.white,
-                                          ),
-                                          foregroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                            Colors.red,
-                                          ),
-                                          fixedSize: MaterialStateProperty.all(
-                                            Size(_width, 45),
-                                          ),
-                                          elevation:
-                                              MaterialStateProperty.all(1),
-                                        ),
-                                        child: const Text(
-                                          "Follow",
-                                          textScaleFactor: 1.2,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                //check out these blogs
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, top: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        child: Text(
-                          "Check out these blogs",
-                          textScaleFactor: 1.4,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              decoration: const BoxDecoration(
-                                // TODO(DONIA): make it random
-                                color: Color(0xFF867000),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                              ),
-                              width: (_width / 3) + 30,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 90,
-                                    child: Stack(
-                                      children: <Widget>[
-                                        ClipRRect(
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            topRight: Radius.circular(10),
-                                          ),
-                                          child: Image.asset(
-                                            "assets/images/${backGrounds[1]}",
-                                            width: _width,
-                                            height: 60,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        const Positioned(
-                                          top: 25,
-                                          left: 0,
-                                          right: 0,
-                                          child: Center(
-                                            child: CircleAvatar(
-                                              radius: 30,
-                                              backgroundImage: AssetImage(
-                                                "assets/images/cat.png",
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  const Center(
-                                    child: Text(
-                                      "Donia Esawi",
-                                      textScaleFactor: 1.1,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 16,
-                                  ),
-                                  Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 6,
-                                        right: 6,
-                                      ),
-                                      child: ElevatedButton(
-                                        onPressed: () {},
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              //compute Luminance, if >0.4
-                                              // then make it black,
-                                              // else make it white
-                                              MaterialStateProperty.all<Color>(
-                                            Colors.white,
-                                          ),
-                                          foregroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                            const Color(0xFF867000),
-                                          ),
-                                          fixedSize: MaterialStateProperty.all(
-                                            Size(_width, 35),
-                                          ),
-                                          elevation:
-                                              MaterialStateProperty.all(1),
-                                        ),
-                                        child: const Text(
-                                          "Follow",
-                                          textScaleFactor: 1.2,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                //try these posts
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, top: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        child: Text(
-                          "Try these posts",
-                          textScaleFactor: 1.4,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      ClipRRect(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(5),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/images/women.png",
-                                    height: (_width / 3) - 19,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/images/cat.png",
-                                    height: (_width / 3) - 19,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/images/profile_pic.png",
-                                    height: (_width / 3) - 19,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 1,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/images/intro_1.gif",
-                                    height: (_width / 3) - 19,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/images/intro_2.gif",
-                                    height: (_width / 3) - 19,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/images/intro_3.jpg",
-                                    height: (_width / 3) - 19,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 1,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/images/intro_4.jpg",
-                                    height: (_width / 3) - 19,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/images/intro_5.gif",
-                                    height: (_width / 3) - 19,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/images/search_1.jpg",
-                                    height: (_width / 3) - 19,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 1,
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                //things we care about
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, top: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        child: Text(
-                          "Things we care about",
-                          textScaleFactor: 1.4,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/${backGrounds[1]}",
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Container(
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    color: Colors.black26,
-                                    child: const Center(
-                                      child: Text(
-                                        "#tagOne",
-                                        textScaleFactor: 1.2,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/${backGrounds[1]}",
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Container(
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    color: Colors.black26,
-                                    child: const Center(
-                                      child: Text(
-                                        "#tagOne",
-                                        textScaleFactor: 1.2,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/${backGrounds[1]}",
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Container(
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    color: Colors.black26,
-                                    child: const Center(
-                                      child: Text(
-                                        "#tagOne",
-                                        textScaleFactor: 1.2,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/${backGrounds[1]}",
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Container(
-                                    width: _width / 3,
-                                    height: (_width / 3) - 40,
-                                    color: Colors.black26,
-                                    child: const Center(
-                                      child: Text(
-                                        "#tagOne",
-                                        textScaleFactor: 1.2,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                //trending now
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: Text(
-                          "Trending now",
-                          textScaleFactor: 1.4,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Column(
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8),
-                                        child: Image.asset(
-                                          "assets/images/1.png",
-                                          width: 35,
-                                          height: 35,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 8,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: <Widget>[
-                                            const Text(
-                                              "trending one",
-                                              textScaleFactor: 1.2,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Row(
-                                              children: <Widget>[
-                                                Text(
-                                                  "#tag1",
-                                                  style: TextStyle(
-                                                    color: Colors.grey.shade700,
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text(
-                                                  "#tag2",
-                                                  style: TextStyle(
-                                                    color: Colors.grey.shade700,
-                                                  ),
-                                                )
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 8),
-                                      child: Text(
-                                        "Follow",
-                                        textScaleFactor: 1.1,
-                                        style: TextStyle(
-                                          color: floatingButtonColor,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: <Widget>[
-                                    const SizedBox(
-                                      width: 53,
-                                    ),
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(3),
-                                      ),
-                                      child: Image.asset(
-                                        "assets/images/intro_1.gif",
-                                        width: 100,
-                                        height: 80,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(3),
-                                      ),
-                                      child: Image.asset(
-                                        "assets/images/intro_2.gif",
-                                        width: 100,
-                                        height: 80,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(3),
-                                      ),
-                                      child: Image.asset(
-                                        "assets/images/intro_3.jpg",
-                                        width: 100,
-                                        height: 80,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(3),
-                                      ),
-                                      child: Image.asset(
-                                        "assets/images/intro_1.gif",
-                                        width: 100,
-                                        height: 80,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ]),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+
+
+
+
+
+
+
