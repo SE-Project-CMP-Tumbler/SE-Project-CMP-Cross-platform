@@ -1,13 +1,13 @@
 // ignore_for_file: lines_longer_than_80_chars
-import 'dart:convert';
+import "dart:convert";
 import "dart:math" as math;
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_colorpicker/flutter_colorpicker.dart";
-import 'package:image_picker/image_picker.dart';
+import "package:image_picker/image_picker.dart";
 import "package:tumbler/Methods/api.dart";
-import 'package:tumbler/Methods/choose_image_from_gallary.dart';
+import "package:tumbler/Methods/choose_image_from_gallery.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/post_model.dart";
