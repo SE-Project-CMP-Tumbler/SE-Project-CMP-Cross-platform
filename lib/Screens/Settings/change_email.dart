@@ -41,7 +41,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
       User.email = response["response"]["email"];
 
       await showToast("You successfully updated your Email!");
-      
+
       // TODO(Ziyad): Restart the app? or log out ?
       await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<MainScreen>(

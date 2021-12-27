@@ -9,13 +9,14 @@ import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
-
 /// Type of Post
 enum PostTypes {
   /// Default Post type (published)
   defaultPost,
+
   /// When Saved as Draft
   draftPost,
+
   /// When Posted as private
   privatePost
 }
@@ -30,6 +31,7 @@ class _AddPostState extends State<AddPost> {
   bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
   String postButtonText = "Post";
+
   /// the current post type
   PostTypes postType = PostTypes.defaultPost;
 
@@ -48,7 +50,6 @@ class _AddPostState extends State<AddPost> {
 
     final Map<String, dynamic> response = await Api()
         .addPost(processedHtml, postOptionChoice, "general", postTime);
-    print(response);
     if (response["meta"]["status"] == "200") {
       await showToast("Added Successfully");
       Navigator.of(context).pop();
@@ -57,7 +58,7 @@ class _AddPostState extends State<AddPost> {
     }
   }
 
-  Widget postTypeMenu(){
+  Widget postTypeMenu() {
     return Column(
       children: <Widget>[
         Row(

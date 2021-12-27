@@ -115,6 +115,7 @@ class _ProfilePageState extends State<ProfilePage>
     final Map<String, dynamic> response =
         await Api().fetchSpecificBlogPost(widget.blogID, currentPagePosts + 1);
 
+
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPagePosts++;
@@ -913,7 +914,7 @@ class _ProfilePageState extends State<ProfilePage>
                     ImageSource.gallery,
                   );
                   if (image != null) {
-                    String basse64 = base64.encode(await image.readAsBytes());
+                    final String basse64 = base64.encode(await image.readAsBytes());
                     await showToast("Success");
                   } else
                     await showToast("Failed");
@@ -930,7 +931,7 @@ class _ProfilePageState extends State<ProfilePage>
                     ImageSource.camera,
                   );
                   if (image != null) {
-                    String basse64 = base64.encode(await image.readAsBytes());
+                    final String basse64 = base64.encode(await image.readAsBytes());
                     await showToast("Success");
                   } else
                     await showToast("Failed");

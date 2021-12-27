@@ -1,7 +1,5 @@
 import "package:flutter/material.dart";
 
-
-
 ///Widget to show the avatar added on it the icon type passed to it
 class AvatarWithIcon extends StatelessWidget {
   ///Takes avatarUrl and iconType

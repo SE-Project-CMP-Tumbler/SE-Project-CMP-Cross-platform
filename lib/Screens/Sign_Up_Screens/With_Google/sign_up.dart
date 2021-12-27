@@ -71,14 +71,14 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
           MaterialPageRoute<IntroCarousel>(
             builder: (final BuildContext context) => IntroCarousel(),
           ),
-              (final Route<dynamic> route) => false,
+          (final Route<dynamic> route) => false,
         );
       } else {
         await Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute<MainScreen>(
             builder: (final BuildContext context) => MainScreen(),
           ),
-              (final Route<dynamic> route) => false,
+          (final Route<dynamic> route) => false,
         );
       }
     } else {
@@ -137,10 +137,10 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
                     onPressed: _controller.text.isEmpty
                         ? null
                         : () async {
-                      if (_formKey.currentState!.validate()) {
-                        await signUp();
-                      }
-                    },
+                            if (_formKey.currentState!.validate()) {
+                              await signUp();
+                            }
+                          },
                     style: ButtonStyle(
                       backgroundColor: _controller.text.isEmpty
                           ? MaterialStateProperty.all<Color>(Colors.grey)

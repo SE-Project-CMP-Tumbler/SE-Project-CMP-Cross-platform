@@ -1,5 +1,7 @@
 import "dart:math" as math;
+
 import "package:flutter/material.dart";
+
 ///
 class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   ///
@@ -8,10 +10,13 @@ class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     required final this.maxHeight,
     required final this.child,
   });
+
   ///
   final double minHeight;
+
   ///
   final double maxHeight;
+
   ///
   final Widget child;
 
@@ -23,10 +28,10 @@ class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      final BuildContext context,
-      final double shrinkOffset,
-      final bool overlapsContent,
-      ) {
+    final BuildContext context,
+    final double shrinkOffset,
+    final bool overlapsContent,
+  ) {
     return SizedBox.expand(child: child);
   }
 

@@ -2,9 +2,9 @@ import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:like_button/like_button.dart";
 import "package:tumbler/Methods/api.dart";
-import 'package:tumbler/Methods/show_toast.dart';
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/notes.dart";
-import 'package:tumbler/Screens/Add_Post/edit_post.dart';
+import "package:tumbler/Screens/Add_Post/edit_post.dart";
 import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
 import "package:tumbler/Screens/Reblog/reblog.dart";
@@ -139,13 +139,13 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               color: Colors.black,
             ),
           ),
-           IconButton(
+          IconButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<Reblog>(
                   builder: (final BuildContext context) => Reblog(
                     originalPost: homePosts[index].postBody,
-                    parentPostId : homePosts[index].postId.toString(),
+                    parentPostId: homePosts[index].postId.toString(),
                   ),
                 ),
               );

@@ -23,7 +23,7 @@ String extractMetionsTags(final String htmlBeforeProcessing) {
       const int blogID = 12;
       html =
           html.replaceRange(x, index1, "<a href='mention$blogID'>$mention</a>");
-      index1 += 13+blogID.toString().length;
+      index1 += 13 + blogID.toString().length;
     }
   }
 
@@ -108,7 +108,7 @@ class HtmlView extends StatelessWidget {
         if (url == null) {
           return;
         } else if (url.startsWith("mention")) {
-          print(url.substring(7));
+
           await Navigator.of(context).push(
             MaterialPageRoute<ProfilePage>(
               builder: (final BuildContext context) => ProfilePage(

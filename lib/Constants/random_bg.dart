@@ -1,6 +1,5 @@
-
 /// for displaying search bg
-List<String> randomBg= <String>[
+List<String> randomBg = <String>[
   "https://64.media.tumblr.com/6aec9d3cb411d320bc90d5667c3496b0/5eb92e9721ea69f9-ad/s540x810/5cbf883eeba29eacd6a523d422a1b82a7f348b6d.png",
   "https://64.media.tumblr.com/724112c4d0997f53de23ae33f562a899/16779be0c8855816-db/s2048x3072/f74bf8fed79ef6e5220a3453305d4fc5cfdf0aaa.jpg",
   "https://64.media.tumblr.com/4530e4a90a3489bb2b4ef39d13df2913/b77690f1930f7869-15/s1280x1920/97db0d4e074b4a89b336fe6b361da4147fc74885.jpg",

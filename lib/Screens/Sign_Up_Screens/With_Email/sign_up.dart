@@ -172,7 +172,7 @@ class _SignUpState extends State<SignUp> {
 
       // make the user follow the tags he choose while sign up
       for (final String tag
-          in Provider.of<FollowedTags>(context,listen: false).followedTags) {
+          in Provider.of<FollowedTags>(context, listen: false).followedTags) {
         await Api().followTag(tag);
       }
 

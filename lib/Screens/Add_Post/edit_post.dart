@@ -4,8 +4,6 @@ import "package:html_editor_enhanced/html_editor.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
 import "package:tumbler/Methods/show_toast.dart";
-import "package:tumbler/Models/user.dart";
-import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 /// Type of Post
