@@ -64,6 +64,7 @@ class _NotesPageState extends State<NotesPage>
     final Map<String, dynamic> recievedNotes =
         await Api().getNotes(widget.postID.toString());
 
+    print("responssssssse $recievedNotes");
     //check the status code for the received response.
     if (recievedNotes["meta"]["status"] == "404")
       throw HttpException("Not Found!");
@@ -80,6 +81,7 @@ class _NotesPageState extends State<NotesPage>
           reblogsWithCommentsList.add(reblogsList[i]);
         }
       }
+      setState(() {});
     }
   }
 
@@ -123,6 +125,7 @@ class _NotesPageState extends State<NotesPage>
   @override
   void initState() {
     super.initState();
+    print("hellloooo0");
     initialize();
     // Start listening to changes.
     replyController.addListener(checkReplyText);

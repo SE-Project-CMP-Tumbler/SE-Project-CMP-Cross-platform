@@ -2,6 +2,7 @@ import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
+import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Providers/blogs.dart";
@@ -135,7 +136,6 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
                     onChanged: (final String val) {},
                     onSubmitted: (final String val) async {
                       if (isValid()) {
-                        // TODO(Donia): call postBlog
                         await postBlog(context, _textEditingController!.text);
 
                         if (_succeeded) {
@@ -157,13 +157,9 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
                     },
                     decoration: InputDecoration(
                       isDense: true,
-                      enabledBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey, width: 2),
-                      ),
-                      focusedBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey, width: 2),
-                      ),
-                      hintText: "name",
+                      enabledBorder: formEnabledFieldBorderStyle,
+                      focusedBorder: formFocusedFieldBorderStyle,
+                      hintText: "Name",
                       hintStyle: TextStyle(
                         color: Colors.grey.shade700,
                       ),

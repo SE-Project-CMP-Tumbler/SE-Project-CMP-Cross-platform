@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import "package:flutter/material.dart";
+import 'package:tumbler/Widgets/Post/html_viewer.dart';
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 class ReplyTile extends StatelessWidget {
@@ -61,11 +62,8 @@ class ReplyTile extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      commentText,
-                      maxLines: 1000,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
+                    HtmlView(
+                       htmlData: "<p>$commentText</p>",
                     ),
                   ],
                 ),

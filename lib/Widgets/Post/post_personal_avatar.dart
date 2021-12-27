@@ -49,11 +49,14 @@ class _PersonAvatarState extends State<PersonAvatar> {
                   )
                 : null,
           ),
-          child: Image.network(
-            widget.avatarPhotoLink.isEmpty
-                ? "https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg"
-                : widget.avatarPhotoLink,
+          child: FadeInImage(
             fit: BoxFit.cover,
+            imageErrorBuilder: (final _, final __, final ___) {
+              return Image.asset("assets/images/profile_Placeholder.png");
+            },
+            placeholder:
+                const AssetImage("assets/images/profile_Placeholder.png"),
+            image: Image.network(widget.avatarPhotoLink).image,
           ),
         ),
       ),

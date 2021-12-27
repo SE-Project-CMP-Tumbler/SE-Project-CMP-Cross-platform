@@ -16,6 +16,7 @@ class PostModel {
     required final this.postTime,
     required final this.notes,
     required final this.isLoved,
+    required final this.isFollowed,
   });
 
   final int postId;
@@ -30,6 +31,7 @@ class PostModel {
   final String postTime;
   int notes;
   bool isLoved;
+  bool isFollowed;
 
   /// Converts JSON["response"]["posts"] to List of Posts
   static Future<List<PostModel>> fromJSON(
@@ -60,6 +62,7 @@ class PostModel {
           postTime: json[i]["post_time"] ?? "",
           notes: (json[i]["notes"] ?? 0) as int,
           isLoved: x,
+          isFollowed: false, // TODO(Ziyad): Make the request
         ),
       );
     }

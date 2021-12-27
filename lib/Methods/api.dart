@@ -23,7 +23,7 @@ class Api {
   final String _uploadImage = dotenv.env["uploadImage"] ?? " ";
   final String _uploadVideo = dotenv.env["uploadVideo"] ?? " ";
   final String _uploadAudio = dotenv.env["uploadAudio"] ?? " ";
-  final String _addPost = dotenv.env["addPost"] ?? " ";
+  final String _post = dotenv.env["Post"] ?? " ";
   final String _blog = dotenv.env["blog"] ?? " ";
   final String _blogSettings = dotenv.env["blog_settings"] ?? " ";
   final String _blogsLikes = dotenv.env["blogsLikes"] ?? " ";
@@ -51,6 +51,9 @@ class Api {
   final String _followBlog = dotenv.env["followBlog"] ?? " ";
   final String _reblog = dotenv.env["reblog"] ?? " ";
   final String _chats = dotenv.env["chats"] ?? " ";
+  final String _followBlog = dotenv.env["follow_blog"] ?? " ";
+  final String _followTag = dotenv.env["follow_tag"] ?? " ";
+
   final String _weirdConnection = '''
             {
               "meta": {
@@ -79,18 +82,24 @@ class Api {
     io.HttpHeaders.authorizationHeader: "Bearer " + User.accessToken,
   };
 
+  /// When an error occur with any api request
+  http.Response errorFunction(
+    final Object? error,
+    final StackTrace stackTrace,
+  ) {
+    if (error.toString().startsWith("SocketException: Failed host lookup")) {
+      return http.Response(_weirdConnection, 502);
+    } else {
+      return http.Response(_failed, 404);
+    }
+  }
+
   /// Make GET Request to the API to get List of
   /// Trending tags.
   Future<Map<String, dynamic>> getTrendingTags() async {
     final http.Response response = await http
         .get(Uri.parse(_host + _getTrendingTags))
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -103,22 +112,16 @@ class Api {
   ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _signUp),
-      body: jsonEncode(<String, String>{
-        "email": email,
-        "blog_username": blogUsername,
-        "password": password,
-        "age": age.toString(),
-      }),
-      headers: _headerContent,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _signUp),
+          body: jsonEncode(<String, String>{
+            "email": email,
+            "blog_username": blogUsername,
+            "password": password,
+            "age": age.toString(),
+          }),
+          headers: _headerContent,
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -130,21 +133,15 @@ class Api {
   ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _signUpWithGoogle),
-      body: jsonEncode(<String, String>{
-        "google_access_token": googleAccessToken,
-        "blog_username": blogUsername,
-        "age": age.toString(),
-      }),
-      headers: _headerContent,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _signUpWithGoogle),
+          body: jsonEncode(<String, String>{
+            "google_access_token": googleAccessToken,
+            "blog_username": blogUsername,
+            "age": age.toString(),
+          }),
+          headers: _headerContent,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -156,20 +153,14 @@ class Api {
   ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _login),
-      body: jsonEncode(<String, String>{
-        "email": email,
-        "password": password,
-      }),
-      headers: _headerContent,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _login),
+          body: jsonEncode(<String, String>{
+            "email": email,
+            "password": password,
+          }),
+          headers: _headerContent,
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -179,19 +170,13 @@ class Api {
   ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _loginWithGoogle),
-      body: jsonEncode(<String, String>{
-        "google_access_token": googleAccessToken,
-      }),
-      headers: _headerContent,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _loginWithGoogle),
+          body: jsonEncode(<String, String>{
+            "google_access_token": googleAccessToken,
+          }),
+          headers: _headerContent,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -200,19 +185,13 @@ class Api {
   Future<Map<String, dynamic>> forgetPassword(final String email) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _forgotPassword),
-      body: jsonEncode(<String, String>{
-        "email": email,
-      }),
-      headers: _headerContent,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _forgotPassword),
+          body: jsonEncode(<String, String>{
+            "email": email,
+          }),
+          headers: _headerContent,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -221,19 +200,13 @@ class Api {
   Future<Map<String, dynamic>> uploadVideo(final String video) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _uploadVideo),
-      headers: _headerContentAuth,
-      body: json.encode(<String, String>{
-        "b64_video": video,
-      }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _uploadVideo),
+          headers: _headerContentAuth,
+          body: json.encode(<String, String>{
+            "b64_video": video,
+          }),
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -261,19 +234,13 @@ class Api {
   Future<dynamic> uploadImage(final String image) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _uploadImage),
-      headers: _headerContentAuth,
-      body: json.encode(<String, String>{
-        "b64_image": image,
-      }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _uploadImage),
+          headers: _headerContentAuth,
+          body: json.encode(<String, String>{
+            "b64_image": image,
+          }),
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -282,19 +249,13 @@ class Api {
   Future<Map<String, dynamic>> uploadAudio(final String audio) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _uploadAudio),
-      headers: _headerContentAuth,
-      body: json.encode(<String, String>{
-        "b64_audio": audio,
-      }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _uploadAudio),
+          headers: _headerContentAuth,
+          body: json.encode(<String, String>{
+            "b64_audio": audio,
+          }),
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -317,22 +278,63 @@ class Api {
   ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _addPost + User.blogsIDs[User.currentProfile]),
-      headers: _headerContentAuth,
-      body: jsonEncode(<String, String>{
-        "post_status": postStatus,
-        "post_time": postTime,
-        "post_type": postType,
-        "post_body": postBody
-      }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _post + User.blogsIDs[User.currentProfile]),
+          headers: _headerContentAuth,
+          body: jsonEncode(<String, String>{
+            "post_status": postStatus,
+            "post_time": postTime,
+            "post_type": postType,
+            "post_body": postBody
+          }),
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// Edit Post.
+  Future<Map<String, dynamic>> editPost(
+    final String postID,
+    final String postStatus,
+    final String postType,
+    final String postBody,
+  ) async {
+    final http.Response response = await http
+        .put(
+          Uri.parse(_host + _post + postID),
+          headers: _headerContentAuth,
+          body: jsonEncode(<String, dynamic>{
+            "post_status": postStatus,
+            "post_type": postType,
+            "post_body": postBody,
+          }),
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// Delete Post.
+  Future<Map<String, dynamic>> deletePost(
+    final String postID,
+  ) async {
+    final http.Response response = await http
+        .delete(
+          Uri.parse(_host + _post + postID),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// get Post.
+  Future<Map<String, dynamic>> getPost(
+    final String postID,
+  ) async {
+    final http.Response response = await http
+        .get(
+          Uri.parse(_host + _post + postID),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -340,16 +342,10 @@ class Api {
   Future<Map<String, dynamic>> fetchHomePosts(final int page) async {
     final http.Response response = await http
         .get(
-      Uri.parse(_host + _dashboard + "?page=$page"),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _dashboard + "?page=$page"),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -357,16 +353,10 @@ class Api {
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await http
         .get(
-      Uri.parse(_host + _postNotes + postID),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _postNotes + postID),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -374,18 +364,16 @@ class Api {
   Future<Map<String, dynamic>> getPostLikeStatus(final int postID) async {
     final http.Response response = await http
         .get(
-      Uri.parse(
-        _host + _postLikeStatus + User.blogsIDs[0] + "/" + postID.toString(),
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(
+            _host +
+                _postLikeStatus +
+                User.blogsIDs[0] +
+                "/" +
+                postID.toString(),
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -393,17 +381,11 @@ class Api {
   Future<Map<String, dynamic>> likePost(final int postId) async {
     final http.Response response = await http
         .post(
-      Uri.parse(
-        _host + _likePost + postId.toString(),
-      ),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(
+            _host + _likePost + postId.toString(),
+          ),
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -411,17 +393,11 @@ class Api {
   Future<Map<String, dynamic>> unlikePost(final int postId) async {
     final http.Response response = await http
         .delete(
-      Uri.parse(
-        _host + _likePost + postId.toString(),
-      ),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(
+            _host + _likePost + postId.toString(),
+          ),
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -659,20 +635,14 @@ class Api {
   ) async {
     final http.Response response = await http
         .put(
-      Uri.parse(_host + _changeEmail),
-      body: jsonEncode(<String, String>{
-        "email": email,
-        "password": password,
-      }),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _changeEmail),
+          body: jsonEncode(<String, String>{
+            "email": email,
+            "password": password,
+          }),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -686,21 +656,15 @@ class Api {
   ) async {
     final http.Response response = await http
         .put(
-      Uri.parse(_host + _changePass),
-      body: jsonEncode(<String, String>{
-        "current_password": currentPass,
-        "password": newPass,
-        "password_confirmation": newPass,
-      }),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _changePass),
+          body: jsonEncode(<String, String>{
+            "current_password": currentPass,
+            "password": newPass,
+            "password_confirmation": newPass,
+          }),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -709,16 +673,10 @@ class Api {
   Future<Map<String, dynamic>> logOut() async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _logOut),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _logOut),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -728,16 +686,10 @@ class Api {
   Future<dynamic> getBlogs() async {
     final http.Response response = await http
         .get(
-      Uri.parse(_host + _blog),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _blog),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
     return response;
   }
 
@@ -747,20 +699,14 @@ class Api {
   ) async {
     final http.Response response = await http
         .post(
-      Uri.parse(_host + _blog),
-      headers: _headerContentAuth,
-      body: jsonEncode(<String, String>{
-        "title": "Untitled",
-        "blog_username": blogUserName,
-      }),
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _blog),
+          headers: _headerContentAuth,
+          body: jsonEncode(<String, String>{
+            "title": "Untitled",
+            "blog_username": blogUserName,
+          }),
+        )
+        .onError(errorFunction);
     return response;
   }
 
@@ -770,18 +716,12 @@ class Api {
   ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(
-        _host + _blog + "/" + blogID,
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(
+            _host + _blog + "/" + blogID,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -792,18 +732,12 @@ class Api {
   ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(
-        _host + _blogSettings + blogID,
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(
+            _host + _blogSettings + blogID,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -815,59 +749,44 @@ class Api {
   ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(
-        _host + _posts + blogID + _published + "?page=$page",
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(
+            _host + _posts + blogID + _published + "?page=$page",
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
 
   /// to get the Liked Posts of a My blog
-  Future<Map<String, dynamic>> fetchLikedPost(final int page) async {
+  Future<Map<String, dynamic>> fetchLikedPost(
+    final String blogID,
+    final int page,
+  ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(
-        _host +
-            _blogsLikes +
-            User.blogsIDs[User.currentProfile] +
-            "?page=$page",
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(
+            _host + _blogsLikes + blogID + "?page=$page",
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
 
   /// to get the Following of a specific blog
-  Future<Map<String, dynamic>> fetchFollowings(final int page) async {
+  Future<Map<String, dynamic>> fetchFollowings(
+    final String blogID,
+    final int page,
+  ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(_host + _followings + "?page=$page"),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(_host + _followings + blogID + "?page=$page"),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
@@ -876,236 +795,82 @@ class Api {
   Future<Map<String, dynamic>> fetchDraftPost() async {
     final http.Response response = await http
         .get(
-      Uri.parse(_host + _posts + User.blogsIDs[User.currentProfile] + _draft),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+          Uri.parse(
+            _host + _posts + User.blogsIDs[User.currentProfile] + _draft,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
 
-  /// Tags requests
-  /// fetch all the tags that a specific blog follows
-  Future<dynamic> fetchTagsFollowed({final bool mock= true}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _followedTags),
-      headers: _headerContentAuth,
-    )
-
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    // print("tags followes");
-    return response;
-  }
-  /// get the details of a specific tag
-  Future<dynamic> fetchTagsDetails({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _followedTags),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    return response;
-  }
-  /// get "Check out these tags"
-  Future<dynamic> fetchCheckOutTags({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _checkOutTags),
-      headers: _headerContentAuth,
-    )
-
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    // print("check out tags");
-    // print(response.body);
-    return response;
-  }
-  /// get "Check out these blogs"
-  Future<dynamic> fetchCheckOutBlogs({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _checkOutBlogs),
-      headers: _headerContentAuth,
-    )
-
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    // print("check out blogs");
-    // print(response.body);
-
-    return response;
-  }
-
-  /// get random posts
-  Future<dynamic> fetchRandomPosts({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
-    final http.Response response = await http.get(
-      Uri.parse(host + _randomPosts),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    // print("random posts results");
-    // print(response.body);
-
-    return response;
-  }
-
-  /// get trending tags to follow
-  Future<dynamic> fetchTrendingTags({final bool mock= false}) async {
-    final String host= mock? _postmanMockHost: _host;
+  /// to follow specific blog
+  Future<Map<String, dynamic>> followBlog(final int blogID) async {
     final http.Response response = await http
-        .get(Uri.parse(host + _getTrendingTags),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    // print("trending tags results");
-    // print(response.body);
+        .post(
+          Uri.parse(_host + _followBlog + blogID.toString()),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
-    return response;
+    return jsonDecode(response.body);
   }
 
-  /// get posts of specific tag
-  Future<dynamic> fetchTagPosts(final String tagDescription,
-      {final bool mock= false, final bool recent=true,}) async {
-
-    final String host= mock? _postmanMockHost: _host;
+  /// to follow specific Tag
+  Future<Map<String, dynamic>> followTag(final String tag) async {
     final http.Response response = await http
-        .get(Uri.parse(host + _tagPosts+
-        tagDescription +(recent?_recentPosts:_topPosts),),
-        headers: _headerContentAuth,)
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    // print("tag posts results");
-    // print(response.body);
+        .post(
+          Uri.parse(_host + _followTag + tag),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
-    return response;
-  }
-  /// fetching words for auto complete search text field
-  Future<dynamic> fetchAutoComplete(final String word,{final bool mock=false})
-  async{
-    final String host= mock? _autocompleteMock: _host;
-    final http.Response response = await http
-        .get(Uri.parse(host + _autoComplete + word),
-        headers: _headerContentAuth,)
-        .onError((final Object? error, final StackTrace stackTrace) {
-      // print(error.toString());
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    // print("words autocomplete results");
-    // print(response.body);
-
-    return response;
-
+    return jsonDecode(response.body);
   }
 
-  /// fetching words for search results
-  Future<dynamic> fetchSearchResults(final String word,{final bool mock=false})
-  async{
-    final String host= mock? _mockSearch: _host;
+  /// to unfollow specific blog
+  Future<Map<String, dynamic>> unFollowBlog(final int blogID) async {
     final http.Response response = await http
-        .get(Uri.parse(host + _search + word,),
-        headers: _headerContentAuth,)
-        .onError((final Object? error, final StackTrace stackTrace) {
+        .delete(
+          Uri.parse(_host + _followBlog + blogID.toString()),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
 
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    // print("words search results");
-    // print(response.body);
+  /// to follow specific blog
+  Future<Map<String, dynamic>> followBlog(final int blogID) async {
+    final http.Response response = await http
+        .post(
+          Uri.parse(_host + _followBlog + blogID.toString()),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
-    return response;
-
+    return jsonDecode(response.body);
   }
 
-  /// follow specific tag
-  Future<dynamic> followTag(final String tagDescription,{final bool mock=false})
-  async{
-    final String host= mock? _mockSearch: _host;
+  /// to follow specific Tag
+  Future<Map<String, dynamic>> followTag(final String tag) async {
     final http.Response response = await http
-        .post(Uri.parse(host + _followedTags + tagDescription,),
-      headers: _headerContentAuth,)
-        .onError((final Object? error, final StackTrace stackTrace) {
+        .post(
+          Uri.parse(_host + _followTag + tag),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
 
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    return response;
-
+    return jsonDecode(response.body);
   }
-  /// un follows specific tag
-  Future<dynamic> unFollowTag(final String tagDescription,
-      {final bool mock=false,})
-  async{
-    final String host= mock? _postmanMockHost: _host;
+
+  /// to unfollow specific blog
+  Future<Map<String, dynamic>> unFollowBlog(final int blogID) async {
     final http.Response response = await http
-        .delete(Uri.parse(host + _followedTags + tagDescription,),
-      headers: _headerContentAuth,)
-        .onError((final Object? error, final StackTrace stackTrace) {
-
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-
-    return response;
-
+        .delete(
+          Uri.parse(_host + _followBlog + blogID.toString()),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
   }
 }
