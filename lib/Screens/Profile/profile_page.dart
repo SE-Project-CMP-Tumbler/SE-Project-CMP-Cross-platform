@@ -1,10 +1,13 @@
 // ignore_for_file: lines_longer_than_80_chars
+import 'dart:convert';
 import "dart:math" as math;
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_colorpicker/flutter_colorpicker.dart";
+import 'package:image_picker/image_picker.dart';
 import "package:tumbler/Methods/api.dart";
+import 'package:tumbler/Methods/choose_image_from_gallary.dart';
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/post_model.dart";
@@ -816,7 +819,7 @@ class _ProfilePageState extends State<ProfilePage>
                               style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all<Color>(
-                                      _index == 0 ? Colors.blue : Colors.black,
+                                  _index == 0 ? Colors.blue : Colors.black,
                                 ),
                               ),
                               onPressed: () => myState(() => _index = 0),
@@ -826,7 +829,7 @@ class _ProfilePageState extends State<ProfilePage>
                               style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all<Color>(
-                                      _index == 1 ? Colors.blue : Colors.black,
+                                  _index == 1 ? Colors.blue : Colors.black,
                                 ),
                               ),
                               onPressed: () => myState(() => _index = 1),
@@ -836,7 +839,7 @@ class _ProfilePageState extends State<ProfilePage>
                               style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all<Color>(
-                                      _index == 2 ? Colors.blue : Colors.black,
+                                  _index == 2 ? Colors.blue : Colors.black,
                                 ),
                               ),
                               onPressed: () => myState(() => _index = 2),
@@ -887,6 +890,54 @@ class _ProfilePageState extends State<ProfilePage>
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  void changeProfilePic() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (final BuildContext context) {
+        return SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              const Text(
+                "Change Profile Picture",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              ListTile(
+                title: const Text("From Gallery"),
+                onTap: () async {
+                  final XFile? image = await chooseImageFromGallery(
+                    ImageSource.gallery,
+                  );
+                  if (image != null) {
+                    String basse64 = base64.encode(await image.readAsBytes());
+                    await showToast("Success");
+                  } else
+                    await showToast("Failed");
+                },
+              ),
+              const Divider(
+                height: 15,
+                color: Colors.grey,
+              ),
+              ListTile(
+                title: const Text("Open Camera"),
+                onTap: () async {
+                  final XFile? image = await chooseImageFromGallery(
+                    ImageSource.camera,
+                  );
+                  if (image != null) {
+                    String basse64 = base64.encode(await image.readAsBytes());
+                    await showToast("Success");
+                  } else
+                    await showToast("Failed");
+                },
+              ),
+            ],
+          ),
         );
       },
     );
@@ -1145,8 +1196,8 @@ class _ProfilePageState extends State<ProfilePage>
                       NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate(
+                      // All Upper Widgets
                       <Widget>[
-                        // All Upper Widgets
                         Container(
                           height: 0.35 * _height,
                           // Header image
@@ -1184,38 +1235,41 @@ class _ProfilePageState extends State<ProfilePage>
                               // Profile Pic
                               Positioned(
                                 bottom: 0.085 * _height - 25,
-                                child: Container(
-                                  height: 100,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    color: themeColor,
-                                    shape: BoxShape.circle, //editable
-                                    border: Border.all(
-                                      width: 3,
+                                child: InkWell(
+                                  onTap: changeProfilePic,
+                                  child: Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
                                       color: themeColor,
-                                    ),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        displayedBlog.avatarShape == "square"
-                                            ? null
-                                            : const BorderRadius.all(
-                                                Radius.circular(50),
-                                              ), //editable
-                                    child: FadeInImage(
-                                      fit: BoxFit.cover,
-                                      imageErrorBuilder:
-                                          (final _, final __, final ___) {
-                                        return Image.asset(
-                                          "assets/images/profile_Placeholder.png",
-                                        );
-                                      },
-                                      placeholder: const AssetImage(
-                                        "assets/images/profile_Placeholder.png",
+                                      shape: BoxShape.circle, //editable
+                                      border: Border.all(
+                                        width: 3,
+                                        color: themeColor,
                                       ),
-                                      image: Image.network(
-                                        displayedBlog.avatarImageUrl!,
-                                      ).image,
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          displayedBlog.avatarShape == "square"
+                                              ? null
+                                              : const BorderRadius.all(
+                                                  Radius.circular(50),
+                                                ), //editable
+                                      child: FadeInImage(
+                                        fit: BoxFit.cover,
+                                        imageErrorBuilder:
+                                            (final _, final __, final ___) {
+                                          return Image.asset(
+                                            "assets/images/profile_Placeholder.png",
+                                          );
+                                        },
+                                        placeholder: const AssetImage(
+                                          "assets/images/profile_Placeholder.png",
+                                        ),
+                                        image: Image.network(
+                                          displayedBlog.avatarImageUrl!,
+                                        ).image,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -1224,15 +1278,8 @@ class _ProfilePageState extends State<ProfilePage>
                               Text(
                                 displayedBlog.blogTitle!,
                                 textScaleFactor: 2.4,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: themeTitleColor,
-                                ),
-                              ),
-                              // Description
-                              Text(
-                                displayedBlog.blogDescription!,
-                                textScaleFactor: 2.4,
+                                textAlign: TextAlign.center,
+                                softWrap: true,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: themeTitleColor,
@@ -1439,6 +1486,17 @@ class _ProfilePageState extends State<ProfilePage>
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        // Description
+                        Text(
+                          displayedBlog.blogDescription!,
+                          textScaleFactor: 1.5,
+                          textAlign: TextAlign.center,
+                          softWrap: true,
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: themeTitleColor,
                           ),
                         ),
                       ],

@@ -3,6 +3,7 @@ import "package:flutter/material.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Methods/initializer.dart";
+import 'package:tumbler/Methods/log_out.dart';
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Providers/blogs.dart";
 import "package:tumbler/Providers/followed_tags_sign_up.dart";

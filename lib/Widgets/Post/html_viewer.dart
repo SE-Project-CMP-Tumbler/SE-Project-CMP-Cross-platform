@@ -1,9 +1,12 @@
 import "package:csslib/src/messages.dart";
 import "package:flutter/material.dart";
 import "package:flutter_html/flutter_html.dart";
+import "package:tumbler/Methods/show_toast.dart";
+import "package:tumbler/Screens/Profile/profile_page.dart";
+import "package:url_launcher/url_launcher.dart";
 
-String process(final String htmlBeforeProcessing) {
-  // Getting all images
+String extractMetionsTags(final String htmlBeforeProcessing) {
+  // Getting all mentions
   String html = htmlBeforeProcessing;
   int index1 = 0;
   int x = 0;
@@ -11,12 +14,32 @@ String process(final String htmlBeforeProcessing) {
     x = html.indexOf("@", index1);
     if (x != -1) {
       index1 = html.indexOf(" ", x);
-      if (index1 == -1)
+      if (index1 == -1) {
         index1 = html.indexOf("<", x);
+      }
 
-      final String mention = html.substring(x,index1);
-      html = html.replaceRange(x, index1, "<a href='post'>$mention</a>");
-      index1 += 18;
+      final String mention = html.substring(x, index1);
+      // TODO(Ziyad): Make the request to check if user
+      const int blogID = 12;
+      html =
+          html.replaceRange(x, index1, "<a href='mention$blogID'>$mention</a>");
+      index1 += 13+blogID.toString().length;
+    }
+  }
+
+  index1 = 0;
+  x = 0;
+  while (x != -1 && index1 <= html.length - 5) {
+    x = html.indexOf("#", index1);
+    if (x != -1) {
+      index1 = html.indexOf(" ", x);
+      if (index1 == -1) {
+        index1 = html.indexOf("<", x);
+      }
+
+      final String tag = html.substring(x, index1);
+      html = html.replaceRange(x, index1, "<a href='tag'>$tag</a>");
+      index1 += 10;
     }
   }
 
@@ -37,7 +60,7 @@ class HtmlView extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     return Html(
-      data: process(htmlData),
+      data: extractMetionsTags(htmlData),
       style: <String, Style>{
         "table": Style(
           backgroundColor: const Color.fromARGB(0x50, 0xee, 0xee, 0xee),
@@ -81,8 +104,26 @@ class HtmlView extends StatelessWidget {
         (final Map<String, String> attr, final __) => attr["src"] != null:
             networkImageRender(width: 500, height: 300),
       },
-      onLinkTap: (final String? url, final _, final __, final ___) {
-        print("link is clicked");
+      onLinkTap: (final String? url, final _, final __, final ___) async {
+        if (url == null) {
+          return;
+        } else if (url.startsWith("mention")) {
+          print(url.substring(7));
+          await Navigator.of(context).push(
+            MaterialPageRoute<ProfilePage>(
+              builder: (final BuildContext context) => ProfilePage(
+                blogID: url.substring(7),
+              ),
+            ),
+          );
+        } else if (url == "tag") {
+          // TODO(Ziyad): go to tag page
+        } else {
+          if (await canLaunch(url))
+            await launch(url);
+          else
+            await showToast("Cannot open this url");
+        }
       },
       onImageTap: (final String? src, final _, final __, final ___) {
         //print(src);

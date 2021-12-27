@@ -2,7 +2,9 @@ import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:like_button/like_button.dart";
 import "package:tumbler/Methods/api.dart";
+import 'package:tumbler/Methods/show_toast.dart';
 import "package:tumbler/Models/notes.dart";
+import 'package:tumbler/Screens/Add_Post/edit_post.dart';
 import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
 
@@ -125,16 +127,20 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               ),
             ),
           ),
-          const IconButton(
-            onPressed: null,
-            icon: Icon(
+          IconButton(
+            onPressed: () {
+              // TODO(Ziyad): Share
+            },
+            icon: const Icon(
               CupertinoIcons.arrowshape_turn_up_right,
               color: Colors.black,
             ),
           ),
-          const IconButton(
-            onPressed: null,
-            icon: Icon(
+          IconButton(
+            onPressed: () {
+              // TODO(Ziyad): reblog
+            },
+            icon: const Icon(
               Icons.repeat,
               color: Colors.black,
             ),
@@ -181,17 +187,33 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               },
             ),
           if (widget.isMine)
-            const IconButton(
-              onPressed: null,
-              icon: Icon(
+            IconButton(
+              onPressed: () async {
+                final Map<String, dynamic> response =
+                    await Api().deletePost(postID.toString());
+
+                if (response["meta"]["status"] == "200") {
+                  await showToast("Deleted");
+                } else {
+                  await showToast(response["meta"]["msg"]);
+                }
+              },
+              icon: const Icon(
                 CupertinoIcons.trash,
                 color: Colors.black,
               ),
             ),
           if (widget.isMine)
-            const IconButton(
-              onPressed: null,
-              icon: Icon(
+            IconButton(
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute<EditPost>(
+                    builder: (final BuildContext context) =>
+                        EditPost(postID: postID.toString()),
+                  ),
+                );
+              },
+              icon: const Icon(
                 Icons.edit_outlined,
                 color: Colors.black,
               ),

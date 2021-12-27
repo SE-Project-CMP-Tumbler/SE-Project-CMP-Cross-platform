@@ -4,6 +4,7 @@ import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/local_db.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
+import "package:tumbler/Screens/Home_Page/home_page.dart";
 
 /// Intermediate function that call [Api.logOut]
 Future<bool> logOut() async {
@@ -37,7 +38,7 @@ Future<bool> logOut() async {
     User.allowSubmission = <bool>[];
     User.isPrimary = <bool>[];
 
-
+    homePosts.clear();
     await showToast("Logged Out");
     return true;
   } else {
