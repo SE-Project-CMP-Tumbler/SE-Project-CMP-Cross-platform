@@ -31,6 +31,7 @@ class TimePacketContainer extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
+            // ignore: noop_primitive_operations
             DateFormat.MMMMEEEEd().format(packetTime).toString(),
             style: const TextStyle(
               fontWeight: FontWeight.w900,

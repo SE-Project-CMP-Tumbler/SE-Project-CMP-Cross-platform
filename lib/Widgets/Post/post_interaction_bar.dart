@@ -5,6 +5,7 @@ import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/notes.dart";
 import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
+import "package:tumbler/Screens/Reblog/reblog.dart";
 
 ///Class for interaction bar exists the bottom of each post in home page
 //////Contains:
@@ -95,6 +96,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                   MaterialPageRoute<Notes>(
                     builder: (final BuildContext context) => NotesPage(
                       postID: postID,
+                      index: index,
                     ),
                   ),
                 );
@@ -111,6 +113,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                   MaterialPageRoute<NotesPage>(
                     builder: (final BuildContext context) => NotesPage(
                       postID: postID,
+                      index: index,
                     ),
                   ),
                 );
@@ -132,9 +135,18 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               color: Colors.black,
             ),
           ),
-          const IconButton(
-            onPressed: null,
-            icon: Icon(
+           IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<Reblog>(
+                  builder: (final BuildContext context) => Reblog(
+                    originalPost: homePosts[index].postBody,
+                    parentPostId : homePosts[index].postId.toString(),
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(
               Icons.repeat,
               color: Colors.black,
             ),
@@ -145,6 +157,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 MaterialPageRoute<NotesPage>(
                   builder: (final BuildContext context) => NotesPage(
                     postID: postID,
+                    index: index,
                   ),
                 ),
               );

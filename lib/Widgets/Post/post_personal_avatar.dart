@@ -29,7 +29,6 @@ class _PersonAvatarState extends State<PersonAvatar> {
   Widget build(final BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO(Waleed): Navigate to user's profile
         Navigator.of(context).push(
           MaterialPageRoute<ProfilePage>(
             builder: (final BuildContext context) => ProfilePage(
