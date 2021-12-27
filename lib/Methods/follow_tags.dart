@@ -1,6 +1,4 @@
-import "dart:convert";
 
-import "package:http/http.dart";
 import "package:tumbler/Methods/api.dart";
 
 /// inorder to follow a specific tag
@@ -8,8 +6,7 @@ import "package:tumbler/Methods/api.dart";
 Future<bool> followTag(final String tagDescription,) async
 {
   bool successful=false;
-  final Response res = await Api().followTag(tagDescription);
-  final Map<String, dynamic> response= jsonDecode(res.body);
+  final Map<String, dynamic> response = await Api().followTag(tagDescription);
   if (response["meta"]["status"] == "200") {
     successful= true;
   }
@@ -22,9 +19,7 @@ Future<bool> followTag(final String tagDescription,) async
 Future<bool> unFollowTag(final String tagDescription,) async
 {
   bool successful=false;
-  final Response res = await Api().unFollowTag(tagDescription);
-  final Map<String, dynamic> response= jsonDecode(res.body);
-  print("Delete follow\n$response");
+  final Map<String, dynamic> response= await Api().unFollowTag(tagDescription);
   if (response["meta"]["status"] == "200") {
     successful= true;
   }

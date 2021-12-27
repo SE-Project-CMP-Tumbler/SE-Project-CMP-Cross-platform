@@ -115,6 +115,7 @@ class _ProfilePageState extends State<ProfilePage>
     final Map<String, dynamic> response =
         await Api().fetchSpecificBlogPost(widget.blogID, currentPagePosts + 1);
 
+    print(response);
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPagePosts++;

@@ -1,8 +1,6 @@
-import "package:flutter/cupertino.dart";
 import "package:flutter/foundation.dart" show kIsWeb;
 import "package:flutter/material.dart";
 import "package:flutter_html/flutter_html.dart";
-import "package:flutter_html/style.dart";
 import "package:tumbler/Models/post_model.dart";
 /// to display random post images in the search page
 class TryThesePosts extends StatelessWidget {
@@ -34,7 +32,7 @@ class TryThesePosts extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(kIsWeb?32:0),
+            padding: EdgeInsets.all(kIsWeb?32:0),
             child: ClipRRect(
               borderRadius: const BorderRadius.all(
                 Radius.circular(5),
@@ -43,7 +41,7 @@ class TryThesePosts extends StatelessWidget {
                 context: context,
                 removeTop: true,
                 child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: kIsWeb?10:1,
                     mainAxisSpacing:  kIsWeb?10:1,

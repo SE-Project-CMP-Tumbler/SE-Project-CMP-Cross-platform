@@ -13,6 +13,7 @@ class Api {
   static const String _postmanMockHost="http://ba5d-41-68-74-128.ngrok.io";
   static const String _autocompleteMock= "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
   static const String _mockSearch ="https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
+
   final String _host = dotenv.env["host"] ?? " ";
   final String _getTrendingTags = dotenv.env["getTrendingTags"] ?? " ";
   final String _signUp = dotenv.env["signUp"] ?? " ";
@@ -33,8 +34,8 @@ class Api {
   final String _logOut = dotenv.env["logOut"] ?? " ";
   final String _published = dotenv.env["published"] ?? " ";
   final String _draft = dotenv.env["draft"] ?? " ";
-  final String _posts = dotenv.env["Post"] ?? " ";
-  final String _followedTags= dotenv.env["followTag"]??" ";
+  final String _posts = dotenv.env["Posts"] ?? " ";
+  final String _followedTags= dotenv.env["follow_Tag"]??" ";
   final String _checkOutBlogs= dotenv.env["checkOutBlogs"]??" ";
   final String _randomPosts= dotenv.env["randomPosts"]??"";
   final String _checkOutTags= dotenv.env["checkOutTags"]??"";
@@ -48,7 +49,6 @@ class Api {
   final String _followings = dotenv.env["followings"] ?? " ";
   final String _likePost = dotenv.env["likePost"] ?? " ";
   final String _replyPost = dotenv.env["replyPost"] ?? " ";
-  final String _followBlog = dotenv.env["followBlog"] ?? " ";
   final String _reblog = dotenv.env["reblog"] ?? " ";
   final String _chats = dotenv.env["chats"] ?? " ";
   final String _followBlog = dotenv.env["follow_blog"] ?? " ";
@@ -92,15 +92,6 @@ class Api {
     } else {
       return http.Response(_failed, 404);
     }
-  }
-
-  /// Make GET Request to the API to get List of
-  /// Trending tags.
-  Future<Map<String, dynamic>> getTrendingTags() async {
-    final http.Response response = await http
-        .get(Uri.parse(_host + _getTrendingTags))
-        .onError(errorFunction);
-    return jsonDecode(response.body);
   }
 
   /// Make Post Request to the API to Sign Up
@@ -219,13 +210,7 @@ class Api {
       Uri.parse(_host + _chats),
       headers: _headerContentAuth,
     )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+        .onError(errorFunction);
     return response;
   }
 
@@ -340,6 +325,7 @@ class Api {
 
   /// GET Posts For the Home Page
   Future<Map<String, dynamic>> fetchHomePosts(final int page) async {
+    print(_host + _dashboard + "?page=$page");
     final http.Response response = await http
         .get(
           Uri.parse(_host + _dashboard + "?page=$page"),
@@ -416,34 +402,7 @@ class Api {
       }),
       headers: _headerContentAuth,
     )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    return jsonDecode(response.body);
-  }
-
-  ///Sends a post request to follow a blog.
-  Future<Map<String, dynamic>> followBlog(
-    final String blogId,
-  ) async {
-    final http.Response response = await http
-        .post(
-      Uri.parse(
-        _host + _followBlog + blogId,
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -458,13 +417,7 @@ class Api {
       ),
       headers: _headerContentAuth,
     )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -479,13 +432,7 @@ class Api {
       ),
       headers: _headerContentAuth,
     )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+        .onError(errorFunction);
 
     return <String, dynamic>{
       // ignore: always_specify_types
@@ -617,13 +564,7 @@ class Api {
         "post_body": postBody
       }),
     )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -829,48 +770,161 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to unfollow specific blog
-  Future<Map<String, dynamic>> unFollowBlog(final int blogID) async {
+  /// to unfollows specific tag
+  Future<Map<String, dynamic>> unFollowTag(final String tagDescription,
+      {final bool mock=false,})
+  async{
+    final String host= mock? _postmanMockHost: _host;
     final http.Response response = await http
-        .delete(
-          Uri.parse(_host + _followBlog + blogID.toString()),
-          headers: _headerContentAuth,
-        )
-        .onError(errorFunction);
+        .delete(Uri.parse(host + _followedTags + tagDescription,),
+      headers: _headerContentAuth,)
+        .onError((final Object? error, final StackTrace stackTrace) {
+
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
     return jsonDecode(response.body);
 
-  /// to follow specific blog
-  Future<Map<String, dynamic>> followBlog(final int blogID) async {
-    final http.Response response = await http
-        .post(
-          Uri.parse(_host + _followBlog + blogID.toString()),
-          headers: _headerContentAuth,
-        )
-        .onError(errorFunction);
-
-    return jsonDecode(response.body);
-  }
-
-  /// to follow specific Tag
-  Future<Map<String, dynamic>> followTag(final String tag) async {
-    final http.Response response = await http
-        .post(
-          Uri.parse(_host + _followTag + tag),
-          headers: _headerContentAuth,
-        )
-        .onError(errorFunction);
-
-    return jsonDecode(response.body);
   }
 
   /// to unfollow specific blog
   Future<Map<String, dynamic>> unFollowBlog(final int blogID) async {
     final http.Response response = await http
         .delete(
-          Uri.parse(_host + _followBlog + blogID.toString()),
-          headers: _headerContentAuth,
-        )
+      Uri.parse(_host + _followBlog + blogID.toString()),
+      headers: _headerContentAuth,
+    )
         .onError(errorFunction);
     return jsonDecode(response.body);
+  }
+
+  /// get posts of specific tag
+  Future<dynamic> fetchTagPosts(final String tagDescription,
+      {final bool mock= false, final bool recent=true,}) async {
+
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http
+        .get(Uri.parse(host + _tagPosts+
+        tagDescription +(recent?_recentPosts:_topPosts),),
+      headers: _headerContentAuth,)
+        .onError(errorFunction);
+    return response;
+  }
+  /// fetching words for auto complete search text field
+  Future<dynamic> fetchAutoComplete(final String word,{final bool mock=false})
+  async{
+    final String host= mock? _autocompleteMock: _host;
+    final http.Response response = await http
+        .get(Uri.parse(host + _autoComplete + word),
+      headers: _headerContentAuth,)
+        .onError(errorFunction);
+    // print("words autocomplete results");
+    // print(response.body);
+
+    return response;
+
+  }
+
+  /// Tags requests
+  /// fetch all the tags that a specific blog follows
+  Future<dynamic> fetchTagsFollowed({final bool mock= true}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _followedTags),
+      headers: _headerContentAuth,
+    )
+
+        .onError(errorFunction);
+    // print("tags followes");
+    return response;
+  }
+  /// get the details of a specific tag
+  Future<dynamic> fetchTagsDetails({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _followedTags),
+      headers: _headerContentAuth,
+    )
+        .onError(errorFunction);
+    return response;
+  }
+  /// get "Check out these tags"
+  Future<dynamic> fetchCheckOutTags({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _checkOutTags),
+      headers: _headerContentAuth,
+    )
+
+        .onError(errorFunction);
+    // print("check out tags");
+    // print(response.body);
+    return response;
+  }
+  /// get "Check out these blogs"
+  Future<dynamic> fetchCheckOutBlogs({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _checkOutBlogs),
+      headers: _headerContentAuth,
+    )
+
+        .onError(errorFunction);
+    // print("check out blogs");
+    // print(response.body);
+
+    return response;
+  }
+
+  /// get random posts
+  Future<dynamic> fetchRandomPosts({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http.get(
+      Uri.parse(host + _randomPosts),
+      headers: _headerContentAuth,
+    )
+        .onError(errorFunction);
+
+    return response;
+  }
+
+  /// get trending tags to follow
+  Future<dynamic> fetchTrendingTags({final bool mock= false}) async {
+    final String host= mock? _postmanMockHost: _host;
+    final http.Response response = await http
+        .get(Uri.parse(host + _getTrendingTags),
+      headers: _headerContentAuth,
+    )
+        .onError(errorFunction);
+    // print("trending tags results");
+    // print(response.body);
+
+    return jsonDecode(response.body);
+  }
+
+  /// fetching words for search results
+  Future<dynamic> fetchSearchResults(final String word,{final bool mock=false})
+  async{
+    final String host= mock? _mockSearch: _host;
+    final http.Response response = await http
+        .get(Uri.parse(host + _search + word,),
+      headers: _headerContentAuth,)
+        .onError((final Object? error, final StackTrace stackTrace) {
+
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    // print("words search results");
+    // print(response.body);
+
+    return response;
+
   }
 }

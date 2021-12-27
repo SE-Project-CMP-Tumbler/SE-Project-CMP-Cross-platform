@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
-import 'package:tumbler/Models/user.dart';
+import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 // ignore: public_member_api_docs
@@ -125,7 +125,7 @@ class _LikeTileState extends State<LikeTile> {
                     }
                   } else {
                     final Map<String, dynamic> response =
-                        await Api().followBlog(widget.blogID);
+                        await Api().followBlog(int.parse(widget.blogID));
                     if (response["meta"]["status"] == "200") {
                       setState(() {
                         _followStatus = true;

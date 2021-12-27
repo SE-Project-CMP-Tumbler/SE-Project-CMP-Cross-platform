@@ -6,9 +6,19 @@ import "package:tumbler/Methods/process_html.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
-import "package:tumbler/Widgets/Add_Post/popup_menu.dart";
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
+
+
+/// Type of Post
+enum PostTypes {
+  /// Default Post type (Reblog)
+  defaultPost,
+  /// When Saved as Draft
+  draftPost,
+  /// When Posted as private
+  privatePost
+}
 
 /// Page to Add New Post
 class Reblog extends StatefulWidget {
@@ -31,6 +41,9 @@ class Reblog extends StatefulWidget {
 class _ReblogState extends State<Reblog> {
   //bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
+  String postButtonText = "Post";
+  /// the current post type
+  PostTypes postType = PostTypes.defaultPost;
 
   Future<void> addTheReblog() async {
     final String html = await controller.getText();
@@ -57,6 +70,144 @@ class _ReblogState extends State<Reblog> {
     } else {
       await showToast(response["meta"]["msg"]);
     }
+  }
+
+  Widget postTypeMenu(){
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Center(
+              child: Text(
+                "                   Post options                              ",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 19,
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  onPrimary: Colors.blue[400],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text("Done"),
+              ),
+            ),
+          ],
+        ),
+        const Divider(
+          thickness: 0.4,
+          color: Colors.black45,
+        ),
+        ListTile(
+          onTap: () {
+            setState(() {
+              postButtonText = "Reblog";
+              postType = PostTypes.defaultPost;
+            });
+            Navigator.of(context).pop();
+          },
+          title: Row(
+            children: const <Widget>[
+              Icon(
+                Icons.post_add,
+                color: Colors.black,
+              ),
+              Text("   Reblog"),
+            ],
+          ),
+          trailing: Radio<PostTypes>(
+            value: PostTypes.defaultPost,
+            groupValue: postType,
+            onChanged: (final PostTypes? value) {
+              setState(() {
+                postButtonText = "Post";
+                postType = value!;
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        const Divider(
+          thickness: 0.3,
+          color: Colors.black45,
+        ),
+        ListTile(
+          onTap: () {
+            setState(() {
+              postButtonText = "Save draft";
+              postType = PostTypes.draftPost;
+            });
+            Navigator.of(context).pop();
+          },
+          title: Row(
+            children: const <Widget>[
+              Icon(
+                Icons.save,
+                color: Colors.black,
+              ),
+              Text("   Save as draft"),
+            ],
+          ),
+          trailing: Radio<PostTypes>(
+            value: PostTypes.draftPost,
+            groupValue: postType,
+            onChanged: (final PostTypes? value) {
+              setState(() {
+                postButtonText = "Save draft";
+                postType = value!;
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        const Divider(
+          thickness: 0.32,
+          color: Colors.black45,
+        ),
+        ListTile(
+          onTap: () {
+            setState(() {
+              postButtonText = "Post Privately";
+              postType = PostTypes.privatePost;
+            });
+            Navigator.of(context).pop();
+          },
+          title: Row(
+            children: const <Widget>[
+              Icon(
+                Icons.lock,
+                color: Colors.black,
+              ),
+              Text("   Post privately"),
+            ],
+          ),
+          trailing: Radio<PostTypes>(
+            value: PostTypes.privatePost,
+            groupValue: postType,
+            onChanged: (final PostTypes? value) {
+              setState(() {
+                postButtonText = "Post privately";
+                postType = value!;
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        const Divider(
+          thickness: 0.32,
+          color: Colors.black45,
+        ),
+      ],
+    );
   }
 
   @override
@@ -93,7 +244,7 @@ class _ReblogState extends State<Reblog> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: const Text("Reblog"),
+                child: Text(postButtonText),
               ),
             ),
             IconButton(
@@ -107,8 +258,8 @@ class _ReblogState extends State<Reblog> {
                   builder: (final BuildContext context) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: const <Widget>[
-                        PostTypeMenu(),
+                      children: <Widget>[
+                        postTypeMenu(),
                       ],
                     );
                   },
