@@ -138,6 +138,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             icon: const Icon(
               CupertinoIcons.arrowshape_turn_up_right,
               color: Colors.black,
+              semanticLabel: "Reblog",
             ),
           ),
           IconButton(

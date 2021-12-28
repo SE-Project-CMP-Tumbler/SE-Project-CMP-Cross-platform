@@ -1,5 +1,4 @@
 // ignore_for_file: lines_longer_than_80_chars
-import "dart:convert";
 import "dart:math" as math;
 
 import "package:flutter/material.dart";
@@ -7,7 +6,7 @@ import "package:flutter/services.dart";
 import "package:flutter_colorpicker/flutter_colorpicker.dart";
 import "package:image_picker/image_picker.dart";
 import "package:tumbler/Methods/api.dart";
-import "package:tumbler/Methods/choose_image_from_gallery.dart";
+import "package:tumbler/Methods/choose_image.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/post_model.dart";
@@ -114,7 +113,6 @@ class _ProfilePageState extends State<ProfilePage>
     currentPagePosts = 0;
     final Map<String, dynamic> response =
         await Api().fetchSpecificBlogPost(widget.blogID, currentPagePosts + 1);
-
 
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
@@ -910,14 +908,14 @@ class _ProfilePageState extends State<ProfilePage>
               ListTile(
                 title: const Text("From Gallery"),
                 onTap: () async {
-                  final XFile? image = await chooseImageFromGallery(
+                  final String? imageData = await chooseImage(
                     ImageSource.gallery,
                   );
-                  if (image != null) {
-                    final String basse64 = base64.encode(await image.readAsBytes());
-                    await showToast("Success");
-                  } else
-                    await showToast("Failed");
+                  if (imageData != null) {
+                    final Map<String, dynamic> response =
+                        await Api().uploadImage(imageData);
+                    if (response["meta"]["status"] == "200") {}
+                  }
                 },
               ),
               const Divider(
@@ -927,14 +925,14 @@ class _ProfilePageState extends State<ProfilePage>
               ListTile(
                 title: const Text("Open Camera"),
                 onTap: () async {
-                  final XFile? image = await chooseImageFromGallery(
+                  final String? imageData = await chooseImage(
                     ImageSource.camera,
                   );
-                  if (image != null) {
-                    final String basse64 = base64.encode(await image.readAsBytes());
-                    await showToast("Success");
-                  } else
-                    await showToast("Failed");
+                  if (imageData != null) {
+                    final Map<String, dynamic> response =
+                        await Api().uploadImage(imageData);
+                    if (response["meta"]["status"] == "200") {}
+                  }
                 },
               ),
             ],
@@ -1422,7 +1420,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                     left: 8,
                                                   ),
                                                   child: Text(
-                                                    displayedBlog.username!,
+                                                    displayedBlog.blogTitle!,
                                                     style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 20,
@@ -1490,16 +1488,17 @@ class _ProfilePageState extends State<ProfilePage>
                           ),
                         ),
                         // Description
-                        Text(
-                          displayedBlog.blogDescription!,
-                          textScaleFactor: 1.5,
-                          textAlign: TextAlign.center,
-                          softWrap: true,
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: themeTitleColor,
+                        if (displayedBlog.blogDescription!.isNotEmpty)
+                          Text(
+                            displayedBlog.blogDescription!,
+                            textScaleFactor: 1.5,
+                            textAlign: TextAlign.center,
+                            softWrap: true,
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: themeTitleColor,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
