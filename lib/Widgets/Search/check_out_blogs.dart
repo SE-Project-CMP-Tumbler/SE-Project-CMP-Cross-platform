@@ -70,7 +70,7 @@ class _CheckOutBlogsState extends State<CheckOutBlogs> {
                         const BorderRadius.all(Radius.circular(10)),
                       ),
                       width:kIsWeb?200:((widget._width / 3) + 30),
-                      height: kIsWeb?180:null,
+                      height: kIsWeb?180:(widget._width / 3) + 50,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,37 +126,39 @@ class _CheckOutBlogsState extends State<CheckOutBlogs> {
                             ),
                           ),
 
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                left: 10,
-                                right: 10,
-                                bottom: 8,
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                  //compute Luminance, if >0.4
-                                  // then make it black,
-                                  // else make it white
-                                  MaterialStateProperty.all<Color>(
-                                    widget.blogsBg[blog]!.computeLuminance()>0.5
-                                        ? Colors.black: Colors.white,
-                                  ),
-                                  foregroundColor:
-                                  MaterialStateProperty.all<Color>(
-                                    widget.blogsBg[blog]??Colors.black,
-                                  ),
-                                  fixedSize: MaterialStateProperty.all(
-                                    Size(widget._width, 35),
-                                  ),
-                                  elevation:
-                                  MaterialStateProperty.all(1),
+                          Expanded(
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 10,
+                                  right: 10,
+                                  bottom: 8,
                                 ),
-                                child: const Text(
-                                  "Follow",
-                                  textScaleFactor: 1.2,
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                    //compute Luminance, if >0.4
+                                    // then make it black,
+                                    // else make it white
+                                    MaterialStateProperty.all<Color>(
+                                      widget.blogsBg[blog]!.computeLuminance()>0.5
+                                          ? Colors.black: Colors.white,
+                                    ),
+                                    foregroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                      widget.blogsBg[blog]??Colors.black,
+                                    ),
+                                    fixedSize: MaterialStateProperty.all(
+                                      Size(widget._width, 35),
+                                    ),
+                                    elevation:
+                                    MaterialStateProperty.all(1),
+                                  ),
+                                  child: const Text(
+                                    "Follow",
+                                    textScaleFactor: 1.2,
+                                  ),
                                 ),
                               ),
                             ),

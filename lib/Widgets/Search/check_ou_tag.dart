@@ -12,6 +12,8 @@ class CheckOutTagComponent extends StatefulWidget {
     required final double width,
     required final this.tag,
     required final this.color,
+    required final this.isFollowed,
+
     final Key? key,
   }) : _width = width, super(key: key);
 
@@ -20,7 +22,8 @@ class CheckOutTagComponent extends StatefulWidget {
   final Tag tag;
   /// main color of the component
   final Color color;
-
+  /// indicates whether this tag is followed or not
+  final bool isFollowed;
   @override
   State<CheckOutTagComponent> createState() => _CheckOutTagComponentState();
 }
@@ -28,10 +31,20 @@ class CheckOutTagComponent extends StatefulWidget {
 class _CheckOutTagComponentState extends State<CheckOutTagComponent> {
   /// to indicate whether the user successfully followed this tag or not
   bool _followed= false;
+
+
   /// to indicate a loading of a post or delete tag request
   bool _proceedingFollowing=false;
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _followed= widget.isFollowed;
+    });
+  }
+  @override
   Widget build(final BuildContext context) {
+    rebuildAllChildren(context);
     final double _height= MediaQuery.of(context).size.height;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
@@ -43,9 +56,12 @@ class _CheckOutTagComponentState extends State<CheckOutTagComponent> {
           borderRadius:
           const BorderRadius.all(Radius.circular(10)),
           border: Border.all(
-            color:Color.fromRGBO(widget.color.red+30>0?widget.color.red+30:widget.color.red,
-                widget.color.green+30<255?widget.color.green+30:widget.color.green,
-                widget.color.blue+30<255?widget.color.blue+30:widget.color.blue
+            color:Color.fromRGBO(widget.color.red+30>0?widget.color.red+30:
+            widget.color.red,
+                widget.color.green+30<255?widget.color.green+30:
+                widget.color.green,
+                widget.color.blue+30<255?widget.color.blue+30:
+                widget.color.blue
                 , 1,),
             width: 2,
           ),
@@ -67,7 +83,8 @@ class _CheckOutTagComponentState extends State<CheckOutTagComponent> {
                   "#${widget.tag.tagDescription!}",
                   textScaleFactor: 1.1,
                   style:TextStyle(
-                    color: widget.color.computeLuminance()>0.5?Colors.black:Colors.white,
+                    color: widget.color.computeLuminance()>0.5?
+                    Colors.black:Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -130,25 +147,28 @@ class _CheckOutTagComponentState extends State<CheckOutTagComponent> {
                   ),
                   child: ElevatedButton(
                     onPressed: () async{
+                      if(mounted)
                       setState(() {
                         _proceedingFollowing=true;
                       });
                       if(!_followed)
-                        {
+                      {
                       if (widget.tag.tagDescription!=null) {
-                        final bool succeeded= await
-                        followTag(widget.tag.tagDescription!);
-                        if(succeeded) {
-                          _showToast(context, "Great!, you are now following "
-                              "all about #${widget.tag.tagDescription}",);
-                          setState(() {
-                            _followed = true;
-                          });
-                        }
-                        else{
-                        _showToast(context, "OOPS, something went wrong 😢");
-                        }
-                        }
+                      final bool succeeded= await
+                      followTag(widget.tag.tagDescription!);
+                      if(succeeded) {
+                      _showToast(context, "Great!, you are now following "
+                      "all about #${widget.tag.tagDescription}",);
+                      if(mounted)
+                      setState(() {
+                      _followed = true;
+                      });
+                      }
+                      else{
+                      _showToast(context, "OOPS, something went wrong 😢");
+                      }
+                      }
+                      }
                       else{
                           // ignore: invariant_booleans
                           if (widget.tag.tagDescription!=null) {
@@ -157,19 +177,19 @@ class _CheckOutTagComponentState extends State<CheckOutTagComponent> {
                           if(succeeded) {
                           _showToast(context, "Don't worry, u won't be"
                           " bothered by this tag again",);
+                          if(mounted)
                           setState(() {
                           _followed = false;
                           });}
                           else{
                           _showToast(context, "OOPS, something went wrong 😢");
                           }
-                          }
-
-                      }
+                      }}
+                      if(mounted)
                       setState(() {
                         _proceedingFollowing=false;
                       });
-                      }},
+                      },
 
                     style: ButtonStyle(
 
@@ -207,6 +227,15 @@ class _CheckOutTagComponentState extends State<CheckOutTagComponent> {
         ),
       ),
     );
+  }
+  /// to solve a ui issue
+  void rebuildAllChildren(final BuildContext context) {
+    void rebuild(final Element el) {
+      el.markNeedsBuild();
+      // ignore: cascade_invocations
+      el.visitChildren(rebuild);
+    }
+    (context as Element).visitChildren(rebuild);
   }
 }
 /// a function that displays a toast message for the user

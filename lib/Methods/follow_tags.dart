@@ -23,8 +23,9 @@ Future<bool> unFollowTag(final String tagDescription,) async
 {
   bool successful=false;
   final Response res = await Api().unFollowTag(tagDescription);
+
   final Map<String, dynamic> response= jsonDecode(res.body);
-  print("Delete follow\n$response");
+
   if (response["meta"]["status"] == "200") {
     successful= true;
   }

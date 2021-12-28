@@ -89,7 +89,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
     });
     /// get random blogs
     await getRandomBlogs().then((final List<Blog> value) {
-      setState((){checkOutBlogs= value;});
+      setState((){
+        checkOutBlogs.clear();
+        checkOutBlogs= value;
+      });
       for(int i =0; i<value.length; i++)
         {
           blogsBgColors[value[i]]= RandomColor().randomColor();
@@ -103,7 +106,9 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
     });
     /// get random posts "try these posts"
     await getRandomPosts().then((final List<PostModel> value) {
-      setState((){randomPosts= value;});
+      setState((){
+        randomPosts.clear();
+        randomPosts= value;});
     }).catchError((final Object? error) {
       setState(() {
         _error = true;
@@ -113,7 +118,9 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
     });
     /// get random suggesting tags
     await getTagsToFollow().then((final List<Tag> value) {
-      setState((){tagsToFollow= value;});
+      setState((){
+        tagsToFollow.clear();
+        tagsToFollow= value;});
       for(int i =0; i<value.length; i++)
       {
         setState(() {
@@ -133,7 +140,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
     await getTrendingTagsToFollow().then((final List<Tag> value) async{
       setState((){
       if(value.length<=9)
-        trendingTags= value;
+        {
+          trendingTags.clear();
+          trendingTags= value;
+        }
       else {
         trendingTags=<Tag>[];
         for (int i = 0; i < 9; i++) {
@@ -178,7 +188,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         _isLoading = false;
         _error = true;
       });
-      showErrorDialog(context, "error from getting followed tags\n${error.toString()}");
+      showErrorDialog(context, "error from getting followed tags"
+          "\n${error.toString()}",);
     });
 
 
@@ -278,6 +289,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
       ),
     );
   }
+
 }
 
 

@@ -1,3 +1,5 @@
+// ignore_for_file: cascade_invocations
+
 import "dart:convert";
 import "package:http/http.dart";
 import "package:tumbler/Methods/api.dart";
@@ -16,12 +18,19 @@ Future<List<Tag>> getTagsToFollow() async
   final List<dynamic> tags = response["response"]["tags"];
   if (response["meta"]["status"] == "200") {
     for (final Map<String, dynamic> tag in tags) {
-      print(tag.toString());
       final Tag coTag = Tag(
         tagDescription: tag["tag_description"],
         tagImgUrl: tag["tag_image"],
         postsCount: tag["posts_count"],
       );
+      final Map<String, dynamic> tagResponse= await
+      getTagDetails(coTag.tagDescription!);
+      if(tagResponse["meta"]["status"]==200)
+        {
+          coTag.isFollowed= tagResponse["response"]["followed"] as bool;
+          coTag.followersCount= tagResponse["response"]["followers_number"];
+          coTag.postsCount= tagResponse["response"]["posts_count"];
+        }
       checkoutTags.add(coTag);
     }
   }
@@ -39,13 +48,19 @@ Future<List<Tag>> getTrendingTagsToFollow() async
   final List<dynamic> tags = response["response"]["tags"];
   if (response["meta"]["status"] == "200") {
     for (final Map<String, dynamic> tag in tags) {
-      print(tag.toString());
-
       final Tag coTag = Tag(
         tagDescription: tag["tag_description"],
         tagImgUrl: tag["tag_image"],
         postsCount: tag["posts_count"],
       );
+      final Map<String, dynamic> tagResponse= await
+      getTagDetails(coTag.tagDescription!);
+      if(tagResponse["meta"]["status"]==200)
+      {
+        coTag.isFollowed= tagResponse["response"]["followed"] as bool;
+        coTag.followersCount= tagResponse["response"]["followers_number"];
+        coTag.postsCount= tagResponse["response"]["posts_count"];
+      }
       trendingTags.add(coTag);
     }
   }
@@ -70,3 +85,10 @@ Future<List<PostModel>> getTagPosts(final String tagDescription,
   return tagPosts;
 }
 
+/// to get more details of each tag
+Future<Map<String, dynamic>> getTagDetails(final String tagDescription,) async
+{
+  final Response res = await Api().fetchTagsDetails(tagDescription);
+  final Map<String, dynamic> response= jsonDecode(res.body);
+  return response;
+}

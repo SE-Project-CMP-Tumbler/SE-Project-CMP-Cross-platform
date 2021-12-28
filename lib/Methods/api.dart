@@ -10,7 +10,7 @@ import "package:tumbler/Models/user.dart";
 class Api {
   static const String _firebaseHost =
       "https://mock-back-default-rtdb.firebaseio.com";
-  static const String _postmanMockHost="http://ba5d-41-68-74-128.ngrok.io";
+  static const String _postmanMockHost="http://f677-193-227-10-6.ngrok.io";
   static const String _autocompleteMock= "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
   static const String _mockSearch ="https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
   final String _host = dotenv.env["host"] ?? " ";
@@ -49,6 +49,7 @@ class Api {
   final String _likePost = dotenv.env["likePost"] ?? " ";
   final String _replyPost = dotenv.env["replyPost"] ?? " ";
   final String _chats = dotenv.env["chats"] ?? " ";
+  final String _tagData = dotenv.env["tagData"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -690,7 +691,7 @@ class Api {
 
   /// Tags requests
   /// fetch all the tags that a specific blog follows
-  Future<dynamic> fetchTagsFollowed({final bool mock= true}) async {
+  Future<dynamic> fetchTagsFollowed({final bool mock= false}) async {
     final String host= mock? _postmanMockHost: _host;
     final http.Response response = await http.get(
       Uri.parse(host + _followedTags),
@@ -704,14 +705,14 @@ class Api {
         return http.Response(_failed, 404);
       }
     });
-    // print("tags followes");
     return response;
   }
   /// get the details of a specific tag
-  Future<dynamic> fetchTagsDetails({final bool mock= false}) async {
+  Future<dynamic> fetchTagsDetails(final String tagDescription,
+      {final bool mock= false,}) async {
     final String host= mock? _postmanMockHost: _host;
     final http.Response response = await http.get(
-      Uri.parse(host + _followedTags),
+      Uri.parse(host + _tagData + tagDescription),
       headers: _headerContentAuth,
     )
         .onError((final Object? error, final StackTrace stackTrace) {
@@ -805,7 +806,7 @@ class Api {
 
   /// get posts of specific tag
   Future<dynamic> fetchTagPosts(final String tagDescription,
-      {final bool mock= false, final bool recent=true,}) async {
+      {final bool mock= true, final bool recent=true,}) async {
 
     final String host= mock? _postmanMockHost: _host;
     final http.Response response = await http
@@ -895,14 +896,13 @@ class Api {
         .delete(Uri.parse(host + _followedTags + tagDescription,),
       headers: _headerContentAuth,)
         .onError((final Object? error, final StackTrace stackTrace) {
-
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
+
         return http.Response(_weirdConnection, 502);
       } else {
         return http.Response(_failed, 404);
       }
     });
-
     return response;
 
   }

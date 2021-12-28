@@ -204,7 +204,7 @@ body: SafeArea(
                                       ),
                                       child: Container(
                                         color: Colors.white,
-                                        child:Container() /**PostOutView(
+                                        child:Container(), /**PostOutView(
                                           post: post,
                                           index: postsRes.indexOf(post),
                                         ),**/
@@ -360,12 +360,18 @@ body: SafeArea(
                                                 },
                                                 child:  CheckOutTagComponent
                                                   (width: _width, tag: Tag(
-                                                  tagDescription: tagRes[index+1]
+                                                  tagDescription:
+                                                  tagRes[index+1]
                                                       .tagDescription,
-                                                  tagImgUrl: tagRes[index+1].tagImgUrl
+                                                  tagImgUrl: tagRes[index+1]
+                                                      .tagImgUrl
                                                       ??tumblerImgUrl,
                                                 ),
-                                                  color: tagsBgColors[index+1],),);
+                                                  color: tagsBgColors[index+1],
+                                                  // TODO(Donia): replace this
+                                                  //  with the value from the db
+                                                  isFollowed: false,
+                                                ),);
                                             },
                                           ),
                                         ),

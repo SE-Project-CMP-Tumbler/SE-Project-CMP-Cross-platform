@@ -17,8 +17,10 @@ class CheckOutTags extends StatelessWidget {
   final List<Tag> tagsToFollow;
   /// map of bg colors of tags
   final Map<Tag, Color> tagsBg;
+
   @override
   Widget build(final BuildContext context) {
+    rebuildAllChildren(context);
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: Column(
@@ -49,7 +51,8 @@ class CheckOutTags extends StatelessWidget {
                   children: tagsToFollow.isNotEmpty?tagsToFollow.map(
                         (final Tag item) =>
                       CheckOutTagComponent
-                        (width: _width, tag: item, color: tagsBg[item]!,),)
+                        (width: _width, tag: item, color: tagsBg[item]!,
+                        isFollowed: false,),)
                       .toList():<Widget>[Container()],
 
 
@@ -60,6 +63,15 @@ class CheckOutTags extends StatelessWidget {
         ],
       ),
     );
+  }
+  /// to solve a ui issue
+  void rebuildAllChildren(final BuildContext context) {
+    void rebuild(final Element el) {
+      el.markNeedsBuild();
+      // ignore: cascade_invocations
+      el.visitChildren(rebuild);
+    }
+    (context as Element).visitChildren(rebuild);
   }
 }
 

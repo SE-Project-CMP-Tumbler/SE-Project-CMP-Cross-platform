@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
+import 'package:random_color/random_color.dart';
 import "package:tumbler/Models/tag.dart";
+import 'package:tumbler/Screens/Search/tag_posts.dart';
 import "package:tumbler/Widgets/Search/tag_card.dart";
 /// this is the tags section in the search screen
 class TagsYouFollow extends StatelessWidget {
@@ -58,9 +60,20 @@ class TagsYouFollow extends StatelessWidget {
               padding: const EdgeInsets.only(left: 8),
               child: Row(
                 children: tags.map((final Tag item) =>
-                    TagCard(tag:item.tagDescription!,
+                    GestureDetector(
+                      onTap: (){
+
+                        Navigator.push(context,
+                          MaterialPageRoute<TagPosts>(
+                            builder:
+                                (final BuildContext context)
+                            => TagPosts(tag: item,bgColor:
+                            RandomColor().randomColor(),),),);
+                      },
+                      child: TagCard(tag:item.tagDescription!,
                   tagBackGround:item.tagImgUrl!,
-                  width: _width,),).toList(),
+                  width: _width,),
+                    ),).toList(),
               ),
             ),
           )
