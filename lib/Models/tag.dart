@@ -1,7 +1,7 @@
 import "package:tumbler/Models/post_model.dart";
 
 /// the tags that appear on the search page
-class Tag{
+class Tag {
   /// constructor of a tag
   Tag({
     required final this.tagDescription,
@@ -29,5 +29,4 @@ class Tag{
 
   /// count of posts that has this tag
   int? postsCount;
-
 }

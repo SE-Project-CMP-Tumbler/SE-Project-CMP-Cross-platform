@@ -1,12 +1,9 @@
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:html_editor_enhanced/html_editor.dart";
-import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
 import "package:tumbler/Methods/show_toast.dart";
-import "package:tumbler/Models/user.dart";
-import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 /// Type of Post
@@ -22,22 +19,31 @@ enum PostTypes {
 }
 
 /// Page to Add New Post
-class AddPost extends StatefulWidget {
+class EditPost extends StatefulWidget {
+  /// Constructor
+  const EditPost({required this.postID});
+
+  /// Post ID to edit
+  final String postID;
+
   @override
-  _AddPostState createState() => _AddPostState();
+  _EditPostState createState() => _EditPostState();
 }
 
-class _AddPostState extends State<AddPost> {
+class _EditPostState extends State<EditPost> {
   bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
   String postButtonText = "Post";
+  String avatarPhotoLink = "";
+  String shape = "square";
+  String blogID = "";
+  String blogUserName = "";
 
   /// the current post type
   PostTypes postType = PostTypes.defaultPost;
 
-  Future<void> addThePost() async {
+  Future<void> editThePost() async {
     final String html = await controller.getText();
-    final String postTime = DateFormat("yyyy-MM-dd").format(DateTime.now());
     final String processedHtml = await extractMediaFiles(html);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
@@ -49,9 +55,10 @@ class _AddPostState extends State<AddPost> {
     }
 
     final Map<String, dynamic> response = await Api()
-        .addPost(processedHtml, postOptionChoice, "general", postTime);
+        .editPost(widget.postID, postOptionChoice, "general", processedHtml);
+
     if (response["meta"]["status"] == "200") {
-      await showToast("Added Successfully");
+      await showToast("Edited Successfully");
       Navigator.of(context).pop();
     } else {
       await showToast(response["meta"]["msg"]);
@@ -196,6 +203,37 @@ class _AddPostState extends State<AddPost> {
     );
   }
 
+  Future<void> initialize() async {
+    final Map<String, dynamic> response = await Api().getPost(widget.postID);
+    if (response["meta"]["status"] == "200") {
+      avatarPhotoLink = response["response"]["blog_avatar"] ?? "";
+      shape = response["response"]["blog_avatar_shape"] ?? "square";
+      blogID = (response["response"]["blog_id"] ?? "").toString();
+      blogUserName = response["response"]["blog_username"] ?? "";
+      if (response["response"]["post_status"] == "published") {
+        postType = PostTypes.defaultPost;
+        postButtonText = "Post";
+      } else if (response["response"]["post_status"] == "draft") {
+        postType = PostTypes.draftPost;
+        postButtonText = "Save draft";
+      } else {
+        postType = PostTypes.privatePost;
+        postButtonText = "Post privately";
+      }
+      controller.insertHtml(response["response"]["post_body"]);
+      setState(() {});
+    } else {
+      await showToast(response["meta"]["msg"]);
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialize();
+  }
+
   @override
   Widget build(final BuildContext context) {
     return GestureDetector(
@@ -223,7 +261,7 @@ class _AddPostState extends State<AddPost> {
             Container(
               margin: const EdgeInsets.all(10),
               child: ElevatedButton(
-                onPressed: isPostButtonDisabled ? null : addThePost,
+                onPressed: isPostButtonDisabled ? null : editThePost,
                 style: ElevatedButton.styleFrom(
                   onPrimary: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -267,11 +305,11 @@ class _AddPostState extends State<AddPost> {
                 child: Row(
                   children: <Widget>[
                     PersonAvatar(
-                      avatarPhotoLink: User.avatars[User.currentProfile],
-                      shape: User.avatarShapes[User.currentProfile],
-                      blogID: User.blogsIDs[User.currentProfile],
+                      avatarPhotoLink: avatarPhotoLink,
+                      shape: shape,
+                      blogID: blogID,
                     ),
-                    const ProfilesList(),
+                    Text(blogUserName),
                   ],
                 ),
               ),

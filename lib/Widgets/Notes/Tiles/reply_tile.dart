@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import "package:flutter/material.dart";
+import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 class ReplyTile extends StatelessWidget {
@@ -47,8 +48,11 @@ class ReplyTile extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black26),
-                  borderRadius: const BorderRadius.all(Radius.circular(15),),),
+                border: Border.all(color: Colors.black26),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(15),
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
@@ -61,11 +65,8 @@ class ReplyTile extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      commentText,
-                      maxLines: 1000,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
+                    HtmlView(
+                      htmlData: "<p>$commentText</p>",
                     ),
                   ],
                 ),

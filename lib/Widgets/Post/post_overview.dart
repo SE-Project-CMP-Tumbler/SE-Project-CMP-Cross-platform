@@ -35,6 +35,8 @@ class _PostOutViewState extends State<PostOutView> {
           avatarShape: widget.post.blogAvatarShape,
           name: widget.post.blogUsername,
           blogID: widget.post.blogId.toString(),
+          isFollowed: widget.post.isFollowed,
+          index: widget.index,
         ),
         const Divider(
           color: Colors.grey,

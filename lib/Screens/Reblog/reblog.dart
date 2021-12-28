@@ -1,17 +1,17 @@
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:html_editor_enhanced/html_editor.dart";
-import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/process_html.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Add_Post/dropdown_list.dart";
+import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 /// Type of Post
 enum PostTypes {
-  /// Default Post type (published)
+  /// Default Post type (Reblog)
   defaultPost,
 
   /// When Saved as Draft
@@ -22,22 +22,33 @@ enum PostTypes {
 }
 
 /// Page to Add New Post
-class AddPost extends StatefulWidget {
+class Reblog extends StatefulWidget {
+  ///takes the html of the original post.
+  const Reblog({
+    required final this.originalPost,
+    required final this.parentPostId,
+  });
+
+  /// Html of the original post.
+  final String originalPost;
+
+  /// parent post id
+  final String parentPostId;
+
   @override
-  _AddPostState createState() => _AddPostState();
+  _ReblogState createState() => _ReblogState();
 }
 
-class _AddPostState extends State<AddPost> {
-  bool isPostButtonDisabled = true;
+class _ReblogState extends State<Reblog> {
+  //bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
   String postButtonText = "Post";
 
   /// the current post type
   PostTypes postType = PostTypes.defaultPost;
 
-  Future<void> addThePost() async {
+  Future<void> addTheReblog() async {
     final String html = await controller.getText();
-    final String postTime = DateFormat("yyyy-MM-dd").format(DateTime.now());
     final String processedHtml = await extractMediaFiles(html);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
@@ -48,8 +59,14 @@ class _AddPostState extends State<AddPost> {
       postOptionChoice = "private";
     }
 
-    final Map<String, dynamic> response = await Api()
-        .addPost(processedHtml, postOptionChoice, "general", postTime);
+    final Map<String, dynamic> response = await Api().reblog(
+      User.blogsIDs[User.currentProfile],
+      widget.parentPostId,
+      processedHtml,
+      postOptionChoice,
+      "general",
+    );
+
     if (response["meta"]["status"] == "200") {
       await showToast("Added Successfully");
       Navigator.of(context).pop();
@@ -96,7 +113,7 @@ class _AddPostState extends State<AddPost> {
         ListTile(
           onTap: () {
             setState(() {
-              postButtonText = "Post";
+              postButtonText = "Reblog";
               postType = PostTypes.defaultPost;
             });
             Navigator.of(context).pop();
@@ -107,7 +124,7 @@ class _AddPostState extends State<AddPost> {
                 Icons.post_add,
                 color: Colors.black,
               ),
-              Text("   Post now"),
+              Text("   Reblog"),
             ],
           ),
           trailing: Radio<PostTypes>(
@@ -223,7 +240,7 @@ class _AddPostState extends State<AddPost> {
             Container(
               margin: const EdgeInsets.all(10),
               child: ElevatedButton(
-                onPressed: isPostButtonDisabled ? null : addThePost,
+                onPressed: addTheReblog,
                 style: ElevatedButton.styleFrom(
                   onPrimary: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -275,6 +292,7 @@ class _AddPostState extends State<AddPost> {
                   ],
                 ),
               ),
+              HtmlView(htmlData: widget.originalPost),
               HtmlEditor(
                 controller: controller,
                 htmlEditorOptions: const HtmlEditorOptions(
@@ -310,14 +328,7 @@ class _AddPostState extends State<AddPost> {
                   height: MediaQuery.of(context).size.height * .75,
                 ),
                 callbacks: Callbacks(
-                  onChangeContent: (final String? changed) async {
-                    final String html = await controller.getText();
-                    if (html.isEmpty) {
-                      setState(() => isPostButtonDisabled = true);
-                    } else {
-                      setState(() => isPostButtonDisabled = false);
-                    }
-                  },
+                  onChangeContent: (final String? changed) async {},
                 ),
               ),
             ],

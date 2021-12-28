@@ -1,7 +1,5 @@
 import "package:flutter/material.dart";
 
-
-
 ///Widget to show the avatar added on it the icon type passed to it
 class AvatarWithIcon extends StatelessWidget {
   ///Takes avatarUrl and iconType
@@ -34,8 +32,9 @@ class AvatarWithIcon extends StatelessWidget {
       width: 40,
       child: Stack(
         alignment: AlignmentDirectional.bottomEnd,
+        // ignore: deprecated_member_use
         overflow: Overflow.visible,
-        children: [
+        children: <Widget>[
           Image.network(
             avatarUrl,
             fit: BoxFit.cover,

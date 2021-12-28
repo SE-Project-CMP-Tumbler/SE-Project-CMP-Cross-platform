@@ -33,6 +33,7 @@ dependencies:
   chewie:
   cupertino_icons: ^1.0.2
   dartdoc: ^4.1.0
+  flutter_colorpicker: ^1.0.3
   flutter_dotenv: ^5.0.2
   fluttertoast: ^8.0.8
   flutter_html: ^2.2.1
@@ -51,12 +52,18 @@ dependencies:
   provider: ^6.0.1
   sqflite: ^2.0.1
   video_player: ^2.2.7
+  url_launcher: ^6.0.17
+  image_picker: ^0.8.4+4
   contained_tab_bar_view: ^0.8.0
   enhanced_drop_down: ^0.1.7+1
+  pusher_client: ^2.0.0
+  flutter_pusher: ^1.0.3
   random_color: ^1.0.6-nullsafety
   infinite_scroll_pagination: ^3.1.0
   sliver_header_delegate: ^0.0.5
   flutter_launcher_icons: ^0.9.2
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

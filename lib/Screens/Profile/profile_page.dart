@@ -1,9 +1,13 @@
 // ignore_for_file: lines_longer_than_80_chars
+import "dart:convert";
 import "dart:math" as math;
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:flutter_colorpicker/flutter_colorpicker.dart";
+import "package:image_picker/image_picker.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/choose_image_from_gallery.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/post_model.dart";
@@ -33,9 +37,9 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   TabController? tabController;
-  int themeColor = 0xff001935;
-  int themeTitleColor = 0xffffffff;
-  int accentColor = 0xffffffff;
+  Color themeColor = const Color(0xff001935);
+  Color themeTitleColor = const Color(0xffffffff);
+  Color accentColor = const Color(0xffffffff);
   late AnimationController loadingSpinnerAnimationController;
 
   /// Bool to indicate if the Blog is mine
@@ -60,6 +64,20 @@ class _ProfilePageState extends State<ProfilePage>
 
   final List<String> _tabs = <String>["Posts"];
 
+  final List<String> _messageOptions = <String>["Send a message"];
+  final List<String> _personIconOptions = <String>[
+    "Share",
+    "Get Notifications",
+    "Block",
+    "Report"
+  ];
+
+  final List<String> blogUserNames =
+      User.blogsNames + <String>["Create new tumblr"];
+  String dropdownValue = User.blogsNames[User.currentProfile];
+
+  Widget? myBlogsDropDown;
+
   /// current opened tab
   late String currentTab;
 
@@ -83,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage>
 
   /// list of Following Users.
   /// Type is [followListTile]
-  List<dynamic> followingTabList = <dynamic>[];
+  List<Map<String, dynamic>> followingTabList = <Map<String, dynamic>>[];
 
   /// for Pagination Likes Tab
   int currentPageFollowing = 0;
@@ -96,6 +114,7 @@ class _ProfilePageState extends State<ProfilePage>
     currentPagePosts = 0;
     final Map<String, dynamic> response =
         await Api().fetchSpecificBlogPost(widget.blogID, currentPagePosts + 1);
+
 
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
@@ -137,7 +156,7 @@ class _ProfilePageState extends State<ProfilePage>
     postsTabLiked.clear();
     currentPageLiked = 0;
     final Map<String, dynamic> response =
-        await Api().fetchLikedPost(currentPageLiked + 1);
+        await Api().fetchLikedPost(displayedBlog.blogId!, currentPageLiked + 1);
 
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
@@ -158,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage>
     }
     _gettingPosts = true;
     final Map<String, dynamic> response =
-        await Api().fetchLikedPost(currentPageLiked + 1);
+        await Api().fetchLikedPost(displayedBlog.blogId!, currentPageLiked + 1);
 
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
@@ -178,24 +197,19 @@ class _ProfilePageState extends State<ProfilePage>
     setState(() => _isLoading = true);
     followingTabList.clear();
     currentPageFollowing = 0;
-    final Map<String, dynamic> response =
-        await Api().fetchFollowings(currentPageFollowing + 1);
+    final Map<String, dynamic> response = await Api()
+        .fetchFollowings(displayedBlog.blogId!, currentPageFollowing + 1);
 
     if (response["meta"]["status"] == "200") {
-      if ((response["response"]["followings"] as List<dynamic>).isNotEmpty) {
+      final List<dynamic> x =
+          response["response"]["followings"] as List<dynamic>;
+      if (x.isNotEmpty) {
         currentPageFollowing++;
-        for (final Map<String, dynamic> follow in response["response"]
-            ["followings"]) {
-          followingTabList.add(
-            followListTile(
-              follow["blog_avatar"],
-              follow["blog_avatar_shape"],
-              follow["blog_username"],
-              follow["title"] ?? "Untitled",
-              follow["blog_id"] as int,
-            ),
-          );
+
+        for (final dynamic element in x) {
+          followingTabList.add(element);
         }
+
         setState(() {}); // to update the list
       }
     } else {
@@ -209,24 +223,18 @@ class _ProfilePageState extends State<ProfilePage>
       return;
     }
     _gettingPosts = true;
-    final Map<String, dynamic> response =
-        await Api().fetchFollowings(currentPageFollowing + 1);
+    final Map<String, dynamic> response = await Api()
+        .fetchFollowings(displayedBlog.blogId!, currentPageFollowing + 1);
 
     if (response["meta"]["status"] == "200") {
-      if ((response["response"]["followings"] as List<dynamic>).isNotEmpty) {
+      final List<dynamic> x =
+          response["response"]["followings"] as List<dynamic>;
+      if (x.isNotEmpty) {
         currentPageFollowing++;
-        for (final Map<String, dynamic> follow in response["response"]
-            ["followings"]) {
-          followingTabList.add(
-            followListTile(
-              follow["blog_avatar"],
-              follow["blog_avatar_shape"],
-              follow["blog_username"],
-              follow["title"] ?? "Untitled",
-              follow["blog_id"] as int,
-            ),
-          );
+        for (final dynamic element in x) {
+          followingTabList.add(element);
         }
+
         setState(() {}); // to update the list
       }
     } else
@@ -235,38 +243,64 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   Widget followListTile(
-    final String blogAvatar,
-    final String blogAvatarShape,
-    final String blogUsername,
-    final String blogTitle,
-    final int blogId,
+    final int index,
   ) {
+    // followListTile(
+    //   follow["blog_avatar"],
+    //   follow["blog_avatar_shape"],
+    //   follow["blog_username"],
+    //   follow["title"] ?? "Untitled",
+    //   follow["blog_id"] as int,
+    //   follow["is_followed"] as bool,
+    // ),
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ListTile(
           onTap: () {
-            // TODO(Ziyad): go to his profile
             Navigator.of(context).push(
               MaterialPageRoute<ProfilePage>(
-                builder: (final BuildContext context) =>
-                    ProfilePage(blogID: blogId.toString()),
+                builder: (final BuildContext context) => ProfilePage(
+                  blogID: followingTabList[index]["blog_id"].toString(),
+                ),
               ),
             );
           },
           dense: true,
           leading: PersonAvatar(
-            avatarPhotoLink: blogAvatar,
-            shape: blogAvatarShape,
-            blogID: blogId.toString(),
+            avatarPhotoLink: followingTabList[index]["blog_avatar"],
+            shape: followingTabList[index]["blog_avatar_shape"],
+            blogID: followingTabList[index]["blog_id"].toString(),
           ),
-          title: Text(blogUsername),
-          subtitle: Text(blogTitle),
-          trailing: IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              // TODO(Ziyad): implement this
+          title: Text(followingTabList[index]["blog_username"]),
+          subtitle: Text(followingTabList[index]["title"] ?? "Untitled"),
+          trailing: TextButton(
+            onPressed: () async {
+              Map<String, dynamic> response = <String, dynamic>{};
+              if (followingTabList[index]["is_followed"] as bool)
+                response = await Api()
+                    .unFollowBlog(followingTabList[index]["blog_id"]);
+              else
+                response =
+                    await Api().followBlog(followingTabList[index]["blog_id"]);
+
+              if (response["meta"]["status"] == "200")
+                setState(
+                  () => followingTabList[index]["is_followed"] =
+                      !followingTabList[index]["is_followed"],
+                );
+              else
+                await showToast(response["meta"]["msg"]);
             },
+            child: followingTabList[index]["is_followed"] as bool
+                ? const Text(
+                    "Unfollow",
+                    style: TextStyle(color: Colors.red),
+                  )
+                : const Text(
+                    "Follow",
+                    style: TextStyle(color: Colors.blue),
+                  ),
           ),
         ),
         const Divider(thickness: 1),
@@ -587,7 +621,7 @@ class _ProfilePageState extends State<ProfilePage>
                               padding: const EdgeInsets.only(
                                 bottom: 18,
                               ),
-                              child: followingTabList[index],
+                              child: followListTile(index),
                             );
                           },
                           // The childCount of the SliverChildBuilderDelegate
@@ -599,6 +633,314 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                   ],
                 ),
+    );
+  }
+
+  void showMessagesOption() {
+    showMenu<String>(
+      context: context,
+      position: const RelativeRect.fromLTRB(
+        25,
+        25,
+        0,
+        0,
+      ),
+      //position where you want to show the menu on screen
+      items: _messageOptions
+          .map(
+            (final String e) => PopupMenuItem<String>(
+              value: e,
+              child: Text(e),
+            ),
+          )
+          .toList(),
+      elevation: 8,
+    ).then((final String? itemSelected) async {
+      if (itemSelected == _messageOptions[0]) {
+        // TODO(Ziyad): Go To Chat
+      } else if (itemSelected == _messageOptions[1]) {
+        // TODO(Ziyad): Ask
+      } else if (itemSelected == _messageOptions[2]) {
+        // TODO(Ziyad): Submit a Post
+      }
+    });
+  }
+
+  void showProfileIconOption() {
+    showMenu<String>(
+      context: context,
+      position: const RelativeRect.fromLTRB(
+        25,
+        25,
+        0,
+        0,
+      ),
+      //position where you want to show the menu on screen
+      items: _personIconOptions
+          .map(
+            (final String e) => PopupMenuItem<String>(
+              value: e,
+              child: Text(e),
+            ),
+          )
+          .toList(),
+      elevation: 8,
+    ).then((final String? itemSelected) async {
+      if (itemSelected == "Share") {
+        // TODO(Ziyad): Share
+      } else if (itemSelected == "Get Notifications") {
+      } else if (itemSelected == "Block") {
+      } else if (itemSelected == "Report") {
+      } else if (itemSelected == "Unfollow") {
+        // TODO(Ziyad): Unfollow
+      } else if (itemSelected == "Follow") {
+        // TODO(Ziyad): Follow
+      }
+    });
+  }
+
+  /*
+  Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              index == 0 ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                          onPressed: () => myState(() => index = 0),
+                          child: const Text("themeColor"),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              index == 1 ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                          onPressed: () => myState(() => index = 1),
+                          child: const Text("accentColor"),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              index == 2 ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                          onPressed: () => myState(() => index = 2),
+                          child: const Text("themeTitleColor"),
+                        ),
+                      ],
+                    ),
+                    ColorPicker(
+                      enableAlpha: false,
+                      paletteType: PaletteType.hsv,
+                      pickerColor: themeColor,
+                      onColorChanged: (final Color colorPicked) {
+                        setState(() {
+                          if (index == 0)
+                            themeColor = colorPicked;
+                          else if (index == 1)
+                            accentColor = colorPicked;
+                          else
+                            themeTitleColor = colorPicked;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: _titleController,
+                      onChanged: (final String s) {
+                        setState(() {
+                          displayedBlog.blogTitle = s;
+                        });
+                      },
+                    ),
+                  ],
+                )
+  * */
+
+  void showEditAppearance() {
+    // index = 0 => change themeColor
+    // index = 1 => change accentColor
+    // index = 2 => change themeTitleColor
+    bool color = true;
+    int _index = 0;
+    final TextEditingController _titleController =
+        TextEditingController(text: displayedBlog.blogTitle);
+    final TextEditingController _descriptionController =
+        TextEditingController(text: displayedBlog.blogDescription);
+    showModalBottomSheet<void>(
+      isDismissible: false,
+      constraints: const BoxConstraints(minHeight: 500),
+      barrierColor: Colors.transparent,
+      context: context,
+      builder: (final BuildContext context) {
+        return StatefulBuilder(
+          builder: (final BuildContext context, final StateSetter myState) {
+            return SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            color ? Colors.blue : Colors.black,
+                          ),
+                        ),
+                        onPressed: () => myState(() => color = true),
+                        child: const Text("Colors"),
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            color ? Colors.black : Colors.blue,
+                          ),
+                        ),
+                        onPressed: () => myState(() => color = false),
+                        child: const Text("Text"),
+                      )
+                    ],
+                  ),
+                  AnimatedCrossFade(
+                    crossFadeState: color
+                        ? CrossFadeState.showFirst
+                        : CrossFadeState.showSecond,
+                    duration: const Duration(seconds: 1),
+                    firstChild: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  _index == 0 ? Colors.blue : Colors.black,
+                                ),
+                              ),
+                              onPressed: () => myState(() => _index = 0),
+                              child: const Text("themeColor"),
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  _index == 1 ? Colors.blue : Colors.black,
+                                ),
+                              ),
+                              onPressed: () => myState(() => _index = 1),
+                              child: const Text("accentColor"),
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  _index == 2 ? Colors.blue : Colors.black,
+                                ),
+                              ),
+                              onPressed: () => myState(() => _index = 2),
+                              child: const Text("themeTitleColor"),
+                            ),
+                          ],
+                        ),
+                        ColorPicker(
+                          enableAlpha: false,
+                          paletteType: PaletteType.hsv,
+                          pickerColor: themeColor,
+                          onColorChanged: (final Color colorPicked) {
+                            setState(() {
+                              if (_index == 0)
+                                themeColor = colorPicked;
+                              else if (_index == 1)
+                                accentColor = colorPicked;
+                              else
+                                themeTitleColor = colorPicked;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    secondChild: Column(
+                      children: <Widget>[
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: _titleController,
+                          onChanged: (final String s) {
+                            setState(() {
+                              displayedBlog.blogTitle = s;
+                            });
+                          },
+                        ),
+                        TextFormField(
+                          controller: _descriptionController,
+                          onChanged: (final String s) {
+                            setState(() {
+                              displayedBlog.blogDescription = s;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void changeProfilePic() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (final BuildContext context) {
+        return SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              const Text(
+                "Change Profile Picture",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              ListTile(
+                title: const Text("From Gallery"),
+                onTap: () async {
+                  final XFile? image = await chooseImageFromGallery(
+                    ImageSource.gallery,
+                  );
+                  if (image != null) {
+                    final String basse64 = base64.encode(await image.readAsBytes());
+                    await showToast("Success");
+                  } else
+                    await showToast("Failed");
+                },
+              ),
+              const Divider(
+                height: 15,
+                color: Colors.grey,
+              ),
+              ListTile(
+                title: const Text("Open Camera"),
+                onTap: () async {
+                  final XFile? image = await chooseImageFromGallery(
+                    ImageSource.camera,
+                  );
+                  if (image != null) {
+                    final String basse64 = base64.encode(await image.readAsBytes());
+                    await showToast("Success");
+                  } else
+                    await showToast("Failed");
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -622,9 +964,7 @@ class _ProfilePageState extends State<ProfilePage>
         blogDescription: User.descriptions[index],
       );
 
-      // If it is my main Blog
-      if (widget.blogID == User.blogsIDs[0])
-        _tabs.addAll(<String>["Likes", "Following"]);
+      _tabs.addAll(<String>["Likes", "Following"]);
     } else {
       _isMine = false;
       final Map<String, dynamic> response =
@@ -645,29 +985,143 @@ class _ProfilePageState extends State<ProfilePage>
           blogDescription: data["description"],
         );
       }
-      /*  UNCOMMENT THIS IF get Likes and Following of other Blog is Working  */
-      // response = await Api().getBlogSetting(widget.blogID);
-      // if (response["meta"]["status"] == "200") {
-      //   if (response["meta"]["share_likes"] != null) {
-      //     if (response["meta"]["share_likes"] as bool) {
-      //       _tabs.add("Likes");
-      //     }
-      //   }
-      //
-      //   if (response["meta"]["share_followings"] != null) {
-      //     if (response["meta"]["share_followings"] as bool) {
-      //       _tabs.add("Following");
-      //     }
-      //   }
-      // }
+
+      if ((response["meta"]["share_likes"] ?? false) as bool) {
+        _tabs.add("Likes");
+      }
+
+      if ((response["meta"]["share_followings"] ?? false) as bool) {
+        _tabs.add("Following");
+      }
+
+      if ((response["meta"]["followed"] ?? false) as bool) {
+        _personIconOptions.add("Unfollow");
+      } else {
+        _personIconOptions.add("Follow");
+      }
+
+      if (displayedBlog.allowAsk!) {
+        _messageOptions.add("Ask");
+      }
+
+      if (displayedBlog.allowSubmission!) {
+        _messageOptions.add("Submit a post");
+      }
     }
 
     setState(() {});
   }
 
+  Widget initializeMyBlogsDropDownMenu() {
+    return DropdownButton<String>(
+      onChanged: (final String? value) {
+        if (value == blogUserNames[blogUserNames.length - 1]) {
+          Navigator.push(
+            context,
+            MaterialPageRoute<CreateNewBlog>(
+              builder: (
+                final BuildContext context,
+              ) =>
+                  const CreateNewBlog(),
+            ),
+          );
+        } else {
+          setState(() {
+            dropdownValue = value!;
+            User.currentProfile = User.blogsNames.indexOf(
+              value,
+            );
+          });
+        }
+      },
+      value: dropdownValue,
+      // Hide the default underline
+      underline: Container(
+        height: 0,
+      ),
+      icon: const Icon(
+        Icons.arrow_drop_down_outlined,
+        color: Colors.white,
+      ),
+      isExpanded: true,
+      // The list of options
+      items: blogUserNames
+          .map(
+            (final String e) => DropdownMenuItem<String>(
+              value: e,
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: <Widget>[
+                    if (e == blogUserNames[blogUserNames.length - 1])
+                      const Icon(
+                        Icons.add_circle_outline,
+                      )
+                    else
+                      Image.network(
+                        User.avatars[blogUserNames.indexWhere(
+                                  (
+                                    final String element,
+                                  ) =>
+                                      element == e,
+                                )] ==
+                                " "
+                            ? "https://picsum.photos/200"
+                            : User.avatars[User.currentProfile],
+                        width: 35,
+                        height: 35,
+                      ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Text(
+                        e,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+          .toList(),
+
+      // Customize the selected item
+      selectedItemBuilder: (
+        final BuildContext context,
+      ) =>
+          blogUserNames
+              .map(
+                (
+                  final String e,
+                ) =>
+                    Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(
+                      8,
+                    ),
+                    child: Text(
+                      e,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    myBlogsDropDown = initializeMyBlogsDropDownMenu();
     currentTab = _tabs[0];
     tabController = TabController(length: 3, vsync: this);
     SystemChrome.setSystemUIOverlayStyle(
@@ -708,9 +1162,6 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(final BuildContext context) {
-    final List<String> blogUserNames =
-        User.blogsNames + <String>["Create new tumblr"];
-    String dropdownValue = User.blogsNames[User.currentProfile];
     final double _height = MediaQuery.of(context).size.height;
     final double _width = MediaQuery.of(context).size.width;
     return RefreshIndicator(
@@ -726,7 +1177,7 @@ class _ProfilePageState extends State<ProfilePage>
       child: DefaultTabController(
         length: _tabs.length, // This is the number of tabs.
         child: Scaffold(
-          backgroundColor: Color(themeColor),
+          backgroundColor: themeColor,
           body: NestedScrollView(
             controller: _controller,
             floatHeaderSlivers: true,
@@ -746,16 +1197,28 @@ class _ProfilePageState extends State<ProfilePage>
                       NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate(
+                      // All Upper Widgets
                       <Widget>[
-                        // All Upper Widgets
                         Container(
                           height: 0.35 * _height,
                           // Header image
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: Image.network(displayedBlog.headerImage!)
-                                  .image,
-                              fit: BoxFit.cover,
+                              image: FadeInImage(
+                                fit: BoxFit.cover,
+                                imageErrorBuilder:
+                                    (final _, final __, final ___) {
+                                  return Image.asset(
+                                    "assets/images/profile_Placeholder.png",
+                                  );
+                                },
+                                placeholder: const AssetImage(
+                                  "assets/images/profile_Placeholder.png",
+                                ),
+                                image: Image.network(
+                                  displayedBlog.avatarImageUrl!,
+                                ).image,
+                              ).image,
                             ),
                           ),
                           child: Stack(
@@ -766,34 +1229,48 @@ class _ProfilePageState extends State<ProfilePage>
                                 left: 0,
                                 right: 0,
                                 child: Container(
-                                  color: Color(themeColor),
+                                  color: themeColor,
                                   height: 0.8 * _height,
                                 ),
                               ),
                               // Profile Pic
                               Positioned(
                                 bottom: 0.085 * _height - 25,
-                                child: Container(
-                                  height: 100,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    color: Color(themeColor),
-                                    shape: BoxShape.circle, //editable
-                                    border: Border.all(
-                                      width: 3,
-                                      color: Color(themeColor),
+                                child: InkWell(
+                                  onTap: changeProfilePic,
+                                  child: Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      color: themeColor,
+                                      shape: BoxShape.circle, //editable
+                                      border: Border.all(
+                                        width: 3,
+                                        color: themeColor,
+                                      ),
                                     ),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        displayedBlog.avatarShape == "square"
-                                            ? null
-                                            : const BorderRadius.all(
-                                                Radius.circular(50),
-                                              ), //editable
-                                    child: Image.network(
-                                      displayedBlog.avatarImageUrl!,
-                                      fit: BoxFit.cover,
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          displayedBlog.avatarShape == "square"
+                                              ? null
+                                              : const BorderRadius.all(
+                                                  Radius.circular(50),
+                                                ), //editable
+                                      child: FadeInImage(
+                                        fit: BoxFit.cover,
+                                        imageErrorBuilder:
+                                            (final _, final __, final ___) {
+                                          return Image.asset(
+                                            "assets/images/profile_Placeholder.png",
+                                          );
+                                        },
+                                        placeholder: const AssetImage(
+                                          "assets/images/profile_Placeholder.png",
+                                        ),
+                                        image: Image.network(
+                                          displayedBlog.avatarImageUrl!,
+                                        ).image,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -802,18 +1279,11 @@ class _ProfilePageState extends State<ProfilePage>
                               Text(
                                 displayedBlog.blogTitle!,
                                 textScaleFactor: 2.4,
+                                textAlign: TextAlign.center,
+                                softWrap: true,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  color: Color(themeTitleColor),
-                                ),
-                              ),
-                              // Description
-                              Text(
-                                displayedBlog.blogDescription!,
-                                textScaleFactor: 2.4,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(themeTitleColor),
+                                  color: themeTitleColor,
                                 ),
                               ),
                               Positioned(
@@ -834,143 +1304,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                       const EdgeInsets.only(
                                                     left: 8,
                                                   ),
-                                                  child: DropdownButton<String>(
-                                                    onChanged:
-                                                        (final String? value) {
-                                                      if (value ==
-                                                          blogUserNames[
-                                                              blogUserNames
-                                                                      .length -
-                                                                  1]) {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute<
-                                                              CreateNewBlog>(
-                                                            builder: (
-                                                              final BuildContext
-                                                                  context,
-                                                            ) =>
-                                                                const CreateNewBlog(),
-                                                          ),
-                                                        );
-                                                      } else {
-                                                        setState(() {
-                                                          dropdownValue =
-                                                              value!;
-                                                          User.currentProfile =
-                                                              User.blogsNames
-                                                                  .indexOf(
-                                                            value,
-                                                          );
-                                                        });
-                                                      }
-                                                    },
-                                                    value: dropdownValue,
-                                                    // Hide the default underline
-                                                    underline: Container(
-                                                      height: 0,
-                                                    ),
-                                                    icon: const Icon(
-                                                      Icons
-                                                          .arrow_drop_down_outlined,
-                                                      color: Colors.white,
-                                                    ),
-                                                    isExpanded: true,
-                                                    // The list of options
-                                                    items: blogUserNames
-                                                        .map(
-                                                          (final String e) =>
-                                                              DropdownMenuItem<
-                                                                  String>(
-                                                            value: e,
-                                                            child: Container(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              child: Row(
-                                                                children: <
-                                                                    Widget>[
-                                                                  if (e ==
-                                                                      blogUserNames[
-                                                                          blogUserNames.length -
-                                                                              1])
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .add_circle_outline,
-                                                                    )
-                                                                  else
-                                                                    Image
-                                                                        .network(
-                                                                      User.avatars[blogUserNames.indexWhere(
-                                                                                (
-                                                                                  final String element,
-                                                                                ) =>
-                                                                                    element == e,
-                                                                              )] ==
-                                                                              " "
-                                                                          ? "https://picsum.photos/200"
-                                                                          : User.avatars[User.currentProfile],
-                                                                      width: 35,
-                                                                      height:
-                                                                          35,
-                                                                    ),
-                                                                  const SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  Expanded(
-                                                                    child: Text(
-                                                                      e,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                        .toList(),
-
-                                                    // Customize the selected item
-                                                    selectedItemBuilder: (
-                                                      final BuildContext
-                                                          context,
-                                                    ) =>
-                                                        blogUserNames
-                                                            .map(
-                                                              (
-                                                                final String e,
-                                                              ) =>
-                                                                  Align(
-                                                                alignment: Alignment
-                                                                    .centerLeft,
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                    8,
-                                                                  ),
-                                                                  child: Text(
-                                                                    e,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          16,
-                                                                      color: Colors
-                                                                          .white,
-                                                                    ),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .left,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            )
-                                                            .toList(),
-                                                  ),
+                                                  child: myBlogsDropDown,
                                                 ),
                                               ),
                                             ),
@@ -1003,9 +1337,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                     Icons.color_lens,
                                                     color: Colors.white,
                                                   ),
-                                                  onPressed: () {
-                                                    // TODO(Ziyad): Implement this
-                                                  },
+                                                  onPressed: showEditAppearance,
                                                   splashColor: Colors.white10,
                                                 ),
                                               ),
@@ -1128,9 +1460,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                     Icons.email_rounded,
                                                     color: Colors.white,
                                                   ),
-                                                  onPressed: () {
-                                                    // TODO(Ziyad): Implement this
-                                                  },
+                                                  onPressed: showMessagesOption,
                                                   splashColor: Colors.white10,
                                                 ),
                                               ),
@@ -1146,9 +1476,8 @@ class _ProfilePageState extends State<ProfilePage>
                                                     Icons.person,
                                                     color: Colors.white,
                                                   ),
-                                                  onPressed: () {
-                                                    // TODO(Ziyad): Implement this
-                                                  },
+                                                  onPressed:
+                                                      showProfileIconOption,
                                                   splashColor: Colors.white10,
                                                 ),
                                               ),
@@ -1158,6 +1487,17 @@ class _ProfilePageState extends State<ProfilePage>
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        // Description
+                        Text(
+                          displayedBlog.blogDescription!,
+                          textScaleFactor: 1.5,
+                          textAlign: TextAlign.center,
+                          softWrap: true,
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: themeTitleColor,
                           ),
                         ),
                       ],
@@ -1171,11 +1511,11 @@ class _ProfilePageState extends State<ProfilePage>
                     minHeight: 80,
                     maxHeight: 80,
                     child: Container(
-                      color: Color(themeColor),
+                      color: themeColor,
                       child: TabBar(
                         padding: const EdgeInsets.only(top: 32),
-                        indicatorColor: Color(accentColor),
-                        labelColor: Color(accentColor),
+                        indicatorColor: accentColor,
+                        labelColor: accentColor,
                         onTap: (final int index) async {
                           if (index == 0 && postsTabPosts.isEmpty)
                             await fetchProfilePosts();

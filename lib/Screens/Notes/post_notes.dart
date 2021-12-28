@@ -80,7 +80,23 @@ class _NotesPageState extends State<NotesPage>
           reblogsWithCommentsList.add(reblogsList[i]);
         }
       }
+      setState(() {});
     }
+  }
+
+  bool updateFollowStatusLocally(final String blogId, final bool followStatus) {
+    bool found = false;
+
+    likesList.map((final dynamic x) {
+      if (x["blog_id"].toString() == blogId) {
+        found = true;
+        x["followed"] = followStatus;
+        return x;
+      } else
+        return x;
+    });
+
+    return found;
   }
 
   //
@@ -107,6 +123,7 @@ class _NotesPageState extends State<NotesPage>
   @override
   void initState() {
     super.initState();
+
     initialize();
     // Start listening to changes.
     replyController.addListener(checkReplyText);
@@ -184,7 +201,7 @@ class _NotesPageState extends State<NotesPage>
           children: <Widget>[
             if (repliesList.isEmpty)
               Column(
-                children: [
+                children: <Widget>[
                   const Spacer(),
                   if (MediaQuery.of(context).viewInsets.bottom < 10)
                     const EmptyBoxImage(msg: "No replies to show"),
@@ -331,6 +348,7 @@ class _NotesPageState extends State<NotesPage>
                       userName: likesList[index]["blog_username"],
                       avatarShape: likesList[index]["blog_avatar_shape"],
                       blogID: likesList[index]["blog_id"].toString(),
+                      updateFollowStatusLocally: updateFollowStatusLocally,
                     );
                   },
                   itemCount: likesList.length,

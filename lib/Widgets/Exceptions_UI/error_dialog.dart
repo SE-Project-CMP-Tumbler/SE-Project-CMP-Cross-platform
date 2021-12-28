@@ -5,9 +5,9 @@ import "package:flutter/material.dart";
 ///
 ///Takes [context] object and [errorMessage].
 Future<void> showErrorDialog(
-    final BuildContext context,
-    final String errorMessage,
-    ) async {
+  final BuildContext context,
+  final String errorMessage,
+) async {
   await showDialog(
     context: context,
     builder: (final BuildContext ctx) {
