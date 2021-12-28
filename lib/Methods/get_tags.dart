@@ -1,9 +1,8 @@
 // ignore_for_file: cascade_invocations
 
-import "dart:convert";
-import "package:http/http.dart";
+import "dart:developer";
 import "package:tumbler/Methods/api.dart";
-import 'package:tumbler/Models/post_model.dart';
+import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 
 
@@ -13,24 +12,20 @@ Future<List<Tag>> getTagsToFollow() async
 
   final List<Tag> checkoutTags=<Tag>[
   ];
-  final Response res = await Api().fetchCheckOutTags();
-  final Map<String, dynamic> response= jsonDecode(res.body);
+  final Map<String, dynamic> response= await Api().fetchCheckOutTags();
   final List<dynamic> tags = response["response"]["tags"];
+  log(tags.toString());
   if (response["meta"]["status"] == "200") {
     for (final Map<String, dynamic> tag in tags) {
       final Tag coTag = Tag(
-        tagDescription: tag["tag_description"],
-        tagImgUrl: tag["tag_image"],
+        tagDescription:
+        tag["tag_description"],
+        tagImgUrl:
+        tag["tag_image"],
+        isFollowed:  tag["followed"] as bool,
+        followersCount: tag["followers_number"],
         postsCount: tag["posts_count"],
       );
-      final Map<String, dynamic> tagResponse= await
-      getTagDetails(coTag.tagDescription!);
-      if(tagResponse["meta"]["status"]==200)
-        {
-          coTag.isFollowed= tagResponse["response"]["followed"] as bool;
-          coTag.followersCount= tagResponse["response"]["followers_number"];
-          coTag.postsCount= tagResponse["response"]["posts_count"];
-        }
       checkoutTags.add(coTag);
     }
   }
@@ -43,24 +38,22 @@ Future<List<Tag>> getTrendingTagsToFollow() async
 {
   final List<Tag> trendingTags=<Tag>[
   ];
-  final Response res = await Api().fetchTrendingTags();
-  final Map<String, dynamic> response= jsonDecode(res.body);
+  final Map<String, dynamic> response= await Api().fetchTrendingTags();
   final List<dynamic> tags = response["response"]["tags"];
+  log(tags.toString());
+
   if (response["meta"]["status"] == "200") {
     for (final Map<String, dynamic> tag in tags) {
       final Tag coTag = Tag(
-        tagDescription: tag["tag_description"],
-        tagImgUrl: tag["tag_image"],
+        tagDescription:
+        tag["tag_description"],
+        tagImgUrl:
+        tag["tag_image"],
+        isFollowed:  tag["followed"] as bool,
+        followersCount: tag["followers_number"],
         postsCount: tag["posts_count"],
       );
-      final Map<String, dynamic> tagResponse= await
-      getTagDetails(coTag.tagDescription!);
-      if(tagResponse["meta"]["status"]==200)
-      {
-        coTag.isFollowed= tagResponse["response"]["followed"] as bool;
-        coTag.followersCount= tagResponse["response"]["followers_number"];
-        coTag.postsCount= tagResponse["response"]["posts_count"];
-      }
+
       trendingTags.add(coTag);
     }
   }
@@ -75,8 +68,8 @@ Future<List<PostModel>> getTagPosts(final String tagDescription,
 {
   List<PostModel> tagPosts=<PostModel>[
   ];
-  final Response res = await Api().fetchTagPosts(tagDescription,recent: recent);
-  final Map<String, dynamic> response= jsonDecode(res.body);
+  final Map<String, dynamic> response= await Api().fetchTagPosts
+    (tagDescription,recent: recent,);
   final List<dynamic> posts = response["response"]["posts"];
   if (response["meta"]["status"] == "200") {
     tagPosts= await PostModel.fromJSON(posts, true);
@@ -88,7 +81,7 @@ Future<List<PostModel>> getTagPosts(final String tagDescription,
 /// to get more details of each tag
 Future<Map<String, dynamic>> getTagDetails(final String tagDescription,) async
 {
-  final Response res = await Api().fetchTagsDetails(tagDescription);
-  final Map<String, dynamic> response= jsonDecode(res.body);
+  final Map<String, dynamic> response=
+  await Api().fetchTagsDetails(tagDescription);
   return response;
 }

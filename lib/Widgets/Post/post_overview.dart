@@ -12,6 +12,7 @@ class PostOutView extends StatefulWidget {
   const PostOutView({
     required final this.post,
     required final this.index,
+    final this.isTagPost=false,
     final Key? key,
   }) : super(key: key);
 
@@ -21,6 +22,8 @@ class PostOutView extends StatefulWidget {
   /// index of the post in the home page
   final int index;
 
+  /// to indicate is this a tag post or not
+  final bool isTagPost;
   @override
   _PostOutViewState createState() => _PostOutViewState();
 }
@@ -49,7 +52,7 @@ class _PostOutViewState extends State<PostOutView> {
           isMine: User.blogsNames.contains(widget.post.blogUsername),
           index: widget.index,
         ),
-        Container(
+        if (!widget.isTagPost) Container(
           height: 10,
           color: const Color.fromRGBO(
             0,
@@ -57,7 +60,7 @@ class _PostOutViewState extends State<PostOutView> {
             53,
             1,
           ),
-        )
+        ) else Container(),
       ],
     );
   }

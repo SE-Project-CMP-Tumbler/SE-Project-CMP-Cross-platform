@@ -5,8 +5,9 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/urls.dart";
 import "package:tumbler/Methods/search_utils.dart";
 import "package:tumbler/Models/blog.dart";
-import 'package:tumbler/Models/post_model.dart';
+import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
+import "package:tumbler/Screens/Profile/profile_page.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 
@@ -204,10 +205,10 @@ body: SafeArea(
                                       ),
                                       child: Container(
                                         color: Colors.white,
-                                        child:Container(), /**PostOutView(
+                                        child:PostOutView(
                                           post: post,
-                                          index: postsRes.indexOf(post),
-                                        ),**/
+                                          index: 0,
+                                        ),
                                       ),
                                     ),
                                   ),)
@@ -232,154 +233,167 @@ body: SafeArea(
 
                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    // ignore: avoid_redundant_argument_values
-                                    kIsWeb?
-                                    CrossAxisAlignment.center:
-                                    CrossAxisAlignment.start,
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment:
+                              // ignore: avoid_redundant_argument_values
+                              kIsWeb?
+                              CrossAxisAlignment.center:
+                              CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text("Top tag",
+                                    textScaleFactor:  kIsWeb? 2.2:1.2,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: Stack(
+                                    alignment: Alignment.center,
                                     children: <Widget>[
-                                      const Padding(
-                                        padding: EdgeInsets.all(8),
-                                        child: Text("Top tag",
-                                          textScaleFactor:  kIsWeb? 2.2:1.2,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                      Center(
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: <Widget>[
-                                            Container(
-                                              height: kIsWeb?(_width>600? 300:250)
-                                                  : 0.2 * _height,
-                                              width: kIsWeb?(_width>600? 400:350)
-                                                  : _width * 0.9,
-                                              decoration:
-                                              BoxDecoration(
-                                                borderRadius:const BorderRadius
-                                                    .all(
-                                                  Radius.circular(10),),
-                                                image: DecorationImage(
-                                                  image: NetworkImage
-                                                    (tagRes[0].tagImgUrl!.isNotEmpty?
-                                                  tagRes[0].tagImgUrl!:
-                                                  "https://picsum.photos/200",
-                                                  ),
-                                                  fit: BoxFit.cover,),
-                                              ),
-
+                                      Container(
+                                        height: kIsWeb?(_width>600? 300:250)
+                                            : 0.2 * _height,
+                                        width: kIsWeb?(_width>600? 400:350)
+                                            : _width * 0.9,
+                                        decoration:
+                                        BoxDecoration(
+                                          borderRadius:const BorderRadius
+                                              .all(
+                                            Radius.circular(10),),
+                                          image: DecorationImage(
+                                            image: NetworkImage
+                                              (tagRes[0].tagImgUrl!.isNotEmpty?
+                                            tagRes[0].tagImgUrl!:
+                                            "https://picsum.photos/200",
                                             ),
-                                            Container(
-                                              height: kIsWeb?(_width>600? 300:250)
-                                                  : 0.2 * _height,
-                                              width: kIsWeb?(_width>600? 400:350)
-                                                  : _width * 0.9,
-                                              decoration:
-                                              const BoxDecoration(
-                                                borderRadius: BorderRadius
-                                                    .all(
-                                                  Radius.circular(10),),
-                                                color: Colors.black26,
-                                              ),
-                                              child: Center(
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Text
-                                                      ("#${tagRes[0].tagDescription}",
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
+                                            fit: BoxFit.cover,),
+                                        ),
+
+                                      ),
+                                      Container(
+                                        height: kIsWeb?(_width>600? 300:250)
+                                            : 0.2 * _height,
+                                        width: kIsWeb?(_width>600? 400:350)
+                                            : _width * 0.9,
+                                        decoration:
+                                        const BoxDecoration(
+                                          borderRadius: BorderRadius
+                                              .all(
+                                            Radius.circular(10),),
+                                          color: Colors.black26,
+                                        ),
+                                        child: Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding: const
+                                                    EdgeInsets.all(16),
+                                                    child: Text
+                                          ("#${tagRes[0].tagDescription}",
+                                                      style: const
+                                                      TextStyle(
+                                                        overflow:
+                                                        TextOverflow
+                                                            .ellipsis,
+                                                        color: Colors
+                                                            .white,
                                                         fontWeight:
                                                         FontWeight.w400,
                                                         fontFamily: "fav",
                                                       ),
                                                       textScaleFactor: 2,
                                                     ),
-                                                    const SizedBox(height: 15,),
-                                                  ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                              const SizedBox(height: 15,),
+                                            ],
+                                          ),
                                         ),
-                                      )
+                                      ),
                                     ],
+                                  ),
+                                )
+                              ],
 
+                            ),
+                          ),
+                          if (tagRes.length>1) Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment:
+                              // ignore: avoid_redundant_argument_values
+                              kIsWeb?
+                              CrossAxisAlignment.center:
+                              CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 8,
+                                      left: 8,
+                                      right: 8,),
+                                  child: Text("Other tags",
+                                    textScaleFactor: kIsWeb?2.2:1.2,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                                if (tagRes.length>1) Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    // ignore: avoid_redundant_argument_values
-                                    kIsWeb?
-                                    CrossAxisAlignment.center:
-                                    CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      const Padding(
-                                        padding: EdgeInsets.only(top: 8,
-                                            left: 8,
-                                            right: 8,),
-                                        child: Text("Other tags",
-                                          textScaleFactor: kIsWeb?2.2:1.2,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
+                                Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child:MediaQuery.removePadding(
+                                    context: context,
+                                    removeTop: true,
+                                    child: GridView.builder(
+                                      gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: kIsWeb?
+                                        (_width>600?9:2):2,
+                                        crossAxisSpacing: 8,
+                                        mainAxisSpacing: 16,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(16),
-                                        child:MediaQuery.removePadding(
-                                          context: context,
-                                          removeTop: true,
-                                          child: GridView.builder(
-                                            gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: kIsWeb?
-                                              (_width>600?9:2):2,
-                                              crossAxisSpacing: 8,
-                                              mainAxisSpacing: 16,
-                                            ),
-                                            physics: const
-                                            NeverScrollableScrollPhysics(),
-                                            shrinkWrap: true,
-                                            itemCount: tagRes.length-1,
-                                            itemBuilder: (
-                                                final BuildContext context,
-                                                final int index,) {
-                                              return GestureDetector(
-                                                onTap: (){
-                                                },
-                                                child:  CheckOutTagComponent
-                                                  (width: _width, tag: Tag(
-                                                  tagDescription:
-                                                  tagRes[index+1]
-                                                      .tagDescription,
-                                                  tagImgUrl: tagRes[index+1]
-                                                      .tagImgUrl
-                                                      ??tumblerImgUrl,
-                                                ),
-                                                  color: tagsBgColors[index+1],
-                                                  // TODO(Donia): replace this
-                                                  //  with the value from the db
-                                                  isFollowed: false,
-                                                ),);
-                                            },
+                                      physics: const
+                                      NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: tagRes.length-1,
+                                      itemBuilder: (
+                                          final BuildContext context,
+                                          final int index,) {
+                                        return GestureDetector(
+                                          onTap: (){
+                                          },
+                                          child:  CheckOutTagComponent
+                                            (width: _width, tag: Tag(
+                                            tagDescription:
+                                            tagRes[index+1]
+                                                .tagDescription,
+                                            tagImgUrl: tagRes[index+1]
+                                                .tagImgUrl
+                                                ??tumblerImgUrl,
                                           ),
-                                        ),
-                                      ),
-                                    ],
+                                            color: tagsBgColors[index+1],
+
+                                            isFollowed: tagRes[index+1]
+                                                .isFollowed ??false,
+                                          ),);
+                                      },
+                                    ),
                                   ),
-                                ) else Container(),
+                                ),
                               ],
+                            ),
+                          ) else Container(),
+                        ],
                             )
                           : Container(),
                           ),
@@ -388,291 +402,309 @@ body: SafeArea(
                     );
                   }
                   /// blogs
-                  else if(_tabs.indexOf(name)==2)
-                    return RefreshIndicator(
-                      onRefresh: ()async{
-                        await getSearchRes(widget.word);
-                      },
-                      child: SingleChildScrollView(
-                        child: Center(
-                          child: SizedBox(
-                          width: _width,
-                          child: Column(
-                            children:blogResults.map((final Blog blog) => Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: AnimatedSize(
-                                duration: const Duration(milliseconds: 800),
-                                curve: Curves.easeInOutCubicEmphasized,
-                                child: SizedBox(
-                                  height: isDeleted[blog]!? 0:500,
-                                  width: kIsWeb? 400: null,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: <Widget>[
-                                      Container(
-                                        height: 500,
-                                        decoration: BoxDecoration(
-                                          color: blogsBgColors
-                                          [blogResults.indexOf(blog)],
-                                          borderRadius: const
-                                          BorderRadius.all(Radius.circular(15)),
-                                        ),
-                                        child: Column(
-                                          children: <Widget>[
-                                            ClipRRect(
-                                              borderRadius: const
-                                              BorderRadius.only(topLeft:
-                                              Radius.circular(15),
-                                              topRight:
-                                              Radius.circular(15),),
-                                              child: Image.network(
-                                                blog.headerImage!=null?
-                                              (blog.headerImage!.isNotEmpty?
-                                              blog.headerImage!:"https://picsum.photos/200/300"):
-                                              "https://picsum.photos/200/300",width: _width,
+        else if(_tabs.indexOf(name)==2)
+          return RefreshIndicator(
+            onRefresh: ()async{
+              await getSearchRes(widget.word);
+            },
+            child: SingleChildScrollView(
+              child: Center(
+                child: SizedBox(
+                width: _width,
+                child: Column(
+                  children:blogResults.map((final Blog blog) =>
+                      Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: AnimatedSize(
+                      duration: const Duration(milliseconds: 800),
+                      curve: Curves.easeInOutCubicEmphasized,
+                      child: GestureDetector(
+                        onTap: (){
 
-                                                height: 200,fit: BoxFit.cover,),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 500,
-                                        decoration:const BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.all(Radius.circular(15)),
-                                          gradient: LinearGradient(
-                                            colors: <Color>[
-                                              Colors.black38,
-                                              Colors.transparent,
-                                              Colors.transparent
+                        },
+                        child: SizedBox(
+                          height: isDeleted[blog]!? 0:500,
+                          width: kIsWeb? 400: null,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              Container(
+                                height: 500,
+                                decoration: BoxDecoration(
+                                  color: blogsBgColors
+                                  [blogResults.indexOf(blog)],
+                                  borderRadius: const
+                                  BorderRadius.all(Radius.circular(15)),
+                                ),
+                                child: Column(
+                                  children: <Widget>[
+                                    ClipRRect(
+                                      borderRadius: const
+                                      BorderRadius.only(topLeft:
+                                      Radius.circular(15),
+                                      topRight:
+                                      Radius.circular(15),),
+                                      child: Image.network(
+                                        blog.headerImage!=null?
+                                      (blog.headerImage!.isNotEmpty?
+                                      blog.headerImage!:"https://picsum.photos/200/300"):
+                                      "https://picsum.photos/200/300",width: _width,
 
-                                            ],
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Expanded(
-                                              flex: 2,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only
-                                                  (left: 16,),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                                  children: <Widget>[
-                                                    Padding(
-                                                      padding: const EdgeInsets.all(16),
-                                                      child: Text(blog.username??"",
-                                                        style:const TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                          FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.all(6),
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          ElevatedButton(onPressed:
-                                                              (){},
-                                                            style: ButtonStyle(
-                                                              backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>
-                                                                (blogsBgColors
-                                                            [blogResults.indexOf(blog)]
-                                                            .computeLuminance()>0.5?
-                                                            Colors.black:Colors.white,),
-                                                              padding:
-                                                              MaterialStateProperty
-                                                                  .all(const
-                                                              EdgeInsets.symmetric
-                                                                (horizontal: 24),),
-                                                            ),
-                                                            child:
-                                                            Text("Follow",
-                                                              textScaleFactor: 1.2,
-                                                              style:
-                                                              TextStyle(
-                                                                color:  blogsBgColors
-                                                            [blogResults.indexOf(blog)]
-                                                              .computeLuminance()>0.5?
-                                                            Colors.white:Colors.black,
-                                                              )
-                                                              ,),
-                                                          ),
-                                                          IconButton(onPressed: (){
-                                                            setState(() {
-                                                              isDeleted[blog]= true;
-                                                            });
-                                                          },
-                                                            icon:
-                                                            Icon(Icons.clear,
-                                                              size: 25,
-                                                              color:  blogsBgColors
-                                                            [blogResults.indexOf(blog)]
-                                                              .computeLuminance()>0.5?
-                                                              Colors.black:Colors.white,
-                                                            ),),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(6),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                      const BorderRadius.all
-                                                        (Radius.circular(10)),
-                                                      child: GridView.builder(
-                                                        // TODO(DONIA): fetch posts of
-                                                        //  this specific
-                                                        /// blog and display it
-                                                        gridDelegate: const
-                                    SliverGridDelegateWithFixedCrossAxisCount
-                                                          (
-                                                          crossAxisCount: 3,
-                                                          crossAxisSpacing: 1.5,
-
-                                                        ),
-                                                        physics: const
-                                                        NeverScrollableScrollPhysics(),
-                                                        shrinkWrap: true,
-                                                        itemCount: 3,
-                                                        itemBuilder: (
-                                                            final BuildContext context,
-                                                            final int index,) {
-                                                          return GestureDetector(
-                                                            onTap: (){
-                                                        // TODO(Donia): push blog page
-                                                            },
-                                                            child: Image.network(
-                                                              tumblerImgUrl,
-                                                              fit: BoxFit.cover,
-                                                              ),);
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Positioned(top: 120,child: Column(
-                                        children: <Widget>[
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: blogsBgColors
-                                              [blogResults.indexOf(blog)],
-                                                border: Border.all(
-                                                  color: blogsBgColors
-                                                  [blogResults.indexOf(blog)]
-                                                  , width: 3,),
-                                                borderRadius: BorderRadius.all(
-                                                  blog.avatarShape=="square"?
-                                                const Radius.circular(5):
-                                                  const Radius.circular(100),
-                                                ),
-                                            ),
-                                            child: Center(
-                                              child: InkWell(
-                                                onTap: (){
-                                                  // TODO(Donia): push blog page
-                                                },
-                                                child: ClipRRect(
-                                                  borderRadius:BorderRadius.all(
-                                                    blog.avatarShape=="square"?
-                                                    const Radius.circular(3):
-                                                    const Radius.circular(100),
-                                                  ),
-                                                  child: Image.network(
-                                                    blog.avatarImageUrl!=null?
-                                                    (blog.avatarImageUrl!.isNotEmpty?
-                                                    blog.avatarImageUrl!:tumblerImgUrl):
-                                                    tumblerImgUrl,
-                                                    errorBuilder: (
-                                                        final BuildContext context,
-                                                        final Object exception,
-                                                        final StackTrace? stackTrace,){
-                                                      return Image.network(
-                                                        tumblerImgUrl,
-                                                        width: 100,
-                                                        height: 100,fit: BoxFit.cover,);
-                                                    },
-                                                    width: 100,
-                                                    height: 100,fit: BoxFit.cover,),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding:const  EdgeInsets.all(16),
-                                            child: GestureDetector(
-                                              onTap:  (){
-                                                // TODO(Donia): push blog page
-                                              },
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding:const EdgeInsets.all(8),
-                                                    child: Text(blog.blogTitle??"",
-                                                      textScaleFactor: 1.8,
-                                                      style: TextStyle(
-                                                        fontWeight: FontWeight.w500,
-                                                        color:  blogsBgColors
-                                                        [blogResults.indexOf(blog)]
-                                                            .computeLuminance()>0.5?
-                                                        Colors.black:Colors.white,
-                                                        fontFamily: "fav",
-                                                      ),
-
-                                                    ),
-                                                  ),
-                                                  Text(blog.blogDescription??"",
-                                                    textScaleFactor: 1.1,
-                                                    style:  TextStyle(
-                                                      color:blogsBgColors
-                                                      [blogResults.indexOf(blog)]
-                                                          .computeLuminance()>0.5?
-                                                      Colors.black:Colors.white,
-                                                      fontFamily: "fav",
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-
-                                        ],
-                                      ),)
-                                    ],
-                                  ),
+                                        height: 200,fit: BoxFit.cover,),
+                                    )
+                                  ],
                                 ),
                               ),
-                            ),).toList(),
+                              Container(
+                                height: 500,
+                                decoration:const BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                                  gradient: LinearGradient(
+                                    colors: <Color>[
+                                      Colors.black38,
+                                      Colors.transparent,
+                                      Colors.transparent
+
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                        padding: const EdgeInsets.only
+                          (left: 16,),
+                        child: Row(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(blog.username??"",
+                            style:const TextStyle(
+                              color: Colors.white,
+                              fontWeight:
+                              FontWeight.w500,
+                            ),
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Row(
+                            children: <Widget>[
+                              ElevatedButton(onPressed:
+                                  (){},
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                  MaterialStateProperty
+                                      .all<Color>
+                                    (blogsBgColors
+                                [blogResults.indexOf(blog)]
+                                .computeLuminance()>0.5?
+                                Colors.black:Colors.white,),
+                                  padding:
+                                  MaterialStateProperty
+                                      .all(const
+                                  EdgeInsets.symmetric
+                                    (horizontal: 24),),
+                                ),
+                                child:
+                                Text("Follow",
+                                  textScaleFactor: 1.2,
+                                  style:
+                                  TextStyle(
+                                    color:  blogsBgColors
+                                [blogResults.indexOf(blog)]
+                                  .computeLuminance()>0.5?
+                                Colors.white:Colors.black,
+                                  )
+                                  ,),
+                              ),
+                              IconButton(onPressed: (){
+                                setState(() {
+                                  isDeleted[blog]= true;
+                                });
+                              },
+                                icon:
+                                Icon(Icons.clear,
+                                  size: 25,
+                                  color:  blogsBgColors
+                                [blogResults.indexOf(blog)]
+                                  .computeLuminance()>0.5?
+                                  Colors.black:Colors.white,
+                                ),),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment:
+                  MainAxisAlignment.end,
+                  children: <Widget>[
+                    Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: ClipRRect(
+                          borderRadius:
+                          const BorderRadius.all
+                            (Radius.circular(10)),
+                          child: GridView.builder(
+                            // TODO(DONIA): fetch posts of
+                            //  this specific
+                            /// blog and display it
+                            gridDelegate: const
+      SliverGridDelegateWithFixedCrossAxisCount
+                              (
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 1.5,
+
+                            ),
+                            physics: const
+                            NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: 3,
+                            itemBuilder: (
+                                final BuildContext context,
+                                final int index,) {
+                              return GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context,
+                                    MaterialPageRoute<ProfilePage>(
+                                      builder: (final BuildContext context) =>
+                                          ProfilePage(blogID: blog.blogId!,),
+                                    ),);
+                                },
+                                child: Image.network(
+                                  tumblerImgUrl,
+                                  fit: BoxFit.cover,
+                                  ),);
+                            },
+                          ),
+                        ),
+                    ),
+                  ],
+                ),
+              )
+                                  ],
+                                ),
+                              ),
+                              Positioned(top: 120,child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: blogsBgColors
+                                      [blogResults.indexOf(blog)],
+                                        border: Border.all(
+                                          color: blogsBgColors
+                                          [blogResults.indexOf(blog)]
+                                          , width: 3,),
+                                        borderRadius: BorderRadius.all(
+                                          blog.avatarShape=="square"?
+                                        const Radius.circular(5):
+                                          const Radius.circular(100),
+                                        ),
+                                    ),
+                                    child: Center(
+                                      child: InkWell(
+                                        onTap: (){
+                                  Navigator.push(context,
+                                    MaterialPageRoute<ProfilePage>(
+                                      builder: (final BuildContext context) =>
+                                          ProfilePage(blogID: blog.blogId!,),
+                                    ),);
+                                        },
+                                        child: ClipRRect(
+                                          borderRadius:BorderRadius.all(
+                                            blog.avatarShape=="square"?
+                                            const Radius.circular(3):
+                                            const Radius.circular(100),
+                                          ),
+                                          child: Image.network(
+                                            blog.avatarImageUrl!=null?
+                                            (blog.avatarImageUrl!.isNotEmpty?
+                                            blog.avatarImageUrl!:tumblerImgUrl):
+                                            tumblerImgUrl,
+                                            errorBuilder: (
+                                                final BuildContext context,
+                                                final Object exception,
+                                                final StackTrace? stackTrace,){
+                                              return Image.network(
+                                                tumblerImgUrl,
+                                                width: 100,
+                                                height: 100,fit: BoxFit.cover,);
+                                            },
+                                            width: 100,
+                                            height: 100,fit: BoxFit.cover,),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:const  EdgeInsets.all(16),
+                                    child: GestureDetector(
+                                      onTap:  (){
+                              Navigator.push(context,
+                                MaterialPageRoute<ProfilePage>(
+                                  builder: (final BuildContext context) =>
+                                      ProfilePage(blogID: blog.blogId!,),
+                                ),);
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Padding(
+                                            padding:const EdgeInsets.all(8),
+                                            child: Text(blog.blogTitle??"",
+                                              textScaleFactor: 1.8,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color:  blogsBgColors
+                                                [blogResults.indexOf(blog)]
+                                                    .computeLuminance()>0.5?
+                                                Colors.black:Colors.white,
+                                                fontFamily: "fav",
+                                              ),
+
+                                            ),
+                                          ),
+                                          Text(blog.blogDescription??"",
+                                            textScaleFactor: 1.1,
+                                            style:  TextStyle(
+                                              color:blogsBgColors
+                                              [blogResults.indexOf(blog)]
+                                                  .computeLuminance()>0.5?
+                                              Colors.black:Colors.white,
+                                              fontFamily: "fav",
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                ],
+                              ),)
+                            ],
+                          ),
                         ),
                       ),
-                    );
+                    ),
+                  ),).toList(),
+                ),
+              ),
+              ),
+            ),
+          );
                   return Center(
                     heightFactor: 15,
                     child: CircularProgressIndicator(

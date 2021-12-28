@@ -64,8 +64,22 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     loadingSpinnerAnimationController!.repeat();
     getFollowedTags();
+    if(Provider.of<Tags>(context,listen: false).isLoaded==false)
+      {
+        getAllSections();
+      }
   }
-
+  // ignore: avoid_void_async
+  void getAllSections ()async{
+    setState(() {
+      _isLoading=false;
+    });
+    await Provider.of<Tags>(context,listen: false).refreshSearchPage(context);
+    setState(() {
+      _isLoading=false;
+      _firstTime= false;
+    });
+  }
   @override
   void dispose() {
     loadingSpinnerAnimationController!.dispose();
@@ -79,7 +93,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         );
     }
   }
-  /// Responsible refreshing search page
+  /// Responsible for reloading all explore screen results
   Future<void> refreshSearchPage(final BuildContext context,)
   async {
     _error = false;
@@ -102,24 +116,26 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         _error = true;
         _isLoading = false;
       });
-      showErrorDialog(context, "error on check out blogs\n${error.toString()}");
+      showErrorDialog(context,
+          "error on check out blogs\n${error.toString()}",);
     });
     /// get random posts "try these posts"
     await getRandomPosts().then((final List<PostModel> value) {
       setState((){
         randomPosts.clear();
         randomPosts= value;});
+
     }).catchError((final Object? error) {
       setState(() {
         _error = true;
         _isLoading = false;
       });
-      showErrorDialog(context,  "error on check out posts\n${error.toString()}");
+      showErrorDialog(context,
+          "error on check out posts\n${error.toString()}",);
     });
     /// get random suggesting tags
     await getTagsToFollow().then((final List<Tag> value) {
       setState((){
-        tagsToFollow.clear();
         tagsToFollow= value;});
       for(int i =0; i<value.length; i++)
       {
@@ -157,12 +173,14 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         await getTagPosts(tTag.tagDescription!).then(
                 (final List<PostModel> value) {
           setState((){tagsPosts[tTag]= value;});
-        }).catchError((final Object? error) {
+        }
+
+        ).catchError((final Object? error) {
           setState(() {
             _error = true;
             _isLoading = false;
           });
-          showErrorDialog(context, "from get tag posts \n${error.toString()}");
+          showErrorDialog(context, "from get tag posts \n${error.toString()}",);
         });
       }
     }).catchError((final Object? error) {
@@ -183,6 +201,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         if(_firstTime)
           _firstTime= false;
       });
+
     }).catchError((final Object? error) {
       setState(() {
         _isLoading = false;
@@ -198,6 +217,13 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
   Widget build(final BuildContext context) {
     /// listening on changes
     tags = Provider.of<Tags>(context).followedTags;
+    checkOutBlogs=Provider.of<Tags>(context).checkOutBlogs;
+    randomPosts=Provider.of<Tags>(context).randomPosts;
+    tagsToFollow=Provider.of<Tags>(context).tagsToFollow;
+    trendingTags=Provider.of<Tags>(context).trendingTags;
+    blogsBgColors=Provider.of<Tags>(context).blogsBgColors;
+    tagsBgColors=Provider.of<Tags>(context).tagsBgColors;
+    tagsPosts=Provider.of<Tags>(context).tagsPosts;
     final double _height = MediaQuery.of(context).size.height;
     final double _width = MediaQuery.of(context).size.width;
 
@@ -224,10 +250,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
         },
         child: RefreshIndicator(
           onRefresh: () async {
-            await refreshSearchPage(
-              context,
-            );
-
+            await Provider.of<Tags>(context, listen: false)
+                .refreshSearchPage(context);
             setState(() {
             _bgIndex= Random().nextInt(10000)%backGrounds.length;
             });
@@ -257,28 +281,26 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin{
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                       // tags you follow
-                        if (tags.isNotEmpty)
-                          TagsYouFollow(tags:tags, width: _width)
-                        else Container(),
+
+                          TagsYouFollow(tags:tags, width: _width),
                       // check out these tags section
-                        if (tagsToFollow.isNotEmpty) CheckOutTags(
+                        CheckOutTags(
                         width: _width,
                         tagsToFollow:tagsToFollow,
-                        tagsBg: tagsBgColors,) else Container(),
+                        tagsBg: tagsBgColors,),
                       // check out these blogs
-                        if (checkOutBlogs.isNotEmpty) CheckOutBlogs(
+                       CheckOutBlogs(
                         width: _width,
                         blogs: checkOutBlogs,
-                        blogsBg: blogsBgColors,) else Container(),
+                        blogsBg: blogsBgColors,),
                       // try these posts
-                        if (randomPosts.isNotEmpty)
-                          TryThesePosts(randomPosts:randomPosts,)
-                        else Container(),
+
+                          TryThesePosts(randomPosts:randomPosts,),
                       // trending now
-                        if (trendingTags.isNotEmpty)
+
                           Trending(trendingTags: trendingTags,
                               tagPosts: tagsPosts,)
-                        else Container(),
+                        ,
                     ],),
                   ),
                 ]),

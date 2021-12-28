@@ -78,6 +78,8 @@ Future<List<Blog>> getRandomBlogs() async {
         blogTitle: blog["title"] ?? "",
         blogId: blog["id"].toString(),
         username: blog["username"] ?? "",
+        isFollowed: blog["followed"]as bool,
+
       );
       checkoutBlogs.add(coBlog);
     }

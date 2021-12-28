@@ -1,12 +1,14 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
-import "package:random_color/random_color.dart";
+import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Models/blog.dart";
+import "package:tumbler/Providers/tags.dart";
+import "package:tumbler/Widgets/Search/check_out_blog.dart";
 
 /// check out blogs
-/// renders random blogs in the search bagw
+/// renders random blogs in the search page
 class CheckOutBlogs extends StatefulWidget {
   /// constructor, takes the blogs list
   const CheckOutBlogs({
@@ -30,7 +32,8 @@ class CheckOutBlogs extends StatefulWidget {
 }
 
 class _CheckOutBlogsState extends State<CheckOutBlogs> {
-  /// this is where the mapping will be placed
+  /// to indicate whether the user successfully followed this blog or not
+
   @override
   void initState() {
 
@@ -38,7 +41,7 @@ class _CheckOutBlogsState extends State<CheckOutBlogs> {
   }
   @override
   Widget build(final BuildContext context) {
-
+    final double _width= MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, top: 12),
       child: Column(
@@ -56,117 +59,23 @@ class _CheckOutBlogsState extends State<CheckOutBlogs> {
               ),
             ),
           ),
-          SingleChildScrollView(
+          if (Provider.of<Tags>(context,listen: false).isLoaded==false&&
+              widget.blogs.isEmpty)const
+          Center(child: CircularProgressIndicator()) else
+                SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children:
-              widget.blogs.map((final Blog blog) =>
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color:widget.blogsBg[blog]??RandomColor().randomColor(),
-                        borderRadius:
-                        const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      width:kIsWeb?200:((widget._width / 3) + 30),
-                      height: kIsWeb?180:(widget._width / 3) + 50,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 90,
-                            child: Stack(
-                              children: <Widget>[
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    topRight: Radius.circular(10),
-                                  ),
-                                  child: Image.network(
-                                    blog.headerImage??"https://picsum.photos/200",
-                                    width: widget._width,
-                                    height: 60,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 25,
-                                  left: 0,
-                                  right: 0,
-                                  child: Center(
-                                    child:
-                                    CircleAvatar(
-                                      backgroundColor: navy,
-                                      radius: 30,
-                                      backgroundImage:  NetworkImage(
-                                        blog.avatarImageUrl ??"https://picsum.photos/200",
-                                      ),
-                                    )
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Center(
-                            child: Padding(
-                              padding: const
-                              EdgeInsets.symmetric(vertical: 8),
-                              child: Text(
-                                blog.username??"tumbler",
-                                textScaleFactor: 1.1,
-                                style: TextStyle(
-                                  color: widget.blogsBg[blog]!
-                                      .computeLuminance()>0.5
-                                      ? Colors.black: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          Expanded(
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 10,
-                                  right: 10,
-                                  bottom: 8,
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                    //compute Luminance, if >0.4
-                                    // then make it black,
-                                    // else make it white
-                                    MaterialStateProperty.all<Color>(
-                                      widget.blogsBg[blog]!.computeLuminance()>0.5
-                                          ? Colors.black: Colors.white,
-                                    ),
-                                    foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                      widget.blogsBg[blog]??Colors.black,
-                                    ),
-                                    fixedSize: MaterialStateProperty.all(
-                                      Size(widget._width, 35),
-                                    ),
-                                    elevation:
-                                    MaterialStateProperty.all(1),
-                                  ),
-                                  child: const Text(
-                                    "Follow",
-                                    textScaleFactor: 1.2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),).toList(),
+                  widget.blogs.map((final Blog blog) =>
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: CheckOutBlog(
+                            key: Key(blog.blogId!),
+                            blog: blog,
+                            bgColor: widget.blogsBg[blog]??
+                            navy,
+                            width: _width,),
+                      ),).toList(),
             ),
           )
         ],

@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "package:tumbler/Models/tag.dart";
+import "package:tumbler/Providers/tags.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 /// check out these tags section
-class CheckOutTags extends StatelessWidget {
+class CheckOutTags extends StatefulWidget {
   /// constructor
   const CheckOutTags({
     required final double width,
@@ -19,8 +21,26 @@ class CheckOutTags extends StatelessWidget {
   final Map<Tag, Color> tagsBg;
 
   @override
+  State<CheckOutTags> createState() => _CheckOutTagsState();
+}
+
+class _CheckOutTagsState extends State<CheckOutTags> {
+  ScrollController? _controller;
+  List<Tag> _tagsToFollow=<Tag> [];
+
+  @override
+  void initState() {
+    _controller= ScrollController();
+    _tagsToFollow= widget.tagsToFollow;
+    super.initState();
+  }
+  @override
+  void dispose() {
+    _controller!.dispose();
+    super.dispose();
+  }
+  @override
   Widget build(final BuildContext context) {
-    rebuildAllChildren(context);
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: Column(
@@ -43,19 +63,26 @@ class CheckOutTags extends StatelessWidget {
           ),
           /// content of the section
           SizedBox(
-            child: SingleChildScrollView(
+            child:
+          (Provider.of<Tags>(context,listen: false).isLoaded==false&&
+              widget.tagsToFollow.isEmpty)?
+          const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
                 padding: const EdgeInsets.only(left: 8),
-                child: Row(
-                  children: tagsToFollow.isNotEmpty?tagsToFollow.map(
+                child:  Row(
+                  children: widget.tagsToFollow.isNotEmpty?
+                  widget.tagsToFollow.map(
                         (final Tag item) =>
-                      CheckOutTagComponent
-                        (width: _width, tag: item, color: tagsBg[item]!,
-                        isFollowed: false,),)
-                      .toList():<Widget>[Container()],
-
-
+                        CheckOutTagComponent
+                          (width: widget._width, tag: item,
+                          color: widget.tagsBg[item]!,
+                          isFollowed: item.isFollowed!,
+                          key: Key(item.tagDescription!),
+                        ),)
+                      .toList()
+                      :<Widget>[Container()],
                 ),
               ),
             ),
@@ -64,15 +91,7 @@ class CheckOutTags extends StatelessWidget {
       ),
     );
   }
-  /// to solve a ui issue
-  void rebuildAllChildren(final BuildContext context) {
-    void rebuild(final Element el) {
-      el.markNeedsBuild();
-      // ignore: cascade_invocations
-      el.visitChildren(rebuild);
-    }
-    (context as Element).visitChildren(rebuild);
-  }
+
 }
 
 

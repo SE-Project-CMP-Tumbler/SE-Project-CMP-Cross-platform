@@ -1,7 +1,9 @@
 import "package:flutter/material.dart";
-import 'package:random_color/random_color.dart';
+import "package:provider/provider.dart";
+import "package:random_color/random_color.dart";
 import "package:tumbler/Models/tag.dart";
-import 'package:tumbler/Screens/Search/tag_posts.dart';
+import "package:tumbler/Providers/tags.dart";
+import "package:tumbler/Screens/Search/tag_posts.dart";
 import "package:tumbler/Widgets/Search/tag_card.dart";
 /// this is the tags section in the search screen
 class TagsYouFollow extends StatelessWidget {
@@ -54,7 +56,11 @@ class TagsYouFollow extends StatelessWidget {
             ),
           ),
           /// List of tags
-          SingleChildScrollView(
+          if(Provider.of<Tags>(context,listen: false)
+              .isLoaded==false&&tags.isEmpty)
+           const Center(child: CircularProgressIndicator())
+          else
+            SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
               padding: const EdgeInsets.only(left: 8),

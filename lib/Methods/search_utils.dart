@@ -42,6 +42,8 @@ Future<List<List<dynamic>>> getSearchResults(
         tagDescription: tagResult["tag_description"],
         tagImgUrl: tagResult["tag_image"],
         postsCount: tagResult["posts_count"],
+        isFollowed:  tagResult["followed"] as bool,
+        followersCount: tagResult["followers_number"],
       );
       tagsResults.add(tag);
     }
@@ -65,6 +67,7 @@ Future<List<List<dynamic>>> getSearchResults(
         blogTitle: blogResult["title"] ?? "",
         blogId: blogResult["id"].toString(),
         username: blogResult["username"] ?? "",
+        isFollowed:  blogResult["followed"],
       );
       blogResults.add(blog);
     }
