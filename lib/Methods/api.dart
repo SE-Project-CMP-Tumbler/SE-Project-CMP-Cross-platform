@@ -56,6 +56,7 @@ class Api {
   final String _sendMessage = dotenv.env["sendMessage"] ?? " ";
   final String _followBlog = dotenv.env["follow_blog"] ?? " ";
   final String _followTag = dotenv.env["follow_tag"] ?? " ";
+  final String _info = dotenv.env["info"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -136,7 +137,6 @@ class Api {
           headers: _headerContent,
         )
         .onError(errorFunction);
-
     return jsonDecode(response.body);
   }
 
@@ -171,7 +171,6 @@ class Api {
           headers: _headerContent,
         )
         .onError(errorFunction);
-
     return jsonDecode(response.body);
   }
 
@@ -610,6 +609,22 @@ class Api {
         .get(
           Uri.parse(
             _host + _blogSettings + blogID,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+
+    return jsonDecode(response.body);
+  }
+
+  /// to get the info of a specific user
+  Future<Map<String, dynamic>> getUserInfo(
+    final String blogUsername,
+  ) async {
+    final http.Response response = await http
+        .get(
+          Uri.parse(
+            _host + _blog + _info + blogUsername,
           ),
           headers: _headerContentAuth,
         )

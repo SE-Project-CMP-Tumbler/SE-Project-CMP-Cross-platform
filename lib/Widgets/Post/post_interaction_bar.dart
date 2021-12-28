@@ -131,6 +131,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             ),
           ),
           IconButton(
+            key: const ValueKey<String>("REBLOG"),
             onPressed: () {
               // TODO(Ziyad): Share
             },
@@ -156,6 +157,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             ),
           ),
           IconButton(
+            key: const ValueKey<String>("NOTES"),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<NotesPage>(
