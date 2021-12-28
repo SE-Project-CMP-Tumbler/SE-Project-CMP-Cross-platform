@@ -94,6 +94,7 @@ class _MainScreenState extends State<MainScreen>
           ),
           if (selectedIndex == 0 || selectedIndex == 3)
             DraggableFloatingActionButton(
+              key: const ValueKey<String>("ActionButton"),
               duration: const Duration(milliseconds: 100),
               initialOffset: Offset(_width - 70, _height - 150),
               parentKey: _parentKey,
