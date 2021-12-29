@@ -7,4 +7,4 @@ services:
     build:
       context: .
     ports:
-      - 4000:TYPE_THE_SERVER_INSIDE_CONTAINER_PORT_HERE
+      - 4000:80
