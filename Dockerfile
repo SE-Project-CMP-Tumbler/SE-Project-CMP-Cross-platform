@@ -4,9 +4,6 @@ FROM nginx
 RUN apt-get update 
 RUN apt-get install -y curl git unzip android-sdk tree grep
 
-RUN tree -f /usr | grep sdkmanager
-RUN false
-
 # Set the working directory to the app files within the container
 WORKDIR /flutter
 
@@ -33,10 +30,10 @@ RUN flutter clean
 RUN flutter pub get
 
 # Build the app for the mobile
-RUN flutter build apk --release
+#RUN flutter build apk --release
 
 # Build the app for the web
-RUN flutter build web
+#RUN flutter build web
 
 RUN cp -r /flutter/build/web /usr/share/nginx/html
 
