@@ -4,6 +4,9 @@ FROM nginx
 RUN apt-get update 
 RUN apt-get install -y curl git unzip android-sdk
 
+RUN sdkmanager --version
+RUN yes | sdkmanager --licenses
+
 # Set the working directory to the app files within the container
 WORKDIR /flutter
 
