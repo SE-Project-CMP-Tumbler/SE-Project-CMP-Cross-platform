@@ -21,7 +21,7 @@ RUN flutter upgrade
 RUN flutter config --enable-web
 
 # Run flutter doctor
-RUN flutter doctor -v
+RUN flutter doctor --android-licenses
 
 # Clean the Project
 RUN flutter clean
