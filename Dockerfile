@@ -4,7 +4,10 @@ FROM nginx
 RUN apt-get update 
 RUN apt-get install -y curl git unzip android-sdk
 
-RUN yes | ~/Android/Sdk/tools/bin/sdkmanager --licenses
+RUN echo $ANDROID_HOME
+RUN ls /
+RUN ls /home/
+RUN false
 
 # Set the working directory to the app files within the container
 WORKDIR /flutter
