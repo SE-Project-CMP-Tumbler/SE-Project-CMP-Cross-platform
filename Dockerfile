@@ -2,11 +2,13 @@ FROM nginx
 #COPY . /usr/share/nginx/html
 
 RUN apt-get update 
-RUN apt-get install -y curl git unzip android-sdk
+RUN apt-get install -y curl git unzip android-sdk tree
 
-RUN echo $ANDROID_SDK
 RUN ls /
 RUN ls /root/
+RUN ls /usr/
+RUN tree /bin/
+RUN tree /usr/*bin*
 RUN false
 
 # Set the working directory to the app files within the container
