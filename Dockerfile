@@ -6,7 +6,7 @@ RUN apt-get install -y curl git unzip android-sdk
 
 RUN echo $ANDROID_HOME
 RUN ls /
-RUN ls /home/
+RUN ls /root/
 RUN false
 
 # Set the working directory to the app files within the container
