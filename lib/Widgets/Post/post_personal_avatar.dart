@@ -43,11 +43,11 @@ class _PersonAvatarState extends State<PersonAvatar> {
           height: 40,
           width: 40,
           decoration: BoxDecoration(
-            borderRadius: (widget.shape == "circle")
-                ? const BorderRadius.all(
-                    Radius.circular(20),
-                  )
-                : null,
+            borderRadius: BorderRadius.all(
+              (widget.shape == "circle")
+                  ? const Radius.circular(20)
+                  : Radius.zero,
+            ),
           ),
           child: FadeInImage(
             fit: BoxFit.cover,

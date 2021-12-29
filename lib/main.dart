@@ -4,13 +4,13 @@ import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:provider/provider.dart";
 import "package:tumbler/Methods/initializer.dart";
 import "package:tumbler/Models/user.dart";
-import "package:tumbler/Providers/blogs.dart";
 import "package:tumbler/Providers/followed_tags_sign_up.dart";
 import "package:tumbler/Providers/tags.dart";
 import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/main_screen.dart";
 
 Future<void> main() async {
+  // enableFlutterDriverExtension();
   await dotenv.load();
   if (!kIsWeb) {
     await initializeUserData();
@@ -27,9 +27,6 @@ class MyApp extends StatelessWidget {
       providers: <ChangeNotifierProvider<dynamic>>[
         ChangeNotifierProvider<FollowedTags>(
           create: (final _) => FollowedTags(),
-        ),
-        ChangeNotifierProvider<BlogsData>(
-          create: (final _) => BlogsData(),
         ),
         ChangeNotifierProvider<Tags>(
           create: (final _) => Tags(),

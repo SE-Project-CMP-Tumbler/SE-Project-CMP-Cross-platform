@@ -16,6 +16,7 @@ class PostModel {
     required final this.notes,
     required final this.isLoved,
     required final this.isFollowed,
+    required final this.traceBackPosts,
   });
 
   final int postId;
@@ -28,6 +29,7 @@ class PostModel {
   final String blogAvatarShape;
   final String blogTitle;
   final String postTime;
+  final List<dynamic> traceBackPosts;
   int notes;
   bool isLoved;
   bool isFollowed;
@@ -53,7 +55,8 @@ class PostModel {
           postTime: json[i]["post_time"] ?? "",
           notes: (json[i]["notes_count"] ?? 0) as int,
           isLoved: (json[i]["is_liked"] ?? false) as bool,
-          isFollowed: false, // TODO(Ziyad): Make the request
+          isFollowed: (json[i]["followed"] ?? false) as bool,
+          traceBackPosts: json[i]["traced_back_posts"],
         ),
       );
     }

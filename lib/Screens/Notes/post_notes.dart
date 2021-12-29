@@ -22,7 +22,7 @@ enum blogsType {
   others
 }
 
-/// [NotesPage] is a class handels all stuff related to notes
+/// [NotesPage] is a class handles all stuff related to notes
 class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
   NotesPage({
@@ -68,9 +68,11 @@ class _NotesPageState extends State<NotesPage>
     if (recievedNotes["meta"]["status"] == "404")
       throw HttpException("Not Found!");
     else {
-      likesList = recievedNotes["response"]["likes"] ?? <dynamic>[];
-      reblogsList = recievedNotes["response"]["reblogs"] ?? <dynamic>[];
-      repliesList = recievedNotes["response"]["replies"] ?? <dynamic>[];
+      likesList = recievedNotes["response"]["likes"]["likes"] ?? <dynamic>[];
+      reblogsList =
+          recievedNotes["response"]["reblogs"]["reblogs"] ?? <dynamic>[];
+      repliesList =
+          recievedNotes["response"]["replies"]["replies"] ?? <dynamic>[];
 
       // spilt blogs received into to sub-categories
       for (int i = 0; i < reblogsList.length; i++) {

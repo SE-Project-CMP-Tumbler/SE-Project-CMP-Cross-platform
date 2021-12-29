@@ -4,6 +4,7 @@ import "dart:io" as io;
 
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
+import 'package:tumbler/Models/blog_theme.dart';
 import "package:tumbler/Models/user.dart";
 
 /// Class [Api] is used for all GET, POST, PUT, Delete request from the backend.
@@ -57,6 +58,7 @@ class Api {
   final String _followBlog = dotenv.env["follow_blog"] ?? " ";
   final String _followTag = dotenv.env["follow_tag"] ?? " ";
   final String _info = dotenv.env["info"] ?? " ";
+  final String _theme = dotenv.env["theme"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -439,7 +441,7 @@ class Api {
     final http.Response response = await http
         .post(
           Uri.parse(
-            _host + _replyPost + postId,
+            _host + _post + _replyPost + postId,
           ),
           body: jsonEncode(<String, String>{
             "reply_text": text,
@@ -586,25 +588,63 @@ class Api {
   }
 
   /// to get the Information of a specific blog
-  Future<Map<String, dynamic>> getBlogInformation(
-    final String blogID,
-  ) async {
+  Future<Map<String, dynamic>> getBlogInformation(final String blogID,) async {
     final http.Response response = await http
         .get(
-          Uri.parse(
-            _host + _blog + "/" + blogID,
-          ),
-          headers: _headerContentAuth,
-        )
+      Uri.parse(
+        _host + _blog + "/" + blogID,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError(errorFunction);
+
+    return jsonDecode(response.body);
+  }
+
+  /// to get the Theme of a specific blog
+  Future<Map<String, dynamic>> getBlogTheme(final String blogID,) async {
+    final http.Response response = await http
+        .get(
+      Uri.parse(
+        _host + _blog + "/" + blogID + _theme,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError(errorFunction);
+
+    return jsonDecode(response.body);
+  }
+
+  /// to get the Theme of a specific blog
+  Future<Map<String, dynamic>> setBlogTheme(final String blogID,
+      final BlogTheme theme,) async {
+    final http.Response response = await http
+        .put(
+      Uri.parse(
+        _host + _blog + "/" + blogID + _theme,
+      ),
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, dynamic>{
+        "color_title": "#" + theme.titleColor,
+        "font_title": theme.titleFont,
+        "font_weight_title": theme.titleWeight,
+        "description": theme.description,
+        "title": theme.titleText,
+        "background_color": "#" + theme.backgroundColor,
+        "accent_color": "#" + theme.accentColor,
+        "body_font": theme.bodyFont,
+        "header_image": theme.headerImage,
+        "avatar": theme.avatarURL,
+        "avatar_shape": theme.avatarShape
+      }),
+    )
         .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
 
   /// to get the Settings of a specific blog
-  Future<Map<String, dynamic>> getBlogSetting(
-    final String blogID,
-  ) async {
+  Future<Map<String, dynamic>> getBlogSetting(final String blogID,) async {
     final http.Response response = await http
         .get(
           Uri.parse(
