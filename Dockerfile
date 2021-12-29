@@ -30,7 +30,7 @@ RUN flutter clean
 RUN flutter pub get
 
 # Build the app for the mobile
-RUN flutter build apk
+RUN flutter build apk --release
 
 # Build the app for the web
 RUN flutter build web
