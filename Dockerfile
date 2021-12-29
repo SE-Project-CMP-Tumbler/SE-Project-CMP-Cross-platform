@@ -2,8 +2,7 @@ FROM nginx
 #COPY . /usr/share/nginx/html
 
 RUN apt-get update 
-RUN apt-get install -y curl git
-RUN apt-get install -y curl unzip
+RUN apt-get install -y curl git unzip android-sdk
 
 # Set the working directory to the app files within the container
 WORKDIR /flutter
