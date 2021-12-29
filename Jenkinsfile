@@ -62,9 +62,8 @@ pipeline {
       }
       steps {
         sh 'whoami;hostname;uptime'
-        sh '''az storage file download \\
---account-name tumblerstorageaccount \\
--s tumbler-secrets -p flutter.dev.env --dest .env;
+        sh '''
+#az storage file download --account-name tumblerstorageaccount -s tumbler-secrets -p flutter.dev.env --dest .env;
 docker-compose up -d --build;
 #docker system prune -f;'''
       }
