@@ -7,8 +7,6 @@ RUN apt-get install -y curl git unzip android-sdk tree grep
 # Set the working directory to the app files within the container
 WORKDIR /flutter
 
-COPY . /flutter
-
 # Clone the flutter repo
 RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
 
@@ -21,7 +19,9 @@ RUN flutter upgrade
 RUN flutter config --enable-web
 
 # Run flutter doctor
-RUN flutter doctor --android-licenses
+RUN flutter doctor -v
+
+COPY . /flutter
 
 # Clean the Project
 RUN flutter clean
