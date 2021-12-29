@@ -33,7 +33,7 @@ RUN flutter pub get
 #RUN flutter build apk --release
 
 # Build the app for the web
-#RUN flutter build web
+RUN flutter build web
 
 RUN cp -r /flutter/build/web /usr/share/nginx/html
 
