@@ -4,7 +4,7 @@ FROM nginx
 RUN apt-get update 
 RUN apt-get install -y curl git unzip android-sdk
 
-RUN echo $ANDROID_HOME
+RUN echo $ANDROID_SDK
 RUN ls /
 RUN ls /root/
 RUN false
