@@ -4,6 +4,7 @@ services:
   app:
     container_name: flutter-dev
     image: flutter-dev
+    tty: true
     build:
       context: .
     ports:
