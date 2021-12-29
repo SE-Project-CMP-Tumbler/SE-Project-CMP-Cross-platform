@@ -2,7 +2,7 @@ FROM nginx
 #COPY . /usr/share/nginx/html
 
 RUN apt-get update 
-RUN apt-get install -y curl git unzip android-sdk tree
+RUN apt-get install -y curl git unzip android-sdk tree grep
 
 RUN tree -f /usr | grep sdkmanager
 RUN false
