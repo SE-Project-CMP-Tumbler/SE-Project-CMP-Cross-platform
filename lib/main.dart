@@ -6,6 +6,7 @@ import "package:tumbler/Methods/initializer.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Providers/blogs.dart";
 import "package:tumbler/Providers/followed_tags_sign_up.dart";
+import "package:tumbler/Screens/Activity/acitivity_chat_screen.dart";
 import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/main_screen.dart";
 
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        //home: AddPost(),
+        //home: ActivityAndChatScreen(),
         home: User.accessToken.isEmpty ? OnStart() : MainScreen(),
       ),
     );
