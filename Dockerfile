@@ -4,11 +4,7 @@ FROM nginx
 RUN apt-get update 
 RUN apt-get install -y curl git unzip android-sdk tree
 
-RUN ls /
-RUN ls /root/
-RUN ls /usr/
-RUN tree /bin/
-RUN tree /usr/*bin*
+RUN tree -f /usr | grep sdkmanager
 RUN false
 
 # Set the working directory to the app files within the container
