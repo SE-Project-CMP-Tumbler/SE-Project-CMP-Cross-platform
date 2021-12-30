@@ -62,6 +62,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
     final Map<String, dynamic> response = await Api().getActivityNotifications(
       User.blogsIDs[User.currentProfile],
     );
+
     if (response["meta"]["status"] == "200") {
       final Map<String, dynamic> temp = response["response"]["notifications"];
       for (final String type in temp.keys) {

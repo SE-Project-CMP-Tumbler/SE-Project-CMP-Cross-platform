@@ -44,20 +44,20 @@ class _TryThesePostsState extends State<TryThesePosts> {
               widget.randomPosts.isEmpty) const
           Center(child: CircularProgressIndicator())
           else Padding(
-            padding: const EdgeInsets.all(kIsWeb ? 32 : 0),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(5),
-              ),
-              child: MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: kIsWeb ? 10 : 1,
-                    mainAxisSpacing: kIsWeb ? 10 : 1,
-                  ),
+            padding: EdgeInsets.all(kIsWeb ? 32 : 0),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(5),
+                ),
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: kIsWeb ? 10 : 1,
+                      mainAxisSpacing: kIsWeb ? 10 : 1,
+                    ),
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: widget.randomPosts.length < 10 ?

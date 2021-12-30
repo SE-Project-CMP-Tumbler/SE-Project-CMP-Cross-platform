@@ -3,7 +3,7 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
-import "package:tumbler/Models/http_requests_exceptions.dart";
+import 'package:tumbler/Methods/show_toast.dart';
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
@@ -45,6 +45,10 @@ class _NotesPageState extends State<NotesPage>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
 
+  int likeCount = 0;
+  int repliesCount = 0;
+  int reblogCount = 0;
+
   /// contains all likes with their details
   List<dynamic> likesList = <dynamic>[];
 
@@ -65,9 +69,13 @@ class _NotesPageState extends State<NotesPage>
         await Api().getNotes(widget.postID.toString());
 
     //check the status code for the received response.
-    if (recievedNotes["meta"]["status"] == "404")
-      throw HttpException("Not Found!");
-    else {
+    if (recievedNotes["meta"]["status"] == "200") {
+      likeCount =
+          recievedNotes["response"]["likes"]["pagination"]["total"] as int;
+      repliesCount =
+          recievedNotes["response"]["replies"]["pagination"]["total"] as int;
+      reblogCount =
+          recievedNotes["response"]["reblogs"]["pagination"]["total"] as int;
       likesList = recievedNotes["response"]["likes"]["likes"] ?? <dynamic>[];
       reblogsList =
           recievedNotes["response"]["reblogs"]["reblogs"] ?? <dynamic>[];
@@ -75,7 +83,7 @@ class _NotesPageState extends State<NotesPage>
           recievedNotes["response"]["replies"]["replies"] ?? <dynamic>[];
 
       // spilt blogs received into to sub-categories
-      for (int i = 0; i < reblogsList.length; i++) {
+      for (int i = 0; i < reblogCount; i++) {
         if (reblogsList[i]["reblog_content"].isEmpty) {
           reblogsWithOutCommentsList.add(reblogsList[i]);
         } else {
@@ -83,7 +91,8 @@ class _NotesPageState extends State<NotesPage>
         }
       }
       setState(() {});
-    }
+    } else
+      await showToast(recievedNotes["meta"]["msg"]);
   }
 
   bool updateFollowStatusLocally(final String blogId, final bool followStatus) {
@@ -152,21 +161,21 @@ class _NotesPageState extends State<NotesPage>
         tabs: <Widget>[
           CustomizedTab(
             iconType: Icons.comment,
-            number: repliesList.length,
+            number: repliesCount,
             color: Colors.blue,
             currIndex: tabController.index,
             myIndex: 0,
           ),
           CustomizedTab(
             iconType: Icons.repeat,
-            number: reblogsList.length,
+            number: reblogCount,
             color: Colors.green,
             currIndex: tabController.index,
             myIndex: 1,
           ),
           CustomizedTab(
             iconType: Icons.favorite_outline_outlined,
-            number: likesList.length,
+            number: likeCount,
             color: Colors.red,
             currIndex: tabController.index,
             myIndex: 2,
@@ -188,7 +197,7 @@ class _NotesPageState extends State<NotesPage>
             children: <Widget>[
               Text(
                 "${numFormatter.format(
-                  likesList.length + repliesList.length + reblogsList.length,
+                  likeCount + repliesCount + reblogCount,
                 )} notes",
               ),
             ],
@@ -233,7 +242,7 @@ class _NotesPageState extends State<NotesPage>
                             blogID: repliesList[index]["blog_id"].toString(),
                           );
                         },
-                        itemCount: repliesList.length,
+                        itemCount: repliesCount,
                       ),
                     ),
                     ReplyTextField(
@@ -353,7 +362,7 @@ class _NotesPageState extends State<NotesPage>
                       updateFollowStatusLocally: updateFollowStatusLocally,
                     );
                   },
-                  itemCount: likesList.length,
+                  itemCount: likeCount,
                 ),
               ),
           ],
