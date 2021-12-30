@@ -23,14 +23,16 @@ Future<List<String>> getAutoComplete(
 }
 
 /// to get the "autocomplete words"
-Future<List<List<dynamic>>> getSearchResults(
-  final String word,
-) async {
+Future<List<List<dynamic>>> getSearchResults(final String word,
+    {final int page = 1,}) async {
   List<PostModel> postsResults = <PostModel>[];
   final List<Tag> tagsResults = <Tag>[];
   final List<Blog> blogResults = <Blog>[];
 
-  final Map<String, dynamic> response = await Api().fetchSearchResults(word);
+  final Map<String, dynamic> response = await Api().fetchSearchResults(
+    word,
+    page: page,
+  );
   if (response["meta"]["status"] == "200") {
     final List<dynamic> posts = response["response"]["posts"]["posts"];
     final List<dynamic> tags = response["response"]["tags"]["tags"];
@@ -42,7 +44,7 @@ Future<List<List<dynamic>>> getSearchResults(
         tagDescription: tagResult["tag_description"],
         tagImgUrl: tagResult["tag_image"],
         postsCount: tagResult["posts_count"],
-        isFollowed:  tagResult["followed"] as bool,
+        isFollowed: tagResult["followed"] as bool,
         followersCount: tagResult["followers_number"],
       );
       tagsResults.add(tag);
@@ -67,7 +69,7 @@ Future<List<List<dynamic>>> getSearchResults(
         blogTitle: blogResult["title"] ?? "",
         blogId: blogResult["id"].toString(),
         username: blogResult["username"] ?? "",
-        isFollowed:  blogResult["followed"],
+        isFollowed: blogResult["followed"],
       );
       blogResults.add(blog);
     }

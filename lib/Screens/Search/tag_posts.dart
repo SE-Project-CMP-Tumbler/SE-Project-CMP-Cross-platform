@@ -1,13 +1,14 @@
 import "dart:math";
-
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:sliver_header_delegate/sliver_header_delegate.dart";
 import "package:sliver_tools/sliver_tools.dart";
+import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/urls.dart";
 import "package:tumbler/Methods/follow_tags.dart";
 import "package:tumbler/Methods/get_tags.dart";
+import "package:tumbler/Methods/show_toast.dart" as toast;
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
@@ -31,7 +32,8 @@ class TagPosts extends StatefulWidget {
 
 class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
   late AnimationController loadingSpinnerAnimationController;
-  ScrollController? _scrollController;
+  final ScrollController _scrollControllerTop= ScrollController();
+  final ScrollController _scrollControllerRecent= ScrollController();
   TabController? tabController;
   /// to indicate whether the posts is loading or not
   bool _isLoading=true;
@@ -41,16 +43,55 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
   /// to indicate a loading of an unfollow tag request
   bool _proceedingFollowing=false;
 
+
+  /// true when error occurred
+  bool _error = false;
+  /// true when more posts are loading.
+  bool _isLoadingMoreTop = false;
+
+  /// to indicate if we reached the max page count or not
+  bool reachedMaxTop = false;
+
+  /// the current page of the followed tags
+  int currentPageTop = 1;
+  /// true when more posts are loading.
+  bool _isLoadingMoreRecent = false;
+
+  /// to indicate if we reached the max page count or not
+  bool reachedMaxRecent = false;
+
+  /// the current page of the followed tags
+  int currentPageRecent = 1;
+  ScrollController? _scrollController;
   List<PostModel> recentPosts= <PostModel>[];
   List<PostModel> topPosts= <PostModel>[];
+  // ignore: unused_field
   int _currentTab=0;
+  // ignore: unused_field
   final int _postsCount=0;
   Future<void> getRecentTagPosts() async{
     setState(() {
+      currentPageTop=1;
+      currentPageRecent=1;
+      reachedMaxTop=false;
+      reachedMaxRecent=false;
       _isLoading=true;
+      _error=false;
     });
+
     /// get recent posts of the tag
-    final List<PostModel> tagPosts= await getTagPosts(widget.tag.tagDescription!,);
+    final List<PostModel> tagPosts= await getTagPosts
+      (widget.tag.tagDescription!,).catchError(
+            (final Object? error) {
+          toast.showToast(
+            "error from getting recent tags posts"
+                "\n${error.toString()}",
+          );
+          setState(() {
+            _isLoading=false;
+            _error=true;
+          });
+        });
     setState((){
       recentPosts =tagPosts;
     });
@@ -61,11 +102,27 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
   }
   Future<void> getTopTagPosts() async{
     setState(() {
+      currentPageTop=1;
+      currentPageRecent=1;
+      reachedMaxTop=false;
+      reachedMaxRecent=false;
       _isLoading=true;
+      _error=false;
     });
     /// get top posts of the tag
     final List<PostModel> tagTopPosts= await getTagPosts
-      (widget.tag.tagDescription!,recent: false,);
+      (widget.tag.tagDescription!,recent: false,).catchError(
+            (final Object? error) {
+          toast.showToast(
+            "error from getting recent tags posts"
+                "\n${error.toString()}",
+          );
+          setState(() {
+            _isLoading=false;
+            _error=true;
+          });
+
+            });
     setState(() {
       topPosts= tagTopPosts;
     });
@@ -74,20 +131,45 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
       _isLoading=false;
     });
   }
-
   // ignore: avoid_void_async
   void fetchAllPosts()async{
     setState(() {
+      currentPageTop=1;
+      currentPageRecent=1;
+      reachedMaxTop=false;
+      reachedMaxRecent=false;
       _isLoading=true;
+      _error=false;
     });
     /// get recent posts of the tag
-     final List<PostModel> tagPosts= await getTagPosts(widget.tag.tagDescription!,);
+     final List<PostModel> tagPosts= await getTagPosts(
+       widget.tag.tagDescription!,).catchError(
+             (final Object? error) {
+           toast.showToast(
+             "error from getting recent tags posts"
+                 "\n${error.toString()}",
+           );
+           setState(() {
+             _isLoading=false;
+             _error=true;
+           });
+         });
     setState((){
       recentPosts =tagPosts;
     });
     /// get top posts of the tag
     final List<PostModel> tagTopPosts= await getTagPosts
-      (widget.tag.tagDescription!,recent: false,);
+      (widget.tag.tagDescription!,recent: false,).catchError(
+            (final Object? error) {
+      toast.showToast(
+        "error from getting top tags posts"
+            "\n${error.toString()}",
+      );
+      setState(() {
+        _isLoading=false;
+        _error=true;
+      });
+    });
     if(mounted)
       setState(() {
       topPosts= tagTopPosts;
@@ -98,26 +180,145 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
     });
 
   }
+
+  // ignore: avoid_void_async
+  void getMoreTopTagPosts()async{
+    if (reachedMaxTop) // nothing more to fetch
+        {
+      return;
+    }
+    setState(() {
+      _isLoadingMoreTop=true;
+      _error=false;
+    });
+    /// get recent posts of the tag
+    final List<PostModel> tagPosts= await getTagPosts(
+      widget.tag.tagDescription!,recent:false, page: currentPageTop,)
+        .catchError(
+            (final Object? error) {
+          toast.showToast(
+            "error from getting top tags posts"
+                "\n${error.toString()}",
+          );
+          setState(() {
+            _isLoadingMoreTop=false;
+            _error=true;
+          });
+        });
+    if(tagPosts.isNotEmpty) {
+      setState(() {
+        if (currentPageTop == 1)
+          topPosts = tagPosts;
+        else
+          topPosts.addAll(tagPosts);
+      });
+    }
+    else{
+      setState(() {
+        reachedMaxTop=true;
+      });
+    }
+    setState(() {
+      _isLoadingMoreTop=false;
+      });
+
+  }
+
+  // ignore: avoid_void_async
+  void getMoreRecentTagPosts()async{
+    if (reachedMaxRecent) // nothing more to fetch
+        {
+      return;
+    }
+    setState(() {
+      _isLoadingMoreRecent=true;
+      _error=false;
+    });
+    /// get recent posts of the tag
+    final List<PostModel> tagPosts= await getTagPosts(
+      widget.tag.tagDescription!, page: currentPageRecent,)
+        .catchError(
+            (final Object? error) {
+          toast.showToast(
+            "error from getting recent tags posts"
+                "\n${error.toString()}",
+          );
+          setState(() {
+            _isLoadingMoreRecent=false;
+            _error=true;
+          });
+        });
+    if(tagPosts.isNotEmpty) {
+      setState(() {
+        if (currentPageRecent == 1)
+          recentPosts = tagPosts;
+        else
+          recentPosts.addAll(tagPosts);
+      });
+    }
+    else{
+      setState(() {
+        reachedMaxRecent=true;
+      });
+    }
+    setState(() {
+      _isLoadingMoreRecent=false;
+    });
+
+  }
+  // ignore: always_specify_types
+  late Animation _colorTween;
+  late AnimationController controller;
   @override
   void initState() {
     super.initState();
     /// Animation controller for the color varying loading spinner
     tabController = TabController(length: 2, vsync: this);
-    _scrollController= ScrollController();
+    _scrollController=ScrollController();
+    _scrollControllerRecent.addListener(() {
+    if(_scrollControllerRecent.position.pixels>=
+        _scrollControllerRecent.position.maxScrollExtent&&!_isLoading
+        &&!_isLoadingMoreRecent)
+      {
+        currentPageRecent++;
+        getMoreRecentTagPosts();
+      }
+    });
+    _scrollControllerTop.addListener(() {
+      if(_scrollControllerTop.position.pixels>=
+          _scrollControllerTop.position.maxScrollExtent&&!_isLoading
+          &&!_isLoadingMoreTop)
+      {
+        currentPageTop++;
+        getMoreTopTagPosts();
+      }
+    });
     loadingSpinnerAnimationController =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     loadingSpinnerAnimationController.repeat();
-    setState(() {
-      _followed= widget.tag.isFollowed??false;
-    });
+    _followed= widget.tag.isFollowed??false;
 
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    controller.repeat();
+    _colorTween = controller.drive(
+      ColorTween(
+        begin: Colors.deepPurpleAccent,
+        end: floatingButtonColor,
+      ),
+    );
     fetchAllPosts();
   }
   @override
   void dispose() {
     loadingSpinnerAnimationController.dispose();
     tabController!.dispose();
+    _scrollControllerRecent.dispose();
+    _scrollControllerTop.dispose();
     _scrollController!.dispose();
+    controller.dispose();
     super.dispose();
   }
   /// a state variable to hide the follow button on scroll
@@ -126,6 +327,7 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
   Widget build(final BuildContext context) {
 
     final double _width= MediaQuery.of(context).size.width;
+    final double _height= MediaQuery.of(context).size.height;
     final List<String> _tabs= <String> ["Recent", "Top"];
     return DefaultTabController(
       length: _tabs.length,
@@ -155,12 +357,14 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
           child: NestedScrollView(
             floatHeaderSlivers: true,
             controller: _scrollController,
-            headerSliverBuilder: (final BuildContext context, final bool value) {
+            headerSliverBuilder: (final BuildContext context, final bool value)
+            {
               return <Widget>[
                 SliverStack(
-                  children: [
+                  children: <Widget>[
                     SliverOverlapAbsorber(
-                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor
+                      (context),
                     sliver: SliverPersistentHeader(
                         floating: true,
                         pinned: true,
@@ -177,7 +381,9 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
 
                           animationDuration:  Duration.zero,
                           expandedWidget: GestureDetector(
-                            onTap: (){print("pressed");},
+                            onTap: (){
+
+                            },
                             child: Stack(
                               clipBehavior: Clip.none,
                               alignment: Alignment.center,
@@ -275,7 +481,7 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
                                   Row(
                                     children: <Widget>[
                                       ElevatedButton(onPressed: ()async{
-                                        print("pressed");
+
                                         if(mounted)
                                           setState(() {
                                             _proceedingFollowing=true;
@@ -300,7 +506,7 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
                                             }
                                             else{
                                               showToast(context,
-                                                "OOPS, something went wrong 😢",);
+                                          "OOPS, something went wrong 😢",);
                                             }
                                           }
                                         }
@@ -313,7 +519,7 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
                                             if(succeeded) {
                                               showToast(context,
                                                 "Don't worry, u won't be"
-                                                    " bothered by this tag again",
+                                            " bothered by this tag again",
                                               );
                                               if(mounted)
                                                 setState(() {
@@ -321,7 +527,7 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
                                                 });}
                                             else{
                                               showToast(context,
-                                                "OOPS, something went wrong 😢",);
+                                        "OOPS, something went wrong 😢",);
                                             }
                                           }}
                                         if(mounted)
@@ -410,7 +616,7 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
                             _currentTab= index;
                           });
                         },
-                        // These are the widgets to put in each tab in the tab bar
+                  // These are the widgets to put in each tab in the tab bar
                         tabs: _tabs
                             .map(
                               (final String name) => Tab(text: name),
@@ -442,53 +648,151 @@ class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
                           else
                             await getTopTagPosts();
                         },
-                        child: Builder(
+                        child: _error?Padding(
+                          padding: EdgeInsets.only(top: _height / 6),
+                          child: Column(
+                            children: <Widget>[
+                              Image.asset("assets/images/error.png"),
+                              const Text(
+                                "Something bad happened T_T\n try again later",
+                                textScaleFactor: 1.5,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
+                            ],
+                          ),
+                        ):
+                        Builder(
                     // This Builder is needed to provide a BuildContext that is
                     // "inside" the NestedScrollView, so that
                     // sliverOverlapAbsorberHandleFor() can find the
                     // NestedScrollView.
                     builder: (final BuildContext context) {
                         if (name == _tabs[0]) {
-                          return ListView.builder(
-                            itemCount: recentPosts.length,
-                            itemBuilder: (final BuildContext context,
-                                final int index,){
-                              return  Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 18,
-                                ),
-                                child: Container(
-                                  color: Colors.white,
-                                  child: PostOutView(
-                                    post: recentPosts[index],
-                                    index: 0,// dump
-                                    isTagPost: true,
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }  else
-                          return  ListView.builder(
-                            itemCount: topPosts.length,
-                            itemBuilder: (final BuildContext context,
-                                final int index,){
-                              return  Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 18,
-                                ),
-                                child: Container(
-                                  color: Colors.white,
-                                  child: PostOutView(
-                                    post: topPosts[index],
-                                    index: 0, // dump
-                                    isTagPost: true,
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                    },
+                          if(recentPosts.isNotEmpty)
+                            return Stack(
+                              alignment: Alignment.topCenter,
+                              children: <Widget>[
+                                ListView.builder(
+                                controller: _scrollControllerRecent,
+                                itemCount: recentPosts.length,
+                                itemBuilder: (final BuildContext context,
+                                    final int index,){
+                                  return  Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 18,
+                                    ),
+                                    child: Container(
+                                      color: Colors.white,
+                                      child: PostOutView(
+                                        post: recentPosts[index],
+                                        index: 0,// dump
+                                        isTagPost: true,
+                                      ),
+                                    ),
+                                  );
+                                },
+                          ),
+                                if (_isLoadingMoreRecent)
+                                  Positioned(
+                                    left: 0,
+                                    bottom: 0,
+                                    child: SizedBox(
+                                      width: _height,
+                                      child: LinearProgressIndicator(
+                                        minHeight: 8,
+                                        valueColor: _colorTween
+                                        as Animation<Color?>,
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  Container(),
+                              ],
+                            );
+                          else
+                            return Padding(
+                              padding: EdgeInsets.only(top: _height / 6),
+                              child: Column(
+                                children: <Widget>[
+                                  Image.asset("assets/images/404.png"),
+                                  const Text(
+                                    "OOPS, there's nothing here",
+                                    textScaleFactor: 1.5,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                        }  else {
+                          if(topPosts.isNotEmpty)
+                            return Stack(
+                              alignment: Alignment.topCenter,
+                              children: <Widget>[
+                                ListView.builder(
+                                controller: _scrollControllerTop,
+                                itemCount: topPosts.length,
+                                itemBuilder: (final BuildContext context,
+                                    final int index,) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 18,
+                                    ),
+                                    child: Container(
+                                      color: Colors.white,
+                                      child: PostOutView(
+                                        post: topPosts[index],
+                                        index: 0, // dump
+                                        isTagPost: true,
+                                      ),
+                                    ),
+                                  );
+                                },
+                          ),
+                                if (_isLoadingMoreTop)
+                                  Positioned(
+                                    left: 0,
+                                    bottom: 0,
+                                    child: SizedBox(
+                                      width: _height,
+                                      child: LinearProgressIndicator(
+                                        minHeight: 8,
+                                        valueColor: _colorTween
+                                        as Animation<Color?>,
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  Container(),
+                              ],
+                            );
+                          else
+                            return Padding(
+                              padding: EdgeInsets.only(top: _height / 6),
+                              child: Column(
+                                children: <Widget>[
+                                  Image.asset("assets/images/404.png"),
+                                  const Text(
+                                    "OOPS, there's nothing here",
+                                    textScaleFactor: 1.5,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                        }
+                        },
                   ),
                       ),
                 )

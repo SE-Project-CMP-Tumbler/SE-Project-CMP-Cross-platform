@@ -252,9 +252,9 @@ void showToast(final BuildContext context, final String msg) {
   scaffold.showSnackBar(
     SnackBar(
       content: Text(msg),
-      backgroundColor: navy,
+      backgroundColor: const Color(0xff2fea34),
       action: SnackBarAction(label: "Got it!",
-          textColor: floatingButtonColor,
+          textColor: navy,
           onPressed: scaffold.hideCurrentSnackBar,),
     ),
   );
