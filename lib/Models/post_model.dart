@@ -45,7 +45,6 @@ class PostModel {
         if (res["meta"]["status"] == "200")
           x = (res["response"]["like_status"] ?? false) as bool;
       }
-
       temp.add(
         PostModel(
           postId: json[i]["post_id"] as int,
@@ -58,7 +57,7 @@ class PostModel {
           blogAvatarShape: json[i]["blog_avatar_shape"] ?? "",
           blogTitle: json[i]["blog_title"] ?? "",
           postTime: json[i]["post_time"] ?? "",
-          notes: (json[i]["notes"] ?? 0) as int,
+          notes: (json[i]["notes_count"] ?? 0) as int,
           isLoved: x,
         ),
       );

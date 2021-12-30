@@ -69,7 +69,7 @@ class Api {
   };
 
   /// THIS WILL BE OVERRIDED WHILE DOING TESTING WITH A MOCK-CLIENT.
-  static http.Client client = http.Client();
+  http.Client client = http.Client();
 
   /// Make GET Request to the API to get List of
   /// Trending tags.
@@ -369,6 +369,7 @@ class Api {
       Uri.parse(
         _host + _likePost + postId.toString(),
       ),
+      headers: _headerContentAuth,
     )
         .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
@@ -387,6 +388,7 @@ class Api {
       Uri.parse(
         _host + _likePost + postId.toString(),
       ),
+      headers: _headerContentAuth,
     )
         .onError((final Object? error, final StackTrace stackTrace) {
       if (error.toString().startsWith("SocketException: Failed host lookup")) {
