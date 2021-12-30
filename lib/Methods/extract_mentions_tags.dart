@@ -5,6 +5,7 @@ Future<String> extractMentionsTags(final String htmlBeforeProcessing) async {
   String html = htmlBeforeProcessing;
   int index1 = 0;
   int x = 0;
+
   while (x != -1 && index1 <= html.length - 5) {
     x = html.indexOf("@", index1);
     if (x != -1) {
@@ -12,6 +13,9 @@ Future<String> extractMentionsTags(final String htmlBeforeProcessing) async {
       if (index1 == -1) {
         index1 = html.indexOf("<", x);
       }
+      if(index1 == -1)
+        index1 = html.length;
+
       final String username = html.substring(x + 1, index1);
 
       final Map<String, dynamic> response = await Api().getUserInfo(username);
@@ -36,6 +40,9 @@ Future<String> extractMentionsTags(final String htmlBeforeProcessing) async {
       if (index1 == -1) {
         index1 = html.indexOf("<", x);
       }
+      if(index1 == -1)
+        index1 = html.length;
+
 
       final String tag = html.substring(x + 1, index1);
       html = html.replaceRange(x, index1, "<a href='tag$tag'>#$tag</a>");
