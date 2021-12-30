@@ -134,7 +134,7 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
                           final bool succeeded= await
                           followBlog(int.parse(widget.blog.blogId!));
                           if(succeeded) {
-                            showSnackBar(
+                            showToast(
                               context,
                               "Great!, you are now following "
                               "${widget.blog.blogTitle}",
@@ -145,7 +145,7 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
                               });
                           }
                           else{
-                            showSnackBar(
+                            showToast(
                                 context, "OOPS, something went wrong 😢");
                           }
                         }
@@ -156,7 +156,7 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
                           final bool succeeded= await
                           unFollowBlog(int.parse(widget.blog.blogId!));
                           if(succeeded) {
-                            showSnackBar(
+                            showToast(
                               context,
                               "Don't worry, u won't be"
                               " bothered by this blog again",
@@ -166,7 +166,7 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
                                 _followed = false;
                               });}
                           else{
-                            showSnackBar(
+                            showToast(
                                 context, "OOPS, something went wrong 😢");
                           }
                         }}

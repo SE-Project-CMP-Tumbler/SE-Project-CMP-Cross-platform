@@ -134,6 +134,9 @@ flutter:
     - assets/images/7.png
     - assets/images/8.png
     - assets/images/9.png
+    - assets/images/smile_chat.svg
+    - assets/images/error.png
+    - assets/images/404.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

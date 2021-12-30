@@ -68,6 +68,7 @@ class _PostOutViewState extends State<PostOutView> {
 
   @override
   Widget build(final BuildContext context) {
+    print(widget.post.postId);
     return Column(
       children: <Widget>[
         PostTopBar(

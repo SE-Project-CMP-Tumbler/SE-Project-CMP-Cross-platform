@@ -66,9 +66,6 @@ class ChatOutView extends StatefulWidget {
 class _ChatOutViewState extends State<ChatOutView> {
   @override
   void initState() {
-    print("loooooooooooool");
-    print(User.blogsIDs[User.currentProfile]);
-    print("loooooooooooool2");
     super.initState();
     loadChats().then((final res) {
       setState(() {});
@@ -123,9 +120,10 @@ class _ChatOutViewState extends State<ChatOutView> {
                       ),
                     Row(
                       children: <Widget>[
-                        (chat.lastMessage != "")
-                            ? Text(chat.lastMessage)
-                            : Text("Photo was sent")
+                        if (chat.lastMessage != "")
+                          Text(chat.lastMessage)
+                        else
+                          const Text("Photo was sent")
                       ],
                     ),
                   ],
