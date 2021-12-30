@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPage++;
         homePosts.addAll(
-          await PostModel.fromJSON(response["response"]["posts"], true),
+          await PostModel.fromJSON(response["response"]["posts"]),
         );
         setState(() {});
       }

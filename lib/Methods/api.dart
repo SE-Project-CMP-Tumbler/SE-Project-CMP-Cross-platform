@@ -494,27 +494,6 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///Sends a post request to follow a blog.
-  Future<Map<String, dynamic>> followBlog(
-    final String blogId,
-  ) async {
-    final http.Response response = await client
-        .post(
-      Uri.parse(
-        _host + _followBlog + blogId,
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
-    return jsonDecode(response.body);
-  }
-
   ///Sends a post request to unfollow a blog.
   Future<Map<String, dynamic>> unfollowBlog(
     final String blogId,
