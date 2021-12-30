@@ -69,7 +69,6 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
   void initState() {
     index = widget.index;
     _notesNum = homePosts[index].notes;
-    print("notes number post index ${index} " + _notesNum.toString());
     _isLoved = homePosts[index].isLoved;
     postID = homePosts[index].postId;
     super.initState();
