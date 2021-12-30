@@ -13,6 +13,7 @@ class Blog {
     required final this.allowAsk,
     required final this.allowSubmission,
     required final this.blogDescription,
+    final this.isFollowed,
   });
 
   /// blog id
@@ -44,4 +45,7 @@ class Blog {
 
   /// blog description
   String? blogDescription;
+
+  /// if the user follows this blog or not
+  bool? isFollowed;
 }

@@ -8,12 +8,11 @@ import "package:tumbler/Models/user.dart";
 
 /// Class [Api] is used for all GET, POST, PUT, Delete request from the backend.
 class Api {
-  static const String _postmanMockHost = "http://ba5d-41-68-74-128.ngrok.io";
-  static const String _autocompleteMock =
-      "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
-  static const String _mockSearch =
-      "https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
-
+  static const String _firebaseHost =
+      "https://mock-back-default-rtdb.firebaseio.com";
+  static const String _postmanMockHost="http://f677-193-227-10-6.ngrok.io";
+  static const String _autocompleteMock= "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
+  static const String _mockSearch ="https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
   final String _host = dotenv.env["host"] ?? " ";
   final String _getTrendingTags = dotenv.env["getTrendingTags"] ?? " ";
   final String _signUp = dotenv.env["signUp"] ?? " ";
@@ -56,7 +55,9 @@ class Api {
   final String _sendMessage = dotenv.env["sendMessage"] ?? " ";
   final String _followBlog = dotenv.env["follow_blog"] ?? " ";
   final String _followTag = dotenv.env["follow_tag"] ?? " ";
+  final String _tagData = dotenv.env["tagData"] ?? " ";
   final String _info = dotenv.env["info"] ?? " ";
+
 
   final String _weirdConnection = '''
             {
@@ -803,13 +804,14 @@ class Api {
   }
 
   /// get the details of a specific tag
-  Future<Map<String, dynamic>> fetchTagsDetails({
+  Future<Map<String, dynamic>> fetchTagsDetails(
+      final String tagDescription, {
     final bool mock = false,
   }) async {
     final String host = mock ? _postmanMockHost : _host;
     final http.Response response = await http
         .get(
-          Uri.parse(host + _followedTags),
+          Uri.parse(host + _tagData +tagDescription),
           headers: _headerContentAuth,
         )
         .onError(errorFunction);

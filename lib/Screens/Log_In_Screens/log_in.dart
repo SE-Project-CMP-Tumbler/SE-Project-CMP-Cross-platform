@@ -108,6 +108,7 @@ class _LogINState extends State<LogIN> {
       User.email = response["response"]["email"];
       User.userID = response["response"]["id"].toString();
       User.accessToken = response["response"]["access_token"];
+      print("access token is:${User.accessToken}");
       // the index of the primary user
       User.currentProfile = 0;
 
