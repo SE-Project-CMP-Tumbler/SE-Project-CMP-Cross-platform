@@ -1,5 +1,7 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import 'package:flutter_svg/svg.dart';
+import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/ActivityAndChat/acitivity_chat_screen.dart";
@@ -47,20 +49,25 @@ class _MainScreenState extends State<MainScreen>
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+        items: <BottomNavigationBarItem>[
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home_filled, size: 30),
             label: "Home",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.search_rounded, size: 30),
             label: "Search",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble, size: 30),
+            icon:  SvgPicture.asset(
+                "assets/images/smile_chat.svg",
+              width: 30,
+              height: 30,
+              color: selectedIndex==2?Colors.white: Colors.white54,
+            ),
             label: "Activity",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(
               CupertinoIcons.person_solid,
               size: 30,

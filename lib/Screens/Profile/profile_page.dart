@@ -409,7 +409,7 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                               child: PostOutView(
                                 post: postsTabPosts[index],
-                                index: index, // dump
+                                index: 0, // dump
                               ),
                             );
                           },

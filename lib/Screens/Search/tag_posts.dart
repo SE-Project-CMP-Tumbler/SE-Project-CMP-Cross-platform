@@ -1,34 +1,118 @@
+import "dart:math";
+
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import "package:flutter/widgets.dart";
 import "package:sliver_header_delegate/sliver_header_delegate.dart";
-import "package:tumbler/Constants/colors.dart";
-
+import "package:sliver_tools/sliver_tools.dart";
+import "package:tumbler/Constants/urls.dart";
+import "package:tumbler/Methods/follow_tags.dart";
+import "package:tumbler/Methods/get_tags.dart";
+import "package:tumbler/Models/post_model.dart";
+import "package:tumbler/Models/tag.dart";
+import "package:tumbler/Widgets/Post/post_overview.dart";
+import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 /// for showing the posts (recent, tops) of a specific tag
 class TagPosts extends StatefulWidget {
   /// constructor, takes tag description and image and a random color only
-  const TagPosts({final Key? key}) : super(key: key);
-
+  const TagPosts({
+    required final this.bgColor,
+    required final this.tag,
+    final Key? key,
+  }) : super(key: key);
+  /// color theme of the page (random color)
+  final Color bgColor;
+  /// a tag object that carries information:
+  /// tag background image, tag description, is followed or not
+  final Tag tag;
   @override
   _TagPostsState createState() => _TagPostsState();
 }
 
-class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
+class _TagPostsState extends State<TagPosts>  with TickerProviderStateMixin{
   late AnimationController loadingSpinnerAnimationController;
   ScrollController? _scrollController;
   TabController? tabController;
+  /// to indicate whether the posts is loading or not
+  bool _isLoading=true;
+  /// to indicate whether the user successfully followed this tag or not
+  bool _followed=false;
 
+  /// to indicate a loading of an unfollow tag request
+  bool _proceedingFollowing=false;
+
+  List<PostModel> recentPosts= <PostModel>[];
+  List<PostModel> topPosts= <PostModel>[];
+  int _currentTab=0;
+  final int _postsCount=0;
+  Future<void> getRecentTagPosts() async{
+    setState(() {
+      _isLoading=true;
+    });
+    /// get recent posts of the tag
+    final List<PostModel> tagPosts= await getTagPosts(widget.tag.tagDescription!,);
+    setState((){
+      recentPosts =tagPosts;
+    });
+
+    setState(() {
+      _isLoading=false;
+    });
+  }
+  Future<void> getTopTagPosts() async{
+    setState(() {
+      _isLoading=true;
+    });
+    /// get top posts of the tag
+    final List<PostModel> tagTopPosts= await getTagPosts
+      (widget.tag.tagDescription!,recent: false,);
+    setState(() {
+      topPosts= tagTopPosts;
+    });
+
+    setState(() {
+      _isLoading=false;
+    });
+  }
+
+  // ignore: avoid_void_async
+  void fetchAllPosts()async{
+    setState(() {
+      _isLoading=true;
+    });
+    /// get recent posts of the tag
+     final List<PostModel> tagPosts= await getTagPosts(widget.tag.tagDescription!,);
+    setState((){
+      recentPosts =tagPosts;
+    });
+    /// get top posts of the tag
+    final List<PostModel> tagTopPosts= await getTagPosts
+      (widget.tag.tagDescription!,recent: false,);
+    if(mounted)
+      setState(() {
+      topPosts= tagTopPosts;
+    });
+    if(mounted)
+      setState(() {
+      _isLoading=false;
+    });
+
+  }
   @override
   void initState() {
     super.initState();
-
     /// Animation controller for the color varying loading spinner
     tabController = TabController(length: 2, vsync: this);
-    _scrollController = ScrollController();
+    _scrollController= ScrollController();
     loadingSpinnerAnimationController =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     loadingSpinnerAnimationController.repeat();
-  }
+    setState(() {
+      _followed= widget.tag.isFollowed??false;
+    });
 
+    fetchAllPosts();
+  }
   @override
   void dispose() {
     loadingSpinnerAnimationController.dispose();
@@ -36,153 +120,419 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
     _scrollController!.dispose();
     super.dispose();
   }
-
+  /// a state variable to hide the follow button on scroll
+  bool isScrolled=false;
   @override
   Widget build(final BuildContext context) {
-    final double _width = MediaQuery.of(context).size.width;
-    final double _height = MediaQuery.of(context).size.height;
-    final List<String> _tabs = <String>["Recent", "Top"];
-    return Scaffold(
-      body: NestedScrollView(
-        controller: _scrollController,
-        headerSliverBuilder: (final BuildContext context, final bool value) {
-          return <Widget>[
-            SliverOverlapAbsorber(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              sliver: SliverPersistentHeader(
-                pinned: true,
-                delegate: FlexibleHeaderDelegate(
-                  leading: IconButton(
-                    icon: const Icon(
-                      CupertinoIcons.arrow_left,
-                      size: 20,
-                    ),
-                    onPressed: () {},
-                  ),
-                  statusBarHeight: MediaQuery.of(context).padding.top,
-                  expandedHeight: 265,
-                  background: MutableBackground(
-                    animationDuration: Duration.zero,
-                    expandedWidget: Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        Image.asset(
-                          "assets/images/search_2.jpg",
-                          width: _width,
-                          fit: BoxFit.cover,
+
+    final double _width= MediaQuery.of(context).size.width;
+    final List<String> _tabs= <String> ["Recent", "Top"];
+    return DefaultTabController(
+      length: _tabs.length,
+      child: Scaffold(
+        backgroundColor: widget.bgColor,
+        // ignore: always_specify_types
+        body:NotificationListener(
+          onNotification: (final Object? t) {
+            if (t is ScrollNotification) {
+              if(_scrollController!.position.pixels>70 )
+                {
+                  if(mounted)
+                    setState(() {
+                    isScrolled= true;
+                  });
+                }
+              else
+                {
+                  if(mounted)
+                  setState(() {
+                    isScrolled= false;
+                  });
+                }
+            }
+            return true;
+          },
+          child: NestedScrollView(
+            floatHeaderSlivers: true,
+            controller: _scrollController,
+            headerSliverBuilder: (final BuildContext context, final bool value) {
+              return <Widget>[
+                SliverStack(
+                  children: [
+                    SliverOverlapAbsorber(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                    sliver: SliverPersistentHeader(
+                        floating: true,
+                        pinned: true,
+                        delegate: FlexibleHeaderDelegate(
+                        leading:IconButton(
+                          icon: const Icon(CupertinoIcons.arrow_left,size: 20,),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
-                        Container(
-                          color: Colors.black26,
-                          width: _width,
-                        ),
-                        Positioned(
-                          bottom: 55,
-                          left: 32,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                "120 posts",
-                                style: TextStyle(
-                                  color: Colors.white,
+                        statusBarHeight: MediaQuery.of(context).padding.top,
+                        expandedHeight: 250,
+                        background: MutableBackground(
+
+                          animationDuration:  Duration.zero,
+                          expandedWidget: GestureDetector(
+                            onTap: (){print("pressed");},
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              alignment: Alignment.center,
+                              children: <Widget>[
+                                Image.network(
+                                  widget.tag.tagImgUrl??tumblerImgUrl,
+                                  width: _width,
+                                  height: 280,
+                                  fit: BoxFit.cover,
                                 ),
-                                textScaleFactor: 1.4,
+                              ],
+                            ),
+                          ),
+                          collapsedWidget:Stack(
+                            alignment: Alignment.center,
+                            clipBehavior: Clip.none,
+                            children: <Widget>[
+                              Image.network(
+                                widget.tag.tagImgUrl??tumblerImgUrl,
+                                width: _width,
+                                fit: BoxFit.cover,
                               ),
-                              Row(
+                              Container(color: Colors.black26,width: _width,),
+                            ],
+                          ),
+                        ),
+                        actions:<Widget> [
+                          IconButton(
+                            icon: const Icon(Icons.share),
+                            onPressed: () {},
+                          ),
+                        ],
+                        collapsedElevation: 0,
+                        children: <Widget>[
+                          FlexibleTextItem(
+                            text: "#${widget.tag.tagDescription}",
+                            expandedAlignment: Alignment.bottomLeft,
+                            collapsedAlignment: Alignment.bottomLeft,
+                            collapsedPadding:const EdgeInsets.only(top: 16,
+                              bottom: 16,
+                                left: 65,),
+                            expandedMargin:const EdgeInsets.only(top: 16,
+                              bottom: 110,
+                                right: 0,
+                                left: 32,),
+                            collapsedStyle: TextStyle(fontSize: 16,
+                              overflow: TextOverflow.ellipsis,
+                              color:  widget.bgColor
+                                  .computeLuminance()>0.5?
+                              Colors.black:Colors.white,
+                              fontWeight: FontWeight.w500,),
+                            expandedStyle: TextStyle(
+                              overflow: TextOverflow.ellipsis,
+
+                              fontWeight: FontWeight.w500,
+                              color:  widget.bgColor
+                                  .computeLuminance()>0.5?
+                              Colors.black:Colors.white,
+                              fontSize: 34,),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                    SliverToBoxAdapter(
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            width: _width,
+                            height: 280,
+                          ),
+                          Positioned(
+                            bottom: 10,
+                            left: 32,
+                            child: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 500),
+                              opacity: isScrolled?0:1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    child: const Text("Follow"),
-                                  ),
-                                  const SizedBox(
-                                    width: 32,
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    child: const Text("New Post"),
+                                  Text("${widget.tag.postsCount} posts",
+                                    style: TextStyle(color:
+                                    widget.bgColor.computeLuminance()>0.5?
+                                    Colors.black:Colors.white,),
+                                    textScaleFactor: 1.2,),
+                                  Text("${widget.tag.followersCount}"
+                                      " followers",
+                                    style: TextStyle(color:
+                                    widget.bgColor.computeLuminance()>0.5?
+                                    Colors.black:Colors.white,),
+                                    textScaleFactor: 1.2,),
+                                  const SizedBox(height: 5,),
+                                  Row(
+                                    children: <Widget>[
+                                      ElevatedButton(onPressed: ()async{
+                                        print("pressed");
+                                        if(mounted)
+                                          setState(() {
+                                            _proceedingFollowing=true;
+                                          });
+                                        if(!_followed)
+                                        {
+                                          if (widget.tag.tagDescription!=null) {
+                                            final bool succeeded= await
+                                            followTag
+                                              (widget.tag.tagDescription!);
+                                            if(succeeded) {
+                                              showToast
+                                                (context, "Great!,"
+                                                  " you are now following "
+                                                  "all about #"
+                                                  "${widget.tag.tagDescription}"
+                                                ,);
+                                              if(mounted)
+                                                setState(() {
+                                                  _followed = true;
+                                                });
+                                            }
+                                            else{
+                                              showToast(context,
+                                                "OOPS, something went wrong 😢",);
+                                            }
+                                          }
+                                        }
+                                        else{
+                                          // ignore: invariant_booleans
+                                          if (widget.tag.tagDescription!=null) {
+                                            final bool succeeded= await
+                                            unFollowTag
+                                              (widget.tag.tagDescription!);
+                                            if(succeeded) {
+                                              showToast(context,
+                                                "Don't worry, u won't be"
+                                                    " bothered by this tag again",
+                                              );
+                                              if(mounted)
+                                                setState(() {
+                                                  _followed = false;
+                                                });}
+                                            else{
+                                              showToast(context,
+                                                "OOPS, something went wrong 😢",);
+                                            }
+                                          }}
+                                        if(mounted)
+                                          setState(() {
+                                            _proceedingFollowing=false;
+                                          });
+                                      },
+                                        style:ButtonStyle(
+                                          backgroundColor: MaterialStateProperty
+                                              .all(_followed?Colors.transparent:
+                                          widget.bgColor,),
+                                          shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              side: BorderSide(color:_followed?
+                                              widget.bgColor:
+                                              Colors.transparent,),
+                                              borderRadius: const
+                                              BorderRadius.all
+                                                (Radius.circular(25),),),
+                                          ), ),
+                                        child: _proceedingFollowing?
+                                        const CircularProgressIndicator():
+                                        Text(_followed?
+                                        "UnFollow":"Follow",
+                                          style: TextStyle(
+                                            color:_followed?  widget.bgColor:
+                                            widget.bgColor.
+                                            computeLuminance()>0.5?
+                                            Colors.black:Colors.white,
+                                          ),
+                                          textScaleFactor: 1.2,),
+                                      ),
+                                      const SizedBox(width: 16,),
+                                      ElevatedButton(onPressed: (){
+
+                                      },
+                                        style: ButtonStyle(
+                                          backgroundColor: MaterialStateProperty
+                                              .all(widget.bgColor),
+                                          shape: MaterialStateProperty.all(
+                                            const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all
+                                                (Radius.circular(25),),),
+                                          ),
+                                          padding: MaterialStateProperty.all(
+                                            const EdgeInsets.symmetric
+                                              (horizontal: 24),),
+                                        ),
+                                        child: Text("New Post",
+                                          textScaleFactor: 1.2,
+                                          style: TextStyle(
+                                            color:  widget.bgColor
+                                                .computeLuminance()>0.5?
+                                            Colors.black:Colors.white,
+                                          ),
+                                        ),),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    collapsedWidget: Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        Image.asset(
-                          "assets/images/search_2.jpg",
-                          width: _width,
-                          fit: BoxFit.cover,
-                        ),
-                        Container(
-                          color: Colors.black26,
-                          width: _width,
-                        ),
-                      ],
-                    ),
-                  ),
-                  actions: <Widget>[
-                    IconButton(
-                      icon: const Icon(Icons.share),
-                      onPressed: () {},
-                    ),
-                  ],
-                  children: <Widget>[
-                    const FlexibleTextItem(
-                      text: "#Mountains",
-                      expandedAlignment: Alignment.bottomLeft,
-                      collapsedAlignment: Alignment.bottomLeft,
-                      collapsedPadding:
-                          EdgeInsets.only(top: 16, bottom: 16, left: 65),
-                      expandedPadding:
-                          EdgeInsets.only(top: 16, bottom: 130, left: 32),
-                      collapsedStyle: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      expandedStyle: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                        fontSize: 34,
+                            ),),
+
+                        ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 220),
-                      child: Container(
-                        color: Colors.white,
-                        child: TabBar(
-                          controller: tabController,
-                          indicatorColor: floatingButtonColor,
-                          labelColor: floatingButtonColor,
-                          // These are the widgets to put in each
-                          // tab in the tab bar
-                          tabs: _tabs
-                              .map(
-                                (final String name) => Tab(
-                                  text: name,
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    )
+
                   ],
                 ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _SliverAppBarDelegate(
+                    minHeight: 60,
+                    maxHeight: 60,
+                    child: Container(
+                      color:  widget.bgColor,
+                      child: TabBar(
+                        controller: tabController,
+                        indicatorColor:  widget.bgColor
+                            .computeLuminance()>0.5?
+                        Colors.black:Colors.white,
+                        labelColor:   widget.bgColor
+                            .computeLuminance()>0.5?
+                        Colors.black:Colors.white,
+                        onTap: (final int index) async {
+                          setState(() {
+                            _currentTab= index;
+                          });
+                        },
+                        // These are the widgets to put in each tab in the tab bar
+                        tabs: _tabs
+                            .map(
+                              (final String name) => Tab(text: name),
+                        )
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                ),
+              ];
+            },
+            body: _isLoading?const Center(
+              child:
+              CircularProgressIndicator(
+
+              ),
+            ):Container(
+              color: widget.bgColor,
+              child: TabBarView(
+                controller: tabController,
+                // These are the contents of the tab views, below the tabs.
+                children: _tabs
+                    .map(
+                      (final String name) => RefreshIndicator(
+                        onRefresh: ()async{
+                          if(name == _tabs[0])
+                            // Recent
+                            await getRecentTagPosts();
+                          else
+                            await getTopTagPosts();
+                        },
+                        child: Builder(
+                    // This Builder is needed to provide a BuildContext that is
+                    // "inside" the NestedScrollView, so that
+                    // sliverOverlapAbsorberHandleFor() can find the
+                    // NestedScrollView.
+                    builder: (final BuildContext context) {
+                        if (name == _tabs[0]) {
+                          return ListView.builder(
+                            itemCount: recentPosts.length,
+                            itemBuilder: (final BuildContext context,
+                                final int index,){
+                              return  Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: 18,
+                                ),
+                                child: Container(
+                                  color: Colors.white,
+                                  child: PostOutView(
+                                    post: recentPosts[index],
+                                    index: 0,// dump
+                                    isTagPost: true,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }  else
+                          return  ListView.builder(
+                            itemCount: topPosts.length,
+                            itemBuilder: (final BuildContext context,
+                                final int index,){
+                              return  Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: 18,
+                                ),
+                                child: Container(
+                                  color: Colors.white,
+                                  child: PostOutView(
+                                    post: topPosts[index],
+                                    index: 0, // dump
+                                    isTagPost: true,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                    },
+                  ),
+                      ),
+                )
+                    .toList(),
               ),
             ),
-          ];
-        },
-        body: Container(
-          margin: const EdgeInsets.only(top: 50),
-          child: TabBarView(
-            controller: tabController,
-            children: _tabs.map((final String e) => Text(e)).toList(),
           ),
         ),
+
       ),
     );
+
+  }
+}
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate({
+    required final this.minHeight,
+    required final this.maxHeight,
+    required final this.child,
+  });
+
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  double get maxExtent => max(maxHeight, minHeight);
+
+  @override
+  Widget build(
+      final BuildContext context,
+      final double shrinkOffset,
+      final bool overlapsContent,
+      ) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(final _SliverAppBarDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
   }
 }

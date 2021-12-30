@@ -33,7 +33,7 @@ class PostInteractionBar extends StatefulWidget {
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
   int index = 0;
-  late int _notesNum;
+  late int _notesNum=0;
   bool _isLoved = false;
   late int postID;
   bool onProcessing = false;
@@ -64,11 +64,14 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
   @override
   void initState() {
     index = widget.index;
-    _notesNum = homePosts[index].notes;
-    _isLoved = homePosts[index].isLoved;
-    postID = homePosts[index].postId;
-    super.initState();
+    if(homePosts.isNotEmpty) {
+      _notesNum = homePosts[index].notes;
+      _isLoved = homePosts[index].isLoved;
+      postID = homePosts[index].postId;
+    }
+        super.initState();
   }
+
 
   @override
   void dispose() {
