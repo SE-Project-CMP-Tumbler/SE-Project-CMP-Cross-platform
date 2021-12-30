@@ -26,7 +26,7 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
     if (response["meta"]["status"] == "200") {
       setState(
         () async => _posts.addAll(
-          await PostModel.fromJSON(response["response"]["posts"], false),
+          await PostModel.fromJSON(response["response"]["posts"]),
         ),
       );
     } else

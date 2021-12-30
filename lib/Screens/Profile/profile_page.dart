@@ -14,6 +14,7 @@ import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
 import "package:tumbler/Screens/Profile/create_new_blog.dart";
+import 'package:tumbler/Screens/Profile/profile_search.dart';
 import "package:tumbler/Screens/Search/search_page.dart";
 import "package:tumbler/Screens/Settings/profile_settings.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
@@ -135,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage>
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPagePosts++;
         postsTabPosts.addAll(
-          await PostModel.fromJSON(response["response"]["posts"], false),
+          await PostModel.fromJSON(response["response"]["posts"]),
         );
       }
     } else {
@@ -157,7 +158,7 @@ class _ProfilePageState extends State<ProfilePage>
         currentPagePosts++;
         setState(
           () async => postsTabPosts.addAll(
-            await PostModel.fromJSON(response["response"]["posts"], false),
+            await PostModel.fromJSON(response["response"]["posts"]),
           ),
         );
       }
@@ -177,7 +178,7 @@ class _ProfilePageState extends State<ProfilePage>
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPageLiked++;
         postsTabLiked.addAll(
-          await PostModel.fromJSON(response["response"]["posts"], false),
+          await PostModel.fromJSON(response["response"]["posts"]),
         );
       }
     } else {
@@ -199,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage>
         currentPageLiked++;
         setState(
           () async => postsTabLiked.addAll(
-            await PostModel.fromJSON(response["response"]["posts"], false),
+            await PostModel.fromJSON(response["response"]["posts"]),
           ),
         );
       }
@@ -1047,6 +1048,16 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
+  void searchIcon() {
+    showSearch(
+      context: context,
+      delegate: ProfileSearch(
+        blogID: displayedBlog.blogId!,
+        username: displayedBlog.username!,
+      ),
+    );
+  }
+
   Future<void> initializeBlogData() async {
     // if it is one of my Blogs
     if (User.blogsIDs.contains(widget.blogID)) {
@@ -1467,9 +1478,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                       Icons.search_outlined,
                                                       color: Colors.white,
                                                     ),
-                                                    onPressed: () {
-                                                      // TODO(Ziyad): Implement this
-                                                    },
+                                                    onPressed: searchIcon,
                                                     splashColor: Colors.white10,
                                                   ),
                                                 ),
@@ -1598,9 +1607,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                       Icons.search_outlined,
                                                       color: Colors.white,
                                                     ),
-                                                    onPressed: () {
-                                                      // TODO(Ziyad): Implement this
-                                                    },
+                                                    onPressed: searchIcon,
                                                     splashColor: Colors.white10,
                                                   ),
                                                 ),
@@ -1785,5 +1792,55 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return maxHeight != oldDelegate.maxHeight ||
         minHeight != oldDelegate.minHeight ||
         child != oldDelegate.child;
+  }
+}
+
+/// Class to Search in Profile
+class ProfileSearch extends SearchDelegate<String> {
+  /// Constructor
+  ProfileSearch({required this.blogID, required this.username});
+
+  /// Blog ID to Search in
+  final String blogID;
+
+  /// UserName
+  final String username;
+
+  @override
+  List<Widget>? buildActions(final BuildContext context) {
+    return <Widget>[
+      IconButton(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<ProfileSearchResult>(
+            builder: (final BuildContext context) => ProfileSearchResult(
+              word: query,
+              blogID: blogID,
+              username: username,
+            ),
+          ),
+        ),
+        icon: const Icon(Icons.search),
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(final BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+      icon: const Icon(Icons.clear),
+    );
+  }
+
+  @override
+  Widget buildResults(final BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(final BuildContext context) {
+    return Container();
   }
 }

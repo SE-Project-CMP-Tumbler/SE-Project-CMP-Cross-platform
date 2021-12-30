@@ -588,63 +588,71 @@ class Api {
   }
 
   /// to get the Information of a specific blog
-  Future<Map<String, dynamic>> getBlogInformation(final String blogID,) async {
+  Future<Map<String, dynamic>> getBlogInformation(
+    final String blogID,
+  ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(
-        _host + _blog + "/" + blogID,
-      ),
-      headers: _headerContentAuth,
-    )
+          Uri.parse(
+            _host + _blog + "/" + blogID,
+          ),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
 
   /// to get the Theme of a specific blog
-  Future<Map<String, dynamic>> getBlogTheme(final String blogID,) async {
+  Future<Map<String, dynamic>> getBlogTheme(
+    final String blogID,
+  ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(
-        _host + _blog + "/" + blogID + _theme,
-      ),
-      headers: _headerContentAuth,
-    )
+          Uri.parse(
+            _host + _blog + "/" + blogID + _theme,
+          ),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
 
   /// to get the Theme of a specific blog
-  Future<Map<String, dynamic>> setBlogTheme(final String blogID,
-      final BlogTheme theme,) async {
+  Future<Map<String, dynamic>> setBlogTheme(
+    final String blogID,
+    final BlogTheme theme,
+  ) async {
     final http.Response response = await http
         .put(
-      Uri.parse(
-        _host + _blog + "/" + blogID + _theme,
-      ),
-      headers: _headerContentAuth,
-      body: jsonEncode(<String, dynamic>{
-        "color_title": "#" + theme.titleColor,
-        "font_title": theme.titleFont,
-        "font_weight_title": theme.titleWeight,
-        "description": theme.description,
-        "title": theme.titleText,
-        "background_color": "#" + theme.backgroundColor,
-        "accent_color": "#" + theme.accentColor,
-        "body_font": theme.bodyFont,
-        "header_image": theme.headerImage,
-        "avatar": theme.avatarURL,
-        "avatar_shape": theme.avatarShape
-      }),
-    )
+          Uri.parse(
+            _host + _blog + "/" + blogID + _theme,
+          ),
+          headers: _headerContentAuth,
+          body: jsonEncode(<String, String>{
+            "color_title": "#" + theme.titleColor,
+            "font_title": theme.titleFont,
+            "font_weight_title": theme.titleWeight,
+            "description": theme.description,
+            "title": theme.titleText,
+            "background_color": "#" + theme.backgroundColor,
+            "accent_color": "#" + theme.accentColor,
+            "body_font": theme.bodyFont,
+            "header_image": theme.headerImage,
+            "avatar": theme.avatarURL,
+            "avatar_shape": theme.avatarShape
+          }),
+        )
         .onError(errorFunction);
 
     return jsonDecode(response.body);
   }
 
   /// to get the Settings of a specific blog
-  Future<Map<String, dynamic>> getBlogSetting(final String blogID,) async {
+  Future<Map<String, dynamic>> getBlogSetting(
+    final String blogID,
+  ) async {
     final http.Response response = await http
         .get(
           Uri.parse(
@@ -926,6 +934,23 @@ class Api {
         .get(
           Uri.parse(
             host + _search + word,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// fetching words for Profile search results
+  Future<Map<String, dynamic>> fetchSearchResultsProfile(
+    final String word,
+    final String blogID,
+    final int page,
+  ) async {
+    final http.Response response = await http
+        .get(
+          Uri.parse(
+            _host + _search + blogID + "/" + word + "?$page",
           ),
           headers: _headerContentAuth,
         )

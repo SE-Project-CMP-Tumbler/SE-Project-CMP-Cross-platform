@@ -31,18 +31,18 @@ class BlogTheme {
   static BlogTheme fromJSON(final Map<String, dynamic> json) {
     return BlogTheme(
       themeID: json["response"]["theme-id"].toString(),
-      titleText: json["response"]["title"][0]["text"],
-      titleColor: json["response"]["title"][0]["color"].toString().substring(1),
-      titleFont: json["response"]["title"][0]["font"],
-      titleWeight: json["response"]["title"][0]["font_weight"],
-      description: json["response"]["description"][0]["text"],
+      titleText: json["response"]["title"] ?? " ",
+      titleColor: json["response"]["color_title"].toString().substring(1),
+      titleFont: json["response"]["font_title"] ?? " ",
+      titleWeight: json["response"]["font_weight_title"] ?? " ",
+      description: json["response"]["description"] ?? " ",
       backgroundColor:
           json["response"]["background_color"].toString().substring(1),
       accentColor: json["response"]["accent_color"].toString().substring(1),
-      bodyFont: json["response"]["body_font"],
-      headerImage: json["response"]["header_image"][0]["url"],
-      avatarURL: json["response"]["avatar"][0]["url"],
-      avatarShape: json["response"]["avatar"][0]["shape"],
+      bodyFont: json["response"]["body_font"] ?? " ",
+      headerImage: json["response"]["header_image"] ?? " ",
+      avatarURL: json["response"]["avatar"] ?? " ",
+      avatarShape: json["response"]["avatar_shape"] ?? " ",
     );
   }
 }
