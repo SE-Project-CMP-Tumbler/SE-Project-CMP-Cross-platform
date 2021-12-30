@@ -6,6 +6,7 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
+import 'package:tumbler/Methods/log_out.dart';
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 
@@ -40,13 +41,13 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (response["meta"]["status"] == "200") {
       await showToast("You successfully updated your Password!");
 
-      // TODO(Ziyad): Restart the app? or log out ?
-      await Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<OnStart>(
-          builder: (final BuildContext context) => OnStart(),
-        ),
-        (final Route<dynamic> route) => false,
-      );
+      if (await logOut())
+        await Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<OnStart>(
+            builder: (final BuildContext context) => OnStart(),
+          ),
+          (final Route<dynamic> route) => false,
+        );
       return;
     } else {
       await showToast(response["meta"]["msg"]);

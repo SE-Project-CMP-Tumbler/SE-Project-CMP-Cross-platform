@@ -5,6 +5,7 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_colorpicker/flutter_colorpicker.dart";
 import "package:image_picker/image_picker.dart";
+import "package:share_plus/share_plus.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/choose_image.dart";
 import "package:tumbler/Methods/show_toast.dart";
@@ -13,8 +14,9 @@ import "package:tumbler/Models/blog_theme.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
+import 'package:tumbler/Screens/Chat/inside_chat.dart';
 import "package:tumbler/Screens/Profile/create_new_blog.dart";
-import 'package:tumbler/Screens/Profile/profile_search.dart';
+import "package:tumbler/Screens/Profile/profile_search.dart";
 import "package:tumbler/Screens/Search/search_page.dart";
 import "package:tumbler/Screens/Settings/profile_settings.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
@@ -673,7 +675,13 @@ class _ProfilePageState extends State<ProfilePage>
       elevation: 8,
     ).then((final String? itemSelected) async {
       if (itemSelected == _messageOptions[0]) {
-        // TODO(Ziyad): Go To Chat
+        await Navigator.of(context).push(
+          MaterialPageRoute<ChatScreen>(
+            builder: (final BuildContext context) => ChatScreen(
+              withBlogID: displayedBlog.blogId!,
+            ),
+          ),
+        );
       } else if (itemSelected == _messageOptions[1]) {
         // TODO(Ziyad): Ask
       } else if (itemSelected == _messageOptions[2]) {
@@ -703,14 +711,24 @@ class _ProfilePageState extends State<ProfilePage>
       elevation: 8,
     ).then((final String? itemSelected) async {
       if (itemSelected == "Share") {
-        // TODO(Ziyad): Share
+        await shareProfile();
       } else if (itemSelected == "Get Notifications") {
       } else if (itemSelected == "Block") {
       } else if (itemSelected == "Report") {
       } else if (itemSelected == "Unfollow") {
-        // TODO(Ziyad): Unfollow
+        final Map<String, dynamic> response =
+            await Api().unFollowBlog(int.parse(widget.blogID));
+        if (response["meta"]["status"] == "200")
+          await showToast("Unfollowed");
+        else
+          await showToast(response["meta"]["msg"]);
       } else if (itemSelected == "Follow") {
-        // TODO(Ziyad): Follow
+        final Map<String, dynamic> response =
+            await Api().followBlog(int.parse(widget.blogID));
+        if (response["meta"]["status"] == "200")
+          await showToast("Unfollowed");
+        else
+          await showToast(response["meta"]["msg"]);
       }
     });
   }
@@ -738,7 +756,7 @@ class _ProfilePageState extends State<ProfilePage>
           builder: (final BuildContext context, final StateSetter myState) {
             return WillPopScope(
               onWillPop: () async {
-                print(await Api().setBlogTheme(widget.blogID, theme));
+                await Api().setBlogTheme(widget.blogID, theme);
                 return true;
               },
               child: SingleChildScrollView(
@@ -917,135 +935,143 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   void changeProfilePic() {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (final BuildContext context) {
-        return SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              const Text(
-                "Change Profile Picture",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              ListTile(
-                title: const Text("From Gallery"),
-                onTap: () async {
-                  final String? imageData = await chooseImage(
-                    ImageSource.gallery,
-                  );
-                  if (imageData != null) {
-                    Map<String, dynamic> response =
-                        await Api().uploadImage(imageData);
-                    if (response["meta"]["status"] == "200") {
-                      final BlogTheme temp = theme;
-                      temp.avatarURL = response["response"]["url"].toString();
-                      response = await Api().setBlogTheme(widget.blogID, temp);
+    if (User.blogsIDs.contains(displayedBlog.blogId))
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (final BuildContext context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const Text(
+                  "Change Profile Picture",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                ListTile(
+                  title: const Text("From Gallery"),
+                  onTap: () async {
+                    final String? imageData = await chooseImage(
+                      ImageSource.gallery,
+                    );
+                    if (imageData != null) {
+                      Map<String, dynamic> response =
+                          await Api().uploadImage(imageData);
                       if (response["meta"]["status"] == "200") {
-                        setState(() => theme = temp);
-                        return;
+                        final BlogTheme temp = theme;
+                        temp.avatarURL = response["response"]["url"].toString();
+                        response =
+                            await Api().setBlogTheme(widget.blogID, temp);
+                        if (response["meta"]["status"] == "200") {
+                          setState(() => theme = temp);
+                          return;
+                        }
                       }
+                      await showToast(response["meta"]["msg"]);
                     }
-                    await showToast(response["meta"]["msg"]);
-                  }
-                },
-              ),
-              const Divider(
-                height: 15,
-                color: Colors.grey,
-              ),
-              ListTile(
-                title: const Text("Open Camera"),
-                onTap: () async {
-                  final String? imageData = await chooseImage(
-                    ImageSource.camera,
-                  );
-                  if (imageData != null) {
-                    Map<String, dynamic> response =
-                        await Api().uploadImage(imageData);
-                    if (response["meta"]["status"] == "200") {
-                      final BlogTheme temp = theme;
-                      temp.avatarURL = response["response"]["url"].toString();
-                      response = await Api().setBlogTheme(widget.blogID, temp);
+                  },
+                ),
+                const Divider(
+                  height: 15,
+                  color: Colors.grey,
+                ),
+                ListTile(
+                  title: const Text("Open Camera"),
+                  onTap: () async {
+                    final String? imageData = await chooseImage(
+                      ImageSource.camera,
+                    );
+                    if (imageData != null) {
+                      Map<String, dynamic> response =
+                          await Api().uploadImage(imageData);
                       if (response["meta"]["status"] == "200") {
-                        setState(() => theme = temp);
-                        return;
+                        final BlogTheme temp = theme;
+                        temp.avatarURL = response["response"]["url"].toString();
+                        response =
+                            await Api().setBlogTheme(widget.blogID, temp);
+                        if (response["meta"]["status"] == "200") {
+                          setState(() => theme = temp);
+                          return;
+                        }
                       }
+                      await showToast(response["meta"]["msg"]);
                     }
-                    await showToast(response["meta"]["msg"]);
-                  }
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
   }
 
   void changeHeaderPic() {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (final BuildContext context) {
-        return SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              const Text(
-                "Change Header Picture",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              ListTile(
-                title: const Text("From Gallery"),
-                onTap: () async {
-                  final String? imageData = await chooseImage(
-                    ImageSource.gallery,
-                  );
-                  if (imageData != null) {
-                    Map<String, dynamic> response =
-                        await Api().uploadImage(imageData);
-                    if (response["meta"]["status"] == "200") {
-                      final BlogTheme temp = theme;
-                      temp.headerImage = response["response"]["url"].toString();
-                      response = await Api().setBlogTheme(widget.blogID, temp);
+    if (User.blogsIDs.contains(displayedBlog.blogId))
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (final BuildContext context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const Text(
+                  "Change Header Picture",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                ListTile(
+                  title: const Text("From Gallery"),
+                  onTap: () async {
+                    final String? imageData = await chooseImage(
+                      ImageSource.gallery,
+                    );
+                    if (imageData != null) {
+                      Map<String, dynamic> response =
+                          await Api().uploadImage(imageData);
                       if (response["meta"]["status"] == "200") {
-                        setState(() => theme = temp);
-                        return;
+                        final BlogTheme temp = theme;
+                        temp.headerImage =
+                            response["response"]["url"].toString();
+                        response =
+                            await Api().setBlogTheme(widget.blogID, temp);
+                        if (response["meta"]["status"] == "200") {
+                          setState(() => theme = temp);
+                          return;
+                        }
                       }
+                      await showToast(response["meta"]["msg"]);
                     }
-                    await showToast(response["meta"]["msg"]);
-                  }
-                },
-              ),
-              const Divider(
-                height: 15,
-                color: Colors.grey,
-              ),
-              ListTile(
-                title: const Text("Open Camera"),
-                onTap: () async {
-                  final String? imageData = await chooseImage(
-                    ImageSource.camera,
-                  );
-                  if (imageData != null) {
-                    Map<String, dynamic> response =
-                        await Api().uploadImage(imageData);
-                    if (response["meta"]["status"] == "200") {
-                      final BlogTheme temp = theme;
-                      temp.headerImage = response["response"]["url"].toString();
-                      response = await Api().setBlogTheme(widget.blogID, temp);
+                  },
+                ),
+                const Divider(
+                  height: 15,
+                  color: Colors.grey,
+                ),
+                ListTile(
+                  title: const Text("Open Camera"),
+                  onTap: () async {
+                    final String? imageData = await chooseImage(
+                      ImageSource.camera,
+                    );
+                    if (imageData != null) {
+                      Map<String, dynamic> response =
+                          await Api().uploadImage(imageData);
                       if (response["meta"]["status"] == "200") {
-                        setState(() => theme = temp);
-                        return;
+                        final BlogTheme temp = theme;
+                        temp.headerImage =
+                            response["response"]["url"].toString();
+                        response =
+                            await Api().setBlogTheme(widget.blogID, temp);
+                        if (response["meta"]["status"] == "200") {
+                          setState(() => theme = temp);
+                          return;
+                        }
                       }
+                      await showToast(response["meta"]["msg"]);
                     }
-                    await showToast(response["meta"]["msg"]);
-                  }
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
   }
 
   void searchIcon() {
@@ -1135,6 +1161,12 @@ class _ProfilePageState extends State<ProfilePage>
         theme = BlogTheme.fromJSON(response);
       });
     }
+  }
+
+  Future<void> shareProfile() async {
+    await Share.share(
+      "https://tumbler.social/profile/${displayedBlog.username}",
+    );
   }
 
   Widget initializeMyBlogsDropDownMenu() {
@@ -1513,9 +1545,7 @@ class _ProfilePageState extends State<ProfilePage>
                                                       Icons.share,
                                                       color: Colors.white,
                                                     ),
-                                                    onPressed: () {
-                                                      // TODO(Ziyad): Implement this
-                                                    },
+                                                    onPressed: shareProfile,
                                                     splashColor: Colors.white10,
                                                   ),
                                                 ),

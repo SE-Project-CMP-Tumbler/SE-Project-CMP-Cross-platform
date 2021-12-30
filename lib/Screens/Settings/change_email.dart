@@ -6,6 +6,7 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
+import 'package:tumbler/Methods/log_out.dart';
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/main_screen.dart";
@@ -42,13 +43,13 @@ class _ChangeEmailState extends State<ChangeEmail> {
 
       await showToast("You successfully updated your Email!");
 
-      // TODO(Ziyad): Restart the app? or log out ?
-      await Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<MainScreen>(
-          builder: (final BuildContext context) => MainScreen(),
-        ),
-        (final Route<dynamic> route) => false,
-      );
+      if (await logOut())
+        await Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<MainScreen>(
+            builder: (final BuildContext context) => MainScreen(),
+          ),
+          (final Route<dynamic> route) => false,
+        );
       return;
     } else {
       await showToast(response["meta"]["msg"]);

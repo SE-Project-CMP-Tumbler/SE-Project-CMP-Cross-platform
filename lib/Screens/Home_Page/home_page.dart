@@ -151,52 +151,58 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: NestedScrollView(
                 floatHeaderSlivers: true,
                 controller: ScrollController(),
-                headerSliverBuilder: (final BuildContext context,
-                        final bool innerBoxIsScrolled,) =>
+                headerSliverBuilder: (
+                  final BuildContext context,
+                  final bool innerBoxIsScrolled,
+                ) =>
                     <Widget>[
                   HomePageAppBar(
                     section: section,
                     changeSection: changeSection,
                   )
                 ],
-                body: _isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                          valueColor: loadingSpinnerAnimationController.drive(
-                            ColorTween(
-                              begin: Colors.blueAccent,
-                              end: Colors.red,
+                body: RefreshIndicator(
+                  onRefresh: fetchPosts,
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor: loadingSpinnerAnimationController.drive(
+                              ColorTween(
+                                begin: Colors.blueAccent,
+                                end: Colors.red,
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    : _error
-                        ? ListView(
-                            children: const <Widget>[
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 150),
-                                child: ErrorImage(
-                                  msg: "Unexpected error,"
-                                      " please try again later",
+                        )
+                      : _error
+                          ? ListView(
+                              children: const <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 150),
+                                  child: ErrorImage(
+                                    msg: "Unexpected error,"
+                                        " please try again later",
+                                  ),
                                 ),
-                              ),
-                            ],
-                          )
-                        : homePosts.isEmpty
-                            ? const EmptyBoxImage(msg: "No Posts to show")
-                            : ListView.builder(
-                                controller: _controller,
-                                itemCount: homePosts.length,
-                                itemBuilder: (
-                                  final BuildContext ctx,
-                                  final int index,
-                                ) {
-                                  return PostOutView(
-                                    post: homePosts[index],
-                                    index: index,
-                                  );
-                                },
-                              ),
+                              ],
+                            )
+                          : homePosts.isEmpty
+                              ? const EmptyBoxImage(msg: "No Posts to show")
+                              : ListView.builder(
+                                  controller: _controller,
+                                  itemCount: homePosts.length,
+                                  itemBuilder: (
+                                    final BuildContext ctx,
+                                    final int index,
+                                  ) {
+                                    return PostOutView(
+                                      post: homePosts[index],
+                                      index: index,
+                                      isDashBoard: true,
+                                    );
+                                  },
+                                ),
+                ),
               ),
             ),
           ),

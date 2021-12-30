@@ -114,7 +114,7 @@ class _LikeTileState extends State<LikeTile> {
                   //else don't update the UI and show toast.
                   if (_followStatus) {
                     final Map<String, dynamic> response =
-                        await Api().unfollowBlog(widget.blogID);
+                        await Api().unFollowBlog(int.parse(widget.blogID));
                     if (response["meta"]["status"] == "200") {
                       setState(() {
                         _followStatus = false;

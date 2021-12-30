@@ -12,7 +12,8 @@ class PostOutView extends StatefulWidget {
   const PostOutView({
     required final this.post,
     required final this.index,
-    final this.isTagPost=false,
+    final this.isTagPost = false,
+    final this.isDashBoard = false,
     final Key? key,
   }) : super(key: key);
 
@@ -24,6 +25,10 @@ class PostOutView extends StatefulWidget {
 
   /// to indicate is this a tag post or not
   final bool isTagPost;
+
+  /// to indicate is this post from dashboard
+  final bool isDashBoard;
+
   @override
   _PostOutViewState createState() => _PostOutViewState();
 }
@@ -47,8 +52,9 @@ class _PostOutViewState extends State<PostOutView> {
           postTime: post["post_time"] ?? "",
           notes: 0,
           isLoved: false,
-          isFollowed: (post["followed"] ?? false) as bool,
+          isFollowed: (post["followed"] ?? true) as bool,
           traceBackPosts: <dynamic>[],
+          isPinned: false,
         ),
       );
     }
@@ -71,6 +77,9 @@ class _PostOutViewState extends State<PostOutView> {
           blogID: widget.post.blogId.toString(),
           isFollowed: widget.post.isFollowed,
           index: widget.index,
+          postID: widget.post.postId.toString(),
+          isReblog: false,
+          isPinned: widget.post.isPinned,
         ),
         const Divider(
           color: Colors.grey,
@@ -82,10 +91,9 @@ class _PostOutViewState extends State<PostOutView> {
         if (l.isNotEmpty)
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
+              border: Border.all(),
             ),
             child: ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (final BuildContext context, final int index) {
                 return Column(
@@ -98,6 +106,9 @@ class _PostOutViewState extends State<PostOutView> {
                       blogID: l[index].blogId.toString(),
                       isFollowed: l[index].isFollowed,
                       index: index,
+                      postID: l[index].postId.toString(),
+                      isReblog: true,
+                      isPinned: false,
                     ),
                     HtmlView(
                       htmlData: l[index].postBody,
@@ -115,16 +126,21 @@ class _PostOutViewState extends State<PostOutView> {
         PostInteractionBar(
           isMine: User.blogsNames.contains(widget.post.blogUsername),
           index: widget.index,
+          postID: widget.post.postId,
+          isDashBoard: widget.isDashBoard,
         ),
-        if (!widget.isTagPost) Container(
-          height: 10,
-          color: const Color.fromRGBO(
-            0,
-            25,
-            53,
-            1,
-          ),
-        ) else Container(),
+        if (!widget.isTagPost)
+          Container(
+            height: 10,
+            color: const Color.fromRGBO(
+              0,
+              25,
+              53,
+              1,
+            ),
+          )
+        else
+          Container(),
       ],
     );
   }

@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import "package:flutter/material.dart";
-import 'package:tumbler/Screens/Profile/profile_page.dart';
+import "package:tumbler/Screens/Profile/profile_page.dart";
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
@@ -50,45 +50,34 @@ class ReblogTileWithComments extends StatelessWidget {
                   style: const TextStyle(color: Colors.black87, fontSize: 14),
                 ),
               ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    onPressed: () {
-                      // TODO(Waleed): Implement This
-                    },
-                    icon: const Icon(Icons.more_horiz),
-                  ),
-                ),
-              )
             ],
           ),
           const SizedBox(
             height: 7,
           ),
           HtmlView(htmlData: htmlData),
-          Row(
-            children: <Widget>[
-              TextButton(
-                onPressed: () {
-                  // TODO(Waleed): Implement This
-                },
-                child: const Text(
-                  "Reblog",
-                  style: TextStyle(color: Colors.black54, fontSize: 17),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  // TODO(Waleed): Implement This
-                },
-                child: const Text(
-                  "View Post",
-                  style: TextStyle(color: Colors.black54, fontSize: 17),
-                ),
-              )
-            ],
-          ),
+          // Row(
+          //   children: <Widget>[
+          //     TextButton(
+          //       onPressed: () {
+          //
+          //       },
+          //       child: const Text(
+          //         "Reblog",
+          //         style: TextStyle(color: Colors.black54, fontSize: 17),
+          //       ),
+          //     ),
+          //     TextButton(
+          //       onPressed: () {
+          //
+          //       },
+          //       child: const Text(
+          //         "View Post",
+          //         style: TextStyle(color: Colors.black54, fontSize: 17),
+          //       ),
+          //     )
+          //   ],
+          // ),
           const Divider(
             color: Colors.black54,
           ),

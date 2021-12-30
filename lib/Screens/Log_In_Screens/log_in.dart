@@ -112,7 +112,6 @@ class _LogINState extends State<LogIN> {
       // the index of the primary user
       User.currentProfile = 0;
 
-      // TODO(Ziyad): this should be fixed properly
       if (!kIsWeb) {
         await LocalDataBase.instance.insertIntoUserTable(
           User.userID,
