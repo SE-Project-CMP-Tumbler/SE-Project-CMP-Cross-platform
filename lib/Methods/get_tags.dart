@@ -65,7 +65,7 @@ Future<List<PostModel>> getTagPosts(
 
   final List<dynamic> posts = response["response"]["posts"];
   if (response["meta"]["status"] == "200") {
-    tagPosts = await PostModel.fromJSON(posts, true);
+    tagPosts = await PostModel.fromJSON(posts);
   }
 
   return tagPosts;

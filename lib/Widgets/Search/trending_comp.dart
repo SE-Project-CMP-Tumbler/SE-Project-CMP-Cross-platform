@@ -159,7 +159,7 @@ class _TrendingComponentState extends State<TrendingComponent> {
                         final bool succeeded= await
                         followTag(widget.tag.tagDescription!);
                         if(succeeded) {
-                          showSnackBar(
+                          showToast(
                             context,
                             "Great!, you are now following "
                             "all about #${widget.tag.tagDescription}",
@@ -170,7 +170,7 @@ class _TrendingComponentState extends State<TrendingComponent> {
                             });
                         }
                         else{
-                          showSnackBar(
+                          showToast(
                               context, "OOPS, something went wrong 😢");
                         }
                       }
@@ -181,7 +181,7 @@ class _TrendingComponentState extends State<TrendingComponent> {
                         final bool succeeded= await
                         unFollowTag(widget.tag.tagDescription!);
                         if(succeeded) {
-                          showSnackBar(
+                          showToast(
                             context,
                             "Don't worry, u won't be"
                             " bothered by this tag again",
@@ -191,7 +191,7 @@ class _TrendingComponentState extends State<TrendingComponent> {
                               _followed = false;
                             });}
                         else{
-                          showSnackBar(
+                          showToast(
                               context, "OOPS, something went wrong 😢");
                         }
                       }}
