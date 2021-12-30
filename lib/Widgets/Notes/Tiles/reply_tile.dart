@@ -42,9 +42,6 @@ class ReplyTile extends StatelessWidget {
             shape: avatarShape,
             blogID: blogID,
           ),
-          const SizedBox(
-            width: 15,
-          ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(

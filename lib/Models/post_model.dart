@@ -16,6 +16,7 @@ class PostModel {
     required final this.notes,
     required final this.isLoved,
     required final this.isFollowed,
+    required final this.traceBackPosts,
   });
 
   final int postId;
@@ -28,6 +29,7 @@ class PostModel {
   final String blogAvatarShape;
   final String blogTitle;
   final String postTime;
+  final List<dynamic> traceBackPosts;
   int notes;
   bool isLoved;
   bool isFollowed;
@@ -35,7 +37,6 @@ class PostModel {
   /// Converts JSON["response"]["posts"] to List of Posts
   static Future<List<PostModel>> fromJSON(
     final List<dynamic> json,
-    final bool wantLove,
   ) async {
     final List<PostModel> temp = <PostModel>[];
     for (int i = 0; i < json.length; i++) {
@@ -53,7 +54,8 @@ class PostModel {
           postTime: json[i]["post_time"] ?? "",
           notes: (json[i]["notes_count"] ?? 0) as int,
           isLoved: (json[i]["is_liked"] ?? false) as bool,
-          isFollowed: false, // TODO(Ziyad): Make the request
+          isFollowed: (json[i]["followed"] ?? true) as bool,
+          traceBackPosts: json[i]["traced_back_posts"],
         ),
       );
     }

@@ -159,6 +159,8 @@ class _HtmlViewState extends State<HtmlView> {
                   url: herf,
                   bgColor: Colors.transparent,
                   isClosable: false,
+                  siteNameStyle: const TextStyle(color: Colors.red),
+                  titleStyle: const TextStyle(color: Colors.black),
                 ),
               ],
             );

@@ -41,7 +41,7 @@ class Reblog extends StatefulWidget {
 
 class _ReblogState extends State<Reblog> {
   final HtmlEditorController controller = HtmlEditorController();
-  String postButtonText = "Post";
+  String postButtonText = "Reblog";
 
   /// the current post type
   PostTypes postType = PostTypes.defaultPost;
@@ -67,7 +67,7 @@ class _ReblogState extends State<Reblog> {
     );
 
     if (response["meta"]["status"] == "200") {
-      await showToast("Added Successfully");
+      await showToast("Rebloged Successfully");
       Navigator.of(context).pop();
     } else {
       await showToast(response["meta"]["msg"]);

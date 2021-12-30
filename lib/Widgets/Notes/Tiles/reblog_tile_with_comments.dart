@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import "package:flutter/material.dart";
+import 'package:tumbler/Screens/Profile/profile_page.dart';
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
@@ -34,11 +35,16 @@ class ReblogTileWithComments extends StatelessWidget {
                 shape: avatarShape,
                 blogID: blogID,
               ),
-              const SizedBox(
-                width: 2,
-              ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<ProfilePage>(
+                      builder: (final BuildContext context) => ProfilePage(
+                        blogID: blogID,
+                      ),
+                    ),
+                  );
+                },
                 child: Text(
                   userName,
                   style: const TextStyle(color: Colors.black87, fontSize: 14),
@@ -48,7 +54,9 @@ class ReblogTileWithComments extends StatelessWidget {
                 child: Container(
                   alignment: Alignment.centerRight,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // TODO(Waleed): Implement This
+                    },
                     icon: const Icon(Icons.more_horiz),
                   ),
                 ),
@@ -62,14 +70,18 @@ class ReblogTileWithComments extends StatelessWidget {
           Row(
             children: <Widget>[
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  // TODO(Waleed): Implement This
+                },
                 child: const Text(
                   "Reblog",
                   style: TextStyle(color: Colors.black54, fontSize: 17),
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  // TODO(Waleed): Implement This
+                },
                 child: const Text(
                   "View Post",
                   style: TextStyle(color: Colors.black54, fontSize: 17),

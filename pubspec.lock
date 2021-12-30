@@ -272,6 +272,11 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.0.2"
+  flutter_driver:
+    dependency: "direct dev"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_html:
     dependency: "direct main"
     description:
@@ -401,6 +406,11 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "9.2.0"
+  fuchsia_remote_debug_protocol:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   fwfh_cached_network_image:
     dependency: transitive
     description:
@@ -778,7 +788,7 @@ packages:
       name: platform
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.0"
+    version: "3.0.2"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -917,10 +927,24 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  string_to_hex:
+    dependency: "direct main"
+    description:
+      name: string_to_hex
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2"
   string_validator:
     dependency: transitive
     description:
       name: string_validator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
+  sync_http:
+    dependency: transitive
+    description:
+      name: sync_http
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
@@ -1064,6 +1088,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.2"
+  vm_service:
+    dependency: transitive
+    description:
+      name: vm_service
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "7.3.0"
   wakelock:
     dependency: transitive
     description:
@@ -1106,6 +1137,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  webdriver:
+    dependency: transitive
+    description:
+      name: webdriver
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
   webview_flutter:
     dependency: transitive
     description:

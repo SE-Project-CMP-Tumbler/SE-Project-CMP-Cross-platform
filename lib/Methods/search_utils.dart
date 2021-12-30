@@ -35,7 +35,7 @@ Future<List<List<dynamic>>> getSearchResults(
     final List<dynamic> posts = response["response"]["posts"]["posts"];
     final List<dynamic> tags = response["response"]["tags"]["tags"];
     final List<dynamic> blogs = response["response"]["blogs"]["blogs"];
-    postsResults = await PostModel.fromJSON(posts, true);
+    postsResults = await PostModel.fromJSON(posts);
 
     for (final Map<String, dynamic> tagResult in tags) {
       final Tag tag = Tag(

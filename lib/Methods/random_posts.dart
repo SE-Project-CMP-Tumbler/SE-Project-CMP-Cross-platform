@@ -7,7 +7,7 @@ Future<List<PostModel>> getRandomPosts() async {
   final Map<String, dynamic> response = await Api().fetchRandomPosts();
   if (response["meta"]["status"] == "200") {
     final List<dynamic> posts = response["response"]["posts"];
-    randomPosts = await PostModel.fromJSON(posts, true);
+    randomPosts = await PostModel.fromJSON(posts);
   }
   return randomPosts;
 }
