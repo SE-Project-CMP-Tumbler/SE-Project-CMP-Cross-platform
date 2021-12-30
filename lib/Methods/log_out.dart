@@ -8,7 +8,6 @@ import "package:tumbler/Screens/Home_Page/home_page.dart";
 
 /// Intermediate function that call [Api.logOut]
 Future<bool> logOut() async {
-  // TODO(Ziyad): Show dialog
   final Map<String, dynamic> response = await Api().logOut();
 
   if (response["meta"]["status"] == "200") {

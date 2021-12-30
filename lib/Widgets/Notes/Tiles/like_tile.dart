@@ -48,7 +48,11 @@ class _LikeTileState extends State<LikeTile> {
 
   @override
   void initState() {
-    _followStatus = widget.followStatus;
+    setState(() {
+      print(
+          "the blogId is ${widget.blogID} and like status is ${widget.followStatus} ");
+      _followStatus = widget.followStatus;
+    });
     super.initState();
   }
 
@@ -110,18 +114,18 @@ class _LikeTileState extends State<LikeTile> {
                           ),
                 onPressed: () async {
                   // make the request to follow/unfollow.
-                  // if successufl : update the UI and update the data locally.
+                  // if successful : update the UI and update the data locally.
                   //else don't update the UI and show toast.
                   if (_followStatus) {
                     final Map<String, dynamic> response =
-                        await Api().unfollowBlog(widget.blogID);
+                        await Api().unFollowBlog(int.parse(widget.blogID));
                     if (response["meta"]["status"] == "200") {
                       setState(() {
                         _followStatus = false;
                       });
                       widget.updateFollowStatusLocally(widget.blogID, false);
                     } else {
-                      await showToast("Failed operation,try again later");
+                      await showToast(response["meta"]["msg"]);
                     }
                   } else {
                     final Map<String, dynamic> response =
@@ -132,7 +136,7 @@ class _LikeTileState extends State<LikeTile> {
                       });
                       widget.updateFollowStatusLocally(widget.blogID, true);
                     } else {
-                      await showToast("Failed operation,try again later");
+                      await showToast(response["meta"]["msg"]);
                     }
                   }
                 },

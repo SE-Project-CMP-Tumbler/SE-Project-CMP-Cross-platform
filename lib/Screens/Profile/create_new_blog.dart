@@ -1,12 +1,10 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
+import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/get_all_blogs.dart";
 import "package:tumbler/Methods/show_toast.dart";
-import "package:tumbler/Models/blog.dart";
-import "package:tumbler/Providers/blogs.dart";
-import "package:tumbler/Widgets/Exceptions_UI/error_dialog.dart";
 
 /// a page for entering the new blog name
 class CreateNewBlog extends StatefulWidget {
@@ -21,27 +19,26 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
   TextEditingController? _textEditingController;
 
   bool isValid() {
-    if (_textEditingController!.text.isEmpty) {
-      return false;
-    }
-    return true;
+    return _textEditingController!.text.isNotEmpty;
   }
 
-  bool _succeeded = true;
-
   /// post the blog
-  Future<void> postBlog(
-    final BuildContext context,
-    final String username,
-  ) async {
-    await Provider.of<BlogsData>(context, listen: false)
-        .addAndUpdateBlogs(username)
-        .catchError((final Object? error) async {
-      await showErrorDialog(context, error.toString());
-      setState(() {
-        _succeeded = false;
-      });
-    });
+  Future<void> postBlog() async {
+    if (isValid()) {
+      final Map<String, dynamic> response =
+          await Api().postNewBlog(_textEditingController!.text);
+
+      if (response["meta"]["status"] == "200") {
+        if (await fillUserBlogs()) {
+          Navigator.of(context).pop();
+          await showToast("Blog is Created");
+        } else
+          await showToast("Please try again later");
+      } else
+        await showToast(response["meta"]["msg"]);
+    } else {
+      await showToast("blog name is empty!");
+    }
   }
 
   @override
@@ -82,28 +79,7 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () async {
-              if (isValid()) {
-                // TODO(Donia): call postBlog
-                await postBlog(context, _textEditingController!.text);
-
-                if (_succeeded) {
-                  final int length =
-                      await Provider.of<BlogsData>(context, listen: false)
-                          .get_Blogs()
-                          .then(
-                            (final List<Blog> value) => value.length,
-                          );
-                  await Provider.of<BlogsData>(context, listen: false)
-                      .updateCurrentBlogIndex(
-                    length - 1,
-                  );
-                  Navigator.pop(context);
-                }
-              } else {
-                await showToast("blog name is empty!");
-              }
-            },
+            onPressed: postBlog,
             child: Text(
               "Save",
               style: TextStyle(
@@ -121,7 +97,6 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              // TODO(Donia): make it random
               Image.asset(
                 "assets/images/intro_3.jpg",
                 width: 40,
@@ -134,27 +109,7 @@ class _CreateNewBlogState extends State<CreateNewBlog> {
                   child: TextField(
                     controller: _textEditingController,
                     onChanged: (final String val) {},
-                    onSubmitted: (final String val) async {
-                      if (isValid()) {
-                        await postBlog(context, _textEditingController!.text);
-
-                        if (_succeeded) {
-                          final int length = await Provider.of<BlogsData>(
-                            context,
-                            listen: false,
-                          ).get_Blogs().then(
-                                (final List<Blog> value) => value.length,
-                              );
-                          await Provider.of<BlogsData>(context, listen: false)
-                              .updateCurrentBlogIndex(
-                            length - 1,
-                          );
-                          Navigator.pop(context);
-                        }
-                      } else {
-                        await showToast("blog name is empty!");
-                      }
-                    },
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       isDense: true,
                       enabledBorder: formEnabledFieldBorderStyle,

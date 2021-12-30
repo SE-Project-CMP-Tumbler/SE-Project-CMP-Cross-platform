@@ -65,7 +65,6 @@ class _SignUpGoogleState extends State<SignUpGoogle> {
       // he only has one blog
       await initializeUserBlogs();
 
-      // TODO(Ziyad): this must be fixed properly
       if (!kIsWeb) {
         await Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute<IntroCarousel>(

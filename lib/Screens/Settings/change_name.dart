@@ -23,7 +23,6 @@ class _ChangeNameState extends State<ChangeName> {
   }
 
   bool canChangeName(final String name) {
-    // TODO(Ziyad): Check the ability to change the name
     // this should be from an endpoint
     // but there is not endpoint for that
     return true;
@@ -77,7 +76,6 @@ class _ChangeNameState extends State<ChangeName> {
           TextButton(
             onPressed: () {
               if (canChange) {
-                // TODO(Ziyad): Make the Request
                 // make request to change the name
                 // but there is no endpoint to that
               }

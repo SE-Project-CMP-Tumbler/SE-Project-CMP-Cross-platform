@@ -51,12 +51,13 @@ class ReplyTextField extends StatelessWidget {
             if (replyController.text.isNotEmpty) {
               final dynamic response =
                   await Api().replyOnPost(postId, replyController.text);
-              if (response["meta"]["response"] == "200") {
+              if (response["meta"]["status"] == "200") {
                 // call function refresh in the NotesPage widget to fetch new
                 //replies and setState()
                 //update number of notes locally....
-                await refresh();
+                replyController.clear();
                 homePosts[index].notes++;
+                await refresh();
               } else {
                 // show toast ? to say retry again late
                 replyController.clear();

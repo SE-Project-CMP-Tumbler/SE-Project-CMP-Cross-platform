@@ -1,19 +1,18 @@
 // ignore_for_file: must_be_immutable, lines_longer_than_80_chars
-
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
-import "package:tumbler/Models/http_requests_exceptions.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
-import "package:tumbler/Widgets/Notes/Tiles/rebolg_tile_without_comments.dart";
+import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_without_comments.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reply_tile.dart";
 import "package:tumbler/Widgets/Notes/customized_tab.dart";
-import "package:tumbler/Widgets/Notes/reply_textfield.dart";
+import "package:tumbler/Widgets/Notes/reply_text_field.dart";
 import "package:tumbler/Widgets/Notes/show_reblog_type_bottom_sheet.dart";
 
-/// [blogType] is an Enumerator for specifing two different reblogs types
+/// [blogType] is an Enumerator for specifying two different reblogs types
 enum blogsType {
   ///reblogs with comments
   withComments,
@@ -22,12 +21,13 @@ enum blogsType {
   others
 }
 
-/// [NotesPage] is a class handels all stuff related to notes
+/// [NotesPage] is a class handles all stuff related to notes
 class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
   NotesPage({
     required final this.postID,
     required final this.index,
+    required final this.updateNotesInInteractionBar,
     final Key? key,
   }) : super(key: key);
 
@@ -37,6 +37,9 @@ class NotesPage extends StatefulWidget {
   /// Post Index
   int index;
 
+  ///
+  Function updateNotesInInteractionBar;
+
   @override
   _NotesPageState createState() => _NotesPageState();
 }
@@ -45,35 +48,46 @@ class _NotesPageState extends State<NotesPage>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
 
+  int likeCount = 0;
+  int repliesCount = 0;
+  int reblogCount = 0;
+
   /// contains all likes with their details
   List<dynamic> likesList = <dynamic>[];
 
-  ///contains all reblogs with their detalis
+  ///contains all reblogs with their details
   List<dynamic> reblogsList = <dynamic>[];
 
   /// contains all replies with their details
   List<dynamic> repliesList = <dynamic>[];
 
-  /// contains all reblogs with comments with their detalis
+  /// contains all reblogs with comments with their details
   List<dynamic> reblogsWithCommentsList = <dynamic>[];
 
-  ///contains all likes without comments their detalis
+  ///contains all likes without comments their details
   List<dynamic> reblogsWithOutCommentsList = <dynamic>[];
 
   Future<void> initialize() async {
-    final Map<String, dynamic> recievedNotes =
+    final Map<String, dynamic> receivedNotes =
         await Api().getNotes(widget.postID.toString());
 
     //check the status code for the received response.
-    if (recievedNotes["meta"]["status"] == "404")
-      throw HttpException("Not Found!");
-    else {
-      likesList = recievedNotes["response"]["likes"] ?? <dynamic>[];
-      reblogsList = recievedNotes["response"]["reblogs"] ?? <dynamic>[];
-      repliesList = recievedNotes["response"]["replies"] ?? <dynamic>[];
+    if (receivedNotes["meta"]["status"] == "200") {
+      likeCount =
+          receivedNotes["response"]["likes"]["pagination"]["total"] as int;
+      repliesCount =
+          receivedNotes["response"]["replies"]["pagination"]["total"] as int;
+      reblogCount =
+          receivedNotes["response"]["reblogs"]["pagination"]["total"] as int;
+      likesList = receivedNotes["response"]["likes"]["likes"] ?? <dynamic>[];
+      reblogsList =
+          receivedNotes["response"]["reblogs"]["reblogs"] ?? <dynamic>[];
+      repliesList =
+          receivedNotes["response"]["replies"]["replies"] ?? <dynamic>[];
+
 
       // spilt blogs received into to sub-categories
-      for (int i = 0; i < reblogsList.length; i++) {
+      for (int i = 0; i < reblogCount; i++) {
         if (reblogsList[i]["reblog_content"].isEmpty) {
           reblogsWithOutCommentsList.add(reblogsList[i]);
         } else {
@@ -81,7 +95,8 @@ class _NotesPageState extends State<NotesPage>
         }
       }
       setState(() {});
-    }
+    } else
+      await showToast(receivedNotes["meta"]["msg"]);
   }
 
   bool updateFollowStatusLocally(final String blogId, final bool followStatus) {
@@ -109,9 +124,9 @@ class _NotesPageState extends State<NotesPage>
   }
 
   Future<void> refresh() async {
-    setState(() async {
-      await initialize();
-    });
+    await initialize();
+    widget.updateNotesInInteractionBar();
+    setState(() {});
   }
 
   void changeBlogViewSection(final Enum type) {
@@ -128,6 +143,7 @@ class _NotesPageState extends State<NotesPage>
     // Start listening to changes.
     replyController.addListener(checkReplyText);
     tabController = TabController(vsync: this, length: 3);
+    super.initState();
   }
 
   @override
@@ -150,21 +166,21 @@ class _NotesPageState extends State<NotesPage>
         tabs: <Widget>[
           CustomizedTab(
             iconType: Icons.comment,
-            number: repliesList.length,
+            number: repliesCount,
             color: Colors.blue,
             currIndex: tabController.index,
             myIndex: 0,
           ),
           CustomizedTab(
             iconType: Icons.repeat,
-            number: reblogsList.length,
+            number: reblogCount,
             color: Colors.green,
             currIndex: tabController.index,
             myIndex: 1,
           ),
           CustomizedTab(
             iconType: Icons.favorite_outline_outlined,
-            number: likesList.length,
+            number: likeCount,
             color: Colors.red,
             currIndex: tabController.index,
             myIndex: 2,
@@ -186,7 +202,7 @@ class _NotesPageState extends State<NotesPage>
             children: <Widget>[
               Text(
                 "${numFormatter.format(
-                  likesList.length + repliesList.length + reblogsList.length,
+                  likeCount + repliesCount + reblogCount,
                 )} notes",
               ),
             ],
@@ -231,7 +247,7 @@ class _NotesPageState extends State<NotesPage>
                             blogID: repliesList[index]["blog_id"].toString(),
                           );
                         },
-                        itemCount: repliesList.length,
+                        itemCount: repliesCount,
                       ),
                     ),
                     ReplyTextField(
@@ -243,97 +259,114 @@ class _NotesPageState extends State<NotesPage>
                   ],
                 ),
               ),
-            if (reblogsWithCommentsList.isEmpty &&
-                    blogTypeToShow == blogsType.withComments.index ||
-                reblogsWithOutCommentsList.isEmpty &&
-                    blogTypeToShow == blogsType.others.index)
-              const EmptyBoxImage(msg: "No reblogs to show")
-            else
-              Padding(
-                padding: EdgeInsets.zero,
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverAppBar(
-                      title: FittedBox(
-                        child: (blogTypeToShow == blogsType.withComments.index)
-                            ? const Text(
-                                "Reblogs with comments",
-                                style: TextStyle(
-                                  color: Colors.black45,
-                                  fontSize: 17,
-                                ),
-                              )
-                            : const Text(
-                                "Other reblogs",
-                                style: TextStyle(
-                                  color: Colors.black45,
-                                  fontSize: 17,
-                                ),
+            Padding(
+              padding: EdgeInsets.zero,
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverAppBar(
+                    title: FittedBox(
+                      child: (blogTypeToShow == blogsType.withComments.index)
+                          ? const Text(
+                              "Reblogs with comments",
+                              style: TextStyle(
+                                color: Colors.black45,
+                                fontSize: 17,
                               ),
-                      ),
-                      floating: true,
-                      backgroundColor: Colors.white,
-                      titleSpacing: 0,
-                      elevation: 1,
-                      forceElevated: true,
-                      expandedHeight: 2,
-                      toolbarHeight: 40,
-                      leadingWidth: 10,
-                      leading: Container(),
-                      actions: <Widget>[
-                        IconButton(
-                          onPressed: () {
-                            showReblogsCategoriesBottomSheet(
-                              context,
-                              blogTypeToShow,
-                              changeBlogViewSection,
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.black45,
-                          ),
-                        )
-                      ],
+                            )
+                          : const Text(
+                              "Other reblogs",
+                              style: TextStyle(
+                                color: Colors.black45,
+                                fontSize: 17,
+                              ),
+                            ),
                     ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (final BuildContext context, final int index) =>
-                            (blogTypeToShow == blogsType.withComments.index)
-                                ? ReblogTileWithComments(
-                                    avatarUrl: reblogsWithCommentsList[index]
-                                        ["blog_avatar"],
-                                    htmlData: reblogsWithCommentsList[index]
-                                        ["reblog_content"],
-                                    userName: reblogsWithCommentsList[index]
-                                        ["blog_username"],
-                                    avatarShape: reblogsWithCommentsList[index]
-                                        ["blog_avatar_shape"],
-                                    blogID: reblogsWithCommentsList[index]
-                                            ["blog_id"]
-                                        .toString(),
-                                  )
-                                : ReblogTileWithOutComments(
-                                    userName: reblogsWithOutCommentsList[index]
-                                        ["blog_username"],
-                                    avatarUrl: reblogsWithOutCommentsList[index]
-                                        ["blog_avatar"],
-                                    avatarShape:
-                                        reblogsWithOutCommentsList[index]
-                                            ["blog_avatar_shape"],
-                                    blogID: reblogsWithOutCommentsList[index]
-                                            ["blog_id"]
-                                        .toString(),
-                                  ),
-                        childCount:
-                            (blogTypeToShow == blogsType.withComments.index)
-                                ? reblogsWithCommentsList.length
-                                : reblogsWithOutCommentsList.length,
-                      ),
-                    )
-                  ],
-                ),
+                    floating: true,
+                    backgroundColor: Colors.white,
+                    titleSpacing: 0,
+                    elevation: 1,
+                    forceElevated: true,
+                    expandedHeight: 2,
+                    toolbarHeight: 40,
+                    leadingWidth: 10,
+                    leading: Container(),
+                    actions: <Widget>[
+                      IconButton(
+                        onPressed: () {
+                          showReblogsCategoriesBottomSheet(
+                            context,
+                            blogTypeToShow,
+                            changeBlogViewSection,
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                      )
+                    ],
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (final BuildContext context, final int index) =>
+                          (reblogsWithCommentsList.isEmpty &&
+                                      blogTypeToShow ==
+                                          blogsType.withComments.index ||
+                                  reblogsWithOutCommentsList.isEmpty &&
+                                      blogTypeToShow == blogsType.others.index)
+                              ? Column(
+                                  children: const <Widget>[
+                                    SizedBox(
+                                      height: 90,
+                                    ),
+                                    EmptyBoxImage(
+                                      msg: "No reblogs to show",
+                                    ),
+                                  ],
+                                )
+                              : (blogTypeToShow == blogsType.withComments.index)
+                                  ? ReblogTileWithComments(
+                                      avatarUrl: reblogsWithCommentsList[index]
+                                          ["blog_avatar"],
+                                      htmlData: reblogsWithCommentsList[index]
+                                          ["reblog_content"],
+                                      userName: reblogsWithCommentsList[index]
+                                          ["blog_username"],
+                                      avatarShape:
+                                          reblogsWithCommentsList[index]
+                                              ["blog_avatar_shape"],
+                                      blogID: reblogsWithCommentsList[index]
+                                              ["blog_id"]
+                                          .toString(),
+                                    )
+                                  : ReblogTileWithOutComments(
+                                      userName:
+                                          reblogsWithOutCommentsList[index]
+                                              ["blog_username"],
+                                      avatarUrl:
+                                          reblogsWithOutCommentsList[index]
+                                              ["blog_avatar"],
+                                      avatarShape:
+                                          reblogsWithOutCommentsList[index]
+                                              ["blog_avatar_shape"],
+                                      blogID: reblogsWithOutCommentsList[index]
+                                              ["blog_id"]
+                                          .toString(),
+                                    ),
+                      childCount: (reblogsWithCommentsList.isEmpty &&
+                                  blogTypeToShow ==
+                                      blogsType.withComments.index ||
+                              reblogsWithOutCommentsList.isEmpty &&
+                                  blogTypeToShow == blogsType.others.index)
+                          ? 1
+                          : (blogTypeToShow == blogsType.withComments.index)
+                              ? reblogsWithCommentsList.length
+                              : reblogsWithOutCommentsList.length,
+                    ),
+                  )
+                ],
               ),
+            ),
             if (likesList.isEmpty)
               const EmptyBoxImage(msg: "No likes to show")
             else
@@ -351,7 +384,7 @@ class _NotesPageState extends State<NotesPage>
                       updateFollowStatusLocally: updateFollowStatusLocally,
                     );
                   },
-                  itemCount: likesList.length,
+                  itemCount: likeCount,
                 ),
               ),
           ],

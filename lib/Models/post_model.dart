@@ -16,6 +16,8 @@ class PostModel {
     required final this.notes,
     required final this.isLoved,
     required final this.isFollowed,
+    required final this.traceBackPosts,
+    required final this.isPinned,
   });
 
   final int postId;
@@ -28,6 +30,8 @@ class PostModel {
   final String blogAvatarShape;
   final String blogTitle;
   final String postTime;
+  final bool isPinned;
+  final List<dynamic> traceBackPosts;
   int notes;
   bool isLoved;
   bool isFollowed;
@@ -35,27 +39,52 @@ class PostModel {
   /// Converts JSON["response"]["posts"] to List of Posts
   static Future<List<PostModel>> fromJSON(
     final List<dynamic> json,
-    final bool wantLove,
   ) async {
     final List<PostModel> temp = <PostModel>[];
     for (int i = 0; i < json.length; i++) {
-      temp.add(
-        PostModel(
-          postId: json[i]["post_id"] as int,
-          postBody: json[i]["post_body"] ?? "",
-          postStatus: json[i]["post_status"] ?? "",
-          postType: json[i]["post_type"] ?? "",
-          blogId: json[i]["blog_id"] as int,
-          blogUsername: json[i]["blog_username"] ?? "",
-          blogAvatar: json[i]["blog_avatar"] ?? "",
-          blogAvatarShape: json[i]["blog_avatar_shape"] ?? "",
-          blogTitle: json[i]["blog_title"] ?? "",
-          postTime: json[i]["post_time"] ?? "",
-          notes: (json[i]["notes_count"] ?? 0) as int,
-          isLoved: (json[i]["is_liked"] ?? false) as bool,
-          isFollowed: false, // TODO(Ziyad): Make the request
-        ),
-      );
+      if (!((json[i]["pinned"] ?? false) as bool)) {
+        temp.add(
+          PostModel(
+            postId: json[i]["post_id"] as int,
+            postBody: json[i]["post_body"] ?? "",
+            postStatus: json[i]["post_status"] ?? "",
+            postType: json[i]["post_type"] ?? "",
+            blogId: json[i]["blog_id"] as int,
+            blogUsername: json[i]["blog_username"] ?? "",
+            blogAvatar: json[i]["blog_avatar"] ?? "",
+            blogAvatarShape: json[i]["blog_avatar_shape"] ?? "",
+            blogTitle: json[i]["blog_title"] ?? "",
+            postTime: json[i]["post_time"] ?? "",
+            notes: (json[i]["notes_count"] ?? 0) as int,
+            isLoved: (json[i]["is_liked"] ?? false) as bool,
+            isFollowed: (json[i]["followed"] ?? true) as bool,
+            traceBackPosts: json[i]["traced_back_posts"],
+            isPinned: (json[i]["pinned"] ?? false) as bool,
+          ),
+        );
+      } else {
+        temp.insert(
+          0, // insert at first
+          PostModel(
+            postId: json[i]["post_id"] as int,
+            postBody: (json[i]["post_body"] ?? "") +
+                " <p style='color:green'><strong>Pinned Post</strong></p>",
+            postStatus: json[i]["post_status"] ?? "",
+            postType: json[i]["post_type"] ?? "",
+            blogId: json[i]["blog_id"] as int,
+            blogUsername: json[i]["blog_username"] ?? "",
+            blogAvatar: json[i]["blog_avatar"] ?? "",
+            blogAvatarShape: json[i]["blog_avatar_shape"] ?? "",
+            blogTitle: json[i]["blog_title"] ?? "",
+            postTime: json[i]["post_time"] ?? "",
+            notes: (json[i]["notes_count"] ?? 0) as int,
+            isLoved: (json[i]["is_liked"] ?? false) as bool,
+            isFollowed: (json[i]["followed"] ?? true) as bool,
+            traceBackPosts: json[i]["traced_back_posts"],
+            isPinned: (json[i]["pinned"] ?? false) as bool,
+          ),
+        );
+      }
     }
     return temp;
   }

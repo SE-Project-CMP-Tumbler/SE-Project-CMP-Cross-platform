@@ -5,14 +5,18 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_colorpicker/flutter_colorpicker.dart";
 import "package:image_picker/image_picker.dart";
+import "package:share_plus/share_plus.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/choose_image.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/blog.dart";
+import "package:tumbler/Models/blog_theme.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
+import 'package:tumbler/Screens/Chat/inside_chat.dart';
 import "package:tumbler/Screens/Profile/create_new_blog.dart";
+import "package:tumbler/Screens/Profile/profile_search.dart";
 import "package:tumbler/Screens/Search/search_page.dart";
 import "package:tumbler/Screens/Settings/profile_settings.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
@@ -52,13 +56,29 @@ class _ProfilePageState extends State<ProfilePage>
     blogId: "",
     isPrimary: false,
     username: "",
-    avatarImageUrl: "",
+    avatarImageUrl:
+        "https://cdnb.artstation.com/p/assets/images/images/033/268/113/large/edmerc-d-mercadal-eren-v5.jpg?1609001111",
     avatarShape: "",
-    headerImage: "",
+    headerImage:
+        "https://cdna.artstation.com/p/assets/images/images/011/360/222/large/moraya-magdy-maro-45-1.jpg?1529180970",
     blogTitle: "",
     allowAsk: false,
     allowSubmission: false,
     blogDescription: "",
+  );
+  BlogTheme theme = BlogTheme(
+    themeID: "",
+    titleText: "Untitled",
+    titleColor: "FFFFFF",
+    titleFont: "",
+    titleWeight: "",
+    description: "",
+    backgroundColor: "FFFFFF",
+    accentColor: "FFFFFF",
+    bodyFont: "",
+    headerImage: "",
+    avatarURL: "",
+    avatarShape: "circle",
   );
 
   final List<String> _tabs = <String>["Posts"];
@@ -118,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage>
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPagePosts++;
         postsTabPosts.addAll(
-          await PostModel.fromJSON(response["response"]["posts"], false),
+          await PostModel.fromJSON(response["response"]["posts"]),
         );
       }
     } else {
@@ -140,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage>
         currentPagePosts++;
         setState(
           () async => postsTabPosts.addAll(
-            await PostModel.fromJSON(response["response"]["posts"], false),
+            await PostModel.fromJSON(response["response"]["posts"]),
           ),
         );
       }
@@ -160,7 +180,7 @@ class _ProfilePageState extends State<ProfilePage>
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPageLiked++;
         postsTabLiked.addAll(
-          await PostModel.fromJSON(response["response"]["posts"], false),
+          await PostModel.fromJSON(response["response"]["posts"]),
         );
       }
     } else {
@@ -182,7 +202,7 @@ class _ProfilePageState extends State<ProfilePage>
         currentPageLiked++;
         setState(
           () async => postsTabLiked.addAll(
-            await PostModel.fromJSON(response["response"]["posts"], false),
+            await PostModel.fromJSON(response["response"]["posts"]),
           ),
         );
       }
@@ -655,7 +675,13 @@ class _ProfilePageState extends State<ProfilePage>
       elevation: 8,
     ).then((final String? itemSelected) async {
       if (itemSelected == _messageOptions[0]) {
-        // TODO(Ziyad): Go To Chat
+        await Navigator.of(context).push(
+          MaterialPageRoute<ChatScreen>(
+            builder: (final BuildContext context) => ChatScreen(
+              withBlogID: displayedBlog.blogId!,
+            ),
+          ),
+        );
       } else if (itemSelected == _messageOptions[1]) {
         // TODO(Ziyad): Ask
       } else if (itemSelected == _messageOptions[2]) {
@@ -685,91 +711,41 @@ class _ProfilePageState extends State<ProfilePage>
       elevation: 8,
     ).then((final String? itemSelected) async {
       if (itemSelected == "Share") {
-        // TODO(Ziyad): Share
+        await shareProfile();
       } else if (itemSelected == "Get Notifications") {
       } else if (itemSelected == "Block") {
       } else if (itemSelected == "Report") {
       } else if (itemSelected == "Unfollow") {
-        // TODO(Ziyad): Unfollow
+        final Map<String, dynamic> response =
+            await Api().unFollowBlog(int.parse(widget.blogID));
+        if (response["meta"]["status"] == "200")
+          await showToast("Unfollowed");
+        else
+          await showToast(response["meta"]["msg"]);
       } else if (itemSelected == "Follow") {
-        // TODO(Ziyad): Follow
+        final Map<String, dynamic> response =
+            await Api().followBlog(int.parse(widget.blogID));
+        if (response["meta"]["status"] == "200")
+          await showToast("Unfollowed");
+        else
+          await showToast(response["meta"]["msg"]);
       }
     });
   }
-
-  /*
-  Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                              index == 0 ? Colors.blue : Colors.black,
-                            ),
-                          ),
-                          onPressed: () => myState(() => index = 0),
-                          child: const Text("themeColor"),
-                        ),
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                              index == 1 ? Colors.blue : Colors.black,
-                            ),
-                          ),
-                          onPressed: () => myState(() => index = 1),
-                          child: const Text("accentColor"),
-                        ),
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                              index == 2 ? Colors.blue : Colors.black,
-                            ),
-                          ),
-                          onPressed: () => myState(() => index = 2),
-                          child: const Text("themeTitleColor"),
-                        ),
-                      ],
-                    ),
-                    ColorPicker(
-                      enableAlpha: false,
-                      paletteType: PaletteType.hsv,
-                      pickerColor: themeColor,
-                      onColorChanged: (final Color colorPicked) {
-                        setState(() {
-                          if (index == 0)
-                            themeColor = colorPicked;
-                          else if (index == 1)
-                            accentColor = colorPicked;
-                          else
-                            themeTitleColor = colorPicked;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: _titleController,
-                      onChanged: (final String s) {
-                        setState(() {
-                          displayedBlog.blogTitle = s;
-                        });
-                      },
-                    ),
-                  ],
-                )
-  * */
 
   void showEditAppearance() {
     // index = 0 => change themeColor
     // index = 1 => change accentColor
     // index = 2 => change themeTitleColor
-    bool color = true;
     int _index = 0;
+    // color = false  =>  change title and description
+    // color = true   =>  change colors
+    bool color = true;
     final TextEditingController _titleController =
         TextEditingController(text: displayedBlog.blogTitle);
     final TextEditingController _descriptionController =
         TextEditingController(text: displayedBlog.blogDescription);
+
     showModalBottomSheet<void>(
       isDismissible: false,
       constraints: const BoxConstraints(minHeight: 500),
@@ -778,114 +754,178 @@ class _ProfilePageState extends State<ProfilePage>
       builder: (final BuildContext context) {
         return StatefulBuilder(
           builder: (final BuildContext context, final StateSetter myState) {
-            return SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            color ? Colors.blue : Colors.black,
+            return WillPopScope(
+              onWillPop: () async {
+                await Api().setBlogTheme(widget.blogID, theme);
+                return true;
+              },
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              color ? Colors.blue : Colors.black,
+                            ),
                           ),
+                          onPressed: () => myState(() => color = true),
+                          child: const Text("Colors"),
                         ),
-                        onPressed: () => myState(() => color = true),
-                        child: const Text("Colors"),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              color ? Colors.black : Colors.blue,
+                            ),
+                          ),
+                          onPressed: () => myState(() => color = false),
+                          child: const Text("Text"),
+                        )
+                      ],
+                    ),
+                    AnimatedCrossFade(
+                      crossFadeState: color
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      duration: const Duration(seconds: 1),
+                      firstChild: Column(
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    _index == 0 ? Colors.blue : Colors.black,
+                                  ),
+                                ),
+                                onPressed: () => myState(() => _index = 0),
+                                child: const Text("BackGround Color"),
+                              ),
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    _index == 1 ? Colors.blue : Colors.black,
+                                  ),
+                                ),
+                                onPressed: () => myState(() => _index = 1),
+                                child: const Text("Accent Color"),
+                              ),
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    _index == 2 ? Colors.blue : Colors.black,
+                                  ),
+                                ),
+                                onPressed: () => myState(() => _index = 2),
+                                child: const Text("Title Color"),
+                              ),
+                            ],
+                          ),
+                          ColorPicker(
+                            enableAlpha: false,
+                            paletteType: PaletteType.hsv,
+                            pickerColor: themeColor,
+                            onColorChanged: (final Color colorPicked) {
+                              setState(() {
+                                if (_index == 0) {
+                                  theme.backgroundColor =
+                                      "${colorPicked.red.toRadixString(
+                                    16,
+                                  )}${colorPicked.green.toRadixString(
+                                    16,
+                                  )}${colorPicked.blue.toRadixString(
+                                    16,
+                                  )}";
+                                } else if (_index == 1) {
+                                  theme.accentColor =
+                                      "${colorPicked.red.toRadixString(
+                                    16,
+                                  )}${colorPicked.green.toRadixString(
+                                    16,
+                                  )}${colorPicked.blue.toRadixString(
+                                    16,
+                                  )}";
+                                } else {
+                                  theme.titleColor =
+                                      "${colorPicked.red.toRadixString(
+                                    16,
+                                  )}${colorPicked.green.toRadixString(
+                                    16,
+                                  )}${colorPicked.blue.toRadixString(
+                                    16,
+                                  )}";
+                                }
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            color ? Colors.black : Colors.blue,
+                      secondChild: Column(
+                        children: <Widget>[
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: TextFormField(
+                              controller: _titleController,
+                              keyboardType: TextInputType.name,
+                              onChanged: (final String s) {
+                                setState(() => theme.titleText = s);
+                              },
+                              style: const TextStyle(color: Colors.black),
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    width: 5,
+                                  ),
+                                ),
+                                label: Text(
+                                  "Title",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                hintStyle: TextStyle(color: Colors.white30),
+                                hintText: "Title",
+                              ),
+                            ),
                           ),
-                        ),
-                        onPressed: () => myState(() => color = false),
-                        child: const Text("Text"),
-                      )
-                    ],
-                  ),
-                  AnimatedCrossFade(
-                    crossFadeState: color
-                        ? CrossFadeState.showFirst
-                        : CrossFadeState.showSecond,
-                    duration: const Duration(seconds: 1),
-                    firstChild: Column(
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                  _index == 0 ? Colors.blue : Colors.black,
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: TextFormField(
+                              controller: _descriptionController,
+                              keyboardType: TextInputType.name,
+                              onChanged: (final String s) {
+                                setState(() => theme.description = s);
+                              },
+                              style: const TextStyle(color: Colors.black),
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    width: 5,
+                                  ),
                                 ),
-                              ),
-                              onPressed: () => myState(() => _index = 0),
-                              child: const Text("themeColor"),
-                            ),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                  _index == 1 ? Colors.blue : Colors.black,
+                                label: Text(
+                                  "Description",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
                                 ),
+                                hintStyle: TextStyle(color: Colors.white30),
+                                hintText: "Description",
                               ),
-                              onPressed: () => myState(() => _index = 1),
-                              child: const Text("accentColor"),
                             ),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                  _index == 2 ? Colors.blue : Colors.black,
-                                ),
-                              ),
-                              onPressed: () => myState(() => _index = 2),
-                              child: const Text("themeTitleColor"),
-                            ),
-                          ],
-                        ),
-                        ColorPicker(
-                          enableAlpha: false,
-                          paletteType: PaletteType.hsv,
-                          pickerColor: themeColor,
-                          onColorChanged: (final Color colorPicked) {
-                            setState(() {
-                              if (_index == 0)
-                                themeColor = colorPicked;
-                              else if (_index == 1)
-                                accentColor = colorPicked;
-                              else
-                                themeTitleColor = colorPicked;
-                            });
-                          },
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                    secondChild: Column(
-                      children: <Widget>[
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: _titleController,
-                          onChanged: (final String s) {
-                            setState(() {
-                              displayedBlog.blogTitle = s;
-                            });
-                          },
-                        ),
-                        TextFormField(
-                          controller: _descriptionController,
-                          onChanged: (final String s) {
-                            setState(() {
-                              displayedBlog.blogDescription = s;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
@@ -895,54 +935,156 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   void changeProfilePic() {
-    showModalBottomSheet<void>(
+    if (User.blogsIDs.contains(displayedBlog.blogId))
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (final BuildContext context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const Text(
+                  "Change Profile Picture",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                ListTile(
+                  title: const Text("From Gallery"),
+                  onTap: () async {
+                    final String? imageData = await chooseImage(
+                      ImageSource.gallery,
+                    );
+                    if (imageData != null) {
+                      Map<String, dynamic> response =
+                          await Api().uploadImage(imageData);
+                      if (response["meta"]["status"] == "200") {
+                        final BlogTheme temp = theme;
+                        temp.avatarURL = response["response"]["url"].toString();
+                        response =
+                            await Api().setBlogTheme(widget.blogID, temp);
+                        if (response["meta"]["status"] == "200") {
+                          setState(() => theme = temp);
+                          return;
+                        }
+                      }
+                      await showToast(response["meta"]["msg"]);
+                    }
+                  },
+                ),
+                const Divider(
+                  height: 15,
+                  color: Colors.grey,
+                ),
+                ListTile(
+                  title: const Text("Open Camera"),
+                  onTap: () async {
+                    final String? imageData = await chooseImage(
+                      ImageSource.camera,
+                    );
+                    if (imageData != null) {
+                      Map<String, dynamic> response =
+                          await Api().uploadImage(imageData);
+                      if (response["meta"]["status"] == "200") {
+                        final BlogTheme temp = theme;
+                        temp.avatarURL = response["response"]["url"].toString();
+                        response =
+                            await Api().setBlogTheme(widget.blogID, temp);
+                        if (response["meta"]["status"] == "200") {
+                          setState(() => theme = temp);
+                          return;
+                        }
+                      }
+                      await showToast(response["meta"]["msg"]);
+                    }
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+  }
+
+  void changeHeaderPic() {
+    if (User.blogsIDs.contains(displayedBlog.blogId))
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (final BuildContext context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const Text(
+                  "Change Header Picture",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                ListTile(
+                  title: const Text("From Gallery"),
+                  onTap: () async {
+                    final String? imageData = await chooseImage(
+                      ImageSource.gallery,
+                    );
+                    if (imageData != null) {
+                      Map<String, dynamic> response =
+                          await Api().uploadImage(imageData);
+                      if (response["meta"]["status"] == "200") {
+                        final BlogTheme temp = theme;
+                        temp.headerImage =
+                            response["response"]["url"].toString();
+                        response =
+                            await Api().setBlogTheme(widget.blogID, temp);
+                        if (response["meta"]["status"] == "200") {
+                          setState(() => theme = temp);
+                          return;
+                        }
+                      }
+                      await showToast(response["meta"]["msg"]);
+                    }
+                  },
+                ),
+                const Divider(
+                  height: 15,
+                  color: Colors.grey,
+                ),
+                ListTile(
+                  title: const Text("Open Camera"),
+                  onTap: () async {
+                    final String? imageData = await chooseImage(
+                      ImageSource.camera,
+                    );
+                    if (imageData != null) {
+                      Map<String, dynamic> response =
+                          await Api().uploadImage(imageData);
+                      if (response["meta"]["status"] == "200") {
+                        final BlogTheme temp = theme;
+                        temp.headerImage =
+                            response["response"]["url"].toString();
+                        response =
+                            await Api().setBlogTheme(widget.blogID, temp);
+                        if (response["meta"]["status"] == "200") {
+                          setState(() => theme = temp);
+                          return;
+                        }
+                      }
+                      await showToast(response["meta"]["msg"]);
+                    }
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+  }
+
+  void searchIcon() {
+    showSearch(
       context: context,
-      builder: (final BuildContext context) {
-        return SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              const Text(
-                "Change Profile Picture",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              ListTile(
-                title: const Text("From Gallery"),
-                onTap: () async {
-                  final String? imageData = await chooseImage(
-                    ImageSource.gallery,
-                  );
-                  if (imageData != null) {
-                    final Map<String, dynamic> response =
-                        await Api().uploadImage(imageData);
-                    if (response["meta"]["status"] == "200") {}
-                  }
-                },
-              ),
-              const Divider(
-                height: 15,
-                color: Colors.grey,
-              ),
-              ListTile(
-                title: const Text("Open Camera"),
-                onTap: () async {
-                  final String? imageData = await chooseImage(
-                    ImageSource.camera,
-                  );
-                  if (imageData != null) {
-                    final Map<String, dynamic> response =
-                        await Api().uploadImage(imageData);
-                    if (response["meta"]["status"] == "200") {}
-                  }
-                },
-              ),
-            ],
-          ),
-        );
-      },
+      delegate: ProfileSearch(
+        blogID: displayedBlog.blogId!,
+        username: displayedBlog.username!,
+      ),
     );
   }
 
-  Future<void> initializeBlog() async {
+  Future<void> initializeBlogData() async {
     // if it is one of my Blogs
     if (User.blogsIDs.contains(widget.blogID)) {
       final int index = User.blogsIDs.indexOf(widget.blogID);
@@ -984,15 +1126,15 @@ class _ProfilePageState extends State<ProfilePage>
         );
       }
 
-      if ((response["meta"]["share_likes"] ?? false) as bool) {
+      if ((response["response"]["share_likes"] ?? false) as bool) {
         _tabs.add("Likes");
       }
 
-      if ((response["meta"]["share_followings"] ?? false) as bool) {
+      if ((response["response"]["share_followings"] ?? false) as bool) {
         _tabs.add("Following");
       }
 
-      if ((response["meta"]["followed"] ?? false) as bool) {
+      if ((response["response"]["followed"] ?? false) as bool) {
         _personIconOptions.add("Unfollow");
       } else {
         _personIconOptions.add("Follow");
@@ -1008,6 +1150,23 @@ class _ProfilePageState extends State<ProfilePage>
     }
 
     setState(() {});
+  }
+
+  Future<void> initializeBlogTheme() async {
+    final Map<String, dynamic> response =
+        await Api().getBlogTheme(widget.blogID);
+
+    if (response["meta"]["status"] == "200") {
+      setState(() {
+        theme = BlogTheme.fromJSON(response);
+      });
+    }
+  }
+
+  Future<void> shareProfile() async {
+    await Share.share(
+      "https://tumbler.social/profile/${displayedBlog.username}",
+    );
   }
 
   Widget initializeMyBlogsDropDownMenu() {
@@ -1028,6 +1187,13 @@ class _ProfilePageState extends State<ProfilePage>
             dropdownValue = value!;
             User.currentProfile = User.blogsNames.indexOf(
               value,
+            );
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute<ProfilePage>(
+                builder: (final BuildContext context) => ProfilePage(
+                  blogID: User.blogsIDs[User.currentProfile],
+                ),
+              ),
             );
           });
         }
@@ -1146,7 +1312,8 @@ class _ProfilePageState extends State<ProfilePage>
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     loadingSpinnerAnimationController.repeat();
 
-    initializeBlog();
+    initializeBlogTheme();
+    initializeBlogData();
     fetchProfilePosts();
   }
 
@@ -1175,7 +1342,11 @@ class _ProfilePageState extends State<ProfilePage>
       child: DefaultTabController(
         length: _tabs.length, // This is the number of tabs.
         child: Scaffold(
-          backgroundColor: themeColor,
+          backgroundColor: Color(
+            int.parse(
+              "0xff${theme.backgroundColor}",
+            ),
+          ),
           body: NestedScrollView(
             controller: _controller,
             floatHeaderSlivers: true,
@@ -1197,306 +1368,338 @@ class _ProfilePageState extends State<ProfilePage>
                     delegate: SliverChildListDelegate(
                       // All Upper Widgets
                       <Widget>[
-                        Container(
-                          height: 0.35 * _height,
-                          // Header image
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: FadeInImage(
-                                fit: BoxFit.cover,
-                                imageErrorBuilder:
-                                    (final _, final __, final ___) {
-                                  return Image.asset(
+                        InkWell(
+                          onTap: changeHeaderPic,
+                          child: Container(
+                            height: 0.35 * _height,
+                            // Header image
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: FadeInImage(
+                                  fit: BoxFit.cover,
+                                  imageErrorBuilder:
+                                      (final _, final __, final ___) {
+                                    return Image.asset(
+                                      "assets/images/profile_Placeholder.png",
+                                    );
+                                  },
+                                  placeholder: const AssetImage(
                                     "assets/images/profile_Placeholder.png",
-                                  );
-                                },
-                                placeholder: const AssetImage(
-                                  "assets/images/profile_Placeholder.png",
-                                ),
-                                image: Image.network(
-                                  displayedBlog.avatarImageUrl!,
+                                  ),
+                                  image: Image.network(
+                                    theme.headerImage,
+                                  ).image,
                                 ).image,
-                              ).image,
-                            ),
-                          ),
-                          child: Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: <Widget>[
-                              Positioned(
-                                top: 0.35 * _height - 0.085 * _height,
-                                left: 0,
-                                right: 0,
-                                child: Container(
-                                  color: themeColor,
-                                  height: 0.8 * _height,
-                                ),
                               ),
-                              // Profile Pic
-                              Positioned(
-                                bottom: 0.085 * _height - 25,
-                                child: InkWell(
-                                  onTap: changeProfilePic,
+                            ),
+                            child: Stack(
+                              alignment: Alignment.bottomCenter,
+                              children: <Widget>[
+                                Positioned(
+                                  top: 0.35 * _height - 0.085 * _height,
+                                  left: 0,
+                                  right: 0,
                                   child: Container(
-                                    height: 100,
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                      color: themeColor,
-                                      shape: BoxShape.circle, //editable
-                                      border: Border.all(
-                                        width: 3,
-                                        color: themeColor,
+                                    color: Color(
+                                      int.parse(
+                                        "0xff${theme.backgroundColor}",
                                       ),
                                     ),
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          displayedBlog.avatarShape == "square"
-                                              ? null
-                                              : const BorderRadius.all(
-                                                  Radius.circular(50),
-                                                ), //editable
-                                      child: FadeInImage(
-                                        fit: BoxFit.cover,
-                                        imageErrorBuilder:
-                                            (final _, final __, final ___) {
-                                          return Image.asset(
-                                            "assets/images/profile_Placeholder.png",
-                                          );
-                                        },
-                                        placeholder: const AssetImage(
-                                          "assets/images/profile_Placeholder.png",
+                                    height: 0.8 * _height,
+                                  ),
+                                ),
+                                // Profile Pic
+                                Positioned(
+                                  bottom: 0.085 * _height - 25,
+                                  child: InkWell(
+                                    onTap: changeProfilePic,
+                                    child: Container(
+                                      height: 100,
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                        color: Color(
+                                          int.parse(
+                                            "0xff${theme.backgroundColor}",
+                                          ),
                                         ),
-                                        image: Image.network(
-                                          displayedBlog.avatarImageUrl!,
-                                        ).image,
+                                        shape: theme.avatarShape == "square"
+                                            ? BoxShape.rectangle
+                                            : BoxShape.circle, //editable
+                                        border: Border.all(
+                                          width: 3,
+                                          color: Color(
+                                            int.parse(
+                                              "0xff${theme.backgroundColor}",
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(
+                                            theme.avatarShape == "square"
+                                                ? 0
+                                                : 50,
+                                          ),
+                                        ), //editable
+                                        child: FadeInImage(
+                                          fit: BoxFit.cover,
+                                          imageErrorBuilder:
+                                              (final _, final __, final ___) {
+                                            return Image.asset(
+                                              "assets/images/profile_Placeholder.png",
+                                            );
+                                          },
+                                          placeholder: const AssetImage(
+                                            "assets/images/profile_Placeholder.png",
+                                          ),
+                                          image: Image.network(
+                                            theme.avatarURL,
+                                          ).image,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              // Title
-                              Text(
-                                displayedBlog.blogTitle!,
-                                textScaleFactor: 2.4,
-                                textAlign: TextAlign.center,
-                                softWrap: true,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: themeTitleColor,
+                                // Title
+                                Text(
+                                  theme.titleText,
+                                  textScaleFactor: 2.4,
+                                  textAlign: TextAlign.center,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(
+                                      int.parse(
+                                        "0xff${theme.titleColor}",
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                child: SafeArea(
-                                  child: _isMine
-                                      ? Row(
-                                          children: <Widget>[
-                                            // Drop Down Menu of My Blogs
-                                            Expanded(
-                                              flex: 4,
-                                              child: SizedBox(
-                                                width: _width / 2,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    left: 8,
+                                Positioned(
+                                  top: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: SafeArea(
+                                    child: _isMine
+                                        ? Row(
+                                            children: <Widget>[
+                                              // Drop Down Menu of My Blogs
+                                              Expanded(
+                                                flex: 4,
+                                                child: SizedBox(
+                                                  width: _width / 2,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      left: 8,
+                                                    ),
+                                                    child: myBlogsDropDown,
                                                   ),
-                                                  child: myBlogsDropDown,
                                                 ),
                                               ),
-                                            ),
-                                            // Search Icon
-                                            Expanded(
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                shape: const CircleBorder(),
-                                                clipBehavior: Clip.hardEdge,
-                                                child: IconButton(
-                                                  icon: const Icon(
-                                                    Icons.search_outlined,
-                                                    color: Colors.white,
-                                                  ),
-                                                  onPressed: () {
-                                                    // TODO(Ziyad): Implement this
-                                                  },
-                                                  splashColor: Colors.white10,
-                                                ),
-                                              ),
-                                            ),
-                                            // Appearance Icon
-                                            Expanded(
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                shape: const CircleBorder(),
-                                                clipBehavior: Clip.hardEdge,
-                                                child: IconButton(
-                                                  icon: const Icon(
-                                                    Icons.color_lens,
-                                                    color: Colors.white,
-                                                  ),
-                                                  onPressed: showEditAppearance,
-                                                  splashColor: Colors.white10,
-                                                ),
-                                              ),
-                                            ),
-                                            // Share Icon
-                                            Expanded(
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                shape: const CircleBorder(),
-                                                clipBehavior: Clip.hardEdge,
-                                                child: IconButton(
-                                                  icon: const Icon(
-                                                    Icons.share,
-                                                    color: Colors.white,
-                                                  ),
-                                                  onPressed: () {
-                                                    // TODO(Ziyad): Implement this
-                                                  },
-                                                  splashColor: Colors.white10,
-                                                ),
-                                              ),
-                                            ),
-                                            // Settings Icon
-                                            Expanded(
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                shape: const CircleBorder(),
-                                                clipBehavior: Clip.hardEdge,
-                                                child: IconButton(
-                                                  icon: const Icon(
-                                                    Icons.settings,
-                                                    size: 25,
-                                                    color: Colors.white,
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute<
-                                                          ProfileSettings>(
-                                                        builder: (
-                                                          final BuildContext
-                                                              context,
-                                                        ) =>
-                                                            const ProfileSettings(),
-                                                      ),
-                                                    );
-                                                  },
-                                                  splashColor: Colors.white10,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : Row(
-                                          // If Showing someone Blog
-                                          children: <Widget>[
-                                            // Back Icon
-                                            Expanded(
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                shape: const CircleBorder(),
-                                                clipBehavior: Clip.hardEdge,
-                                                child: IconButton(
-                                                  icon: const Icon(
-                                                    Icons.arrow_back_outlined,
-                                                    color: Colors.white,
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  splashColor: Colors.white10,
-                                                ),
-                                              ),
-                                            ),
-                                            // User Name
-                                            Expanded(
-                                              flex: 4,
-                                              child: SizedBox(
-                                                width: _width / 2,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    left: 8,
-                                                  ),
-                                                  child: Text(
-                                                    displayedBlog.blogTitle!,
-                                                    style: const TextStyle(
+                                              // Search Icon
+                                              Expanded(
+                                                child: Material(
+                                                  type:
+                                                      MaterialType.transparency,
+                                                  shape: const CircleBorder(),
+                                                  clipBehavior: Clip.hardEdge,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.search_outlined,
                                                       color: Colors.white,
-                                                      fontSize: 20,
+                                                    ),
+                                                    onPressed: searchIcon,
+                                                    splashColor: Colors.white10,
+                                                  ),
+                                                ),
+                                              ),
+                                              // Appearance Icon
+                                              Expanded(
+                                                child: Material(
+                                                  type:
+                                                      MaterialType.transparency,
+                                                  shape: const CircleBorder(),
+                                                  clipBehavior: Clip.hardEdge,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.color_lens,
+                                                      color: Colors.white,
+                                                    ),
+                                                    onPressed:
+                                                        showEditAppearance,
+                                                    splashColor: Colors.white10,
+                                                  ),
+                                                ),
+                                              ),
+                                              // Share Icon
+                                              Expanded(
+                                                child: Material(
+                                                  type:
+                                                      MaterialType.transparency,
+                                                  shape: const CircleBorder(),
+                                                  clipBehavior: Clip.hardEdge,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.share,
+                                                      color: Colors.white,
+                                                    ),
+                                                    onPressed: shareProfile,
+                                                    splashColor: Colors.white10,
+                                                  ),
+                                                ),
+                                              ),
+                                              // Settings Icon
+                                              Expanded(
+                                                child: Material(
+                                                  type:
+                                                      MaterialType.transparency,
+                                                  shape: const CircleBorder(),
+                                                  clipBehavior: Clip.hardEdge,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.settings,
+                                                      size: 25,
+                                                      color: Colors.white,
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute<
+                                                            ProfileSettings>(
+                                                          builder: (
+                                                            final BuildContext
+                                                                context,
+                                                          ) =>
+                                                              const ProfileSettings(),
+                                                        ),
+                                                      );
+                                                    },
+                                                    splashColor: Colors.white10,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Row(
+                                            // If Showing someone Blog
+                                            children: <Widget>[
+                                              // Back Icon
+                                              Expanded(
+                                                child: Material(
+                                                  type:
+                                                      MaterialType.transparency,
+                                                  shape: const CircleBorder(),
+                                                  clipBehavior: Clip.hardEdge,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.arrow_back_outlined,
+                                                      color: Colors.white,
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    splashColor: Colors.white10,
+                                                  ),
+                                                ),
+                                              ),
+                                              // User Name
+                                              Expanded(
+                                                flex: 4,
+                                                child: SizedBox(
+                                                  width: _width / 2,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      left: 8,
+                                                    ),
+                                                    child: Text(
+                                                      displayedBlog.blogTitle!,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            // Search Icon
-                                            Expanded(
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                shape: const CircleBorder(),
-                                                clipBehavior: Clip.hardEdge,
-                                                child: IconButton(
-                                                  icon: const Icon(
-                                                    Icons.search_outlined,
-                                                    color: Colors.white,
+                                              // Search Icon
+                                              Expanded(
+                                                child: Material(
+                                                  type:
+                                                      MaterialType.transparency,
+                                                  shape: const CircleBorder(),
+                                                  clipBehavior: Clip.hardEdge,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.search_outlined,
+                                                      color: Colors.white,
+                                                    ),
+                                                    onPressed: searchIcon,
+                                                    splashColor: Colors.white10,
                                                   ),
-                                                  onPressed: () {
-                                                    // TODO(Ziyad): Implement this
-                                                  },
-                                                  splashColor: Colors.white10,
                                                 ),
                                               ),
-                                            ),
-                                            // Message
-                                            Expanded(
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                shape: const CircleBorder(),
-                                                clipBehavior: Clip.hardEdge,
-                                                child: IconButton(
-                                                  icon: const Icon(
-                                                    Icons.email_rounded,
-                                                    color: Colors.white,
+                                              // Message
+                                              Expanded(
+                                                child: Material(
+                                                  type:
+                                                      MaterialType.transparency,
+                                                  shape: const CircleBorder(),
+                                                  clipBehavior: Clip.hardEdge,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.email_rounded,
+                                                      color: Colors.white,
+                                                    ),
+                                                    onPressed:
+                                                        showMessagesOption,
+                                                    splashColor: Colors.white10,
                                                   ),
-                                                  onPressed: showMessagesOption,
-                                                  splashColor: Colors.white10,
                                                 ),
                                               ),
-                                            ),
-                                            // Profile Icon
-                                            Expanded(
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                shape: const CircleBorder(),
-                                                clipBehavior: Clip.hardEdge,
-                                                child: IconButton(
-                                                  icon: const Icon(
-                                                    Icons.person,
-                                                    color: Colors.white,
+                                              // Profile Icon
+                                              Expanded(
+                                                child: Material(
+                                                  type:
+                                                      MaterialType.transparency,
+                                                  shape: const CircleBorder(),
+                                                  clipBehavior: Clip.hardEdge,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.person,
+                                                      color: Colors.white,
+                                                    ),
+                                                    onPressed:
+                                                        showProfileIconOption,
+                                                    splashColor: Colors.white10,
                                                   ),
-                                                  onPressed:
-                                                      showProfileIconOption,
-                                                  splashColor: Colors.white10,
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
+                                            ],
+                                          ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         // Description
-                        if (displayedBlog.blogDescription!.isNotEmpty)
+                        if (theme.description.isNotEmpty)
                           Text(
-                            displayedBlog.blogDescription!,
+                            theme.description,
                             textScaleFactor: 1.5,
                             textAlign: TextAlign.center,
                             softWrap: true,
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
-                              color: themeTitleColor,
+                              color: Color(
+                                int.parse(
+                                  "0xff${theme.titleColor}",
+                                ),
+                              ),
                             ),
                           ),
                       ],
@@ -1510,11 +1713,28 @@ class _ProfilePageState extends State<ProfilePage>
                     minHeight: 80,
                     maxHeight: 80,
                     child: Container(
-                      color: themeColor,
+                      color: Color(
+                        int.parse(
+                          "0xff${theme.backgroundColor}",
+                        ),
+                      ),
                       child: TabBar(
                         padding: const EdgeInsets.only(top: 32),
-                        indicatorColor: accentColor,
-                        labelColor: accentColor,
+                        unselectedLabelColor: Color(
+                          int.parse(
+                            "0xff${theme.accentColor}",
+                          ),
+                        ),
+                        indicatorColor: Color(
+                          int.parse(
+                            "0xff${theme.accentColor}",
+                          ),
+                        ),
+                        labelColor: Color(
+                          int.parse(
+                            "0xff${theme.accentColor}",
+                          ),
+                        ),
                         onTap: (final int index) async {
                           if (index == 0 && postsTabPosts.isEmpty)
                             await fetchProfilePosts();
@@ -1602,5 +1822,55 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return maxHeight != oldDelegate.maxHeight ||
         minHeight != oldDelegate.minHeight ||
         child != oldDelegate.child;
+  }
+}
+
+/// Class to Search in Profile
+class ProfileSearch extends SearchDelegate<String> {
+  /// Constructor
+  ProfileSearch({required this.blogID, required this.username});
+
+  /// Blog ID to Search in
+  final String blogID;
+
+  /// UserName
+  final String username;
+
+  @override
+  List<Widget>? buildActions(final BuildContext context) {
+    return <Widget>[
+      IconButton(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<ProfileSearchResult>(
+            builder: (final BuildContext context) => ProfileSearchResult(
+              word: query,
+              blogID: blogID,
+              username: username,
+            ),
+          ),
+        ),
+        icon: const Icon(Icons.search),
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(final BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+      icon: const Icon(Icons.clear),
+    );
+  }
+
+  @override
+  Widget buildResults(final BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(final BuildContext context) {
+    return Container();
   }
 }

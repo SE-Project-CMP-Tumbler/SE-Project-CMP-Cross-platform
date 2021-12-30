@@ -4,6 +4,7 @@ import "dart:io" as io;
 
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
+import 'package:tumbler/Models/blog_theme.dart';
 import "package:tumbler/Models/user.dart";
 
 /// Class [Api] is used for all GET, POST, PUT, Delete request from the backend.
@@ -59,7 +60,10 @@ class Api {
   final String _followTag = dotenv.env["follow_tag"] ?? " ";
   final String _tagData = dotenv.env["tagData"] ?? " ";
   final String _info = dotenv.env["info"] ?? " ";
-
+  final String _theme = dotenv.env["theme"] ?? " ";
+  final String _notifications = dotenv.env["notifications"] ?? " ";
+  final String _pin = dotenv.env["pin"] ?? " ";
+  final String _unpin = dotenv.env["unpin"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -101,6 +105,24 @@ class Api {
     }
   }
 
+  /// THIS WILL BE OVERRIDED WHILE DOING TESTING WITH A MOCK-CLIENT.
+  http.Client client = http.Client();
+
+  /// Make GET Request to the API to get List of
+  /// Trending tags.
+  Future<Map<String, dynamic>> getTrendingTags() async {
+    final http.Response response = await client
+        .get(Uri.parse(_host + _getTrendingTags))
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
   /// Make Post Request to the API to Sign Up
   Future<Map<String, dynamic>> signUp(
     final String blogUsername,
@@ -108,7 +130,7 @@ class Api {
     final String email,
     final int age,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _signUp),
           body: jsonEncode(<String, String>{
@@ -129,7 +151,7 @@ class Api {
     final String googleAccessToken,
     final int age,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _signUpWithGoogle),
           body: jsonEncode(<String, String>{
@@ -165,7 +187,7 @@ class Api {
   Future<Map<String, dynamic>> logInWithGoogle(
     final String googleAccessToken,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _loginWithGoogle),
           body: jsonEncode(<String, String>{
@@ -179,7 +201,7 @@ class Api {
 
   /// Make Post Request to the API to Send Forget Password Email.
   Future<Map<String, dynamic>> forgetPassword(final String email) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _forgotPassword),
           body: jsonEncode(<String, String>{
@@ -194,7 +216,7 @@ class Api {
 
   /// Upload [video] to our server to get url of this video.
   Future<Map<String, dynamic>> uploadVideo(final String video) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _uploadVideo),
           headers: _headerContentAuth,
@@ -209,7 +231,7 @@ class Api {
 
   ///get chats for that chats choose
   Future<Map<String, dynamic>> getChats() async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _chats),
           headers: _headerContentAuth,
@@ -220,7 +242,7 @@ class Api {
 
   ///get chat messages
   Future<Map<String, dynamic>> getMessages(final String roomId) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _chatMessages + roomId),
           headers: _headerContentAuth,
@@ -238,11 +260,15 @@ class Api {
     final String photo,
     final String roomId,
   ) async {
-    final http.Response response = await http
+    dynamic dt = <String, String>{"text": text};
+    if (photo != "") {
+      dt = <String, String>{"photo": photo};
+    }
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _sendMessage + roomId),
           headers: _headerContentAuth,
-          body: json.encode(<String, String>{"text": text}),
+          body: json.encode(dt),
         )
         .onError(errorFunction);
     return jsonDecode(response.body);
@@ -250,7 +276,7 @@ class Api {
 
   ///get room id for chat
   Future<Map<String, dynamic>> getRoomId(final String toBlogId) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _chatRoom),
           headers: _headerContentAuth,
@@ -265,7 +291,7 @@ class Api {
 
   /// Upload [image] to our server to get url of this image.
   Future<Map<String, dynamic>> uploadImage(final String image) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _uploadImage),
           headers: _headerContentAuth,
@@ -280,7 +306,7 @@ class Api {
 
   /// Upload [audio] to our server to get url of this audio.
   Future<Map<String, dynamic>> uploadAudio(final String audio) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _uploadAudio),
           headers: _headerContentAuth,
@@ -295,7 +321,7 @@ class Api {
 
   /// Get all blogs of user
   Future<Map<String, dynamic>> getAllBlogs() async {
-    final http.Response response = await http.get(
+    final http.Response response = await client.get(
       Uri.parse(_host + _blog),
       headers: _headerContentAuth,
     );
@@ -308,10 +334,11 @@ class Api {
     final String postStatus,
     final String postType,
     final String postTime,
+    final String blogId,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
-          Uri.parse(_host + _post + User.blogsIDs[User.currentProfile]),
+          Uri.parse(_host + _post + blogId),
           headers: _headerContentAuth,
           body: jsonEncode(<String, String>{
             "post_status": postStatus,
@@ -359,32 +386,63 @@ class Api {
   }
 
   /// get Post.
-  Future<Map<String, dynamic>> getPost(
-    final String postID,
-  ) async {
+  Future<Map<String, dynamic>> getPost(final String postID,) async {
     final http.Response response = await http
         .get(
-          Uri.parse(_host + _post + postID),
-          headers: _headerContentAuth,
-        )
+      Uri.parse(_host + _post + postID),
+      headers: _headerContentAuth,
+    )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// pin Post.
+  Future<Map<String, dynamic>> pinPost(final String postID,
+      final String blogID,) async {
+    final http.Response response = await http
+        .put(
+      Uri.parse(_host + _posts + _pin),
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, dynamic>{
+        "blog_id": blogID,
+        "post_id": postID,
+      }),
+    )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// unpin Post.
+  Future<Map<String, dynamic>> unPinPost(final String postID,
+      final String blogID,) async {
+    print(_host + _posts + _unpin);
+    final http.Response response = await http
+        .put(
+      Uri.parse(_host + _posts + _unpin),
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, dynamic>{
+        "blog_id": blogID,
+        "post_id": postID,
+      }),
+    )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
   /// GET Posts For the Home Page
   Future<Map<String, dynamic>> fetchHomePosts(final int page) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
-          Uri.parse(_host + _dashboard + "?page=$page"),
-          headers: _headerContentAuth,
-        )
+      Uri.parse(_host + _dashboard + "?page=$page"),
+      headers: _headerContentAuth,
+    )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
   /// GET Notes For the post with id [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(_host + _postNotes + postID),
           headers: _headerContentAuth,
@@ -395,7 +453,7 @@ class Api {
 
   /// GET getPostLikeStatus for a post with id [postID]
   Future<Map<String, dynamic>> getPostLikeStatus(final int postID) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
             _host +
@@ -412,11 +470,12 @@ class Api {
 
   /// To make Like on Post
   Future<Map<String, dynamic>> likePost(final int postId) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
-          Uri.parse(
+      Uri.parse(
             _host + _likePost + postId.toString(),
           ),
+          headers: _headerContentAuth,
         )
         .onError(errorFunction);
     return jsonDecode(response.body);
@@ -424,11 +483,12 @@ class Api {
 
   /// To Make Unlike on post
   Future<Map<String, dynamic>> unlikePost(final int postId) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .delete(
-          Uri.parse(
+      Uri.parse(
             _host + _likePost + postId.toString(),
           ),
+          headers: _headerContentAuth,
         )
         .onError(errorFunction);
     return jsonDecode(response.body);
@@ -439,17 +499,24 @@ class Api {
     final String postId,
     final String text,
   ) async {
-    final http.Response response = await http
+    print(_host + _post + _replyPost + postId);
+    final http.Response response = await client
         .post(
-          Uri.parse(
-            _host + _replyPost + postId,
-          ),
-          body: jsonEncode(<String, String>{
-            "reply_text": text,
-          }),
-          headers: _headerContentAuth,
-        )
-        .onError(errorFunction);
+      Uri.parse(
+        _host + _post + _replyPost + postId,
+      ),
+      body: jsonEncode(<String, String>{
+        "reply_text": text,
+      }),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
     return jsonDecode(response.body);
   }
 
@@ -457,7 +524,7 @@ class Api {
   Future<Map<String, dynamic>> unfollowBlog(
     final String blogId,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .delete(
           Uri.parse(
             _host + _followBlog + blogId,
@@ -472,14 +539,21 @@ class Api {
   Future<Map<String, dynamic>> getActivityNotifications(
     final String blogId,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
-          Uri.parse(
-            _host + _blog + "/" + blogId + "/notifications",
-          ),
-          headers: _headerContentAuth,
-        )
-        .onError(errorFunction);
+      Uri.parse(
+        _host + "/notifications?type=all&for_blog_id=" + blogId,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
     return jsonDecode(response.body);
   }
 
@@ -491,7 +565,7 @@ class Api {
     final String postStatus,
     final String postType,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _reblog + blogId + "/" + parentPostId),
           headers: _headerContentAuth,
@@ -511,7 +585,7 @@ class Api {
     final String email,
     final String password,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .put(
           Uri.parse(_host + _changeEmail),
           body: jsonEncode(<String, String>{
@@ -532,7 +606,7 @@ class Api {
     final String newPass,
     final String confirmPass,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .put(
           Uri.parse(_host + _changePass),
           body: jsonEncode(<String, String>{
@@ -549,7 +623,7 @@ class Api {
 
   /// Post request to log out
   Future<Map<String, dynamic>> logOut() async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _logOut),
           headers: _headerContentAuth,
@@ -575,7 +649,7 @@ class Api {
   Future<Map<String, dynamic>> postNewBlog(
     final String blogUserName,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _blog),
           headers: _headerContentAuth,
@@ -592,7 +666,7 @@ class Api {
   Future<Map<String, dynamic>> getBlogInformation(
     final String blogID,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
             _host + _blog + "/" + blogID,
@@ -604,11 +678,62 @@ class Api {
     return jsonDecode(response.body);
   }
 
+  /// to get the Theme of a specific blog
+  Future<Map<String, dynamic>> getBlogTheme(
+    final String blogID,
+  ) async {
+    final http.Response response = await http
+        .get(
+          Uri.parse(
+            _host + _blog + "/" + blogID + _theme,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+
+    return jsonDecode(response.body);
+  }
+
+  /// to get the Theme of a specific blog
+  Future<Map<String, dynamic>> setBlogTheme(
+    final String blogID,
+    final BlogTheme theme,
+  ) async {
+    final Map<String, String> body = <String, String>{
+      "color_title": "#" + theme.titleColor,
+      "font_title": theme.titleFont,
+      "font_weight_title": theme.titleWeight,
+      "title": theme.titleText,
+      "background_color": "#" + theme.backgroundColor,
+      "accent_color": "#" + theme.accentColor,
+      "body_font": theme.bodyFont,
+      "header_image": theme.headerImage,
+      "avatar": theme.avatarURL,
+      "avatar_shape": theme.avatarShape
+    };
+
+    if (theme.description.isNotEmpty) {
+      body["description"] = theme.description;
+    }
+
+    final http.Response response = await http
+        .put(
+          Uri.parse(
+            _host + _blog + "/" + blogID + _theme,
+          ),
+          headers: _headerContentAuth,
+          body: jsonEncode(body),
+        )
+        .onError(errorFunction);
+
+    return jsonDecode(response.body);
+  }
+
   /// to get the Settings of a specific blog
   Future<Map<String, dynamic>> getBlogSetting(
     final String blogID,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
             _host + _blogSettings + blogID,
@@ -641,7 +766,7 @@ class Api {
     final String blogID,
     final int page,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
             _host + _posts + blogID + _published + "?page=$page",
@@ -686,10 +811,10 @@ class Api {
 
   /// to get the draft posts of a specific blog
   Future<Map<String, dynamic>> fetchDraftPost() async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
-            _host + _posts + User.blogsIDs[User.currentProfile] + _draft,
+            _host + _post + User.blogsIDs[User.currentProfile] + _draft,
           ),
           headers: _headerContentAuth,
         )
@@ -882,6 +1007,23 @@ class Api {
         .get(
           Uri.parse(
             host + _search + word + "?page=$page",
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// fetching words for Profile search results
+  Future<Map<String, dynamic>> fetchSearchResultsProfile(
+    final String word,
+    final String blogID,
+    final int page,
+  ) async {
+    final http.Response response = await http
+        .get(
+          Uri.parse(
+            _host + _search + blogID + "/" + word + "?$page",
           ),
           headers: _headerContentAuth,
         )

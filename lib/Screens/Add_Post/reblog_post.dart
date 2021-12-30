@@ -41,13 +41,17 @@ class Reblog extends StatefulWidget {
 
 class _ReblogState extends State<Reblog> {
   final HtmlEditorController controller = HtmlEditorController();
-  String postButtonText = "Post";
+  String postButtonText = "Reblog";
 
   /// the current post type
   PostTypes postType = PostTypes.defaultPost;
 
   Future<void> addTheReblog() async {
     final String html = await controller.getText();
+    if (html.isEmpty) {
+      await showToast("Please Enter Text");
+      return;
+    }
     final String processedHtml = await extractMediaFiles(html);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {
@@ -67,7 +71,7 @@ class _ReblogState extends State<Reblog> {
     );
 
     if (response["meta"]["status"] == "200") {
-      await showToast("Added Successfully");
+      await showToast("Rebloged Successfully");
       Navigator.of(context).pop();
     } else {
       await showToast(response["meta"]["msg"]);

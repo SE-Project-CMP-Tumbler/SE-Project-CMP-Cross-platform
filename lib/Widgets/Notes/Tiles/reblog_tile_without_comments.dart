@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import "package:flutter/material.dart";
+import 'package:tumbler/Screens/Profile/profile_page.dart';
 
 import "Package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
@@ -44,7 +45,13 @@ class ReblogTileWithOutComments extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                // TODO(Waleed): Go to the profile
+                Navigator.of(context).push(
+                  MaterialPageRoute<ProfilePage>(
+                    builder: (final BuildContext context) => ProfilePage(
+                      blogID: blogID,
+                    ),
+                  ),
+                );
               },
               child: Text(
                 userName,

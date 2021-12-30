@@ -1,10 +1,14 @@
 import "package:csslib/src/messages.dart";
 import "package:flutter/material.dart";
 import "package:flutter_html/flutter_html.dart";
+import "package:random_color/random_color.dart";
 import "package:simple_url_preview/simple_url_preview.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/extract_mentions_tags.dart";
 import "package:tumbler/Methods/show_toast.dart";
+import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
+import "package:tumbler/Screens/Search/tag_posts.dart";
 import "package:url_launcher/url_launcher.dart";
 
 /// Used to render html content
@@ -25,57 +29,16 @@ class HtmlView extends StatefulWidget {
 class _HtmlViewState extends State<HtmlView> {
   String data = "";
 
-  Future<void> extractMentionsTags(final String htmlBeforeProcessing) async {
-    // Getting all mentions
-    String html = htmlBeforeProcessing;
-    int index1 = 0;
-    int x = 0;
-    while (x != -1 && index1 <= html.length - 5) {
-      x = html.indexOf("@", index1);
-      if (x != -1) {
-        index1 = html.indexOf(" ", x);
-        if (index1 == -1) {
-          index1 = html.indexOf("<", x);
-        }
-        final String username = html.substring(x + 1, index1);
-
-        final Map<String, dynamic> response = await Api().getUserInfo(username);
-        if (response["meta"]["status"] == "200") {
-          final String blogID = response["response"]["id"].toString();
-          html = html.replaceRange(
-            x,
-            index1,
-            "<a href='mention$blogID'>@$username</a>",
-          );
-          index1 += 13 + blogID.length;
-        }
-      }
-    }
-
-    index1 = 0;
-    x = 0;
-    while (x != -1 && index1 <= html.length - 5) {
-      x = html.indexOf("#", index1);
-      if (x != -1) {
-        index1 = html.indexOf(" ", x);
-        if (index1 == -1) {
-          index1 = html.indexOf("<", x);
-        }
-
-        final String tag = html.substring(x, index1);
-        html = html.replaceRange(x, index1, "<a href='tag'>$tag</a>");
-        index1 += 10;
-      }
-    }
-
-    setState(() => data = html);
+  Future<void> initialize() async {
+    data = await extractMentionsTags(widget.htmlData);
+    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
     data = widget.htmlData;
-    extractMentionsTags(widget.htmlData);
+    initialize();
   }
 
   @override
@@ -85,9 +48,6 @@ class _HtmlViewState extends State<HtmlView> {
       style: <String, Style>{
         "table": Style(
           backgroundColor: const Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-        ),
-        "p": Style(
-          color: Colors.black,
         ),
         "tr": Style(
           border: const Border(bottom: BorderSide(color: Colors.grey)),
@@ -102,9 +62,6 @@ class _HtmlViewState extends State<HtmlView> {
         ),
         "h5": Style(
           color: Colors.black,
-          // maxLines: 2,
-          // textOverflow: TextOverflow.ellipsis,
-          // color: Colors.black,
         ),
         "h4": Style(
           color: Colors.black,
@@ -136,8 +93,30 @@ class _HtmlViewState extends State<HtmlView> {
               ),
             ),
           );
-        } else if (url == "tag") {
-          // TODO(Ziyad): go to tag page
+        } else if (url.startsWith("tag")) {
+          final Map<String, dynamic> response =
+              await Api().fetchTagsDetails(url.substring(3));
+
+          if (response["meta"]["status"] == "200") {
+            await Navigator.push(
+              context,
+              MaterialPageRoute<TagPosts>(
+                builder: (final BuildContext context) => TagPosts(
+                  tag: Tag(
+                    tagDescription: response["response"]["tag_description"],
+                    tagImgUrl: response["response"]["tag_image"],
+                    followersCount:
+                        response["response"]["followers_number"] as int,
+                    isFollowed:
+                        (response["response"]["followed"] ?? false) as bool,
+                    postsCount: response["response"]["posts_count"],
+                  ),
+                  bgColor: RandomColor().randomColor(),
+                ),
+              ),
+            );
+          } else
+            await showToast(response["meta"]["msg"]);
         } else {
           if (await canLaunch(url))
             await launch(url);
@@ -148,7 +127,9 @@ class _HtmlViewState extends State<HtmlView> {
       customRender: <String, dynamic Function(RenderContext, Widget)>{
         "a": (final RenderContext context, final Widget child) {
           final String? herf = context.tree.element?.attributes["href"];
-          if (herf == null || herf.startsWith("mention") || herf == "tag")
+          if (herf == null ||
+              herf.startsWith("mention") ||
+              herf.startsWith("tag"))
             return null;
           else
             return Column(
@@ -159,6 +140,8 @@ class _HtmlViewState extends State<HtmlView> {
                   url: herf,
                   bgColor: Colors.transparent,
                   isClosable: false,
+                  siteNameStyle: const TextStyle(color: Colors.red),
+                  titleStyle: const TextStyle(color: Colors.black),
                 ),
               ],
             );
