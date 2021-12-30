@@ -1,9 +1,11 @@
 import "dart:convert";
 
 import "package:flutter/material.dart";
+import 'package:image_picker/image_picker.dart';
 import "package:pusher_client/pusher_client.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
+import "package:tumbler/Methods/choose_image.dart";
 import "package:tumbler/Models/message.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
@@ -24,10 +26,10 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late PusherClient pusher;
   late Channel channel;
-  late String friendName;
-  late String friendAvatar;
+  late String friendName = "";
+  late String friendAvatar = "";
   String chatTitle = " ";
-
+  String image = "";
   Future<void> bindEvent(
     final String channelName,
     final String eventName,
@@ -46,6 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
             encodedRes["from_blog_username"].toString(),
             "",
             encodedRes["text"],
+            encodedRes["photo"],
           ),
         );
         setState(() {});
@@ -78,6 +81,8 @@ class _ChatScreenState extends State<ChatScreen> {
   bool hasContent = false;
 
   Widget _buildMessage(final Message message, final bool change) {
+    print(message.photo);
+    print("lklk");
     return Container(
       child: change
           ? Row(
@@ -136,7 +141,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           vertical: 1,
                           horizontal: 1,
                         ),
-                        child: Text(message.text),
+                        child: (message.photo.isEmpty)
+                            ? Text(message.text)
+                            : Image.network(message.photo),
                       ),
                     ],
                   ),
@@ -161,7 +168,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       topRight: Radius.circular(15),
                     ),
                   ),
-                  child: Text(message.text),
+                  child: (message.photo.isEmpty)
+                      ? Text(message.text)
+                      : Image.network(message.photo),
                 ),
               ],
             ),
@@ -171,19 +180,22 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
 
   Future<void> submitMessage() async {
+    print(image);
     messages.insert(
       0,
       Message(
         User.blogsNames[User.currentProfile],
         "",
         _messageController.text,
+        image,
       ),
     );
     final Map<String, dynamic> res =
-        await Api().sendMessages(_messageController.text, "", roomId);
+        await Api().sendMessages(_messageController.text, image, roomId);
     //checking the status code of the received response.
     if (res["meta"]["status"] == "200") {
       _messageController.clear();
+      image = "";
       hasContent = false;
       setState(() {});
     } else
@@ -203,8 +215,23 @@ class _ChatScreenState extends State<ChatScreen> {
                 icon: const Icon(Icons.camera_alt),
                 color: Colors.purple,
                 iconSize: 25,
-                onPressed: () {},
+                onPressed: () async {
+                  dynamic img = await chooseImage(ImageSource.gallery);
+                  print("p1");
+                  if (img != null) {
+                    print("p2");
+                    Map<String, dynamic> url;
+                    url = await Api().uploadImage(img);
+                    String urlToSend = "";
+                    if (url["meta"]["status"] == "200") {
+                      urlToSend = url["response"]["url"].toString();
+                      image = urlToSend;
+                      submitMessage();
+                    }
+                  }
+                },
               ),
+              //Image.network(image),
             ],
           ),
           Row(
@@ -243,14 +270,15 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.clear();
       final List<dynamic> messagesList = response["response"]["chat_messages"];
       for (int i = 0; i < messagesList.length; i++) {
-        final String sender = messagesList[i]["from_blog_username"];
+        final String sender = messagesList[i]["blog_username"];
         const String rec = "";
         messages.insert(
           0,
           Message(
             sender,
             rec,
-            messagesList[i]["text"],
+            messagesList[i]["text"] ?? "",
+            messagesList[i]["photo"] ?? "",
           ),
         );
       }
@@ -278,7 +306,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(final BuildContext context) {
-    final String channelName = "private-channel-$roomId";
+    final String channelName = "channel-$roomId";
     bindEvent(channelName, "chat-update");
     return SafeArea(
       child: Scaffold(

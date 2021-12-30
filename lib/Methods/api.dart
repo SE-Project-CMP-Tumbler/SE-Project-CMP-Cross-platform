@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
 import "dart:convert";
 import "dart:io" as io;
-
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
 import 'package:tumbler/Models/blog_theme.dart';
@@ -82,7 +81,6 @@ class Api {
                       }
             }
         ''';
-
   final Map<String, String> _headerContent = <String, String>{
     io.HttpHeaders.acceptHeader: "application/json",
     io.HttpHeaders.contentTypeHeader: "application/json",
@@ -232,7 +230,7 @@ class Api {
 
   ///get chats for that chats choose
   Future<Map<String, dynamic>> getChats() async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _chats),
           headers: _headerContentAuth,
@@ -243,7 +241,7 @@ class Api {
 
   ///get chat messages
   Future<Map<String, dynamic>> getMessages(final String roomId) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _chatMessages + roomId),
           headers: _headerContentAuth,
@@ -261,11 +259,15 @@ class Api {
     final String photo,
     final String roomId,
   ) async {
-    final http.Response response = await http
+    dynamic dt = <String, String>{"text": text};
+    if (photo != "") {
+      dt = <String, String>{"photo": photo};
+    }
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _sendMessage + roomId),
           headers: _headerContentAuth,
-          body: json.encode(<String, String>{"text": text}),
+          body: json.encode(dt),
         )
         .onError(errorFunction);
     return jsonDecode(response.body);
@@ -273,7 +275,7 @@ class Api {
 
   ///get room id for chat
   Future<Map<String, dynamic>> getRoomId(final String toBlogId) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _chatRoom),
           headers: _headerContentAuth,
@@ -288,7 +290,7 @@ class Api {
 
   /// Upload [image] to our server to get url of this image.
   Future<Map<String, dynamic>> uploadImage(final String image) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _uploadImage),
           headers: _headerContentAuth,
@@ -331,10 +333,11 @@ class Api {
     final String postStatus,
     final String postType,
     final String postTime,
+    final String blogId,
   ) async {
     final http.Response response = await client
         .post(
-          Uri.parse(_host + _post + User.blogsIDs[User.currentProfile]),
+          Uri.parse(_host + _post + blogId),
           headers: _headerContentAuth,
           body: jsonEncode(<String, String>{
             "post_status": postStatus,
