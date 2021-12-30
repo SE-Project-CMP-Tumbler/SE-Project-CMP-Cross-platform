@@ -28,6 +28,7 @@ class NotesPage extends StatefulWidget {
   NotesPage({
     required final this.postID,
     required final this.index,
+    required final this.updateNotesInInteractionBar,
     final Key? key,
   }) : super(key: key);
 
@@ -36,6 +37,9 @@ class NotesPage extends StatefulWidget {
 
   /// Post Index
   int index;
+
+  ///
+  Function updateNotesInInteractionBar;
 
   @override
   _NotesPageState createState() => _NotesPageState();
@@ -82,6 +86,7 @@ class _NotesPageState extends State<NotesPage>
       repliesList =
           recievedNotes["response"]["replies"]["replies"] ?? <dynamic>[];
 
+
       // spilt blogs received into to sub-categories
       for (int i = 0; i < reblogCount; i++) {
         if (reblogsList[i]["reblog_content"].isEmpty) {
@@ -120,9 +125,9 @@ class _NotesPageState extends State<NotesPage>
   }
 
   Future<void> refresh() async {
-    setState(() async {
-      await initialize();
-    });
+    await initialize();
+    widget.updateNotesInInteractionBar();
+    setState(() {});
   }
 
   void changeBlogViewSection(final Enum type) {
@@ -139,6 +144,7 @@ class _NotesPageState extends State<NotesPage>
     // Start listening to changes.
     replyController.addListener(checkReplyText);
     tabController = TabController(vsync: this, length: 3);
+    super.initState();
   }
 
   @override
@@ -254,97 +260,114 @@ class _NotesPageState extends State<NotesPage>
                   ],
                 ),
               ),
-            if (reblogsWithCommentsList.isEmpty &&
-                    blogTypeToShow == blogsType.withComments.index ||
-                reblogsWithOutCommentsList.isEmpty &&
-                    blogTypeToShow == blogsType.others.index)
-              const EmptyBoxImage(msg: "No reblogs to show")
-            else
-              Padding(
-                padding: EdgeInsets.zero,
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverAppBar(
-                      title: FittedBox(
-                        child: (blogTypeToShow == blogsType.withComments.index)
-                            ? const Text(
-                                "Reblogs with comments",
-                                style: TextStyle(
-                                  color: Colors.black45,
-                                  fontSize: 17,
-                                ),
-                              )
-                            : const Text(
-                                "Other reblogs",
-                                style: TextStyle(
-                                  color: Colors.black45,
-                                  fontSize: 17,
-                                ),
+            Padding(
+              padding: EdgeInsets.zero,
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverAppBar(
+                    title: FittedBox(
+                      child: (blogTypeToShow == blogsType.withComments.index)
+                          ? const Text(
+                              "Reblogs with comments",
+                              style: TextStyle(
+                                color: Colors.black45,
+                                fontSize: 17,
                               ),
-                      ),
-                      floating: true,
-                      backgroundColor: Colors.white,
-                      titleSpacing: 0,
-                      elevation: 1,
-                      forceElevated: true,
-                      expandedHeight: 2,
-                      toolbarHeight: 40,
-                      leadingWidth: 10,
-                      leading: Container(),
-                      actions: <Widget>[
-                        IconButton(
-                          onPressed: () {
-                            showReblogsCategoriesBottomSheet(
-                              context,
-                              blogTypeToShow,
-                              changeBlogViewSection,
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.black45,
-                          ),
-                        )
-                      ],
+                            )
+                          : const Text(
+                              "Other reblogs",
+                              style: TextStyle(
+                                color: Colors.black45,
+                                fontSize: 17,
+                              ),
+                            ),
                     ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (final BuildContext context, final int index) =>
-                            (blogTypeToShow == blogsType.withComments.index)
-                                ? ReblogTileWithComments(
-                                    avatarUrl: reblogsWithCommentsList[index]
-                                        ["blog_avatar"],
-                                    htmlData: reblogsWithCommentsList[index]
-                                        ["reblog_content"],
-                                    userName: reblogsWithCommentsList[index]
-                                        ["blog_username"],
-                                    avatarShape: reblogsWithCommentsList[index]
-                                        ["blog_avatar_shape"],
-                                    blogID: reblogsWithCommentsList[index]
-                                            ["blog_id"]
-                                        .toString(),
-                                  )
-                                : ReblogTileWithOutComments(
-                                    userName: reblogsWithOutCommentsList[index]
-                                        ["blog_username"],
-                                    avatarUrl: reblogsWithOutCommentsList[index]
-                                        ["blog_avatar"],
-                                    avatarShape:
-                                        reblogsWithOutCommentsList[index]
-                                            ["blog_avatar_shape"],
-                                    blogID: reblogsWithOutCommentsList[index]
-                                            ["blog_id"]
-                                        .toString(),
-                                  ),
-                        childCount:
-                            (blogTypeToShow == blogsType.withComments.index)
-                                ? reblogsWithCommentsList.length
-                                : reblogsWithOutCommentsList.length,
-                      ),
-                    )
-                  ],
-                ),
+                    floating: true,
+                    backgroundColor: Colors.white,
+                    titleSpacing: 0,
+                    elevation: 1,
+                    forceElevated: true,
+                    expandedHeight: 2,
+                    toolbarHeight: 40,
+                    leadingWidth: 10,
+                    leading: Container(),
+                    actions: <Widget>[
+                      IconButton(
+                        onPressed: () {
+                          showReblogsCategoriesBottomSheet(
+                            context,
+                            blogTypeToShow,
+                            changeBlogViewSection,
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                      )
+                    ],
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (final BuildContext context, final int index) =>
+                          (reblogsWithCommentsList.isEmpty &&
+                                      blogTypeToShow ==
+                                          blogsType.withComments.index ||
+                                  reblogsWithOutCommentsList.isEmpty &&
+                                      blogTypeToShow == blogsType.others.index)
+                              ? Column(
+                                  children: const <Widget>[
+                                    SizedBox(
+                                      height: 90,
+                                    ),
+                                    EmptyBoxImage(
+                                      msg: "No reblogs to show",
+                                    ),
+                                  ],
+                                )
+                              : (blogTypeToShow == blogsType.withComments.index)
+                                  ? ReblogTileWithComments(
+                                      avatarUrl: reblogsWithCommentsList[index]
+                                          ["blog_avatar"],
+                                      htmlData: reblogsWithCommentsList[index]
+                                          ["reblog_content"],
+                                      userName: reblogsWithCommentsList[index]
+                                          ["blog_username"],
+                                      avatarShape:
+                                          reblogsWithCommentsList[index]
+                                              ["blog_avatar_shape"],
+                                      blogID: reblogsWithCommentsList[index]
+                                              ["blog_id"]
+                                          .toString(),
+                                    )
+                                  : ReblogTileWithOutComments(
+                                      userName:
+                                          reblogsWithOutCommentsList[index]
+                                              ["blog_username"],
+                                      avatarUrl:
+                                          reblogsWithOutCommentsList[index]
+                                              ["blog_avatar"],
+                                      avatarShape:
+                                          reblogsWithOutCommentsList[index]
+                                              ["blog_avatar_shape"],
+                                      blogID: reblogsWithOutCommentsList[index]
+                                              ["blog_id"]
+                                          .toString(),
+                                    ),
+                      childCount: (reblogsWithCommentsList.isEmpty &&
+                                  blogTypeToShow ==
+                                      blogsType.withComments.index ||
+                              reblogsWithOutCommentsList.isEmpty &&
+                                  blogTypeToShow == blogsType.others.index)
+                          ? 1
+                          : (blogTypeToShow == blogsType.withComments.index)
+                              ? reblogsWithCommentsList.length
+                              : reblogsWithOutCommentsList.length,
+                    ),
+                  )
+                ],
               ),
+            ),
             if (likesList.isEmpty)
               const EmptyBoxImage(msg: "No likes to show")
             else

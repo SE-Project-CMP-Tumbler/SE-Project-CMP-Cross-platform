@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Activity_Notifications/avatar_with_icon.dart";
+import "package:tumbler/Models/user.dart";
 
 ///Widget that represents the mention notification showing up in the activity
 ///page
@@ -60,8 +61,9 @@ class MentionNotificationWidget extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const TextSpan(
-                        text: " mentioned you in a post @changeMeLaterPlease ",
+                      TextSpan(
+                        text:
+                            " mentioned you in a post @${User.blogsNames[User.currentProfile]}",
                       )
                     ],
                   ),

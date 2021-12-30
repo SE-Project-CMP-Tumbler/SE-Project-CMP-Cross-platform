@@ -93,6 +93,7 @@ class Api {
     io.HttpHeaders.authorizationHeader: "Bearer " + User.accessToken,
   };
 
+
   /// When an error occur with any api request
   http.Response errorFunction(
     final Object? error,
@@ -105,6 +106,24 @@ class Api {
     }
   }
 
+  /// THIS WILL BE OVERRIDED WHILE DOING TESTING WITH A MOCK-CLIENT.
+  http.Client client = http.Client();
+
+  /// Make GET Request to the API to get List of
+  /// Trending tags.
+  Future<Map<String, dynamic>> getTrendingTags() async {
+    final http.Response response = await client
+        .get(Uri.parse(_host + _getTrendingTags))
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
   /// Make Post Request to the API to Sign Up
   Future<Map<String, dynamic>> signUp(
     final String blogUsername,
@@ -112,7 +131,7 @@ class Api {
     final String email,
     final int age,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _signUp),
           body: jsonEncode(<String, String>{
@@ -133,7 +152,7 @@ class Api {
     final String googleAccessToken,
     final int age,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _signUpWithGoogle),
           body: jsonEncode(<String, String>{
@@ -152,7 +171,7 @@ class Api {
     final String email,
     final String password,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _login),
           body: jsonEncode(<String, String>{
@@ -169,7 +188,7 @@ class Api {
   Future<Map<String, dynamic>> logInWithGoogle(
     final String googleAccessToken,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _loginWithGoogle),
           body: jsonEncode(<String, String>{
@@ -183,7 +202,7 @@ class Api {
 
   /// Make Post Request to the API to Send Forget Password Email.
   Future<Map<String, dynamic>> forgetPassword(final String email) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _forgotPassword),
           body: jsonEncode(<String, String>{
@@ -198,7 +217,7 @@ class Api {
 
   /// Upload [video] to our server to get url of this video.
   Future<Map<String, dynamic>> uploadVideo(final String video) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _uploadVideo),
           headers: _headerContentAuth,
@@ -284,7 +303,7 @@ class Api {
 
   /// Upload [audio] to our server to get url of this audio.
   Future<Map<String, dynamic>> uploadAudio(final String audio) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _uploadAudio),
           headers: _headerContentAuth,
@@ -299,7 +318,7 @@ class Api {
 
   /// Get all blogs of user
   Future<Map<String, dynamic>> getAllBlogs() async {
-    final http.Response response = await http.get(
+    final http.Response response = await client.get(
       Uri.parse(_host + _blog),
       headers: _headerContentAuth,
     );
@@ -313,7 +332,7 @@ class Api {
     final String postType,
     final String postTime,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _post + User.blogsIDs[User.currentProfile]),
           headers: _headerContentAuth,
@@ -408,7 +427,7 @@ class Api {
 
   /// GET Posts For the Home Page
   Future<Map<String, dynamic>> fetchHomePosts(final int page) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
       Uri.parse(_host + _dashboard + "?page=$page"),
       headers: _headerContentAuth,
@@ -419,7 +438,7 @@ class Api {
 
   /// GET Notes For the post with id [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(_host + _postNotes + postID),
           headers: _headerContentAuth,
@@ -430,7 +449,7 @@ class Api {
 
   /// GET getPostLikeStatus for a post with id [postID]
   Future<Map<String, dynamic>> getPostLikeStatus(final int postID) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
             _host +
@@ -447,7 +466,7 @@ class Api {
 
   /// To make Like on Post
   Future<Map<String, dynamic>> likePost(final int postId) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
       Uri.parse(
             _host + _likePost + postId.toString(),
@@ -460,7 +479,7 @@ class Api {
 
   /// To Make Unlike on post
   Future<Map<String, dynamic>> unlikePost(final int postId) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .delete(
       Uri.parse(
             _host + _likePost + postId.toString(),
@@ -476,14 +495,35 @@ class Api {
     final String postId,
     final String text,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
+      Uri.parse(
+        _host + _replyPost + postId,
+      ),
+      body: jsonEncode(<String, String>{
+        "reply_text": text,
+      }),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+    return jsonDecode(response.body);
+  }
+
+  ///Sends a post request to unfollow a blog.
+  Future<Map<String, dynamic>> unfollowBlog(
+    final String blogId,
+  ) async {
+    final http.Response response = await client
+        .delete(
           Uri.parse(
-            _host + _post + _replyPost + postId,
+            _host + _followBlog + blogId,
           ),
-          body: jsonEncode(<String, String>{
-            "reply_text": text,
-          }),
           headers: _headerContentAuth,
         )
         .onError(errorFunction);
@@ -494,14 +534,21 @@ class Api {
   Future<Map<String, dynamic>> getActivityNotifications(
     final String blogId,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
-          Uri.parse(
-            _host + _notifications,
-          ),
-          headers: _headerContentAuth,
-        )
-        .onError(errorFunction);
+      Uri.parse(
+        _host + "/notifications?type=all&for_blog_id=" + blogId,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError((final Object? error, final StackTrace stackTrace) {
+      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        return http.Response(_weirdConnection, 502);
+      } else {
+        return http.Response(_failed, 404);
+      }
+    });
+
     return jsonDecode(response.body);
   }
 
@@ -513,7 +560,7 @@ class Api {
     final String postStatus,
     final String postType,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _reblog + blogId + "/" + parentPostId),
           headers: _headerContentAuth,
@@ -533,7 +580,7 @@ class Api {
     final String email,
     final String password,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .put(
           Uri.parse(_host + _changeEmail),
           body: jsonEncode(<String, String>{
@@ -554,7 +601,7 @@ class Api {
     final String newPass,
     final String confirmPass,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .put(
           Uri.parse(_host + _changePass),
           body: jsonEncode(<String, String>{
@@ -571,7 +618,7 @@ class Api {
 
   /// Post request to log out
   Future<Map<String, dynamic>> logOut() async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _logOut),
           headers: _headerContentAuth,
@@ -597,7 +644,7 @@ class Api {
   Future<Map<String, dynamic>> postNewBlog(
     final String blogUserName,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .post(
           Uri.parse(_host + _blog),
           headers: _headerContentAuth,
@@ -614,7 +661,7 @@ class Api {
   Future<Map<String, dynamic>> getBlogInformation(
     final String blogID,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
             _host + _blog + "/" + blogID,
@@ -681,7 +728,7 @@ class Api {
   Future<Map<String, dynamic>> getBlogSetting(
     final String blogID,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
             _host + _blogSettings + blogID,
@@ -714,7 +761,7 @@ class Api {
     final String blogID,
     final int page,
   ) async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
             _host + _posts + blogID + _published + "?page=$page",
@@ -759,7 +806,7 @@ class Api {
 
   /// to get the draft posts of a specific blog
   Future<Map<String, dynamic>> fetchDraftPost() async {
-    final http.Response response = await http
+    final http.Response response = await client
         .get(
           Uri.parse(
             _host + _posts + User.blogsIDs[User.currentProfile] + _draft,
