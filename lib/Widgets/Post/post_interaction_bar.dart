@@ -134,12 +134,14 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             ),
           ),
           IconButton(
+            key: const ValueKey<String>("REBLOG"),
             onPressed: () {
               // TODO(Ziyad): Share
             },
             icon: const Icon(
               CupertinoIcons.arrowshape_turn_up_right,
               color: Colors.black,
+              semanticLabel: "Reblog",
             ),
           ),
           IconButton(
@@ -159,6 +161,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             ),
           ),
           IconButton(
+            key: const ValueKey<String>("NOTES"),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<NotesPage>(

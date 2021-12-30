@@ -1,0 +1,11 @@
+version: "3.3"
+
+services:
+  app:
+    container_name: flutter-dev
+    image: flutter-dev
+    tty: true
+    build:
+      context: .
+    ports:
+      - 4000:80

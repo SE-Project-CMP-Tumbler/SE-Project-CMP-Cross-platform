@@ -220,6 +220,7 @@ class _EditPostState extends State<EditPost> {
         postType = PostTypes.privatePost;
         postButtonText = "Post privately";
       }
+      controller.clear();
       controller.insertHtml(response["response"]["post_body"]);
       setState(() {});
     } else {

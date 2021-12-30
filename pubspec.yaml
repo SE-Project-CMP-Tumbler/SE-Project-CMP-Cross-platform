@@ -57,12 +57,15 @@ dependencies:
   contained_tab_bar_view: ^0.8.0
   enhanced_drop_down: ^0.1.7+1
   pusher_client: ^2.0.0
+  flutter_pusher: ^1.0.3
   random_color: ^1.0.6-nullsafety
   infinite_scroll_pagination: ^3.1.0
   sliver_header_delegate: ^0.0.5
   flutter_launcher_icons: ^0.9.2
   sliver_tools: ^0.2.5
   flutter_svg: ^0.23.0+1
+  simple_url_preview: ^3.0.1
+
 
 dev_dependencies:
   flutter_test:
