@@ -24,11 +24,10 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
     final Map<String, dynamic> response = await Api().fetchDraftPost();
 
     if (response["meta"]["status"] == "200") {
-      setState(
-        () async => _posts.addAll(
-          await PostModel.fromJSON(response["response"]["posts"]),
-        ),
+      _posts.addAll(
+        await PostModel.fromJSON(response["response"]["posts"]),
       );
+      setState(() {});
     } else
       await showToast(response["meta"]["msg"]);
 
@@ -104,7 +103,6 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
   @override
   Widget build(final BuildContext context) {
     return Scaffold(
-      backgroundColor: appBackgroundColor,
       appBar: AppBar(
         backgroundColor: appBackgroundColor,
         title: const Text("Drafts"),

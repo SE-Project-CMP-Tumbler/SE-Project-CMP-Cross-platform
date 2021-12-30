@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
 import "dart:convert";
 import "dart:io" as io;
+
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
 import 'package:tumbler/Models/blog_theme.dart';
@@ -498,10 +499,11 @@ class Api {
     final String postId,
     final String text,
   ) async {
+    print(_host + _post + _replyPost + postId);
     final http.Response response = await client
         .post(
       Uri.parse(
-        _host + _replyPost + postId,
+        _host + _post + _replyPost + postId,
       ),
       body: jsonEncode(<String, String>{
         "reply_text": text,
@@ -809,7 +811,6 @@ class Api {
 
   /// to get the draft posts of a specific blog
   Future<Map<String, dynamic>> fetchDraftPost() async {
-    print(_host + _post + User.blogsIDs[User.currentProfile] + _draft);
     final http.Response response = await client
         .get(
           Uri.parse(
