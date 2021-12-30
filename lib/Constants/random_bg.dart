@@ -1,0 +1,20 @@
+/// for displaying search bg
+List<String> randomBg = <String>[
+  "https://64.media.tumblr.com/6aec9d3cb411d320bc90d5667c3496b0/5eb92e9721ea69f9-ad/s540x810/5cbf883eeba29eacd6a523d422a1b82a7f348b6d.png",
+  "https://64.media.tumblr.com/724112c4d0997f53de23ae33f562a899/16779be0c8855816-db/s2048x3072/f74bf8fed79ef6e5220a3453305d4fc5cfdf0aaa.jpg",
+  "https://64.media.tumblr.com/4530e4a90a3489bb2b4ef39d13df2913/b77690f1930f7869-15/s1280x1920/97db0d4e074b4a89b336fe6b361da4147fc74885.jpg",
+  "https://64.media.tumblr.com/cc5f2ec8a5fbfb5ee66b7a2469cddc2a/f510213332fe6503-29/s1280x1920/b4216bfdbf357a1d3cab7bc2974845a3f2da1158.jpg",
+  "https://64.media.tumblr.com/71c50f010f0de5b797935a3aceaf1bf5/ef5be79c5bb4228f-c5/s1280x1920/3b9931da64b02921f8aa25358d9f835df5a47fcc.gifv",
+  "https://64.media.tumblr.com/f6bdf6f4e0e43535573435fbc8675106/b4f2445c9b485f06-14/s500x750/375b5147adf58f0916193128d1ab8d771b623e24.jpg",
+  "https://64.media.tumblr.com/04b8092d5ed0a9ad9e15dc3549da7fca/15058898eeb700e9-a5/s400x600/f6682b5cfa3812f19e342383058f59894eb405d2.gifv",
+  "https://64.media.tumblr.com/26bae82b477edcfe354eaa922e0840f3/b66c12b8f4a160a5-37/s250x400/b6f357cefa49db7a4d2ec46e8ef1df4ac1e26b97.gifv",
+  "https://64.media.tumblr.com/0fc248402402e455676c5c00d23a4a4d/6b09ff75a24d3918-71/s500x750/a0497d8736bac478a752a9e4449d40c1f2e0965f.jpg",
+  "https://64.media.tumblr.com/a0a9d2d66353400073d87ab5f1c8d28d/c77e254b88282ac4-0c/s500x750/e306047fabc5c729fc196fe029668b13a9693ee1.gifv",
+  "https://64.media.tumblr.com/3bb66aa7d56a6570c70558704a34d063/b912eae1a1ee74b6-fd/s500x750/d666fd17d0e037f8ced7255d4d464f8165221a42.png",
+  "https://64.media.tumblr.com/c15e7bcdbc94b91fbc16161ecfcd07cf/f5634647cc305f8e-d7/s500x750/3e65140371d01755ef852730822bf96ab1664fc3.gifv",
+  "https://64.media.tumblr.com/60b59500de0987ea7e10f1a8a93a19b1/1d77f642fea568fe-98/s1280x1920/e0fdb02bdeafc67683a2fdf48feb1b963266ad01.gifv",
+  "https://64.media.tumblr.com/6c506b6c9e8a359a2393771e9c0d903c/46786e3194f78d23-5b/s640x960/540513a0f3a5d0884aae43cc244a6260ce8d035e.jpg",
+  "https://64.media.tumblr.com/efbd27f441e38e06d7c2190d056abe28/7cccea89cd4ff555-db/s1280x1920/61b542c26537967a48b4f772aeb447b36122cc05.jpg",
+  "https://64.media.tumblr.com/3828423e4e1e23833d4182f6776c4d21/a89f1aab55184919-af/s500x750/6ac86c54c204d11f2744c36591cd2ce6a35a809f.jpg",
+  "https://64.media.tumblr.com/4b6e429dfe041236a833c19fbf55e8d2/b9828e6dfc144f63-5b/s500x750/ea49b765535fe2e1c172f7a3ddb72604bf56fe2f.jpg"
+];

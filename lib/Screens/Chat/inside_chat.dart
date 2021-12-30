@@ -1,42 +1,56 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:pusher_client/pusher_client.dart';
-import "package:tumbler/Models/http_requests_exceptions.dart";
-import "package:tumbler/Models/message.dart";
-import "../../Methods/api.dart";
-import "../../Models/user.dart";
-//import 'package:tumbler/Widgets/Post/post_personal_avatar.dart';
-import '../../Widgets/Post/post_personal_avatar.dart';
+import "dart:convert";
 
-List<Message> messages = [];
+import "package:flutter/material.dart";
+import 'package:image_picker/image_picker.dart';
+import "package:pusher_client/pusher_client.dart";
+import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/show_toast.dart";
+import "package:tumbler/Methods/choose_image.dart";
+import "package:tumbler/Models/message.dart";
+import "package:tumbler/Models/user.dart";
+import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
+
+List<Message> messages = <Message>[];
 
 ///Chat screen
 class ChatScreen extends StatefulWidget {
+  /// Constructor
+  const ChatScreen({required this.withBlogID});
+
+  final String withBlogID;
+
   @override
-  String with_blog_id;
-  ChatScreen(this.with_blog_id);
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   late PusherClient pusher;
   late Channel channel;
-  late String friendName;
-  late String friendAvatar;
+  late String friendName = "";
+  late String friendAvatar = "";
   String chatTitle = " ";
-  void bindEvent(String channelName, String eventName) async {
+  String image = "";
+  Future<void> bindEvent(
+    final String channelName,
+    final String eventName,
+  ) async {
     await initPusher();
-    pusher.connect();
-    channel = await pusher.subscribe(channelName);
-    await channel.bind(eventName, (final last) {
+    await pusher.connect();
+    channel = pusher.subscribe(channelName);
+    await channel.bind(eventName, (final PusherEvent? last) {
       final String data = last!.data.toString();
-      final encodedRes = jsonDecode(data);
+      final Map<String, dynamic> encodedRes = jsonDecode(data);
       if (encodedRes["from_blog_id"].toString() !=
           User.blogsIDs[User.currentProfile]) {
         messages.insert(
-            0,
-            Message(encodedRes["from_blog_username"].toString(), "",
-                encodedRes["text"]));
+          0,
+          Message(
+            encodedRes["from_blog_username"].toString(),
+            "",
+            encodedRes["text"],
+            encodedRes["photo"],
+          ),
+        );
         setState(() {});
       }
     });
@@ -48,7 +62,9 @@ class _ChatScreenState extends State<ChatScreen> {
       PusherOptions(
         auth: PusherAuth(
           "https://api.dev.tumbler.social/broadcasting/auth",
-          headers: {"Authorization": "Bearer ${User.accessToken}"},
+          headers: <String, String>{
+            "Authorization": "Bearer ${User.accessToken}"
+          },
         ),
         cluster: "eu",
       ),
@@ -63,145 +79,180 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   bool hasContent = false;
-  _buildMessage(Message message, bool Change) {
+
+  Widget _buildMessage(final Message message, final bool change) {
+    print(message.photo);
+    print("lklk");
     return Container(
-      child: Change
-          ? Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                      margin: EdgeInsets.only(top: 5.0, bottom: 2.0),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
-                      width: 41,
-                      height: 42,
-                      child: (message.sender ==
-                              User.blogsNames[User.currentProfile])
-                          ? PersonAvatar(
-                              avatarPhotoLink:
-                                  User.avatars[User.currentProfile],
-                              shape: "",
-                              blogID: User.blogsIDs[User.currentProfile])
-                          : PersonAvatar(
-                              avatarPhotoLink: friendAvatar,
-                              shape: "",
-                              blogID: widget.with_blog_id)),
-                  Container(
-                    margin: EdgeInsets.only(top: 5.0, bottom: 2.0),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(15.0),
-                          topLeft: Radius.circular(15.0),
-                          bottomRight: Radius.circular(15.0),
-                          topRight: Radius.circular(15.0),
-                        )),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.0, horizontal: 4.0),
-                          child: Text(
-                            message.sender,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+      child: change
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.only(top: 5, bottom: 2),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                  width: 41,
+                  height: 42,
+                  child: (message.sender ==
+                          User.blogsNames[User.currentProfile])
+                      ? PersonAvatar(
+                          avatarPhotoLink: User.avatars[User.currentProfile],
+                          shape: "",
+                          blogID: User.blogsIDs[User.currentProfile],
+                        )
+                      : PersonAvatar(
+                          avatarPhotoLink: friendAvatar,
+                          shape: "",
+                          blogID: widget.withBlogID,
                         ),
-                        Container(
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.65,
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.0, horizontal: 1.0),
-                          child: Text(message.text),
-                        ),
-                      ],
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 5, bottom: 2),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      topLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                      topRight: Radius.circular(15),
                     ),
                   ),
-                ],
-              ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 1,
+                          horizontal: 4,
+                        ),
+                        child: Text(
+                          message.sender,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.65,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 1,
+                          horizontal: 1,
+                        ),
+                        child: (message.photo.isEmpty)
+                            ? Text(message.text)
+                            : Image.network(message.photo),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             )
           : Row(
-              children: [
+              children: <Widget>[
                 Container(
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.65,
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.65,
+                  ),
+                  margin: const EdgeInsets.only(left: 45, top: 2, bottom: 2),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      topLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                      topRight: Radius.circular(15),
                     ),
-                    margin: EdgeInsets.only(left: 45.0, top: 2, bottom: 2),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(15.0),
-                          topLeft: Radius.circular(15.0),
-                          bottomRight: Radius.circular(15.0),
-                          topRight: Radius.circular(15.0),
-                        )),
-                    child: Text(message.text)),
+                  ),
+                  child: (message.photo.isEmpty)
+                      ? Text(message.text)
+                      : Image.network(message.photo),
+                ),
               ],
             ),
     );
   }
 
-  final _messageController = new TextEditingController();
-  submitMessage() async {
+  final TextEditingController _messageController = TextEditingController();
+
+  Future<void> submitMessage() async {
+    print(image);
     messages.insert(
-        0,
-        Message(
-            User.blogsNames[User.currentProfile], "", _messageController.text));
-    final dynamic res =
-        await Api().sendMessages(_messageController.text, "", roomId);
+      0,
+      Message(
+        User.blogsNames[User.currentProfile],
+        "",
+        _messageController.text,
+        image,
+      ),
+    );
+    final Map<String, dynamic> res =
+        await Api().sendMessages(_messageController.text, image, roomId);
     //checking the status code of the received response.
-    if (res.statusCode == 401)
-      throw HttpException("You are not authorized");
-    else if (res.statusCode == 404) {
-      throw HttpException("Not Found!");
-    }
-    _messageController.clear();
-    hasContent = false;
-    setState(() => {});
+    if (res["meta"]["status"] == "200") {
+      _messageController.clear();
+      image = "";
+      hasContent = false;
+      setState(() {});
+    } else
+      await showToast(res["meta"]["msg"]);
   }
 
-  _buildMessageComposer() {
+  Container _buildMessageComposer() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
-      height: 100.0,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      height: 100,
       color: Colors.white,
       child: Column(
-        children: [
+        children: <Widget>[
           Row(
-            children: [
+            children: <Widget>[
               IconButton(
-                icon: Icon(Icons.camera_alt),
+                icon: const Icon(Icons.camera_alt),
                 color: Colors.purple,
-                iconSize: 25.0,
-                onPressed: () {},
+                iconSize: 25,
+                onPressed: () async {
+                  dynamic img = await chooseImage(ImageSource.gallery);
+                  print("p1");
+                  if (img != null) {
+                    print("p2");
+                    Map<String, dynamic> url;
+                    url = await Api().uploadImage(img);
+                    String urlToSend = "";
+                    if (url["meta"]["status"] == "200") {
+                      urlToSend = url["response"]["url"].toString();
+                      image = urlToSend;
+                      submitMessage();
+                    }
+                  }
+                },
               ),
+              //Image.network(image),
             ],
           ),
           Row(
-            children: [
+            children: <Widget>[
               Expanded(
                 child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(hintText: "Say your thing"),
-                    onChanged: (newTxt) {
-                      print(_messageController.text);
-                      if (_messageController.text.isEmpty) {
-                        setState(() => hasContent = false);
-                      } else {
-                        setState(() => hasContent = true);
-                      }
-                    }),
+                  controller: _messageController,
+                  decoration: const InputDecoration(hintText: "Say your thing"),
+                  onChanged: (final String newTxt) {
+                    if (_messageController.text.isEmpty) {
+                      setState(() => hasContent = false);
+                    } else {
+                      setState(() => hasContent = true);
+                    }
+                  },
+                ),
               ),
               IconButton(
-                icon: Icon(Icons.send),
+                icon: const Icon(Icons.send),
                 color: Colors.purple,
-                iconSize: 25.0,
+                iconSize: 25,
                 onPressed:
                     _messageController.text.isNotEmpty ? submitMessage : null,
               ),
@@ -212,52 +263,51 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void loadMessages(String roomId) async {
-    final dynamic res = await Api().getMessages(roomId);
+  Future<void> loadMessages(final String roomId) async {
+    final Map<String, dynamic> response = await Api().getMessages(roomId);
     //checking the status code of the received response.F
-    if (res.statusCode == 401)
-      throw HttpException("You are not authorized");
-    else if (res.statusCode == 404) {
-      throw HttpException("Not Found!");
-    }
-    messages.clear();
-    final Map<String, dynamic> encodedRes = jsonDecode(res.body);
-    final List<dynamic> messagesList = encodedRes["response"]["chat_messages"];
-    for (int i = 0; i < messagesList.length; i++) {
-      String sender = messagesList[i]["from_blog_username"];
-      String rec = "";
-      messages.insert(
-        0,
-        Message(
-          sender,
-          rec,
-          messagesList[i]["text"],
-        ),
-      );
-    }
-    setState(() {});
+    if (response["meta"]["status"] == "200") {
+      messages.clear();
+      final List<dynamic> messagesList = response["response"]["chat_messages"];
+      for (int i = 0; i < messagesList.length; i++) {
+        final String sender = messagesList[i]["blog_username"];
+        const String rec = "";
+        messages.insert(
+          0,
+          Message(
+            sender,
+            rec,
+            messagesList[i]["text"] ?? "",
+            messagesList[i]["photo"] ?? "",
+          ),
+        );
+      }
+      setState(() {});
+    } else
+      await showToast(response["meta"]["msg"]);
   }
 
   String roomId = "";
-  dynamic initialzeMe() async {
-    final dynamic response = await Api().getRoomId(widget.with_blog_id);
-    final Map<String, dynamic> encodedRes = jsonDecode(response.body);
-    dynamic droomId = encodedRes["response"]["chat_room_id"];
+
+  Future<void> initialzeMe() async {
+    final Map<String, dynamic> response =
+        await Api().getRoomId(widget.withBlogID);
+    final dynamic droomId = response["response"]["chat_room_id"];
     roomId = droomId.toString();
     final Map<String, dynamic> res =
-        await Api().getBlogInformation(widget.with_blog_id.toString());
+        await Api().getBlogInformation(widget.withBlogID.toString());
     friendName = res["response"]["username"];
     friendAvatar = res["response"]["avatar"];
-    chatTitle = User.blogsNames[User.currentProfile] + " + " + friendName;
-    loadMessages(roomId);
+    chatTitle = "${User.blogsNames[User.currentProfile]} + $friendName";
+    await loadMessages(roomId);
   }
 
-  final _controller = ScrollController();
+  final ScrollController _controller = ScrollController();
 
   @override
   Widget build(final BuildContext context) {
-    String channelName = "private-channel-" + roomId;
-    bindEvent(channelName, 'chat-update');
+    final String channelName = "channel-$roomId";
+    bindEvent(channelName, "chat-update");
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -294,24 +344,22 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
         body: Column(
-          children: [
+          children: <Widget>[
             Expanded(
-              child: Container(
-                child: ListView.builder(
-                  reverse: true,
-                  controller: _controller,
-                  padding: EdgeInsets.only(top: 15.0),
-                  itemCount: messages.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final Message message = messages[index];
-                    bool change = true;
-                    if (index != messages.length - 1 &&
-                        messages[index + 1].sender == messages[index].sender) {
-                      change = false;
-                    }
-                    return _buildMessage(message, change);
-                  },
-                ),
+              child: ListView.builder(
+                reverse: true,
+                controller: _controller,
+                padding: const EdgeInsets.only(top: 15),
+                itemCount: messages.length,
+                itemBuilder: (final BuildContext context, final int index) {
+                  final Message message = messages[index];
+                  bool change = true;
+                  if (index != messages.length - 1 &&
+                      messages[index + 1].sender == messages[index].sender) {
+                    change = false;
+                  }
+                  return _buildMessage(message, change);
+                },
               ),
             ),
             _buildMessageComposer(),

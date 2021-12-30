@@ -1,12 +1,21 @@
 class Chat {
-  String last_message;
+  Chat(
+    this.lastMessage,
+    this.photo,
+    this.blogID,
+    this.blogUsername,
+    this.blogAvatar,
+    this.blogAvatarShape,
+    this.blogTitle,
+    this.read,
+  );
+
+  String lastMessage;
   String photo;
-  int blog_id;
-  String blog_username;
-  String blog_avatar;
-  String blog_avatar_shape;
-  String blog_title;
+  int blogID;
+  String blogUsername;
+  String blogAvatar;
+  String blogAvatarShape;
+  String blogTitle;
   bool read;
-  Chat(this.last_message, this.photo, this.blog_id, this.blog_username,
-      this.blog_avatar, this.blog_avatar_shape, this.blog_title,this.read);
 }

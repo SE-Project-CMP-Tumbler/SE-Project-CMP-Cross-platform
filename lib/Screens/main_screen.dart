@@ -4,11 +4,11 @@ import "package:provider/provider.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Providers/blogs.dart";
-import 'package:tumbler/Screens/ActivityAndChat/acitivity_chat_screen.dart';
+import "package:tumbler/Screens/ActivityAndChat/acitivity_chat_screen.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
+import 'package:tumbler/Screens/Chat/inside_chat.dart';
 import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
-import "package:tumbler/Screens/Chat/inside_chat.dart";
 import "package:tumbler/Screens/Search/search_page.dart";
 import "package:tumbler/Widgets/Home/draggable_floating_button.dart";
 
@@ -95,6 +95,7 @@ class _MainScreenState extends State<MainScreen>
           ),
           if (selectedIndex == 0 || selectedIndex == 3)
             DraggableFloatingActionButton(
+              key: const ValueKey<String>("ActionButton"),
               duration: const Duration(milliseconds: 100),
               initialOffset: Offset(_width - 70, _height - 150),
               parentKey: _parentKey,

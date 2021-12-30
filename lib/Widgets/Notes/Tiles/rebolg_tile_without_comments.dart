@@ -19,6 +19,7 @@ class ReblogTileWithOutComments extends StatelessWidget {
 
   /// User Name
   final String userName;
+
   /// Shape
   final String avatarShape;
 
@@ -42,7 +43,9 @@ class ReblogTileWithOutComments extends StatelessWidget {
               width: 1,
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                // TODO(Waleed): Go to the profile
+              },
               child: Text(
                 userName,
                 style: const TextStyle(color: Colors.black87, fontSize: 14),

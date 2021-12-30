@@ -74,8 +74,7 @@ class ProfileSettings extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<ShowDraft>(
-                    builder: (final BuildContext context) =>
-                        const ShowDraft(),
+                    builder: (final BuildContext context) => const ShowDraft(),
                   ),
                 );
               },
@@ -90,7 +89,7 @@ class ProfileSettings extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 if (await logOut()) {
-                  // TODO(Ziyad): Restart the app?
+                  // Provider.of<FollowedTags>(context).followedTags.clear();
                   await Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute<OnStart>(
                       builder: (final BuildContext context) => OnStart(),

@@ -12,7 +12,8 @@ class DraggableFloatingActionButton extends StatefulWidget {
     required final this.onPressed,
     required final this.parentKey,
     required final this.duration,
-  });
+    final Key? key,
+  }) : super(key: key);
 
   /// The Next Floating Action Bar
   final Widget child;

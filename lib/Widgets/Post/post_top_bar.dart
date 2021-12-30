@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
+import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/user.dart";
+import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 ///[PostTopBar] carries information about post owner
@@ -10,6 +12,8 @@ class PostTopBar extends StatefulWidget {
     required final this.avatarShape,
     required final this.name,
     required final this.blogID,
+    required final this.isFollowed,
+    required final this.index,
     final Key? key,
   }) : super(key: key);
 
@@ -24,6 +28,12 @@ class PostTopBar extends StatefulWidget {
 
   /// blog ID of the user published the Post
   final String blogID;
+
+  /// To Show Follow Button
+  final bool isFollowed;
+
+  /// the index of the post in the page
+  final int index;
 
   @override
   _PostTopBarState createState() => _PostTopBarState();
@@ -142,17 +152,26 @@ class _PostTopBarState extends State<PostTopBar> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              "Follow",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.blue,
+          if (!widget.isFollowed)
+            TextButton(
+              onPressed: () async {
+                final Map<String, dynamic> response =
+                    await Api().followBlog(int.parse(widget.blogID));
+
+                if (response["meta"]["status"] == "200") {
+                  homePosts[widget.index].isFollowed = true;
+                  setState(() {});
+                }
+              },
+              child: const Text(
+                "Follow",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.blue,
+                ),
               ),
             ),
-          ),
           Expanded(
             child: Container(
               alignment: Alignment.centerRight,

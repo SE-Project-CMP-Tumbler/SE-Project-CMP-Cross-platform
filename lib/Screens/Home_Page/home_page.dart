@@ -5,6 +5,7 @@ import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/post_model.dart";
+import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Exceptions_UI/generic_exception.dart";
 import "package:tumbler/Widgets/Home/home_sliver_app_bar.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
@@ -134,67 +135,69 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(final BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: const Color.fromRGBO(0, 25, 53, 1),
-        body: Center(
-          child: Container(
-            color: Colors.white,
-            width: (defaultTargetPlatform == TargetPlatform.windows ||
-                    defaultTargetPlatform == TargetPlatform.linux ||
-                    defaultTargetPlatform == TargetPlatform.macOS)
-                ? MediaQuery.of(context).size.width * (2 / 3)
-                : double.infinity,
-            child: NestedScrollView(
-              floatHeaderSlivers: true,
-              controller: ScrollController(),
-              headerSliverBuilder:
-                  (final BuildContext context, final bool innerBoxIsScrolled) =>
-                      <Widget>[
-                HomePageAppBar(
-                  section: section,
-                  changeSection: changeSection,
-                )
-              ],
-              body: _isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        valueColor: loadingSpinnerAnimationController.drive(
-                          ColorTween(
-                            begin: Colors.blueAccent,
-                            end: Colors.red,
+    return RefreshIndicator(
+      onRefresh: fetchPosts,
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: const Color.fromRGBO(0, 25, 53, 1),
+          body: Center(
+            child: Container(
+              color: Colors.white,
+              width: (defaultTargetPlatform == TargetPlatform.windows ||
+                      defaultTargetPlatform == TargetPlatform.linux ||
+                      defaultTargetPlatform == TargetPlatform.macOS)
+                  ? MediaQuery.of(context).size.width * (2 / 3)
+                  : double.infinity,
+              child: NestedScrollView(
+                floatHeaderSlivers: true,
+                controller: ScrollController(),
+                headerSliverBuilder: (final BuildContext context,
+                        final bool innerBoxIsScrolled,) =>
+                    <Widget>[
+                  HomePageAppBar(
+                    section: section,
+                    changeSection: changeSection,
+                  )
+                ],
+                body: _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          valueColor: loadingSpinnerAnimationController.drive(
+                            ColorTween(
+                              begin: Colors.blueAccent,
+                              end: Colors.red,
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: fetchPosts,
-                      child: _error
-                          ? ListView(
-                              children: const <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 150),
-                                  child: ErrorImage(
-                                    msg: "Unexpected error,"
-                                        " please try again later",
-                                  ),
+                      )
+                    : _error
+                        ? ListView(
+                            children: const <Widget>[
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 150),
+                                child: ErrorImage(
+                                  msg: "Unexpected error,"
+                                      " please try again later",
                                 ),
-                              ],
-                            )
-                          : ListView.builder(
-                              controller: _controller,
-                              itemCount: homePosts.length,
-                              itemBuilder: (
-                                final BuildContext ctx,
-                                final int index,
-                              ) {
-                                return PostOutView(
-                                  post: homePosts[index],
-                                  index: index,
-                                );
-                              },
-                            ),
-                    ),
+                              ),
+                            ],
+                          )
+                        : homePosts.isEmpty
+                            ? const EmptyBoxImage(msg: "No Posts to show")
+                            : ListView.builder(
+                                controller: _controller,
+                                itemCount: homePosts.length,
+                                itemBuilder: (
+                                  final BuildContext ctx,
+                                  final int index,
+                                ) {
+                                  return PostOutView(
+                                    post: homePosts[index],
+                                    index: index,
+                                  );
+                                },
+                              ),
+              ),
             ),
           ),
         ),

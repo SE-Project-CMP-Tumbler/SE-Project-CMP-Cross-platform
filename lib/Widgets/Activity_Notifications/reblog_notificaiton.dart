@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Activity_Notifications/avatar_with_icon.dart";
 
-
 ///Widget that represents the reblog notification in activity page
 class ReblogNotificationWidget extends StatelessWidget {
   /// Takes avatarUrl and userName
@@ -22,7 +21,7 @@ class ReblogNotificationWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
-        children: [
+        children: <Widget>[
           AvatarWithIcon(
             avatarUrl: avatarUrl,
             iconType: "reblog",
