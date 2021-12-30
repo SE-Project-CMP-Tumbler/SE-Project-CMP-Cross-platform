@@ -61,6 +61,7 @@ class Api {
   final String _pin = dotenv.env["pin"] ?? " ";
   final String _unpin = dotenv.env["unpin"] ?? " ";
   final String _changeStatus = dotenv.env["changeStatus"] ?? " ";
+  final String _followers = dotenv.env["followers"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -138,6 +139,20 @@ class Api {
           headers: _headerContent,
         )
         .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// GET My followers
+  Future<Map<String, dynamic>> getFollowers() async {
+    final http.Response response = await client
+        .get(
+      Uri.parse(
+        _host + _followers,
+      ),
+      headers: _headerContentAuth,
+    )
+        .onError(errorFunction);
+
     return jsonDecode(response.body);
   }
 

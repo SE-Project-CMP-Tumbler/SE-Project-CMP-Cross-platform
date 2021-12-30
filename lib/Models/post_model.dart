@@ -14,8 +14,8 @@ class PostModel {
     required final this.blogTitle,
     required final this.postTime,
     required final this.notes,
-    required final this.isLoved,
-    required final this.isFollowed,
+    required this.isLoved,
+    required this.isFollowed,
     required final this.traceBackPosts,
     required final this.isPinned,
   });

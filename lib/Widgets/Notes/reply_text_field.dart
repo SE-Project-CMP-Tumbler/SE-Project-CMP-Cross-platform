@@ -9,6 +9,7 @@ class ReplyTextField extends StatelessWidget {
   const ReplyTextField({
     required final this.replyController,
     required final this.postId,
+    required final this.refresh,
     final Key? key,
   }) : super(key: key);
 
@@ -17,6 +18,9 @@ class ReplyTextField extends StatelessWidget {
 
   ///
   final String postId;
+
+  ///
+  final Function refresh;
 
   @override
   Widget build(final BuildContext context) {
@@ -47,11 +51,11 @@ class ReplyTextField extends StatelessWidget {
                 // call function refresh in the NotesPage widget to fetch new
                 //replies and setState()
                 //update number of notes locally....
-                replyController.clear();
+                await refresh();
               } else {
-                replyController.clear();
                 await showToast(response["meta"]["msg"]);
               }
+                replyController.clear();
             }
           },
           child: Text(

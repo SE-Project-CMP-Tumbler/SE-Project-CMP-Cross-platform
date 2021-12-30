@@ -414,7 +414,7 @@ class _SearchResultState extends State<SearchResult>
                                                           top: 8,
                                                           left: 8,
                                                           right: 8,
-                                                        ),
+                                                         ),
                                                         child: Text(
                                                           "Other tags",
                                                           textScaleFactor:
