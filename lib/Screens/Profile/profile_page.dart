@@ -1188,7 +1188,7 @@ class _ProfilePageState extends State<ProfilePage>
             User.currentProfile = User.blogsNames.indexOf(
               value,
             );
-            Navigator.of(context).pushReplacement(
+            Navigator.of(context).push(
               MaterialPageRoute<ProfilePage>(
                 builder: (final BuildContext context) => ProfilePage(
                   blogID: User.blogsIDs[User.currentProfile],
