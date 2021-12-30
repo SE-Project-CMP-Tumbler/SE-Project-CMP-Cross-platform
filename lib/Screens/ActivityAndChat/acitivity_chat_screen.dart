@@ -7,6 +7,8 @@ import "package:tumbler/Models/Activity_Notifications/ask.dart";
 import "package:tumbler/Models/Activity_Notifications/follow.dart";
 import "package:tumbler/Models/Activity_Notifications/mention.dart";
 import "package:tumbler/Models/Activity_Notifications/reblog.dart";
+import "package:tumbler/Models/Activity_Notifications/like.dart";
+import "package:tumbler/Models/Activity_Notifications/reply.dart";
 import "package:tumbler/Models/Activity_Notifications/time_packet.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Activity_Notifications/time_packet_contianer.dart";
@@ -63,43 +65,54 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
       User.blogsIDs[User.currentProfile],
     );
     if (response["meta"]["status"] == "200") {
-      final Map<String, dynamic> temp = response["response"]["notifications"];
-      for (final String type in temp.keys) {
-        final List<dynamic> tempList =
-            response["response"]["notifications"][type] ?? <dynamic>[];
-        for (final dynamic i in tempList) {
-          if (type == "asks" ||
-              type == "reblogs" ||
-              type == "follows" ||
-              type == "mentions_posts" ||
-              type == "mentions_replies")
-            bigSack.add(
-              (type == "asks")
-                  ? Ask(
-                      dateTime: DateTime.parse(i["ask_time"]),
-                      quesiton: i["question_body"],
-                      avatarUrl: i["blog_avatar"],
-                      userName: i["blog_username"],
+      final List<dynamic> temp = response["response"]["notifications"];
+      for (int i = 0; i < temp.length; i++) {
+        final Map<String, dynamic> notification =
+            temp[i] ?? <String, dynamic>{};
+        final String type = notification["type"];
+        bigSack.add(
+          (type == "ask")
+              ? Ask(
+                  dateTime: DateTime.parse(notification["timestamp"]),
+                  quesiton: notification["target_question_summary"],
+                  avatarUrl: notification["from_blog_avatar"],
+                  userName: notification["from_blog_username"],
+                )
+              : (type == "reblog")
+                  ? Reblog(
+                      dateTime: DateTime.parse(notification["timestamp"]),
+                      avatarUrl: notification["from_blog_avatar"],
+                      userName: notification["from_blog_username"],
                     )
-                  : (type == "reblogs")
-                      ? Reblog(
-                          dateTime: DateTime.parse(i["post_time"]),
-                          avatarUrl: i["blog_avatar"],
-                          userName: i["blog_username"],
+                  : (type == "follow")
+                      ? Follow(
+                          dateTime: DateTime.parse(notification["timestamp"]),
+                          avatarUrl: notification["from_blog_avatar"],
+                          userName: notification["from_blog_username"],
                         )
-                      : (type == "follows")
-                          ? Follow(
-                              dateTime: DateTime.parse(i["follow_time"]),
-                              avatarUrl: i["blog_avatar"],
-                              userName: i["blog_username"],
+                      : (type == "like")
+                          ? Like(
+                              avatarUrl: notification["from_blog_avatar"],
+                              dateTime: DateTime.parse(
+                                notification["timestamp"],
+                              ),
+                              userName: notification["from_blog_username"],
                             )
-                          : Mention(
-                              dateTime: DateTime.parse(i["mention_time"]),
-                              avatarUrl: i["blog_avatar"],
-                              userName: i["blog_username"],
-                            ),
-            );
-        }
+                          : (type == "reply")
+                              ? Reply(
+                                  avatarUrl: notification["from_blog_avatar"],
+                                  dateTime:
+                                      DateTime.parse(notification["timestamp"]),
+                                  userName: notification["from_blog_username"],
+                                  reply: notification["reply_summary"],
+                                )
+                              : Mention(
+                                  dateTime:
+                                      DateTime.parse(notification["timestamp"]),
+                                  avatarUrl: notification["from_blog_avatar"],
+                                  userName: notification["from_blog_username"],
+                                ),
+        );
       }
 
       for (int i = 0; i < bigSack.length; i++) {

@@ -10,6 +10,7 @@ import "package:tumbler/Providers/tags.dart";
 import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/main_screen.dart";
 import "package:tumbler/Screens/inside_chat.dart";
+
 Future<void> main() async {
   await dotenv.load();
   if (!kIsWeb) {
@@ -37,8 +38,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Chat(),
-        //home: User.accessToken.isEmpty ? OnStart() : MainScreen(),
+        home: User.accessToken.isEmpty ? OnStart() : MainScreen(),
       ),
     );
   }

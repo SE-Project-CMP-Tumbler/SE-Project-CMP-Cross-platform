@@ -48,7 +48,11 @@ class _LikeTileState extends State<LikeTile> {
 
   @override
   void initState() {
-    _followStatus = widget.followStatus;
+    setState(() {
+      print(
+          "the blogId is ${widget.blogID} and like status is ${widget.followStatus} ");
+      _followStatus = widget.followStatus;
+    });
     super.initState();
   }
 

@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Activity_Notifications/avatar_with_icon.dart";
-
+import "package:tumbler/Models/user.dart";
 
 /// Widget that represent the new following notification in activity page
 class FollowNotificationWidget extends StatelessWidget {
@@ -22,7 +22,7 @@ class FollowNotificationWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
-        children: <Widget> [
+        children: <Widget>[
           AvatarWithIcon(
             avatarUrl: avatarUrl,
             iconType: "follow",
@@ -49,8 +49,9 @@ class FollowNotificationWidget extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const TextSpan(
-                      text: " started following @changeMeLaterPlease ",
+                    TextSpan(
+                      text:
+                          " started following @${User.blogsNames[User.currentProfile]}",
                     )
                   ],
                 ),

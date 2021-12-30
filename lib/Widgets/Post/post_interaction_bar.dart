@@ -59,6 +59,12 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
     }
   }
 
+  void updatePostInteractionBarNotesNumber() {
+    setState(() {
+      _notesNum = homePosts[index].notes;
+    });
+  }
+
   @override
   void initState() {
     index = widget.index;
@@ -97,6 +103,8 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                     builder: (final BuildContext context) => NotesPage(
                       postID: postID,
                       index: index,
+                      updateNotesInInteractionBar:
+                          updatePostInteractionBarNotesNumber,
                     ),
                   ),
                 );
@@ -114,6 +122,8 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                     builder: (final BuildContext context) => NotesPage(
                       postID: postID,
                       index: index,
+                      updateNotesInInteractionBar:
+                          updatePostInteractionBarNotesNumber,
                     ),
                   ),
                 );
@@ -135,13 +145,13 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               color: Colors.black,
             ),
           ),
-           IconButton(
+          IconButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<Reblog>(
                   builder: (final BuildContext context) => Reblog(
                     originalPost: homePosts[index].postBody,
-                    parentPostId : homePosts[index].postId.toString(),
+                    parentPostId: homePosts[index].postId.toString(),
                   ),
                 ),
               );
@@ -158,6 +168,8 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                   builder: (final BuildContext context) => NotesPage(
                     postID: postID,
                     index: index,
+                    updateNotesInInteractionBar:
+                        updatePostInteractionBarNotesNumber,
                   ),
                 ),
               );

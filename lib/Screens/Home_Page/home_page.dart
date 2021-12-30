@@ -83,11 +83,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPage++;
-        setState(
-          () async => homePosts.addAll(
-            await PostModel.fromJSON(response["response"]["posts"], true),
-          ),
+        homePosts.addAll(
+          await PostModel.fromJSON(response["response"]["posts"], true),
         );
+        setState(() {});
       }
     } else
       await showToast(response["meta"]["msg"]);

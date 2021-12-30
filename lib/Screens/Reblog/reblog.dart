@@ -45,11 +45,12 @@ class _ReblogState extends State<Reblog> {
     }
 
     final Map<String, dynamic> response = await Api().reblog(
-        User.blogsIDs[User.currentProfile],
-        widget.parentPostId,
-        processedHtml,
-        postOptionChoice,
-        "general",);
+      User.blogsIDs[User.currentProfile],
+      widget.parentPostId,
+      processedHtml,
+      postOptionChoice,
+      "general",
+    );
 
     if (response["meta"]["status"] == "200") {
       await showToast("Added Successfully");
@@ -174,9 +175,7 @@ class _ReblogState extends State<Reblog> {
                   height: MediaQuery.of(context).size.height * .75,
                 ),
                 callbacks: Callbacks(
-                  onChangeContent: (final String? changed) async {
-                    
-                  },
+                  onChangeContent: (final String? changed) async {},
                 ),
               ),
             ],
