@@ -176,7 +176,6 @@ class _SignUpState extends State<SignUp> {
         await Api().followTag(tag);
       }
 
-      // TODO(Ziyad): this must be fixed properly
       if (!kIsWeb) {
         await Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute<IntroCarousel>(

@@ -4,6 +4,7 @@ import "package:flutter_html/flutter_html.dart";
 import "package:random_color/random_color.dart";
 import "package:simple_url_preview/simple_url_preview.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/extract_mentions_tags.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
@@ -28,57 +29,16 @@ class HtmlView extends StatefulWidget {
 class _HtmlViewState extends State<HtmlView> {
   String data = "";
 
-  Future<void> extractMentionsTags(final String htmlBeforeProcessing) async {
-    // Getting all mentions
-    String html = htmlBeforeProcessing;
-    int index1 = 0;
-    int x = 0;
-    while (x != -1 && index1 <= html.length - 5) {
-      x = html.indexOf("@", index1);
-      if (x != -1) {
-        index1 = html.indexOf(" ", x);
-        if (index1 == -1) {
-          index1 = html.indexOf("<", x);
-        }
-        final String username = html.substring(x + 1, index1);
-
-        final Map<String, dynamic> response = await Api().getUserInfo(username);
-        if (response["meta"]["status"] == "200") {
-          final String blogID = response["response"]["id"].toString();
-          html = html.replaceRange(
-            x,
-            index1,
-            "<a href='mention$blogID'>@$username</a>",
-          );
-          index1 += 13 + blogID.length;
-        }
-      }
-    }
-
-    index1 = 0;
-    x = 0;
-    while (x != -1 && index1 <= html.length - 5) {
-      x = html.indexOf("#", index1);
-      if (x != -1) {
-        index1 = html.indexOf(" ", x);
-        if (index1 == -1) {
-          index1 = html.indexOf("<", x);
-        }
-
-        final String tag = html.substring(x + 1, index1);
-        html = html.replaceRange(x, index1, "<a href='tag$tag'>#$tag</a>");
-        index1 += 10 + tag.length;
-      }
-    }
-
-    setState(() => data = html);
+  Future<void> initialize() async {
+    data = await extractMentionsTags(widget.htmlData);
+    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
     data = widget.htmlData;
-    extractMentionsTags(widget.htmlData);
+    initialize();
   }
 
   @override
@@ -88,9 +48,6 @@ class _HtmlViewState extends State<HtmlView> {
       style: <String, Style>{
         "table": Style(
           backgroundColor: const Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-        ),
-        "p": Style(
-          color: Colors.black,
         ),
         "tr": Style(
           border: const Border(bottom: BorderSide(color: Colors.grey)),
@@ -105,9 +62,6 @@ class _HtmlViewState extends State<HtmlView> {
         ),
         "h5": Style(
           color: Colors.black,
-          // maxLines: 2,
-          // textOverflow: TextOverflow.ellipsis,
-          // color: Colors.black,
         ),
         "h4": Style(
           color: Colors.black,

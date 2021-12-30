@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
@@ -14,6 +15,9 @@ class PostTopBar extends StatefulWidget {
     required final this.blogID,
     required final this.isFollowed,
     required final this.index,
+    required final this.postID,
+    required final this.isReblog,
+    required final this.isPinned,
     final Key? key,
   }) : super(key: key);
 
@@ -29,11 +33,20 @@ class PostTopBar extends StatefulWidget {
   /// blog ID of the user published the Post
   final String blogID;
 
+  /// ID of Post
+  final String postID;
+
   /// To Show Follow Button
   final bool isFollowed;
 
   /// the index of the post in the page
   final int index;
+
+  /// to hide the model sheet icon
+  final bool isReblog;
+
+  /// to check if the post is pinnned
+  final bool isPinned;
 
   @override
   _PostTopBarState createState() => _PostTopBarState();
@@ -57,17 +70,36 @@ class _PostTopBarState extends State<PostTopBar> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       ListTile(
-                        onTap: () {
-                          // TODO(Ziyad): make the request
+                        onTap: () async {
+                          if (!widget.isPinned) {
+                            final Map<String, dynamic> response = await Api()
+                                .pinPost(widget.postID, widget.blogID);
+                            if (response["meta"]["status"] == "200") {
+                              await showToast("Pinned");
+                              Navigator.of(context).pop();
+                            } else
+                              await showToast(response["meta"]["msg"]);
+                          } else {
+                            final Map<String, dynamic> response = await Api()
+                                .unPinPost(widget.postID, widget.blogID);
+                            if (response["meta"]["status"] == "200") {
+                              await showToast("unpinned");
+                              Navigator.of(context).pop();
+                            } else
+                              await showToast(response["meta"]["msg"]);
+                          }
                         },
-                        title: const Text(
-                          "Pin Post",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        title: Text(
+                          widget.isPinned ? "Unpin Post" : "Pin Post",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
                       ListTile(
-                        onTap: () {
-                          // TODO(Ziyad): Make The Request
+                        onTap: () async {
+                          await showToast("Nothing to do");
                         },
                         title: const Text(
                           "Mute notifications",
@@ -75,8 +107,8 @@ class _PostTopBarState extends State<PostTopBar> {
                         ),
                       ),
                       ListTile(
-                        onTap: () {
-                          // TODO(Ziyad): Make The Request
+                        onTap: () async {
+                          await showToast("Nothing to do");
                         },
                         title: const Text(
                           "Copy link",
@@ -89,8 +121,8 @@ class _PostTopBarState extends State<PostTopBar> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       ListTile(
-                        onTap: () {
-                          // TODO(Ziyad): Make The Request
+                        onTap: () async {
+                          await showToast("Nothing to do");
                         },
                         title: const Text(
                           "Report sensitive content",
@@ -98,8 +130,8 @@ class _PostTopBarState extends State<PostTopBar> {
                         ),
                       ),
                       ListTile(
-                        onTap: () {
-                          // TODO(Ziyad): Make The Request
+                        onTap: () async {
+                          await showToast("Nothing to do");
                         },
                         title: const Text(
                           "Repost spam",
@@ -107,8 +139,8 @@ class _PostTopBarState extends State<PostTopBar> {
                         ),
                       ),
                       ListTile(
-                        onTap: () {
-                          // TODO(Ziyad): Make The Request
+                        onTap: () async {
+                          await showToast("Nothing to do");
                         },
                         title: const Text(
                           "Report something else",
@@ -116,8 +148,8 @@ class _PostTopBarState extends State<PostTopBar> {
                         ),
                       ),
                       ListTile(
-                        onTap: () {
-                          // TODO(Ziyad): Make The Request
+                        onTap: () async {
+                          await showToast("Nothing to do");
                         },
                         title: const Text(
                           "Copy link",
@@ -172,18 +204,19 @@ class _PostTopBarState extends State<PostTopBar> {
                 ),
               ),
             ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                onPressed: () => showEditPostBottomSheet(context),
-                icon: const Icon(
-                  Icons.more_horiz,
-                  color: Colors.black87,
+          if (!widget.isReblog)
+            Expanded(
+              child: Container(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  onPressed: () => showEditPostBottomSheet(context),
+                  icon: const Icon(
+                    Icons.more_horiz,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
-            ),
-          )
+            )
         ],
       ),
     );

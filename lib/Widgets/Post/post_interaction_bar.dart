@@ -5,9 +5,9 @@ import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/notes.dart";
 import "package:tumbler/Screens/Add_Post/edit_post.dart";
+import "package:tumbler/Screens/Add_Post/reblog_post.dart";
 import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Screens/Notes/post_notes.dart";
-import "package:tumbler/Screens/Reblog/reblog.dart";
 
 ///Class for interaction bar exists the bottom of each post in home page
 //////Contains:
@@ -18,6 +18,8 @@ class PostInteractionBar extends StatefulWidget {
   const PostInteractionBar({
     required final this.index,
     required final this.isMine,
+    required final this.isDashBoard,
+    required final this.postID,
     final Key? key,
   }) : super(key: key);
 
@@ -27,13 +29,19 @@ class PostInteractionBar extends StatefulWidget {
   /// to indicate if the post is mine
   final bool isMine;
 
+  /// to update notes
+  final bool isDashBoard;
+
+  /// Post ID
+  final int postID;
+
   @override
   _PostInteractionBarState createState() => _PostInteractionBarState();
 }
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
   int index = 0;
-  late int _notesNum=0;
+  late int _notesNum = 0;
   bool _isLoved = false;
   late int postID;
   bool onProcessing = false;
@@ -41,10 +49,9 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
 
   /// Called when the user clicks on favorite icon button
   Future<void> likePost() async {
-    final Map<String, dynamic> response =
-        await Api().likePost(homePosts[index].postId);
+    final Map<String, dynamic> response = await Api().likePost(postID);
 
-    if (response["meta"]["status"] == "200") {
+    if (response["meta"]["status"] == "200" && widget.isDashBoard) {
       homePosts[index].notes++;
       homePosts[index].isLoved = true;
     }
@@ -52,32 +59,31 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
 
   /// Called when the user clicks on un-favorite icon button (filled favorite)
   Future<void> unlikePost() async {
-    final Map<String, dynamic> response =
-        await Api().unlikePost(homePosts[index].postId);
+    final Map<String, dynamic> response = await Api().unlikePost(postID);
 
-    if (response["meta"]["status"] == "200") {
+    if (response["meta"]["status"] == "200" && widget.isDashBoard) {
       homePosts[index].notes--;
       homePosts[index].isLoved = false;
     }
   }
 
   void updatePostInteractionBarNotesNumber() {
-    setState(() {
-      _notesNum = homePosts[index].notes;
-    });
+    if (widget.isDashBoard)
+      setState(() {
+        _notesNum = homePosts[index].notes;
+      });
   }
 
   @override
   void initState() {
     index = widget.index;
-    if(homePosts.isNotEmpty) {
+    if (homePosts.contains(index)) {
       _notesNum = homePosts[index].notes;
       _isLoved = homePosts[index].isLoved;
       postID = homePosts[index].postId;
-    }
-        super.initState();
+    } else {}
+    super.initState();
   }
-
 
   @override
   void dispose() {

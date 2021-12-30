@@ -1,19 +1,18 @@
 // ignore_for_file: must_be_immutable, lines_longer_than_80_chars
-
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
-import 'package:tumbler/Methods/show_toast.dart';
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Notes/Tiles/like_tile.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_with_comments.dart";
-import "package:tumbler/Widgets/Notes/Tiles/rebolg_tile_without_comments.dart";
+import "package:tumbler/Widgets/Notes/Tiles/reblog_tile_without_comments.dart";
 import "package:tumbler/Widgets/Notes/Tiles/reply_tile.dart";
 import "package:tumbler/Widgets/Notes/customized_tab.dart";
-import "package:tumbler/Widgets/Notes/reply_textfield.dart";
+import "package:tumbler/Widgets/Notes/reply_text_field.dart";
 import "package:tumbler/Widgets/Notes/show_reblog_type_bottom_sheet.dart";
 
-/// [blogType] is an Enumerator for specifing two different reblogs types
+/// [blogType] is an Enumerator for specifying two different reblogs types
 enum blogsType {
   ///reblogs with comments
   withComments,
@@ -56,35 +55,35 @@ class _NotesPageState extends State<NotesPage>
   /// contains all likes with their details
   List<dynamic> likesList = <dynamic>[];
 
-  ///contains all reblogs with their detalis
+  ///contains all reblogs with their details
   List<dynamic> reblogsList = <dynamic>[];
 
   /// contains all replies with their details
   List<dynamic> repliesList = <dynamic>[];
 
-  /// contains all reblogs with comments with their detalis
+  /// contains all reblogs with comments with their details
   List<dynamic> reblogsWithCommentsList = <dynamic>[];
 
-  ///contains all likes without comments their detalis
+  ///contains all likes without comments their details
   List<dynamic> reblogsWithOutCommentsList = <dynamic>[];
 
   Future<void> initialize() async {
-    final Map<String, dynamic> recievedNotes =
+    final Map<String, dynamic> receivedNotes =
         await Api().getNotes(widget.postID.toString());
 
     //check the status code for the received response.
-    if (recievedNotes["meta"]["status"] == "200") {
+    if (receivedNotes["meta"]["status"] == "200") {
       likeCount =
-          recievedNotes["response"]["likes"]["pagination"]["total"] as int;
+          receivedNotes["response"]["likes"]["pagination"]["total"] as int;
       repliesCount =
-          recievedNotes["response"]["replies"]["pagination"]["total"] as int;
+          receivedNotes["response"]["replies"]["pagination"]["total"] as int;
       reblogCount =
-          recievedNotes["response"]["reblogs"]["pagination"]["total"] as int;
-      likesList = recievedNotes["response"]["likes"]["likes"] ?? <dynamic>[];
+          receivedNotes["response"]["reblogs"]["pagination"]["total"] as int;
+      likesList = receivedNotes["response"]["likes"]["likes"] ?? <dynamic>[];
       reblogsList =
-          recievedNotes["response"]["reblogs"]["reblogs"] ?? <dynamic>[];
+          receivedNotes["response"]["reblogs"]["reblogs"] ?? <dynamic>[];
       repliesList =
-          recievedNotes["response"]["replies"]["replies"] ?? <dynamic>[];
+          receivedNotes["response"]["replies"]["replies"] ?? <dynamic>[];
 
 
       // spilt blogs received into to sub-categories
@@ -97,7 +96,7 @@ class _NotesPageState extends State<NotesPage>
       }
       setState(() {});
     } else
-      await showToast(recievedNotes["meta"]["msg"]);
+      await showToast(receivedNotes["meta"]["msg"]);
   }
 
   bool updateFollowStatusLocally(final String blogId, final bool followStatus) {

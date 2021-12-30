@@ -65,12 +65,13 @@ dependencies:
   string_to_hex: ^0.2.2
   sliver_tools: ^0.2.5
   flutter_svg: ^0.23.0+1
+  share_plus: ^3.0.4
 
 dev_dependencies:
+  flutter_driver:
+    sdk: flutter
   flutter_test:
     sdk: flutter
-    flutter_driver:
-      sdk: flutter
   test: ^1.17.10
 flutter_native_splash:
   color: "#001935"

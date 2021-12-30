@@ -48,6 +48,10 @@ class _ReblogState extends State<Reblog> {
 
   Future<void> addTheReblog() async {
     final String html = await controller.getText();
+    if (html.isEmpty) {
+      await showToast("Please Enter Text");
+      return;
+    }
     final String processedHtml = await extractMediaFiles(html);
     String postOptionChoice = "";
     if (postType == PostTypes.defaultPost) {

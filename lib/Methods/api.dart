@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
 import "dart:convert";
 import "dart:io" as io;
+
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
 import 'package:tumbler/Models/blog_theme.dart';
@@ -61,6 +62,8 @@ class Api {
   final String _info = dotenv.env["info"] ?? " ";
   final String _theme = dotenv.env["theme"] ?? " ";
   final String _notifications = dotenv.env["notifications"] ?? " ";
+  final String _pin = dotenv.env["pin"] ?? " ";
+  final String _unpin = dotenv.env["unpin"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -383,14 +386,45 @@ class Api {
   }
 
   /// get Post.
-  Future<Map<String, dynamic>> getPost(
-    final String postID,
-  ) async {
+  Future<Map<String, dynamic>> getPost(final String postID,) async {
     final http.Response response = await http
         .get(
-          Uri.parse(_host + _post + postID),
-          headers: _headerContentAuth,
-        )
+      Uri.parse(_host + _post + postID),
+      headers: _headerContentAuth,
+    )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// pin Post.
+  Future<Map<String, dynamic>> pinPost(final String postID,
+      final String blogID,) async {
+    final http.Response response = await http
+        .put(
+      Uri.parse(_host + _posts + _pin),
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, dynamic>{
+        "blog_id": blogID,
+        "post_id": postID,
+      }),
+    )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
+  /// unpin Post.
+  Future<Map<String, dynamic>> unPinPost(final String postID,
+      final String blogID,) async {
+    print(_host + _posts + _unpin);
+    final http.Response response = await http
+        .put(
+      Uri.parse(_host + _posts + _unpin),
+      headers: _headerContentAuth,
+      body: jsonEncode(<String, dynamic>{
+        "blog_id": blogID,
+        "post_id": postID,
+      }),
+    )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
@@ -399,9 +433,9 @@ class Api {
   Future<Map<String, dynamic>> fetchHomePosts(final int page) async {
     final http.Response response = await client
         .get(
-          Uri.parse(_host + _dashboard + "?page=$page"),
-          headers: _headerContentAuth,
-        )
+      Uri.parse(_host + _dashboard + "?page=$page"),
+      headers: _headerContentAuth,
+    )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
@@ -439,17 +473,11 @@ class Api {
     final http.Response response = await client
         .post(
       Uri.parse(
-        _host + _likePost + postId.toString(),
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+            _host + _likePost + postId.toString(),
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -458,17 +486,11 @@ class Api {
     final http.Response response = await client
         .delete(
       Uri.parse(
-        _host + _likePost + postId.toString(),
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
-        return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+            _host + _likePost + postId.toString(),
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
@@ -477,10 +499,11 @@ class Api {
     final String postId,
     final String text,
   ) async {
+    print(_host + _post + _replyPost + postId);
     final http.Response response = await client
         .post(
       Uri.parse(
-        _host + _replyPost + postId,
+        _host + _post + _replyPost + postId,
       ),
       body: jsonEncode(<String, String>{
         "reply_text": text,
@@ -676,25 +699,30 @@ class Api {
     final String blogID,
     final BlogTheme theme,
   ) async {
+    final Map<String, String> body = <String, String>{
+      "color_title": "#" + theme.titleColor,
+      "font_title": theme.titleFont,
+      "font_weight_title": theme.titleWeight,
+      "title": theme.titleText,
+      "background_color": "#" + theme.backgroundColor,
+      "accent_color": "#" + theme.accentColor,
+      "body_font": theme.bodyFont,
+      "header_image": theme.headerImage,
+      "avatar": theme.avatarURL,
+      "avatar_shape": theme.avatarShape
+    };
+
+    if (theme.description.isNotEmpty) {
+      body["description"] = theme.description;
+    }
+
     final http.Response response = await http
         .put(
           Uri.parse(
             _host + _blog + "/" + blogID + _theme,
           ),
           headers: _headerContentAuth,
-          body: jsonEncode(<String, String>{
-            "color_title": "#" + theme.titleColor,
-            "font_title": theme.titleFont,
-            "font_weight_title": theme.titleWeight,
-            "description": theme.description,
-            "title": theme.titleText,
-            "background_color": "#" + theme.backgroundColor,
-            "accent_color": "#" + theme.accentColor,
-            "body_font": theme.bodyFont,
-            "header_image": theme.headerImage,
-            "avatar": theme.avatarURL,
-            "avatar_shape": theme.avatarShape
-          }),
+          body: jsonEncode(body),
         )
         .onError(errorFunction);
 
@@ -786,7 +814,7 @@ class Api {
     final http.Response response = await client
         .get(
           Uri.parse(
-            _host + _posts + User.blogsIDs[User.currentProfile] + _draft,
+            _host + _post + User.blogsIDs[User.currentProfile] + _draft,
           ),
           headers: _headerContentAuth,
         )
