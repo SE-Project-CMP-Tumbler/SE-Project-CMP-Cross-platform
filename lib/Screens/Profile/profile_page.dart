@@ -1126,15 +1126,15 @@ class _ProfilePageState extends State<ProfilePage>
         );
       }
 
-      if ((response["meta"]["share_likes"] ?? false) as bool) {
+      if ((response["response"]["share_likes"] ?? false) as bool) {
         _tabs.add("Likes");
       }
 
-      if ((response["meta"]["share_followings"] ?? false) as bool) {
+      if ((response["response"]["share_followings"] ?? false) as bool) {
         _tabs.add("Following");
       }
 
-      if ((response["meta"]["followed"] ?? false) as bool) {
+      if ((response["response"]["followed"] ?? false) as bool) {
         _personIconOptions.add("Unfollow");
       } else {
         _personIconOptions.add("Follow");

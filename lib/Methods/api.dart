@@ -806,10 +806,11 @@ class Api {
 
   /// to get the draft posts of a specific blog
   Future<Map<String, dynamic>> fetchDraftPost() async {
+    print(_host + _post + User.blogsIDs[User.currentProfile] + _draft);
     final http.Response response = await client
         .get(
           Uri.parse(
-            _host + _posts + User.blogsIDs[User.currentProfile] + _draft,
+            _host + _post + User.blogsIDs[User.currentProfile] + _draft,
           ),
           headers: _headerContentAuth,
         )
