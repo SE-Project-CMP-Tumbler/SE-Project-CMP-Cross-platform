@@ -4,7 +4,6 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Methods/follow_blog.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
-
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 
 /// blog component
@@ -135,15 +134,19 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
                           final bool succeeded= await
                           followBlog(int.parse(widget.blog.blogId!));
                           if(succeeded) {
-                            showToast(context, "Great!, you are now following "
-                                "${widget.blog.blogTitle}",);
+                            showSnackBar(
+                              context,
+                              "Great!, you are now following "
+                              "${widget.blog.blogTitle}",
+                            );
                             if(mounted)
                               setState(() {
                                 _followed = true;
                               });
                           }
                           else{
-                            showToast(context, "OOPS, something went wrong 😢");
+                            showSnackBar(
+                                context, "OOPS, something went wrong 😢");
                           }
                         }
                       }
@@ -153,14 +156,18 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
                           final bool succeeded= await
                           unFollowBlog(int.parse(widget.blog.blogId!));
                           if(succeeded) {
-                            showToast(context, "Don't worry, u won't be"
-                                " bothered by this blog again",);
+                            showSnackBar(
+                              context,
+                              "Don't worry, u won't be"
+                              " bothered by this blog again",
+                            );
                             if(mounted)
                               setState(() {
                                 _followed = false;
                               });}
                           else{
-                            showToast(context, "OOPS, something went wrong 😢");
+                            showSnackBar(
+                                context, "OOPS, something went wrong 😢");
                           }
                         }}
                       if(mounted)

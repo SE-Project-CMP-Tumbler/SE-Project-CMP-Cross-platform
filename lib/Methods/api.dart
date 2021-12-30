@@ -11,9 +11,11 @@ import "package:tumbler/Models/user.dart";
 class Api {
   static const String _firebaseHost =
       "https://mock-back-default-rtdb.firebaseio.com";
-  static const String _postmanMockHost="http://f677-193-227-10-6.ngrok.io";
-  static const String _autocompleteMock= "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
-  static const String _mockSearch ="https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
+  static const String _postmanMockHost = "http://f677-193-227-10-6.ngrok.io";
+  static const String _autocompleteMock =
+      "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
+  static const String _mockSearch =
+      "https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
   final String _host = dotenv.env["host"] ?? " ";
   final String _getTrendingTags = dotenv.env["getTrendingTags"] ?? " ";
   final String _signUp = dotenv.env["signUp"] ?? " ";
@@ -59,7 +61,7 @@ class Api {
   final String _tagData = dotenv.env["tagData"] ?? " ";
   final String _info = dotenv.env["info"] ?? " ";
   final String _theme = dotenv.env["theme"] ?? " ";
-
+  final String _notifications = dotenv.env["notifications"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -475,7 +477,7 @@ class Api {
     final http.Response response = await http
         .get(
           Uri.parse(
-            _host + _blog + "/" + blogId + "/notifications",
+            _host + _notifications,
           ),
           headers: _headerContentAuth,
         )
@@ -853,13 +855,13 @@ class Api {
 
   /// get the details of a specific tag
   Future<Map<String, dynamic>> fetchTagsDetails(
-      final String tagDescription, {
+    final String tagDescription, {
     final bool mock = false,
   }) async {
     final String host = mock ? _postmanMockHost : _host;
     final http.Response response = await http
         .get(
-          Uri.parse(host + _tagData +tagDescription),
+      Uri.parse(host + _tagData + tagDescription),
           headers: _headerContentAuth,
         )
         .onError(errorFunction);
