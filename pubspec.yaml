@@ -57,7 +57,6 @@ dependencies:
   contained_tab_bar_view: ^0.8.0
   enhanced_drop_down: ^0.1.7+1
   pusher_client: ^2.0.0
-  flutter_pusher: ^1.0.3
   random_color: ^1.0.6-nullsafety
   infinite_scroll_pagination: ^3.1.0
   sliver_header_delegate: ^0.0.5
@@ -70,9 +69,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_driver:
-    sdk: flutter
-
+    flutter_driver:
+      sdk: flutter
+  test: ^1.17.10
 flutter_native_splash:
   color: "#001935"
   image: assets/images/logo_letter.png
@@ -99,7 +98,7 @@ flutter:
     - assets/images/
     - assets/fonts/
     - .env
-
+    - lib/mock.json
     - assets/images/intro_1.gif
     - assets/images/intro_2.gif
     - assets/images/intro_2.webp
