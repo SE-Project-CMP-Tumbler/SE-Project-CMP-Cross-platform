@@ -22,6 +22,12 @@ import "package:tumbler/Screens/Settings/profile_settings.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
+/// list of current profile posts.
+List<PostModel> postsTabPosts = <PostModel>[];
+
+/// list of current posts liked.
+List<PostModel> postsTabLiked = <PostModel>[];
+
 /// Profile Page of the User
 class ProfilePage extends StatefulWidget {
   /// constructor
@@ -106,14 +112,8 @@ class _ProfilePageState extends State<ProfilePage>
   /// Indicate that more posts are fetched
   bool _gettingPosts = false;
 
-  /// list of current profile posts.
-  List<PostModel> postsTabPosts = <PostModel>[];
-
   /// for Pagination Post Tab
   int currentPagePosts = 0;
-
-  /// list of current posts liked.
-  List<PostModel> postsTabLiked = <PostModel>[];
 
   /// for Pagination Likes Tab
   int currentPageLiked = 0;
@@ -411,7 +411,7 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                               child: PostOutView(
                                 post: postsTabPosts[index],
-                                index: 0, // dump
+                                index: index, page: 1,
                               ),
                             );
                           },
@@ -526,7 +526,8 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                               child: PostOutView(
                                 post: postsTabLiked[index],
-                                index: index, // dump , not used in this case
+                                index: index,
+                                page: 2,
                               ),
                             );
                           },

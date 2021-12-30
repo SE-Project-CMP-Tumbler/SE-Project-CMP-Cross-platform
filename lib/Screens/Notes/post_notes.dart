@@ -26,19 +26,12 @@ class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
   NotesPage({
     required final this.postID,
-    required final this.index,
-    required final this.updateNotesInInteractionBar,
     final Key? key,
   }) : super(key: key);
 
   /// Post ID
   int postID = 0;
 
-  /// Post Index
-  int index;
-
-  ///
-  Function updateNotesInInteractionBar;
 
   @override
   _NotesPageState createState() => _NotesPageState();
@@ -67,10 +60,18 @@ class _NotesPageState extends State<NotesPage>
   ///contains all likes without comments their details
   List<dynamic> reblogsWithOutCommentsList = <dynamic>[];
 
+
   Future<void> initialize() async {
     final Map<String, dynamic> receivedNotes =
         await Api().getNotes(widget.postID.toString());
 
+    print(receivedNotes);
+    reblogsWithOutCommentsList.clear();
+    reblogsWithCommentsList.clear();
+    likesList.clear();
+    reblogsList.clear();
+    repliesList.clear();
+    setState(() {});
     //check the status code for the received response.
     if (receivedNotes["meta"]["status"] == "200") {
       likeCount =
@@ -123,8 +124,12 @@ class _NotesPageState extends State<NotesPage>
   }
 
   Future<void> refresh() async {
+    likesList.clear();
+    reblogsList.clear();
+    repliesList.clear();
+    reblogsWithCommentsList.clear();
+    reblogsWithOutCommentsList.clear();
     await initialize();
-    widget.updateNotesInInteractionBar();
     setState(() {});
   }
 
@@ -221,9 +226,7 @@ class _NotesPageState extends State<NotesPage>
                   const Spacer(),
                   ReplyTextField(
                     replyController: replyController,
-                    postId: widget.postID.toString(),
-                    refresh: refresh,
-                    index: widget.index,
+                    postId: widget.postID.toString(), refresh: refresh,
                   )
                 ],
               )
@@ -249,9 +252,7 @@ class _NotesPageState extends State<NotesPage>
                     ),
                     ReplyTextField(
                       replyController: replyController,
-                      postId: widget.postID.toString(),
-                      refresh: refresh,
-                      index: widget.index,
+                      postId: widget.postID.toString(), refresh: refresh,
                     ),
                   ],
                 ),

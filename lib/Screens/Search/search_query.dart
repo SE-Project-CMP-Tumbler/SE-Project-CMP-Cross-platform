@@ -13,12 +13,12 @@ import "package:tumbler/Screens/Search/search_result.dart";
 class SearchQuery extends StatefulWidget {
   /// constructor
   const SearchQuery({
-    final this.recommendedTags,
+    required final this.recommendedTags,
     final Key? key,
   }) : super(key: key);
 
   /// suggested words to search about (taken from suggested tags)
-  final List<Tag>? recommendedTags;
+  final List<Tag> recommendedTags;
 
   @override
   State<SearchQuery> createState() => _SearchQueryState();
@@ -191,7 +191,7 @@ class _SearchQueryState extends State<SearchQuery> {
                   // Next, create a SliverList
                   SliverList(
                     delegate: SliverChildListDelegate(
-                      !_startedSearching && widget.recommendedTags != null
+                      !_startedSearching
                           ? <Widget>[
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -208,7 +208,7 @@ class _SearchQueryState extends State<SearchQuery> {
                                 ),
                               ),
                               Column(
-                                children: widget.recommendedTags!
+                                children: widget.recommendedTags
                                     .map(
                                       (final Tag tag) => Material(
                                         color: Colors.white,
@@ -217,9 +217,8 @@ class _SearchQueryState extends State<SearchQuery> {
                                             Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute<SearchResult>(
-                                                builder: (
-                                                  final BuildContext context,
-                                                ) =>
+                                                builder: (final BuildContext
+                                                        context,) =>
                                                     SearchResult(
                                                   word: tag.tagDescription!,
                                                 ),
@@ -240,192 +239,182 @@ class _SearchQueryState extends State<SearchQuery> {
                                     .toList(),
                               ),
                             ]
-                          : widget.recommendedTags == null && !_startedSearching
-                              ? <Widget>[Container()]
-                              : <Widget>[
-                                  /// if clicked, fetch the posts of
-                                  /// that specific tag
-                                  Material(
-                                    color: Colors.white,
-                                    child: InkWell(
-                                      splashColor: Colors.grey,
-                                      child: ListTile(
-                                        onTap: () {},
-                                        title: Row(
-                                          children: <Widget>[
-                                            const Text(
-                                              "Go To #",
-                                              style: TextStyle(
-                                                fontFamily: "fav",
-                                              ),
-                                            ),
-                                            Text(
-                                              _textEditingController.value.text,
-                                              style: TextStyle(
-                                                color: floatingButtonColor,
-                                                fontFamily: "fav",
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const Divider(
-                                    thickness: 0.5,
-                                    height: 0,
-                                  ),
-                                  Column(
-                                    children: autoCompWords
-                                        .map(
-                                          (final String word) => Material(
-                                            color: Colors.white,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute<
-                                                      SearchResult>(
-                                                    builder: (
-                                                      final BuildContext
-                                                          context,
-                                                    ) =>
-                                                        SearchResult(
-                                                      word: word,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: ListTile(
-                                                leading: Icon(
-                                                  Icons.search,
-                                                  size: 28,
-                                                  color: Colors.grey.shade400,
-                                                ),
-                                                title: Text(word),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                        .toList(),
-                                  ),
-                                  const Divider(
-                                    thickness: 0.5,
-                                    height: 0,
-                                  ),
-
-                                  /// tumblers
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8,
-                                      right: 8,
-                                      top: 8,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                          : <Widget>[
+                              /// if clicked, fetch the posts of
+                              /// that specific tag
+                              Material(
+                                color: Colors.white,
+                                child: InkWell(
+                                  splashColor: Colors.grey,
+                                  child: ListTile(
+                                    onTap: () {},
+                                    title: Row(
                                       children: <Widget>[
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 16,
-                                            right: 16,
-                                            top: 16,
-                                            bottom: 8,
-                                          ),
-                                          child: Text(
-                                            "Tumblers",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade700,
-                                              fontFamily: "fav",
-                                            ),
+                                        const Text(
+                                          "Go To #",
+                                          style: TextStyle(
+                                            fontFamily: "fav",
                                           ),
                                         ),
-
-                                        /// If clicked then get that
-                                        /// specific blog and show it,
-                                        /// show error toast if not found
-                                        Material(
-                                          color: Colors.white,
-                                          child: InkWell(
-                                            onTap: () {},
-                                            child: ListTile(
-                                              title: Row(
-                                                children: <Widget>[
-                                                  const Text(
-                                                    "Go To @",
-                                                    style: TextStyle(
-                                                      fontFamily: "fav",
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    _textEditingController
-                                                        .value.text,
-                                                    style: TextStyle(
-                                                      color:
-                                                          floatingButtonColor,
-                                                      fontFamily: "fav",
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                        Text(
+                                          _textEditingController.value.text,
+                                          style: TextStyle(
+                                            color: floatingButtonColor,
+                                            fontFamily: "fav",
                                           ),
-                                        ),
-
-                                        /// List of search results (blogs)
-                                        Column(
-                                          children: blogResults
-                                              .map(
-                                                (final Blog blog) => ListTile(
-                                                  title: Text(blog.username!),
-                                                  leading: Image.network(
-                                                    blog.avatarImageUrl ??
-                                                        tumblerImgUrl,
-                                                    errorBuilder: (
-                                                      final BuildContext
-                                                          context,
-                                                      final Object exception,
-                                                      final StackTrace?
-                                                          stackTrace,
-                                                    ) {
-                                                      return Image.network(
-                                                        tumblerImgUrl,
-                                                        height: 40,
-                                                        width: 40,
-                                                        fit: BoxFit.fill,
-                                                      );
-                                                    },
-                                                    height: 40,
-                                                    width: 40,
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                  trailing:
-// TODO(DONIA): remove this if the blog is followed by the current user
-                                                      TextButton(
-                                                    child: Text(
-                                                      "FOLLOW",
-                                                      style: GoogleFonts
-                                                          .montserrat(
-                                                        textStyle: TextStyle(
-                                                          color:
-                                                          floatingButtonColor,
-                                                          fontWeight:
-                                                              FontWeight.w300,
-                                                        ),
-                                                      ),
-                                                      textScaleFactor: 1.1,
-                                                    ),
-                                                    onPressed: () {},
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
                                         )
                                       ],
                                     ),
                                   ),
-                                ],
+                                ),
+                              ),
+                              const Divider(
+                                thickness: 0.5,
+                                height: 0,
+                              ),
+                              Column(
+                                children: autoCompWords
+                                    .map(
+                                      (final String word) => Material(
+                                        color: Colors.white,
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute<SearchResult>(
+                                                builder: (final BuildContext
+                                                        context,) =>
+                                                    SearchResult(
+                                                  word: word,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: ListTile(
+                                            leading: Icon(
+                                              Icons.search,
+                                              size: 28,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                            title: Text(word),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                              const Divider(
+                                thickness: 0.5,
+                                height: 0,
+                              ),
+
+                              /// tumblers
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 8,
+                                  right: 8,
+                                  top: 8,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 16,
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 8,
+                                      ),
+                                      child: Text(
+                                        "Tumblers",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey.shade700,
+                                          fontFamily: "fav",
+                                        ),
+                                      ),
+                                    ),
+
+                                    /// If clicked then get that
+                                    /// specific blog and show it,
+                                    /// show error toast if not found
+                                    Material(
+                                      color: Colors.white,
+                                      child: InkWell(
+                                        onTap: () {},
+                                        child: ListTile(
+                                          title: Row(
+                                            children: <Widget>[
+                                              const Text(
+                                                "Go To @",
+                                                style: TextStyle(
+                                                  fontFamily: "fav",
+                                                ),
+                                              ),
+                                              Text(
+                                                _textEditingController
+                                                    .value.text,
+                                                style: TextStyle(
+                                                  color: floatingButtonColor,
+                                                  fontFamily: "fav",
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    /// List of search results (blogs)
+                                    Column(
+                                      children: blogResults
+                                          .map(
+                                            (final Blog blog) => ListTile(
+                                              title: Text(blog.username!),
+                                              leading: Image.network(
+                                                blog.avatarImageUrl ??
+                                                    tumblerImgUrl,
+                                                errorBuilder: (
+                                                  final BuildContext context,
+                                                  final Object exception,
+                                                  final StackTrace? stackTrace,
+                                                ) {
+                                                  return Image.network(
+                                                    tumblerImgUrl,
+                                                    height: 40,
+                                                    width: 40,
+                                                    fit: BoxFit.fill,
+                                                  );
+                                                },
+                                                height: 40,
+                                                width: 40,
+                                                fit: BoxFit.fill,
+                                              ),
+                                              trailing:
+// TODO(DONIA): remove this if the blog is followed by the current user
+                                                  TextButton(
+                                                child: Text(
+                                                  "FOLLOW",
+                                                  style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                      color:
+                                                          floatingButtonColor,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                    ),
+                                                  ),
+                                                  textScaleFactor: 1.1,
+                                                ),
+                                                onPressed: () {},
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
                     ),
                   ),
                 ],

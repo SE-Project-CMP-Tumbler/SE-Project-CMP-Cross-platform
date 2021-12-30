@@ -26,4 +26,3 @@ Future<bool> unFollowTag(final String tagDescription,) async
   }
   return successful;
 }
-

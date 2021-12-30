@@ -1,4 +1,3 @@
-import "package:tumbler/Constants/urls.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/user.dart";
@@ -54,10 +53,9 @@ Future<bool> fillUserBlogs() async {
 }
 
 /// to get the "blogs" in "check out blogs section
-Future<List<Blog>> getRandomBlogs({final int page = 1}) async {
+Future<List<Blog>> getRandomBlogs() async {
   final List<Blog> checkoutBlogs = <Blog>[];
-  final Map<String, dynamic> response =
-      await Api().fetchCheckOutBlogs(page: page);
+  final Map<String, dynamic> response = await Api().fetchCheckOutBlogs();
   final List<dynamic> blogs = response["response"]["blogs"];
   if (response["meta"]["status"] == "200") {
     for (final Map<String, dynamic> blog in blogs) {
@@ -71,16 +69,17 @@ Future<List<Blog>> getRandomBlogs({final int page = 1}) async {
         // don't care
         avatarImageUrl: blog["avatar"].toString().isNotEmpty
             ? blog["avatar"].toString()
-            : tumblerImgUrl,
+            : "https://i.pinimg.com/736x/89/90/48/899048ab0cc455154006fdb9676964b3.jpg",
         avatarShape: blog["avatar_shape"] ?? "circle",
         headerImage: blog["header_image"].toString().isNotEmpty
             ? blog["header_image"].toString()
-            : tumblerImgUrl,
+            : "https://picsum.photos/200",
         blogDescription: blog["description"] ?? "",
         blogTitle: blog["title"] ?? "",
         blogId: blog["id"].toString(),
         username: blog["username"] ?? "",
-        isFollowed: blog["followed"] as bool,
+        isFollowed: blog["followed"]as bool,
+
       );
       checkoutBlogs.add(coBlog);
     }

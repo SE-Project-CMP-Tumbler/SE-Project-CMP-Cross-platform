@@ -12,8 +12,9 @@ class PostOutView extends StatefulWidget {
   const PostOutView({
     required final this.post,
     required final this.index,
+    required final this.page,
     final this.isTagPost = false,
-    final this.isDashBoard = false,
+    final this.isDraft = false,
     final Key? key,
   }) : super(key: key);
 
@@ -23,11 +24,23 @@ class PostOutView extends StatefulWidget {
   /// index of the post in the home page
   final int index;
 
+  /// indicate which list we propagate in
+  /// page = 0 -> Home Page
+  /// page = 1 -> Profile Posts
+  /// page = 2 -> Profile Like Posts
+  /// page = 3 -> Search Result Posts
+  /// page = 4 -> Draft Posts
+  /// page = 5 -> Recommend Posts
+  /// page = 6 -> Profile Search Posts
+  /// page = 7 -> Recent tag Posts
+  /// page = 8 -> Top tag Posts
+  final int page;
+
   /// to indicate is this a tag post or not
   final bool isTagPost;
 
   /// to indicate is this post from dashboard
-  final bool isDashBoard;
+  final bool isDraft;
 
   @override
   _PostOutViewState createState() => _PostOutViewState();
@@ -68,7 +81,6 @@ class _PostOutViewState extends State<PostOutView> {
 
   @override
   Widget build(final BuildContext context) {
-    print(widget.post.postId);
     return Column(
       children: <Widget>[
         PostTopBar(
@@ -128,7 +140,8 @@ class _PostOutViewState extends State<PostOutView> {
           isMine: User.blogsNames.contains(widget.post.blogUsername),
           index: widget.index,
           postID: widget.post.postId,
-          isDashBoard: widget.isDashBoard,
+          isDraft: widget.isDraft,
+          page: widget.page,
         ),
         if (!widget.isTagPost)
           Container(

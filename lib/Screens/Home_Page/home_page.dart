@@ -197,7 +197,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     return PostOutView(
                                       post: homePosts[index],
                                       index: index,
-                                      isDashBoard: true,
+                                      page: 0,
                                     );
                                   },
                                 ),

@@ -5,6 +5,9 @@ import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 
+final List<PostModel> draftPosts = <PostModel>[];
+
+
 /// To Show the Draft Post of the Current Blog
 class ShowDraft extends StatefulWidget {
   /// Constructor
@@ -15,7 +18,6 @@ class ShowDraft extends StatefulWidget {
 }
 
 class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
-  final List<PostModel> _posts = <PostModel>[];
   bool _isLoading = false;
   late AnimationController loadingSpinnerAnimationController;
 
@@ -24,7 +26,7 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
     final Map<String, dynamic> response = await Api().fetchDraftPost();
 
     if (response["meta"]["status"] == "200") {
-      _posts.addAll(
+      draftPosts.addAll(
         await PostModel.fromJSON(response["response"]["posts"]),
       );
       setState(() {});
@@ -118,7 +120,7 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
                 ),
               ),
             )
-          : _posts.isNotEmpty
+          : draftPosts.isNotEmpty
               ? Column(
                   children: <Widget>[
                     Expanded(
@@ -130,8 +132,9 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
                           return Column(
                             children: <Widget>[
                               PostOutView(
-                                post: _posts[index],
-                                index: index, // not used
+                                post: draftPosts[index],
+                                index: index, page: 4,
+                                isDraft: true,
                               ),
                               Container(
                                 height: 10,
@@ -140,7 +143,7 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
                             ],
                           );
                         },
-                        itemCount: _posts.length,
+                        itemCount: draftPosts.length,
                       ),
                     ),
                   ],
