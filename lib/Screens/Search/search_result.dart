@@ -12,6 +12,8 @@ import "package:tumbler/Screens/Profile/profile_page.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 
+List<PostModel> postsRes = <PostModel>[];
+
 /// for displaying results of the search query, (posts, tags, blogs)
 class SearchResult extends StatefulWidget {
   ///
@@ -41,7 +43,7 @@ class _SearchResultState extends State<SearchResult>
   final bool _error = false;
 
   List<List<dynamic>> searchResults = <List<dynamic>>[];
-  List<PostModel> postsRes = <PostModel>[];
+
   List<Tag> tagRes = <Tag>[];
   List<Blog> blogResults = <Blog>[];
   List<Color> blogsBgColors = <Color>[RandomColor().randomColor()];
@@ -209,26 +211,30 @@ class _SearchResultState extends State<SearchResult>
                                 child: SizedBox(
                                   width: _width,
                                   child: Center(
-                                    child: Column(
-                                      children: postsRes
-                                          .map(
-                                            (final PostModel post) => SizedBox(
-                                              width: kIsWeb ? 500 : _width,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  bottom: 18,
-                                                ),
-                                                child: Container(
-                                                  color: Colors.white,
-                                                  child: PostOutView(
-                                                    post: post,
-                                                    index: 0,
-                                                  ),
-                                                ),
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: postsRes.length,
+                                      itemBuilder: (
+                                        final BuildContext context,
+                                        final int index,
+                                      ) {
+                                        return SizedBox(
+                                          width: kIsWeb ? 500 : _width,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 18,
+                                            ),
+                                            child: Container(
+                                              color: Colors.white,
+                                              child: PostOutView(
+                                                post: postsRes[index],
+                                                index: index,
+                                                page: 3,
                                               ),
                                             ),
-                                          )
-                                          .toList(),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),

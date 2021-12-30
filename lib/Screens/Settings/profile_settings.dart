@@ -1,7 +1,10 @@
 import "package:flutter/material.dart";
+import 'package:provider/provider.dart';
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Methods/log_out.dart";
 import "package:tumbler/Models/user.dart";
+import 'package:tumbler/Providers/followed_tags_sign_up.dart';
+import 'package:tumbler/Providers/tags.dart';
 import "package:tumbler/Screens/On_Start_Screens/on_start_screen.dart";
 import "package:tumbler/Screens/Settings/change_email.dart";
 import "package:tumbler/Screens/Settings/change_name.dart";
@@ -106,7 +109,10 @@ class ProfileSettings extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 if (await logOut()) {
-                  // Provider.of<FollowedTags>(context).followedTags.clear();
+                  Provider.of<FollowedTags>(context, listen: false)
+                      .followedTags
+                      .clear();
+                  Provider.of<Tags>(context, listen: false).resetAll();
                   await Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute<OnStart>(
                       builder: (final BuildContext context) => OnStart(),

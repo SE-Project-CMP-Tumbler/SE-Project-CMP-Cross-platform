@@ -26,19 +26,12 @@ class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
   NotesPage({
     required final this.postID,
-    required final this.index,
-    required final this.updateNotesInInteractionBar,
     final Key? key,
   }) : super(key: key);
 
   /// Post ID
   int postID;
 
-  /// Post Index
-  int index;
-
-  ///
-  Function updateNotesInInteractionBar;
 
   @override
   _NotesPageState createState() => _NotesPageState();
@@ -125,7 +118,6 @@ class _NotesPageState extends State<NotesPage>
 
   Future<void> refresh() async {
     await initialize();
-    widget.updateNotesInInteractionBar();
     setState(() {});
   }
 
@@ -225,8 +217,6 @@ class _NotesPageState extends State<NotesPage>
                   ReplyTextField(
                     replyController: replyController,
                     postId: widget.postID.toString(),
-                    refresh: refresh,
-                    index: widget.index,
                   )
                 ],
               )
@@ -253,8 +243,6 @@ class _NotesPageState extends State<NotesPage>
                     ReplyTextField(
                       replyController: replyController,
                       postId: widget.postID.toString(),
-                      refresh: refresh,
-                      index: widget.index,
                     ),
                   ],
                 ),

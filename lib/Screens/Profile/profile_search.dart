@@ -9,6 +9,9 @@ import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Exceptions_UI/generic_exception.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 
+List<PostModel> profileSearchPosts = <PostModel>[];
+
+
 /// Page to show the Search in Profile page
 class ProfileSearchResult extends StatefulWidget {
   /// Constructor
@@ -34,7 +37,6 @@ class ProfileSearchResult extends StatefulWidget {
 
 class _ProfileSearchResultState extends State<ProfileSearchResult>
     with TickerProviderStateMixin {
-  List<PostModel> posts = <PostModel>[];
 
   /// true when posts are loading.
   bool _isLoading = false;
@@ -55,7 +57,7 @@ class _ProfileSearchResultState extends State<ProfileSearchResult>
   Future<void> fetchPosts() async {
     setState(() => _isLoading = true);
     setState(() => _error = false);
-    posts.clear();
+    profileSearchPosts.clear();
     currentPage = 0;
     final Map<String, dynamic> response = await Api()
         .fetchSearchResultsProfile(widget.word, widget.blogID, currentPage + 1);
@@ -63,7 +65,7 @@ class _ProfileSearchResultState extends State<ProfileSearchResult>
     if (response["meta"]["status"] == "200") {
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPage++;
-        posts.addAll(
+        profileSearchPosts.addAll(
           await PostModel.fromJSON(response["response"]["posts"]),
         );
       }
@@ -86,7 +88,7 @@ class _ProfileSearchResultState extends State<ProfileSearchResult>
       if ((response["response"]["posts"] as List<dynamic>).isNotEmpty) {
         currentPage++;
         setState(
-          () async => posts.addAll(
+          () async => profileSearchPosts.addAll(
             await PostModel.fromJSON(response["response"]["posts"]),
           ),
         );
@@ -193,18 +195,18 @@ class _ProfileSearchResultState extends State<ProfileSearchResult>
                                   ),
                                 ],
                               )
-                            : posts.isEmpty
+                            : profileSearchPosts.isEmpty
                                 ? const EmptyBoxImage(msg: "No Posts to show")
                                 : ListView.builder(
                                     controller: _controller,
-                                    itemCount: posts.length,
+                                    itemCount: profileSearchPosts.length,
                                     itemBuilder: (
                                       final BuildContext ctx,
                                       final int index,
                                     ) {
                                       return PostOutView(
-                                        post: posts[index],
-                                        index: index,
+                                        post: profileSearchPosts[index],
+                                        index: index, page: 6,
                                       );
                                     },
                                   ),

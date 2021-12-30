@@ -17,7 +17,7 @@ Future<void> loadChats() async {
   if (response["meta"]["status"] == "200") {
     chats.clear();
     final List<dynamic> chatsList = response["response"]["chat_messages"];
-    print(chatsList);
+
     for (int i = 0; i < chatsList.length; i++) {
       final String chk = chatsList[i]["blog_id"].toString();
       if (chk == User.blogsIDs[User.currentProfile]) {

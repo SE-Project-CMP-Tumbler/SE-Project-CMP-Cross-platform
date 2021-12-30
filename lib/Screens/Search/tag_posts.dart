@@ -12,6 +12,10 @@ import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 
+
+List<PostModel> recentTagPosts = <PostModel>[];
+List<PostModel> topTagPosts = <PostModel>[];
+
 /// for showing the posts (recent, tops) of a specific tag
 class TagPosts extends StatefulWidget {
   /// constructor, takes tag description and image and a random color only
@@ -46,8 +50,6 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
   /// to indicate a loading of an unfollow tag request
   bool _proceedingFollowing = false;
 
-  List<PostModel> recentPosts = <PostModel>[];
-  List<PostModel> topPosts = <PostModel>[];
   int _currentTab = 0;
   final int _postsCount = 0;
 
@@ -61,7 +63,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
       widget.tag.tagDescription!,
     );
     setState(() {
-      recentPosts = tagPosts;
+      recentTagPosts = tagPosts;
     });
 
     setState(() {
@@ -80,7 +82,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
       recent: false,
     );
     setState(() {
-      topPosts = tagTopPosts;
+      topTagPosts = tagTopPosts;
     });
 
     setState(() {
@@ -99,7 +101,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
       widget.tag.tagDescription!,
     );
     setState(() {
-      recentPosts = tagPosts;
+      recentTagPosts = tagPosts;
     });
 
     /// get top posts of the tag
@@ -109,7 +111,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
     );
     if (mounted)
       setState(() {
-        topPosts = tagTopPosts;
+        topTagPosts = tagTopPosts;
       });
     if (mounted)
       setState(() {
@@ -528,7 +530,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
                                 builder: (final BuildContext context) {
                                   if (name == _tabs[0]) {
                                     return ListView.builder(
-                                      itemCount: recentPosts.length,
+                                      itemCount: recentTagPosts.length,
                                       itemBuilder: (
                                         final BuildContext context,
                                         final int index,
@@ -540,9 +542,9 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
                                           child: Container(
                                             color: Colors.white,
                                             child: PostOutView(
-                                              post: recentPosts[index],
-                                              index: 0, // dump
-                                              isTagPost: true,
+                                              post: recentTagPosts[index],
+                                              index: index,
+                                              isTagPost: true, page: 7,
                                             ),
                                           ),
                                         );
@@ -550,7 +552,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
                                     );
                                   } else
                                     return ListView.builder(
-                                      itemCount: topPosts.length,
+                                      itemCount: topTagPosts.length,
                                       itemBuilder: (
                                         final BuildContext context,
                                         final int index,
@@ -562,9 +564,10 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
                                           child: Container(
                                             color: Colors.white,
                                             child: PostOutView(
-                                              post: topPosts[index],
-                                              index: 0, // dump
+                                              post: topTagPosts[index],
+                                              index: index,
                                               isTagPost: true,
+                                              page: 8,
                                             ),
                                           ),
                                         );

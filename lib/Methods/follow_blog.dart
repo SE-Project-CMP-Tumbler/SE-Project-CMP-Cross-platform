@@ -26,4 +26,3 @@ Future<bool> unFollowBlog(final int blogId,) async
   }
   return successful;
 }
-

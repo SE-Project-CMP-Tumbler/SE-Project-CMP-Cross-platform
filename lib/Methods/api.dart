@@ -1,16 +1,13 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
 import "dart:convert";
 import "dart:io" as io;
-
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
-import 'package:tumbler/Models/blog_theme.dart';
+import "package:tumbler/Models/blog_theme.dart";
 import "package:tumbler/Models/user.dart";
 
 /// Class [Api] is used for all GET, POST, PUT, Delete request from the backend.
 class Api {
-  static const String _firebaseHost =
-      "https://mock-back-default-rtdb.firebaseio.com";
   static const String _postmanMockHost = "http://f677-193-227-10-6.ngrok.io";
   static const String _autocompleteMock =
       "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
@@ -61,9 +58,9 @@ class Api {
   final String _tagData = dotenv.env["tagData"] ?? " ";
   final String _info = dotenv.env["info"] ?? " ";
   final String _theme = dotenv.env["theme"] ?? " ";
-  final String _notifications = dotenv.env["notifications"] ?? " ";
   final String _pin = dotenv.env["pin"] ?? " ";
   final String _unpin = dotenv.env["unpin"] ?? " ";
+  final String _changeStatus = dotenv.env["changeStatus"] ?? " ";
 
   final String _weirdConnection = '''
             {
@@ -92,7 +89,6 @@ class Api {
     io.HttpHeaders.authorizationHeader: "Bearer " + User.accessToken,
   };
 
-
   /// When an error occur with any api request
   http.Response errorFunction(
     final Object? error,
@@ -105,7 +101,7 @@ class Api {
     }
   }
 
-  /// THIS WILL BE OVERRIDED WHILE DOING TESTING WITH A MOCK-CLIENT.
+  /// THIS WILL BE OVERRIDE WHILE DOING TESTING WITH A MOCK-CLIENT.
   http.Client client = http.Client();
 
   /// Make GET Request to the API to get List of
@@ -385,46 +381,72 @@ class Api {
     return jsonDecode(response.body);
   }
 
+  /// Change status of Post.
+  Future<Map<String, dynamic>> changePostStatus(
+    final String postID,
+    final String blogID,
+  ) async {
+    final http.Response response = await http
+        .put(
+          Uri.parse(_host + _posts + _changeStatus),
+          body: jsonEncode(
+            <String, String>{
+              "blog_id": blogID,
+              "post_id": postID,
+              "post_status": "published",
+            },
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction);
+    return jsonDecode(response.body);
+  }
+
   /// get Post.
-  Future<Map<String, dynamic>> getPost(final String postID,) async {
+  Future<Map<String, dynamic>> getPost(
+    final String postID,
+  ) async {
     final http.Response response = await http
         .get(
-      Uri.parse(_host + _post + postID),
-      headers: _headerContentAuth,
-    )
+          Uri.parse(_host + _post + postID),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
   /// pin Post.
-  Future<Map<String, dynamic>> pinPost(final String postID,
-      final String blogID,) async {
+  Future<Map<String, dynamic>> pinPost(
+    final String postID,
+    final String blogID,
+  ) async {
     final http.Response response = await http
         .put(
-      Uri.parse(_host + _posts + _pin),
-      headers: _headerContentAuth,
-      body: jsonEncode(<String, dynamic>{
-        "blog_id": blogID,
-        "post_id": postID,
-      }),
-    )
+          Uri.parse(_host + _posts + _pin),
+          headers: _headerContentAuth,
+          body: jsonEncode(<String, dynamic>{
+            "blog_id": blogID,
+            "post_id": postID,
+          }),
+        )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
 
   /// unpin Post.
-  Future<Map<String, dynamic>> unPinPost(final String postID,
-      final String blogID,) async {
-    print(_host + _posts + _unpin);
+  Future<Map<String, dynamic>> unPinPost(
+    final String postID,
+    final String blogID,
+  ) async {
     final http.Response response = await http
         .put(
-      Uri.parse(_host + _posts + _unpin),
-      headers: _headerContentAuth,
-      body: jsonEncode(<String, dynamic>{
-        "blog_id": blogID,
-        "post_id": postID,
-      }),
-    )
+          Uri.parse(_host + _posts + _unpin),
+          headers: _headerContentAuth,
+          body: jsonEncode(<String, dynamic>{
+            "blog_id": blogID,
+            "post_id": postID,
+          }),
+        )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
@@ -433,9 +455,9 @@ class Api {
   Future<Map<String, dynamic>> fetchHomePosts(final int page) async {
     final http.Response response = await client
         .get(
-      Uri.parse(_host + _dashboard + "?page=$page"),
-      headers: _headerContentAuth,
-    )
+          Uri.parse(_host + _dashboard + "?page=$page"),
+          headers: _headerContentAuth,
+        )
         .onError(errorFunction);
     return jsonDecode(response.body);
   }
@@ -472,7 +494,7 @@ class Api {
   Future<Map<String, dynamic>> likePost(final int postId) async {
     final http.Response response = await client
         .post(
-      Uri.parse(
+          Uri.parse(
             _host + _likePost + postId.toString(),
           ),
           headers: _headerContentAuth,
@@ -485,7 +507,7 @@ class Api {
   Future<Map<String, dynamic>> unlikePost(final int postId) async {
     final http.Response response = await client
         .delete(
-      Uri.parse(
+          Uri.parse(
             _host + _likePost + postId.toString(),
           ),
           headers: _headerContentAuth,
@@ -499,7 +521,6 @@ class Api {
     final String postId,
     final String text,
   ) async {
-    print(_host + _post + _replyPost + postId);
     final http.Response response = await client
         .post(
       Uri.parse(
@@ -938,7 +959,7 @@ class Api {
     final String host = mock ? _postmanMockHost : _host;
     final http.Response response = await http
         .get(
-      Uri.parse(host + _tagData + tagDescription),
+          Uri.parse(host + _tagData + tagDescription),
           headers: _headerContentAuth,
         )
         .onError(errorFunction);
