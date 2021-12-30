@@ -82,6 +82,7 @@ class Api {
                       }
             }
         ''';
+
   final Map<String, String> _headerContent = <String, String>{
     io.HttpHeaders.acceptHeader: "application/json",
     io.HttpHeaders.contentTypeHeader: "application/json",
@@ -91,7 +92,6 @@ class Api {
     io.HttpHeaders.contentTypeHeader: "application/json",
     io.HttpHeaders.authorizationHeader: "Bearer " + User.accessToken,
   };
-
 
   /// When an error occur with any api request
   http.Response errorFunction(
@@ -170,7 +170,7 @@ class Api {
     final String email,
     final String password,
   ) async {
-    final http.Response response = await client
+    final http.Response response = await http
         .post(
           Uri.parse(_host + _login),
           body: jsonEncode(<String, String>{
@@ -849,10 +849,9 @@ class Api {
 
   /// to unfollows specific tag
   Future<Map<String, dynamic>> unFollowTag(
-    final String tagDescription, {
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String tagDescription,
+  ) async {
+    final String host = _host;
     final http.Response response = await http
         .delete(
           Uri.parse(
@@ -879,17 +878,18 @@ class Api {
   /// get posts of specific tag
   Future<Map<String, dynamic>> fetchTagPosts(
     final String tagDescription, {
-    final bool mock = false,
     final bool recent = true,
+    final int page = 1,
   }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(
             host +
                 _tagPosts +
                 tagDescription +
-                (recent ? _recentPosts : _topPosts),
+                (recent ? _recentPosts : _topPosts) +
+                "&page=$page",
           ),
           headers: _headerContentAuth,
         )
@@ -899,10 +899,9 @@ class Api {
 
   /// fetching words for auto complete search text field
   Future<Map<String, dynamic>> fetchAutoComplete(
-    final String word, {
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _autocompleteMock : _host;
+    final String word,
+  ) async {
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(host + _autoComplete + word),
@@ -917,13 +916,11 @@ class Api {
 
   /// Tags requests
   /// fetch all the tags that a specific blog follows
-  Future<Map<String, dynamic>> fetchTagsFollowed({
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+  Future<Map<String, dynamic>> fetchTagsFollowed({final int page = 1}) async {
+    final String host = _host;
     final http.Response response = await http
         .get(
-          Uri.parse(host + _followedTags),
+          Uri.parse(host + _followedTags + "?page=$page"),
           headers: _headerContentAuth,
         )
         .onError(errorFunction);
@@ -932,13 +929,12 @@ class Api {
 
   /// get the details of a specific tag
   Future<Map<String, dynamic>> fetchTagsDetails(
-    final String tagDescription, {
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String tagDescription,
+  ) async {
+    final String host = _host;
     final http.Response response = await http
         .get(
-      Uri.parse(host + _tagData + tagDescription),
+          Uri.parse(host + _tagData + tagDescription),
           headers: _headerContentAuth,
         )
         .onError(errorFunction);
@@ -946,10 +942,8 @@ class Api {
   }
 
   /// get "Check out these tags"
-  Future<Map<String, dynamic>> fetchCheckOutTags({
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+  Future<Map<String, dynamic>> fetchCheckOutTags() async {
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(host + _checkOutTags),
@@ -963,12 +957,12 @@ class Api {
 
   /// get "Check out these blogs"
   Future<Map<String, dynamic>> fetchCheckOutBlogs({
-    final bool mock = false,
+    final int page = 1,
   }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String host = _host;
     final http.Response response = await http
         .get(
-          Uri.parse(host + _checkOutBlogs),
+          Uri.parse(host + _checkOutBlogs + "?page=$page"),
           headers: _headerContentAuth,
         )
         .onError(errorFunction);
@@ -978,12 +972,12 @@ class Api {
 
   /// get random posts
   Future<Map<String, dynamic>> fetchRandomPosts({
-    final bool mock = false,
+    final int page = 1,
   }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String host = _host;
     final http.Response response = await http
         .get(
-          Uri.parse(host + _randomPosts),
+          Uri.parse(host + _randomPosts + "?page=$page"),
           headers: _headerContentAuth,
         )
         .onError(errorFunction);
@@ -992,10 +986,8 @@ class Api {
   }
 
   /// get trending tags to follow
-  Future<Map<String, dynamic>> fetchTrendingTags({
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+  Future<Map<String, dynamic>> fetchTrendingTags() async {
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(host + _getTrendingTags),
@@ -1008,13 +1000,13 @@ class Api {
   /// fetching words for search results
   Future<Map<String, dynamic>> fetchSearchResults(
     final String word, {
-    final bool mock = false,
+    final int page = 1,
   }) async {
-    final String host = mock ? _mockSearch : _host;
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(
-            host + _search + word,
+            host + _search + word + "?page=$page",
           ),
           headers: _headerContentAuth,
         )

@@ -1,11 +1,11 @@
 /// for displaying search bg
 List<String> randomBg = <String>[
+  "https://64.media.tumblr.com/f6bdf6f4e0e43535573435fbc8675106/b4f2445c9b485f06-14/s500x750/375b5147adf58f0916193128d1ab8d771b623e24.jpg",
   "https://64.media.tumblr.com/6aec9d3cb411d320bc90d5667c3496b0/5eb92e9721ea69f9-ad/s540x810/5cbf883eeba29eacd6a523d422a1b82a7f348b6d.png",
   "https://64.media.tumblr.com/724112c4d0997f53de23ae33f562a899/16779be0c8855816-db/s2048x3072/f74bf8fed79ef6e5220a3453305d4fc5cfdf0aaa.jpg",
   "https://64.media.tumblr.com/4530e4a90a3489bb2b4ef39d13df2913/b77690f1930f7869-15/s1280x1920/97db0d4e074b4a89b336fe6b361da4147fc74885.jpg",
   "https://64.media.tumblr.com/cc5f2ec8a5fbfb5ee66b7a2469cddc2a/f510213332fe6503-29/s1280x1920/b4216bfdbf357a1d3cab7bc2974845a3f2da1158.jpg",
   "https://64.media.tumblr.com/71c50f010f0de5b797935a3aceaf1bf5/ef5be79c5bb4228f-c5/s1280x1920/3b9931da64b02921f8aa25358d9f835df5a47fcc.gifv",
-  "https://64.media.tumblr.com/f6bdf6f4e0e43535573435fbc8675106/b4f2445c9b485f06-14/s500x750/375b5147adf58f0916193128d1ab8d771b623e24.jpg",
   "https://64.media.tumblr.com/04b8092d5ed0a9ad9e15dc3549da7fca/15058898eeb700e9-a5/s400x600/f6682b5cfa3812f19e342383058f59894eb405d2.gifv",
   "https://64.media.tumblr.com/26bae82b477edcfe354eaa922e0840f3/b66c12b8f4a160a5-37/s250x400/b6f357cefa49db7a4d2ec46e8ef1df4ac1e26b97.gifv",
   "https://64.media.tumblr.com/0fc248402402e455676c5c00d23a4a4d/6b09ff75a24d3918-71/s500x750/a0497d8736bac478a752a9e4449d40c1f2e0965f.jpg",
