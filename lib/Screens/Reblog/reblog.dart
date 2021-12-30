@@ -40,7 +40,6 @@ class Reblog extends StatefulWidget {
 }
 
 class _ReblogState extends State<Reblog> {
-  //bool isPostButtonDisabled = true;
   final HtmlEditorController controller = HtmlEditorController();
   String postButtonText = "Post";
 
@@ -83,7 +82,7 @@ class _ReblogState extends State<Reblog> {
           children: <Widget>[
             const Center(
               child: Text(
-                "                   Post options                              ",
+                "                  Post options     ",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -292,7 +291,15 @@ class _ReblogState extends State<Reblog> {
                   ],
                 ),
               ),
+              Container(
+                height: 2,
+                color: Colors.black,
+              ),
               HtmlView(htmlData: widget.originalPost),
+              Container(
+                height: 2,
+                color: Colors.black,
+              ),
               HtmlEditor(
                 controller: controller,
                 htmlEditorOptions: const HtmlEditorOptions(

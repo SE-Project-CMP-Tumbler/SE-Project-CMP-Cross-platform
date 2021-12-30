@@ -1,4 +1,4 @@
-import "package:tumbler/Methods/Api.dart";
+import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
 
 /// Get URL for all the Encoded Images, Videos, Audios
