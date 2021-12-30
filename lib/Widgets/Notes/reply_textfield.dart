@@ -55,8 +55,9 @@ class ReplyTextField extends StatelessWidget {
                 // call function refresh in the NotesPage widget to fetch new
                 //replies and setState()
                 //update number of notes locally....
-                await refresh();
+                replyController.clear();
                 homePosts[index].notes++;
+                await refresh();
               } else {
                 // show toast ? to say retry again late
                 replyController.clear();

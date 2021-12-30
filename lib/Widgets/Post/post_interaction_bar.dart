@@ -61,6 +61,12 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
     }
   }
 
+  void updatePostInteractionBarNotesNumber() {
+    setState(() {
+      _notesNum = homePosts[index].notes;
+    });
+  }
+
   @override
   void initState() {
     index = widget.index;
@@ -102,6 +108,8 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                     builder: (final BuildContext context) => NotesPage(
                       postID: postID,
                       index: index,
+                      updateNotesInInteractionBar:
+                          updatePostInteractionBarNotesNumber,
                     ),
                   ),
                 );
@@ -119,6 +127,8 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                     builder: (final BuildContext context) => NotesPage(
                       postID: postID,
                       index: index,
+                      updateNotesInInteractionBar:
+                          updatePostInteractionBarNotesNumber,
                     ),
                   ),
                 );
@@ -157,6 +167,8 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                   builder: (final BuildContext context) => NotesPage(
                     postID: postID,
                     index: index,
+                    updateNotesInInteractionBar:
+                        updatePostInteractionBarNotesNumber,
                   ),
                 ),
               );
