@@ -12,7 +12,8 @@ List<Chat> chats = <Chat>[];
 
 Future<void> loadChats() async {
   // clear all loaded post.
-  final Map<String, dynamic> response = await Api().getChats();
+  final Map<String, dynamic> response =
+      await Api().getChats(User.blogsIDs[User.currentProfile]);
   //checking the status code of the received response.
   if (response["meta"]["status"] == "200") {
     chats.clear();
@@ -36,7 +37,7 @@ Future<void> loadChats() async {
       } else {
         chats.add(
           Chat(
-            chatsList[i]["text"],
+            chatsList[i]["text"] ?? "",
             "",
             chatsList[i]["blog_id"] as int,
             chatsList[i]["blog_username"],
@@ -122,7 +123,7 @@ class _ChatOutViewState extends State<ChatOutView> {
                       ),
                     Row(
                       children: <Widget>[
-                        (chat.lastMessage == "")
+                        (chat.lastMessage != "")
                             ? Text(chat.lastMessage)
                             : Text("Photo was sent")
                       ],

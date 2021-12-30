@@ -76,8 +76,10 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
 
   @override
   void initState() {
+    postID = widget.postID;
+
     index = widget.index;
-    if (homePosts.contains(index)) {
+    if (widget.isDashBoard) {
       _notesNum = homePosts[index].notes;
       _isLoved = homePosts[index].isLoved;
       postID = homePosts[index].postId;

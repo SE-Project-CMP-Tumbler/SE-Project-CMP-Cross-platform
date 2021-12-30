@@ -47,8 +47,8 @@ class _ChatScreenState extends State<ChatScreen> {
           Message(
             encodedRes["from_blog_username"].toString(),
             "",
-            encodedRes["text"],
-            encodedRes["photo"],
+            encodedRes["text"] ?? "",
+            encodedRes["photo"] ?? "",
           ),
         );
         setState(() {});
