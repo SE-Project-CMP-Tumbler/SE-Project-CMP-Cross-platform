@@ -1,0 +1,20 @@
+{
+    "addPostMock" : {
+        "meta": {"status": "200", "msg": "OK"},
+        "response": {
+          "post_id": 5,
+          "blog_id": 5,
+          "blog_username": "",
+          "blog_avatar": "",
+          "blog_avatar_shape": "",
+          "blog_title": "",
+          "pinned": false,
+          "post_time": "2012-02-30",
+          "post_type": "general",
+          "post_body":
+              "<div> <h1>What's Artificial intellegence? </h1> <img src='https://modo3.com/thumbs/fit630x300/84738/1453981470/%D8%A8%D8%AD%D8%AB_%D8%B9%D9%86_Google.jpg' alt=''> <p>It's the weapon that'd end the humanity!!</p> <video width='320' height='240' controls> <source src='movie.mp4' type='video/mp4'> <source src='movie.ogg' type='video/ogg'> Your browser does not support the video tag. </video> <p>#AI #humanity #freedom</p> </div>"
+        }
+      }
+      
+    
+}

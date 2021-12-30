@@ -17,16 +17,17 @@ Future<void> loadChats() async {
   if (response["meta"]["status"] == "200") {
     chats.clear();
     final List<dynamic> chatsList = response["response"]["chat_messages"];
+    print(chatsList);
     for (int i = 0; i < chatsList.length; i++) {
-      final String chk = chatsList[i]["from_blog_id"].toString();
+      final String chk = chatsList[i]["blog_id"].toString();
       if (chk == User.blogsIDs[User.currentProfile]) {
         chats.add(
           Chat(
-            chatsList[i]["text"],
+            chatsList[i]["text"] ?? "",
             "",
-            chatsList[i]["friend_blog_id"] as int,
-            chatsList[i]["friend_blog_username"],
-            chatsList[i]["friend_blog_avatar"],
+            chatsList[i]["friend_id"] as int,
+            chatsList[i]["friend_username"],
+            chatsList[i]["friend_avatar"],
             "",
             "",
             chatsList[i]["read"] as bool,
@@ -37,9 +38,9 @@ Future<void> loadChats() async {
           Chat(
             chatsList[i]["text"],
             "",
-            chatsList[i]["from_blog_id"] as int,
-            chatsList[i]["from_blog_username"],
-            chatsList[i]["from_blog_avatar"],
+            chatsList[i]["blog_id"] as int,
+            chatsList[i]["blog_username"],
+            chatsList[i]["blog_avatar"],
             "",
             "",
             chatsList[i]["read"] as bool,
@@ -64,6 +65,9 @@ class ChatOutView extends StatefulWidget {
 class _ChatOutViewState extends State<ChatOutView> {
   @override
   void initState() {
+    print("loooooooooooool");
+    print(User.blogsIDs[User.currentProfile]);
+    print("loooooooooooool2");
     super.initState();
     loadChats().then((final res) {
       setState(() {});
@@ -117,7 +121,11 @@ class _ChatOutViewState extends State<ChatOutView> {
                         ],
                       ),
                     Row(
-                      children: <Widget>[Text(chat.lastMessage)],
+                      children: <Widget>[
+                        (chat.lastMessage == "")
+                            ? Text(chat.lastMessage)
+                            : Text("Photo was sent")
+                      ],
                     ),
                   ],
                 ),
