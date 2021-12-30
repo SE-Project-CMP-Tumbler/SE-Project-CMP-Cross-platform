@@ -30,7 +30,7 @@ class NotesPage extends StatefulWidget {
   }) : super(key: key);
 
   /// Post ID
-  int postID;
+  int postID = 0;
 
 
   @override
@@ -77,7 +77,6 @@ class _NotesPageState extends State<NotesPage>
           receivedNotes["response"]["reblogs"]["reblogs"] ?? <dynamic>[];
       repliesList =
           receivedNotes["response"]["replies"]["replies"] ?? <dynamic>[];
-
 
       // spilt blogs received into to sub-categories
       for (int i = 0; i < reblogCount; i++) {
@@ -129,8 +128,6 @@ class _NotesPageState extends State<NotesPage>
 
   @override
   void initState() {
-    super.initState();
-
     initialize();
     // Start listening to changes.
     replyController.addListener(checkReplyText);

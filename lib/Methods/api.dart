@@ -226,11 +226,16 @@ class Api {
   }
 
   ///get chats for that chats choose
-  Future<Map<String, dynamic>> getChats() async {
+  Future<Map<String, dynamic>> getChats(final String blogId) async {
     final http.Response response = await client
         .post(
           Uri.parse(_host + _chats),
           headers: _headerContentAuth,
+          body: json.encode(
+            <String, String>{
+              "from_blog_id": User.blogsIDs[User.currentProfile],
+            },
+          ),
         )
         .onError(errorFunction);
     return jsonDecode(response.body);
