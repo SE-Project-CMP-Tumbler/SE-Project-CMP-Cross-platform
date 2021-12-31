@@ -30,22 +30,56 @@ class _RecommendedPostsState extends State<RecommendedPosts>
   AnimationController? loadingSpinnerAnimationController;
 
   /// Responsible for reloading all explore screen results
-  Future<void> refreshRandomPostsPage(
-    final BuildContext context,
-  ) async {
-    _error = false;
-    setState(() {
+  Future<void> refreshRandomPostsPage(final BuildContext context,)
+  async {
+
       _isLoading = true;
-    });
+      _isLoadingMore=false;
+      reachedMax = false;
+      _error = false;
+
 
     /// get random posts "try these posts"
     await getRandomPosts().then((final List<PostModel> value) {
-      setState(() {
-        recommendedPosts.clear();
-        recommendedPosts = value;
-        if (_firstTime) _firstTime = false;
+        randomPosts.clear();
+        randomPosts= value;
+        if(_firstTime)
+          _firstTime=false;
+        _isLoading= false;}
+    ).catchError((final Object? error) {
+
+        _error = true;
         _isLoading = false;
-      });
+
+      showErrorDialog(context,  "error on random posts\n${error.toString()}");
+    });
+  }
+  // ignore: avoid_void_async
+  void getMoreRandomPosts()async{
+    if(reachedMax)
+      {
+        return;
+      }
+    setState((){
+      _isLoadingMore = true;
+    });
+
+    /// get random posts "try these posts"
+    await getRandomPosts(page: currentPage).then((final List<PostModel> value) {
+      setState(() {
+        if (value.isNotEmpty) {
+          if(randomPosts.isEmpty)
+            randomPosts = value;
+          else
+            randomPosts.addAll(value);
+        }
+        else
+          {
+            reachedMax=true;
+          }
+        _isLoadingMore = false;
+      }
+      );
     }).catchError((final Object? error) {
       setState(() {
         _error = true;
@@ -57,17 +91,37 @@ class _RecommendedPostsState extends State<RecommendedPosts>
 
   @override
   void initState() {
-    /// Animation controller for the color varying loading spinner
-    loadingSpinnerAnimationController =
-        AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    loadingSpinnerAnimationController!.repeat();
-    refreshRandomPostsPage(context);
     super.initState();
+    /// Animation controller for the color varying loading spinner
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _colorTween = controller.drive(
+      ColorTween(
+        begin: Colors.deepPurpleAccent,
+        end: floatingButtonColor,
+      ),
+    );
+    _scrollController.addListener(() {
+      if (!reachedMax) {
+        if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent &&
+            !_isLoading &&
+            !_isLoadingMore) {
+          currentPage++;
+          getMoreRandomPosts();
+        }
+      }
+    });
+    refreshRandomPostsPage(context);
+
   }
 
   @override
   void dispose() {
-    loadingSpinnerAnimationController!.dispose();
+    controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
