@@ -11,4 +11,5 @@ class Follower {
   String blog_avatar_shape;
   String blog_username;
   int blog_id;
+  late bool isFollowedByMe;
 }

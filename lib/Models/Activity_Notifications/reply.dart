@@ -6,7 +6,11 @@ class Reply {
     required final this.avatarUrl,
     required final this.userName,
     required final this.reply,
+    required final this.postID,
   });
+
+  ///postID to reply on
+  int postID;
 
   /// date time of the reply
   DateTime dateTime;

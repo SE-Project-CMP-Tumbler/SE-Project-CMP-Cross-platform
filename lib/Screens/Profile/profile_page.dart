@@ -719,15 +719,18 @@ class _ProfilePageState extends State<ProfilePage>
       } else if (itemSelected == "Unfollow") {
         final Map<String, dynamic> response =
             await Api().unFollowBlog(int.parse(widget.blogID));
-        if (response["meta"]["status"] == "200")
+        if (response["meta"]["status"] == "200") {
           await showToast("Unfollowed");
-        else
+          _personIconOptions[_personIconOptions.length] = "Follow";
+        } else
           await showToast(response["meta"]["msg"]);
       } else if (itemSelected == "Follow") {
         final Map<String, dynamic> response =
             await Api().followBlog(int.parse(widget.blogID));
-        if (response["meta"]["status"] == "200")
-          await showToast("Unfollowed");
+        if (response["meta"]["status"] == "200") {
+          await showToast("Followed");
+          _personIconOptions[_personIconOptions.length] = "Unfollow";
+        }
         else
           await showToast(response["meta"]["msg"]);
       }
@@ -1373,6 +1376,7 @@ class _ProfilePageState extends State<ProfilePage>
                           onTap: changeHeaderPic,
                           child: Container(
                             height: 0.35 * _height,
+                            width: _width,
                             // Header image
                             decoration: BoxDecoration(
                               image: DecorationImage(

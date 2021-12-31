@@ -1,11 +1,11 @@
 import "dart:convert";
 
 import "package:flutter/material.dart";
-import 'package:image_picker/image_picker.dart';
+import "package:image_picker/image_picker.dart";
 import "package:pusher_client/pusher_client.dart";
 import "package:tumbler/Methods/api.dart";
-import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Methods/choose_image.dart";
+import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/message.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
@@ -81,8 +81,6 @@ class _ChatScreenState extends State<ChatScreen> {
   bool hasContent = false;
 
   Widget _buildMessage(final Message message, final bool change) {
-    print(message.photo);
-    print("lklk");
     return Container(
       child: change
           ? Row(
@@ -180,7 +178,6 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
 
   Future<void> submitMessage() async {
-    print(image);
     messages.insert(
       0,
       Message(
@@ -216,17 +213,15 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: Colors.purple,
                 iconSize: 25,
                 onPressed: () async {
-                  dynamic img = await chooseImage(ImageSource.gallery);
-                  print("p1");
+                  final dynamic img = await chooseImage(ImageSource.gallery);
                   if (img != null) {
-                    print("p2");
                     Map<String, dynamic> url;
                     url = await Api().uploadImage(img);
                     String urlToSend = "";
                     if (url["meta"]["status"] == "200") {
                       urlToSend = url["response"]["url"].toString();
                       image = urlToSend;
-                      submitMessage();
+                      await submitMessage();
                     }
                   }
                 },

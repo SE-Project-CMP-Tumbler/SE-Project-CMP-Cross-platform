@@ -47,10 +47,14 @@ class _AddPostState extends State<AddPost> {
     } else if (postType == PostTypes.privatePost) {
       postOptionChoice = "private";
     }
-    
-    final Map<String, dynamic> response = await Api()
-        .addPost(processedHtml, postOptionChoice, "general", postTime,User.blogsIDs[User.currentProfile]);
-    print(response);
+
+    final Map<String, dynamic> response = await Api().addPost(
+      processedHtml,
+      postOptionChoice,
+      "general",
+      postTime,
+      User.blogsIDs[User.currentProfile],
+    );
     if (response["meta"]["status"] == "200") {
       await showToast("Added Successfully");
       Navigator.of(context).pop();

@@ -48,37 +48,40 @@ class TimePacketContainer extends StatelessWidget {
           children: notificaitons.map((final dynamic element) {
             return (element.type == "like")
                 ? LikeNotificationWidget(
-                    avatarUrl: element.avatarUrl,
-                    userName: element.userName,
-                  )
+              avatarUrl: element.avatarUrl,
+              userName: element.userName,
+              postID: element.postID,
+            )
                 : (element.type == "reblog")
-                    ? ReblogNotificationWidget(
-                        avatarUrl: element.avatarUrl,
-                        userName: element.userName,
-                      )
-                    : (element.type == "mention")
-                        ? MentionNotificationWidget(
-                            avatarUrl: element.avatarUrl,
-                            mentioningUserName: element.userName,
-                          )
-                        : (element.type == "ask")
-                            ? AskNotificationWidget(
-                                avatarUrl: element.avatarUrl,
-                                askingUserName: element.userName,
-                                question: element.quesiton,
-                              )
-                            : (element.type == "follow")
-                                ? FollowNotificationWidget(
-                                    userName: element.userName,
-                                    avatarUrl: element.avatarUrl,
-                                  )
-                                : (element.type == "reply")
-                                    ? ReplyNotificationWidget(
-                                        avatarUrl: element.avatarUrl,
-                                        replyingUserName: element.userName,
-                                        reply: element.reply,
-                                      )
-                                    : const Placeholder();
+                ? ReblogNotificationWidget(
+              avatarUrl: element.avatarUrl,
+              userName: element.userName,
+              postID: element.postID,
+            )
+                : (element.type == "mention")
+                ? MentionNotificationWidget(
+              avatarUrl: element.avatarUrl,
+              mentioningUserName: element.userName,
+            )
+                : (element.type == "ask")
+                ? AskNotificationWidget(
+              avatarUrl: element.avatarUrl,
+              askingUserName: element.userName,
+              question: element.quesiton,
+            )
+                : (element.type == "follow")
+                ? FollowNotificationWidget(
+              userName: element.userName,
+              avatarUrl: element.avatarUrl,
+            )
+                : (element.type == "reply")
+                ? ReplyNotificationWidget(
+              avatarUrl: element.avatarUrl,
+              replyingUserName: element.userName,
+              reply: element.reply,
+              postID: element.postID,
+            )
+                : const Placeholder();
           }).toList(),
         )
       ],

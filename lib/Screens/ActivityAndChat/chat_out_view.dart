@@ -67,6 +67,7 @@ class _ChatOutViewState extends State<ChatOutView> {
   @override
   void initState() {
     super.initState();
+    // ignore_
     loadChats().then((final res) {
       setState(() {});
     });

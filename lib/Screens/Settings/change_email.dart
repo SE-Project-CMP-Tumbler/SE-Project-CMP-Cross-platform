@@ -6,7 +6,7 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/ui_styles.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/email_password_validators.dart";
-import 'package:tumbler/Methods/log_out.dart';
+import "package:tumbler/Methods/log_out.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/main_screen.dart";

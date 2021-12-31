@@ -99,17 +99,17 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
         draftPosts[index].notes++;
         draftPosts[index].isLoved = true;
       } else if (widget.page == 5) {
-        recommendedPosts[index].notes++;
-        recommendedPosts[index].isLoved = true;
+        randomPosts[index].notes++;
+        randomPosts[index].isLoved = true;
       } else if (widget.page == 6) {
         profileSearchPosts[index].notes++;
         profileSearchPosts[index].isLoved = true;
       } else if (widget.page == 7) {
-        recentTagPosts[index].notes++;
-        recentTagPosts[index].isLoved = true;
+        recentPosts[index].notes++;
+        recentPosts[index].isLoved = true;
       } else if (widget.page == 8) {
-        topTagPosts[index].notes++;
-        topTagPosts[index].isLoved = true;
+        topPosts[index].notes++;
+        topPosts[index].isLoved = true;
       }
     }
   }
@@ -145,17 +145,17 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
         draftPosts[index].notes--;
         draftPosts[index].isLoved = false;
       } else if (widget.page == 5) {
-        recommendedPosts[index].notes--;
-        recommendedPosts[index].isLoved = false;
+        randomPosts[index].notes--;
+        randomPosts[index].isLoved = false;
       } else if (widget.page == 6) {
         profileSearchPosts[index].notes--;
         profileSearchPosts[index].isLoved = false;
       } else if (widget.page == 7) {
-        recentTagPosts[index].notes--;
-        recentTagPosts[index].isLoved = false;
+        recentPosts[index].notes--;
+        recentPosts[index].isLoved = false;
       } else if (widget.page == 8) {
-        topTagPosts[index].notes--;
-        topTagPosts[index].isLoved = false;
+        topPosts[index].notes--;
+        topPosts[index].isLoved = false;
       }
     }
   }
@@ -202,25 +202,25 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
       postID = draftPosts[index].postId;
       body = draftPosts[index].postBody;
     } else if (widget.page == 5) {
-      _notesNum = recommendedPosts[index].notes;
-      _isLoved = recommendedPosts[index].isLoved;
-      postID = recommendedPosts[index].postId;
-      body = recommendedPosts[index].postBody;
+      _notesNum = randomPosts[index].notes;
+      _isLoved = randomPosts[index].isLoved;
+      postID = randomPosts[index].postId;
+      body = randomPosts[index].postBody;
     } else if (widget.page == 6) {
       _notesNum = profileSearchPosts[index].notes;
       _isLoved = profileSearchPosts[index].isLoved;
       postID = profileSearchPosts[index].postId;
       body = profileSearchPosts[index].postBody;
     } else if (widget.page == 7) {
-      _notesNum = recentTagPosts[index].notes;
-      _isLoved = recentTagPosts[index].isLoved;
-      postID = recentTagPosts[index].postId;
-      body = recentTagPosts[index].postBody;
+      _notesNum = recentPosts[index].notes;
+      _isLoved = recentPosts[index].isLoved;
+      postID = recentPosts[index].postId;
+      body = recentPosts[index].postBody;
     } else if (widget.page == 8) {
-      _notesNum = topTagPosts[index].notes;
-      _isLoved = topTagPosts[index].isLoved;
-      postID = topTagPosts[index].postId;
-      body = topTagPosts[index].postBody;
+      _notesNum = topPosts[index].notes;
+      _isLoved = topPosts[index].isLoved;
+      postID = topPosts[index].postId;
+      body = topPosts[index].postBody;
     }
     super.initState();
   }
@@ -260,6 +260,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 },
                 child: Image.asset(
                   "assets/images/interactions.jpeg",
+                  semanticLabel: "Notes",
                 ),
               ),
             ),

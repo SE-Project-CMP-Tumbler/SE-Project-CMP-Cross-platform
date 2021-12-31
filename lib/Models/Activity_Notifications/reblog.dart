@@ -5,7 +5,12 @@ class Reblog {
     required final this.dateTime,
     required final this.avatarUrl,
     required final this.userName,
+    required final this.postID,
   });
+
+
+  ///postID to reply on
+  int postID;
 
   /// the time of the reblog
   DateTime dateTime;

@@ -29,7 +29,6 @@ class _MyFollowersState extends State<MyFollowers>
 
     if (response["meta"]["status"] == "200") {
       final dynamic temp = response["response"]["followers"];
-
       followers = temp.map((final dynamic jsonData) {
         return Follower(
           blog_avatar: jsonData["blog_avatar"],
@@ -40,13 +39,19 @@ class _MyFollowersState extends State<MyFollowers>
       }).toList();
     }
 
+    for (int i = 0; i < followers.length; i++) {
+      final Map<String, dynamic> res =
+      await Api().isMyFollowing(followers[i].blog_id);
+      if (res["meta"]["status"] == "200") {
+        followers[i].isFollowedByMe = res["response"]["followed"] ?? false;
+      } else {
+        await showToast("Unsuccessful operation!");
+      }
+    }
+
     setState(() {
       isLoading = false;
     });
-  }
-
-  void refresh() {
-    setState(() {});
   }
 
   @override
@@ -94,7 +99,6 @@ class _MyFollowersState extends State<MyFollowers>
         itemBuilder: (final BuildContext context, final int index) {
           return FollowerTile(
             follower: followers[index],
-            refresh: refresh,
           );
         },
         itemCount: followers.length,
@@ -104,15 +108,26 @@ class _MyFollowersState extends State<MyFollowers>
 }
 
 ///
-class FollowerTile extends StatelessWidget {
+class FollowerTile extends StatefulWidget {
   FollowerTile({
     required final this.follower,
-    required final this.refresh,
     final Key? key,
   }) : super(key: key);
 
   Follower follower;
-  Function refresh;
+
+  @override
+  State<FollowerTile> createState() => _FollowerTileState();
+}
+
+class _FollowerTileState extends State<FollowerTile> {
+  late bool isFollowedByMe;
+
+  @override
+  void initState() {
+    isFollowedByMe = widget.follower.isFollowedByMe;
+    super.initState();
+  }
 
   @override
   Widget build(final BuildContext context) {
@@ -121,27 +136,44 @@ class FollowerTile extends StatelessWidget {
       child: Row(
         children: <Widget>[
           PersonAvatar(
-            avatarPhotoLink: follower.blog_avatar,
-            shape: follower.blog_avatar_shape,
-            blogID: follower.blog_id.toString(),
+            avatarPhotoLink: widget.follower.blog_avatar,
+            shape: widget.follower.blog_avatar_shape,
+            blogID: widget.follower.blog_id.toString(),
           ),
           const SizedBox(
             width: 5,
           ),
           Expanded(
-            child: Text(follower.blog_username),
+            child: Text(widget.follower.blog_username),
           ),
           TextButton(
             onPressed: () async {
-              final dynamic res = await Api().unFollowBlog(follower.blog_id);
-              if (res["meta"]["status"] == "200") {
-                refresh();
-                await showToast("Successful Operation!");
+              if (isFollowedByMe) {
+                final dynamic res =
+                await Api().unFollowBlog(widget.follower.blog_id);
+                if (res["meta"]["status"] == "200") {
+                  await showToast("Successful unfollowing!");
+                } else {
+                  await showToast("Unsuccessful unfollowing!");
+                }
+                setState(() {
+                  isFollowedByMe = false;
+                });
               } else {
-                await showToast("Unsuccessful Operation!");
+                final dynamic res =
+                await Api().followBlog(widget.follower.blog_id);
+                if (res["meta"]["status"] == "200") {
+                  await showToast("Successful following");
+                } else {
+                  await showToast("Unsuccessful following!");
+                }
+                setState(() {
+                  isFollowedByMe = true;
+                });
               }
             },
-            child: const Text("Unfollow"),
+            child:
+            isFollowedByMe ? const Text("Unfollow") : const Text("Follow"),
           )
         ],
       ),
