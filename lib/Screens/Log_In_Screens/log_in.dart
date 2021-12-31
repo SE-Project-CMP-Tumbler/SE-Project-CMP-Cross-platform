@@ -122,7 +122,6 @@ class _LogINState extends State<LogIN> {
         );
       }
       await initializeUserBlogs();
-
       await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<MainScreen>(
           builder: (final BuildContext context) => MainScreen(),

@@ -31,7 +31,6 @@ class _HtmlViewState extends State<HtmlView> {
 
   Future<void> initialize() async {
     data = await extractMentionsTags(widget.htmlData);
-    setState(() {});
   }
 
   @override

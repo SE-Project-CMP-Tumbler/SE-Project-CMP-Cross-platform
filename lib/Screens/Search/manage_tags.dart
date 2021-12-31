@@ -155,9 +155,10 @@ class _ManageTagsState extends State<ManageTags> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
     _scrollController.dispose();
     controller.dispose();
+    super.dispose();
+
   }
 
   @override

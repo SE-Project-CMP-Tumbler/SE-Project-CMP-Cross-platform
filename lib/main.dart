@@ -12,6 +12,8 @@ import "package:tumbler/Screens/main_screen.dart";
 
 Future<void> main() async {
   // enableFlutterDriverExtension();
+  WidgetsFlutterBinding.ensureInitialized();
+
   await dotenv.load();
   if (!kIsWeb) {
     await initializeUserData();

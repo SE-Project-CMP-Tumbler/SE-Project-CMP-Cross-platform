@@ -14,7 +14,7 @@ import "package:tumbler/Models/blog_theme.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
-import 'package:tumbler/Screens/Chat/inside_chat.dart';
+import "package:tumbler/Screens/Chat/inside_chat.dart";
 import "package:tumbler/Screens/Profile/create_new_blog.dart";
 import "package:tumbler/Screens/Profile/profile_search.dart";
 import "package:tumbler/Screens/Search/search_page.dart";

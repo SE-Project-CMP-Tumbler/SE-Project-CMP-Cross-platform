@@ -44,27 +44,25 @@ class _RecommendedPostsState extends State<RecommendedPosts> with
   /// Responsible for reloading all explore screen results
   Future<void> refreshRandomPostsPage(final BuildContext context,)
   async {
-    setState((){
+
       _isLoading = true;
       _isLoadingMore=false;
       reachedMax = false;
       _error = false;
-    });
+
 
     /// get random posts "try these posts"
     await getRandomPosts().then((final List<PostModel> value) {
-      setState((){
         randomPosts.clear();
         randomPosts= value;
         if(_firstTime)
           _firstTime=false;
         _isLoading= false;}
-    );
-    }).catchError((final Object? error) {
-      setState(() {
+    ).catchError((final Object? error) {
+
         _error = true;
         _isLoading = false;
-      });
+
       showErrorDialog(context,  "error on random posts\n${error.toString()}");
     });
   }
@@ -104,15 +102,12 @@ class _RecommendedPostsState extends State<RecommendedPosts> with
   }
   @override
   void initState() {
+    super.initState();
     /// Animation controller for the color varying loading spinner
-    loadingSpinnerAnimationController =
-        AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    loadingSpinnerAnimationController!.repeat();
     controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    controller.repeat();
     _colorTween = controller.drive(
       ColorTween(
         begin: Colors.deepPurpleAccent,
@@ -131,11 +126,10 @@ class _RecommendedPostsState extends State<RecommendedPosts> with
       }
     });
     refreshRandomPostsPage(context);
-    super.initState();
+
   }
   @override
   void dispose() {
-    loadingSpinnerAnimationController!.dispose();
     controller.dispose();
     _scrollController.dispose();
     super.dispose();

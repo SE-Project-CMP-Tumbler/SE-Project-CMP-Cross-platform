@@ -73,17 +73,17 @@ class _NotesPageState extends State<NotesPage>
 
     //check the status code for the received response.
     if (receivedNotes["meta"]["status"] == "200") {
-      likeCount =
-          receivedNotes["response"]["likes"]["pagination"]["total"] as int;
-      repliesCount =
-          receivedNotes["response"]["replies"]["pagination"]["total"] as int;
-      reblogCount =
-          receivedNotes["response"]["reblogs"]["pagination"]["total"] as int;
-      likesList = receivedNotes["response"]["likes"]["likes"] ?? <dynamic>[];
-      reblogsList =
-          receivedNotes["response"]["reblogs"]["reblogs"] ?? <dynamic>[];
-      repliesList =
-          receivedNotes["response"]["replies"]["replies"] ?? <dynamic>[];
+        likeCount =
+        receivedNotes["response"]["likes"]["pagination"]["total"] as int;
+        repliesCount =
+        receivedNotes["response"]["replies"]["pagination"]["total"] as int;
+        reblogCount =
+        receivedNotes["response"]["reblogs"]["pagination"]["total"] as int;
+        likesList = receivedNotes["response"]["likes"]["likes"] ?? <dynamic>[];
+        reblogsList =
+            receivedNotes["response"]["reblogs"]["reblogs"] ?? <dynamic>[];
+        repliesList =
+            receivedNotes["response"]["replies"]["replies"] ?? <dynamic>[];
 
 
       // spilt blogs received into to sub-categories
@@ -139,7 +139,7 @@ class _NotesPageState extends State<NotesPage>
   void initState() {
     super.initState();
 
-    initialize();
+    refresh();
     // Start listening to changes.
     replyController.addListener(checkReplyText);
     tabController = TabController(vsync: this, length: 3);
