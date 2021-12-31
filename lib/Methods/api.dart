@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
 import "dart:convert";
 import "dart:io" as io;
+
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
 import "package:tumbler/Models/blog_theme.dart";
@@ -110,13 +111,13 @@ class Api {
   Future<Map<String, dynamic>> getTrendingTags() async {
     final http.Response response = await client
         .get(Uri.parse(_host + _getTrendingTags))
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
         return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -138,7 +139,13 @@ class Api {
           }),
           headers: _headerContent,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -146,12 +153,18 @@ class Api {
   Future<Map<String, dynamic>> getFollowers() async {
     final http.Response response = await client
         .get(
-      Uri.parse(
-        _host + _followers,
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError(errorFunction);
+          Uri.parse(
+            _host + _followers,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -172,7 +185,13 @@ class Api {
           }),
           headers: _headerContent,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -190,7 +209,13 @@ class Api {
           }),
           headers: _headerContent,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -206,7 +231,13 @@ class Api {
           }),
           headers: _headerContent,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -220,7 +251,13 @@ class Api {
           }),
           headers: _headerContent,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -235,7 +272,13 @@ class Api {
             "b64_video": video,
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -252,7 +295,13 @@ class Api {
             },
           ),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -266,7 +315,13 @@ class Api {
             "from_blog_id": User.blogsIDs[User.currentProfile],
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -286,7 +341,13 @@ class Api {
           headers: _headerContentAuth,
           body: json.encode(dt),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -301,7 +362,13 @@ class Api {
             "to_blog_id": toBlogId,
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -315,7 +382,13 @@ class Api {
             "b64_image": image,
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -330,16 +403,30 @@ class Api {
             "b64_audio": audio,
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
 
   /// Get all blogs of user
   Future<Map<String, dynamic>> getAllBlogs() async {
-    final http.Response response = await client.get(
-      Uri.parse(_host + _blog),
-      headers: _headerContentAuth,
+    final http.Response response = await client
+        .get(
+          Uri.parse(_host + _blog),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
     );
     return jsonDecode(response.body);
   }
@@ -363,7 +450,13 @@ class Api {
             "post_body": postBody
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -384,7 +477,13 @@ class Api {
             "post_body": postBody,
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -397,7 +496,13 @@ class Api {
           Uri.parse(_host + _post + postID),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -418,7 +523,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -431,7 +542,13 @@ class Api {
           Uri.parse(_host + _post + postID),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -449,7 +566,13 @@ class Api {
             "post_id": postID,
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -458,7 +581,6 @@ class Api {
     final String postID,
     final String blogID,
   ) async {
-
     final http.Response response = await http
         .put(
           Uri.parse(_host + _posts + _unpin),
@@ -468,7 +590,13 @@ class Api {
             "post_id": postID,
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -479,7 +607,13 @@ class Api {
           Uri.parse(_host + _dashboard + "?page=$page"),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -490,7 +624,13 @@ class Api {
           Uri.parse(_host + _postNotes + postID),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -507,7 +647,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -520,7 +666,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -533,7 +685,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -544,21 +702,21 @@ class Api {
   ) async {
     final http.Response response = await client
         .post(
-      Uri.parse(
-        _host + _post + _replyPost + postId,
-      ),
-      body: jsonEncode(<String, String>{
-        "reply_text": text,
-      }),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+          Uri.parse(
+            _host + _post + _replyPost + postId,
+          ),
+          body: jsonEncode(<String, String>{
+            "reply_text": text,
+          }),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
         return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -573,7 +731,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -583,18 +747,18 @@ class Api {
   ) async {
     final http.Response response = await client
         .get(
-      Uri.parse(
-        _host + "/notifications?type=all&for_blog_id=" + blogId,
-      ),
-      headers: _headerContentAuth,
-    )
-        .onError((final Object? error, final StackTrace stackTrace) {
-      if (error.toString().startsWith("SocketException: Failed host lookup")) {
+          Uri.parse(
+            _host + "/notifications?type=all&for_blog_id=" + blogId,
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
         return http.Response(_weirdConnection, 502);
-      } else {
-        return http.Response(_failed, 404);
-      }
-    });
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -617,7 +781,13 @@ class Api {
             "post_body": postBody
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -636,7 +806,13 @@ class Api {
           }),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -658,7 +834,13 @@ class Api {
           }),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -670,7 +852,13 @@ class Api {
           Uri.parse(_host + _logOut),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -683,7 +871,13 @@ class Api {
           Uri.parse(_host + _blog),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -700,7 +894,13 @@ class Api {
             "blog_username": blogUserName,
           }),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -715,7 +915,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -731,7 +937,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -766,7 +978,13 @@ class Api {
           headers: _headerContentAuth,
           body: jsonEncode(body),
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -782,7 +1000,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -798,7 +1022,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -815,7 +1045,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -831,7 +1067,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -846,7 +1088,13 @@ class Api {
           Uri.parse(_host + _followings + blogID + "?page=$page"),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -860,7 +1108,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -872,7 +1126,13 @@ class Api {
           Uri.parse(_host + _followBlog + blogID.toString()),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -884,17 +1144,22 @@ class Api {
           Uri.parse(_host + _followTag + tag),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
 
   /// to unfollows specific tag
   Future<Map<String, dynamic>> unFollowTag(
-    final String tagDescription, {
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String tagDescription,
+  ) async {
+    final String host = _host;
     final http.Response response = await http
         .delete(
           Uri.parse(
@@ -902,7 +1167,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
@@ -914,90 +1185,136 @@ class Api {
           Uri.parse(_host + _followBlog + blogID.toString()),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// GET i follow a specific blog with blogID [blogID]
+  Future<Map<String, dynamic>> isMyFollowing(final int blogID) async {
+    final http.Response response = await client
+        .get(
+      Uri.parse(
+        _host + "/followed_by/" + blogID.toString(),
+      ),
+      headers: _headerContentAuth,
+    ).onError(errorFunction).timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
   /// get posts of specific tag
   Future<Map<String, dynamic>> fetchTagPosts(
     final String tagDescription, {
-    final bool mock = false,
     final bool recent = true,
+    final int page = 1,
   }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(
             host +
                 _tagPosts +
                 tagDescription +
-                (recent ? _recentPosts : _topPosts),
+                (recent ? _recentPosts : _topPosts) +
+                "&page=$page",
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
   /// fetching words for auto complete search text field
   Future<Map<String, dynamic>> fetchAutoComplete(
-    final String word, {
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _autocompleteMock : _host;
+    final String word,
+  ) async {
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(host + _autoComplete + word),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
-    // print("words autocomplete results");
-    // print(response.body);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
 
   /// Tags requests
   /// fetch all the tags that a specific blog follows
-  Future<Map<String, dynamic>> fetchTagsFollowed({
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+  Future<Map<String, dynamic>> fetchTagsFollowed({final int page = 1}) async {
+    final String host = _host;
     final http.Response response = await http
         .get(
-          Uri.parse(host + _followedTags),
+          Uri.parse(host + _followedTags + "?page=$page"),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
   /// get the details of a specific tag
   Future<Map<String, dynamic>> fetchTagsDetails(
-    final String tagDescription, {
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String tagDescription,
+  ) async {
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(host + _tagData + tagDescription),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
   /// get "Check out these tags"
-  Future<Map<String, dynamic>> fetchCheckOutTags({
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+  Future<Map<String, dynamic>> fetchCheckOutTags() async {
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(host + _checkOutTags),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     // print("check out tags");
     // print(response.body);
     return jsonDecode(response.body);
@@ -1005,62 +1322,84 @@ class Api {
 
   /// get "Check out these blogs"
   Future<Map<String, dynamic>> fetchCheckOutBlogs({
-    final bool mock = false,
+    final int page = 1,
   }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String host = _host;
     final http.Response response = await http
         .get(
-          Uri.parse(host + _checkOutBlogs),
+          Uri.parse(host + _checkOutBlogs + "?page=$page"),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
 
   /// get random posts
   Future<Map<String, dynamic>> fetchRandomPosts({
-    final bool mock = false,
+    final int page = 1,
   }) async {
-    final String host = mock ? _postmanMockHost : _host;
+    final String host = _host;
     final http.Response response = await http
         .get(
-          Uri.parse(host + _randomPosts),
+          Uri.parse(host + _randomPosts + "?page=$page"),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
 
     return jsonDecode(response.body);
   }
 
   /// get trending tags to follow
-  Future<Map<String, dynamic>> fetchTrendingTags({
-    final bool mock = false,
-  }) async {
-    final String host = mock ? _postmanMockHost : _host;
+  Future<Map<String, dynamic>> fetchTrendingTags() async {
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(host + _getTrendingTags),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
   /// fetching words for search results
   Future<Map<String, dynamic>> fetchSearchResults(
     final String word, {
-    final bool mock = false,
+    final int page = 1,
   }) async {
-    final String host = mock ? _mockSearch : _host;
+    final String host = _host;
     final http.Response response = await http
         .get(
           Uri.parse(
-            host + _search + word,
+            host + _search + word + "?page=$page",
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 
@@ -1077,7 +1416,13 @@ class Api {
           ),
           headers: _headerContentAuth,
         )
-        .onError(errorFunction);
+        .onError(errorFunction)
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        return http.Response(_weirdConnection, 502);
+      },
+    );
     return jsonDecode(response.body);
   }
 }

@@ -125,6 +125,7 @@ class _ManageTagsState extends State<ManageTags> with TickerProviderStateMixin {
 
   // ignore: always_specify_types
   late Animation _colorTween;
+
   @override
   void initState() {
     super.initState();
@@ -158,7 +159,6 @@ class _ManageTagsState extends State<ManageTags> with TickerProviderStateMixin {
     _scrollController.dispose();
     controller.dispose();
     super.dispose();
-
   }
 
   @override
@@ -306,6 +306,7 @@ class _FollowedTagComponentState extends State<FollowedTagComponent>
 
   /// to indicate a loading of an unfollow tag request
   bool _proceedingFollowing = false;
+
   // ignore: always_specify_types, unused_field
   late Animation _colorTween;
   late AnimationController controller;
@@ -381,7 +382,7 @@ class _FollowedTagComponentState extends State<FollowedTagComponent>
               final bool succeeded =
                   await followTag(widget.followedTag.tagDescription!);
               if (succeeded) {
-                showToast(
+                showSnackBar(
                   context,
                   "Great!,"
                   " you are now following "
@@ -393,7 +394,7 @@ class _FollowedTagComponentState extends State<FollowedTagComponent>
                     _followed = true;
                   });
               } else {
-                showToast(
+                showSnackBar(
                   context,
                   "OOPS, something went wrong 😢",
                 );
@@ -405,7 +406,7 @@ class _FollowedTagComponentState extends State<FollowedTagComponent>
               final bool succeeded =
                   await unFollowTag(widget.followedTag.tagDescription!);
               if (succeeded) {
-                showToast(
+                showSnackBar(
                   context,
                   "Don't worry, u won't be"
                   " bothered by this tag again",
@@ -415,7 +416,7 @@ class _FollowedTagComponentState extends State<FollowedTagComponent>
                     _followed = false;
                   });
               } else {
-                showToast(
+                showSnackBar(
                   context,
                   "OOPS, something went wrong 😢",
                 );
