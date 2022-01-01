@@ -1,4 +1,3 @@
-// ignore_for_file: lines_longer_than_80_chars
 import "package:flutter/foundation.dart" show kIsWeb;
 import "package:flutter/material.dart";
 import "package:random_color/random_color.dart";
@@ -15,6 +14,7 @@ import "package:tumbler/Screens/Search/tag_posts.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 
+/// List of Post from the Search Result
 List<PostModel> postsRes = <PostModel>[];
 
 /// for displaying results of the search query, (posts, tags, blogs)

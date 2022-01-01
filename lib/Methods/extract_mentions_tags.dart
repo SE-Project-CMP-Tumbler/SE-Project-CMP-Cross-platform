@@ -1,5 +1,8 @@
 import "package:tumbler/Methods/api.dart";
 
+/// Extract the Word after '@' and check if this a valid user from [Api.getUserInfo],
+/// if valid, it replace the username with herf mapping to his/her profile.
+/// Extract the Word after '#' and replace it with herf mapping to the Tag Page
 Future<String> extractMentionsTags(final String htmlBeforeProcessing) async {
   // Getting all mentions
   String html = htmlBeforeProcessing;
@@ -13,8 +16,9 @@ Future<String> extractMentionsTags(final String htmlBeforeProcessing) async {
       if (index1 == -1) {
         index1 = html.indexOf("<", x);
       }
-      if(index1 == -1)
+      if (index1 == -1) {
         index1 = html.length;
+      }
 
       final String username = html.substring(x + 1, index1);
 
@@ -40,9 +44,9 @@ Future<String> extractMentionsTags(final String htmlBeforeProcessing) async {
       if (index1 == -1) {
         index1 = html.indexOf("<", x);
       }
-      if(index1 == -1)
+      if (index1 == -1) {
         index1 = html.length;
-
+      }
 
       final String tag = html.substring(x + 1, index1);
       html = html.replaceRange(x, index1, "<a href='tag$tag'>#$tag</a>");

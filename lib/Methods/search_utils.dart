@@ -23,8 +23,10 @@ Future<List<String>> getAutoComplete(
 }
 
 /// to get the "autocomplete words"
-Future<List<List<dynamic>>> getSearchResults(final String word,
-    {final int page = 1,}) async {
+Future<List<List<dynamic>>> getSearchResults(
+  final String word, {
+  final int page = 1,
+}) async {
   List<PostModel> postsResults = <PostModel>[];
   final List<Tag> tagsResults = <Tag>[];
   final List<Blog> blogResults = <Blog>[];

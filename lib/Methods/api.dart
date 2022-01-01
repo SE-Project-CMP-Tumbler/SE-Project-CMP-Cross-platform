@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings
 import "dart:convert";
 import "dart:io" as io;
 
@@ -9,11 +8,6 @@ import "package:tumbler/Models/user.dart";
 
 /// Class [Api] is used for all GET, POST, PUT, Delete request from the backend.
 class Api {
-  static const String _postmanMockHost = "http://f677-193-227-10-6.ngrok.io";
-  static const String _autocompleteMock =
-      "https://run.mocky.io/v3/387362a2-6ceb-4ae7-88ad-d40aa3a7f3bf";
-  static const String _mockSearch =
-      "https://run.mocky.io/v3/1655e416-8421-41d6-9f75-0f03ab293a2f";
   final String _host = dotenv.env["host"] ?? " ";
   final String _getTrendingTags = dotenv.env["getTrendingTags"] ?? " ";
   final String _signUp = dotenv.env["signUp"] ?? " ";
@@ -1199,11 +1193,13 @@ class Api {
   Future<Map<String, dynamic>> isMyFollowing(final int blogID) async {
     final http.Response response = await client
         .get(
-      Uri.parse(
-        _host + "/followed_by/" + blogID.toString(),
-      ),
-      headers: _headerContentAuth,
-    ).onError(errorFunction).timeout(
+          Uri.parse(
+            _host + "/followed_by/" + blogID.toString(),
+          ),
+          headers: _headerContentAuth,
+        )
+        .onError(errorFunction)
+        .timeout(
       const Duration(seconds: 10),
       onTimeout: () {
         return http.Response(_weirdConnection, 502);

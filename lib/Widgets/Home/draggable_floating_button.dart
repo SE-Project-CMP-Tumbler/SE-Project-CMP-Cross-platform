@@ -68,9 +68,8 @@ class _DraggableFloatingActionButtonState
           parentSize.height - size.height,
         );
       });
-    } on Exception catch (e) {
-      // ignore: avoid_print
-      print(e.toString());
+    } on Exception {
+      //
     }
   }
 

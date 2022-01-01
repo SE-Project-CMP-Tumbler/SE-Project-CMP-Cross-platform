@@ -13,8 +13,7 @@ Future<List<PostModel>> getRandomPosts({
   if (response["meta"]["status"] == "200") {
     final List<dynamic> posts = response["response"]["posts"];
     randomPosts = await PostModel.fromJSON(posts);
-  }
-  else
-     await showToast(response["meta"]["msg"]);
+  } else
+    await showToast(response["meta"]["msg"]);
   return randomPosts;
 }

@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs
-
 ///Post Model
 class PostModel {
+  /// Constructor
   PostModel({
     required final this.postId,
     required final this.postBody,
@@ -13,27 +12,56 @@ class PostModel {
     required final this.blogAvatarShape,
     required final this.blogTitle,
     required final this.postTime,
-    required  this.notes,
-    required  this.isLoved,
+    required this.notes,
+    required this.isLoved,
     required final this.isFollowed,
     required final this.traceBackPosts,
     required final this.isPinned,
   });
 
+  /// ID of the Post
   final int postId;
+
+  /// Html Body of the Post
   final String postBody;
+
+  /// Status of the Post
   final String postStatus;
+
+  /// Type of the Post
   final String postType;
+
+  /// ID of the Blog added this Post
   final int blogId;
+
+  /// Username of the Blog added this Post
   final String blogUsername;
+
+  /// URL of the Avatar of the Blog added this Post
   final String blogAvatar;
+
+  /// Shape of the Avatar
   final String blogAvatarShape;
+
+  /// Title of the Blog added this Post
   final String blogTitle;
+
+  /// Time at which the post was added
   final String postTime;
+
+  /// Boolean to indicate if the post is pinned
   final bool isPinned;
+
+  /// Trace Back Posts (if the post was rebloged)
   final List<dynamic> traceBackPosts;
+
+  /// Number of notes of the post
   int notes;
+
+  /// Boolean to indicate if the post was liked by me
   bool isLoved;
+
+  /// Boolean to indicate if th follow the blog added this post
   bool isFollowed;
 
   /// Converts JSON["response"]["posts"] to List of Posts

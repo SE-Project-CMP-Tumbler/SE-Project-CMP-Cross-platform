@@ -17,7 +17,7 @@ import "package:tumbler/Screens/Search/tag_posts.dart";
 import "package:tumbler/Screens/Settings/show_draft.dart";
 
 ///Class for interaction bar exists the bottom of each post in home page
-//////Contains:
+///Contains:
 ///1-Notes number
 ///2-buttons to Favorite and reblog and reply
 class PostInteractionBar extends StatefulWidget {

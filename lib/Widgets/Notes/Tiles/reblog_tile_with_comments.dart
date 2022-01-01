@@ -1,12 +1,11 @@
-// ignore_for_file: public_member_api_docs
-
 import "package:flutter/material.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
+/// Widget for Reblog With Comments in Notes
 class ReblogTileWithComments extends StatelessWidget {
-  ///
+  /// Constructor
   const ReblogTileWithComments({
     required final this.avatarUrl,
     required final this.userName,
@@ -16,10 +15,19 @@ class ReblogTileWithComments extends StatelessWidget {
     final Key? key,
   }) : super(key: key);
 
+  /// URL of the Avatar of the Blog rebloged
   final String avatarUrl;
+
+  /// Username of the Blog rebloged
   final String userName;
+
+  /// Body of the Reblog
   final String htmlData;
+
+  /// Avatar Shape of the of the Blog reblog
   final String avatarShape;
+
+  /// ID of the Blog reblog
   final String blogID;
 
   @override

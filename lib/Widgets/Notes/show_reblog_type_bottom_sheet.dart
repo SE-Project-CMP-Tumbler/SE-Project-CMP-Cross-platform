@@ -1,12 +1,15 @@
-// ignore_for_file: public_member_api_docs
-
 import "package:flutter/material.dart";
 
+/// Types of ReBlogs
 enum blogsType {
+  /// Reblogs with Comments
   withComments,
+
+  /// Reblogs without Comments
   others,
 }
 
+/// To show Bottom Sheet
 void showReblogsCategoriesBottomSheet(
   final BuildContext ctx,
   final int currType,

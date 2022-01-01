@@ -1,8 +1,8 @@
+import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:tumbler/Methods/age_validation.dart";
-import "package:flutter_dotenv/flutter_dotenv.dart";
 
-void main() async {
+Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
   test("Empty age string", () {

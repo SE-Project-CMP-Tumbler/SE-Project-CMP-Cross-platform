@@ -1,15 +1,25 @@
-// ignore_for_file: public_member_api_docs
-
+/// Model of the Follower Class
 class Follower {
-  Follower(
-      {required final this.blog_avatar,
-        required final this.blog_id,
-        required final this.blog_avatar_shape,
-        required final this.blog_username});
+  /// Constructor
+  Follower({
+    required final this.blogAvatar,
+    required final this.blogID,
+    required final this.blogAvatarShape,
+    required final this.blogUsername,
+  });
 
-  String blog_avatar;
-  String blog_avatar_shape;
-  String blog_username;
-  int blog_id;
+  /// URL of the Blog
+  String blogAvatar;
+
+  /// Shape of the Avatar
+  String blogAvatarShape;
+
+  /// Username of the Blog
+  String blogUsername;
+
+  /// ID of the Blog
+  int blogID;
+
+  /// Boolean to indicate if i follow he/she
   late bool isFollowedByMe;
 }

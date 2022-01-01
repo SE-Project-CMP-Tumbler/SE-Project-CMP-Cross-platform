@@ -8,7 +8,6 @@ class Like {
     required final this.postID,
   });
 
-
   ///postID to reply on
   int postID;
 

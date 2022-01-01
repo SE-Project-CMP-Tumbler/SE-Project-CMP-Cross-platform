@@ -1,12 +1,10 @@
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import 'package:flutter_svg/svg.dart';
-import "package:provider/provider.dart";
+import "package:flutter_svg/svg.dart";
 import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/ActivityAndChat/acitivity_chat_screen.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
-import 'package:tumbler/Screens/Chat/inside_chat.dart';
 import "package:tumbler/Screens/Home_Page/home_page.dart";
 import "package:tumbler/Screens/Profile/profile_page.dart";
 import "package:tumbler/Screens/Search/search_page.dart";
@@ -60,11 +58,11 @@ class _MainScreenState extends State<MainScreen>
             label: "Search",
           ),
           BottomNavigationBarItem(
-            icon:  SvgPicture.asset(
-                "assets/images/smile_chat.svg",
+            icon: SvgPicture.asset(
+              "assets/images/smile_chat.svg",
               width: 30,
               height: 30,
-              color: selectedIndex==2?Colors.white: Colors.white54,
+              color: selectedIndex == 2 ? Colors.white : Colors.white54,
             ),
             label: "Activity",
           ),

@@ -1,6 +1,3 @@
-// ignore_for_file: cascade_invocations
-
-
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/http_requests_exceptions.dart";
 import "package:tumbler/Models/post_model.dart";
@@ -91,8 +88,7 @@ Future<List<Tag>> getUserFollowedTags({final int page = 1}) async {
   if (int.tryParse(encodedRes["meta"]["status"]) != null &&
       int.tryParse(encodedRes["meta"]["status"]) != 200)
     throw HttpException(encodedRes["meta"]["msg"]);
-  // ignore: prefer_final_locals
-  List<Tag> tagsFollowed = <Tag>[];
+  final List<Tag> tagsFollowed = <Tag>[];
 
   /// set _followedTags list.
   final List<dynamic> tagsList = encodedRes["response"]["tags"];

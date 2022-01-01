@@ -10,13 +10,12 @@ import "package:tumbler/Models/message.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
-List<Message> messages = <Message>[];
-
 ///Chat screen
 class ChatScreen extends StatefulWidget {
   /// Constructor
   const ChatScreen({required this.withBlogID});
 
+  /// Blog ID i chat with
   final String withBlogID;
 
   @override
@@ -30,6 +29,8 @@ class _ChatScreenState extends State<ChatScreen> {
   late String friendAvatar = "";
   String chatTitle = " ";
   String image = "";
+  List<Message> messages = <Message>[];
+
   Future<void> bindEvent(
     final String channelName,
     final String eventName,
@@ -290,7 +291,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final dynamic droomId = response["response"]["chat_room_id"];
     roomId = droomId.toString();
     final Map<String, dynamic> res =
-        await Api().getBlogInformation(widget.withBlogID.toString());
+        await Api().getBlogInformation(widget.withBlogID);
     friendName = res["response"]["username"];
     friendAvatar = res["response"]["avatar"];
     chatTitle = "${User.blogsNames[User.currentProfile]} + $friendName";

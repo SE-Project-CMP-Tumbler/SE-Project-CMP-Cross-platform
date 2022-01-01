@@ -5,8 +5,8 @@ import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 
+/// List of Draft Posts
 final List<PostModel> draftPosts = <PostModel>[];
-
 
 /// To Show the Draft Post of the Current Blog
 class ShowDraft extends StatefulWidget {
@@ -133,7 +133,8 @@ class _ShowDraftState extends State<ShowDraft> with TickerProviderStateMixin {
                             children: <Widget>[
                               PostOutView(
                                 post: draftPosts[index],
-                                index: index, page: 4,
+                                index: index,
+                                page: 4,
                                 isDraft: true,
                               ),
                               Container(

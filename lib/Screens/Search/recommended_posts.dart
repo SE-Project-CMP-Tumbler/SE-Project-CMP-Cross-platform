@@ -7,6 +7,7 @@ import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Widgets/Exceptions_UI/error_dialog.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 
+/// List of Random Posts
 List<PostModel> randomPosts = <PostModel>[];
 
 /// to show suggested posts (random) from the explore page

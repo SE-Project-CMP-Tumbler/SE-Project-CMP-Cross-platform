@@ -411,7 +411,8 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                               child: PostOutView(
                                 post: postsTabPosts[index],
-                                index: index, page: 1,
+                                index: index,
+                                page: 1,
                               ),
                             );
                           },
@@ -730,8 +731,7 @@ class _ProfilePageState extends State<ProfilePage>
         if (response["meta"]["status"] == "200") {
           await showToast("Followed");
           _personIconOptions[_personIconOptions.length] = "Unfollow";
-        }
-        else
+        } else
           await showToast(response["meta"]["msg"]);
       }
     });

@@ -3,6 +3,7 @@ import "package:provider/provider.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Providers/tags.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
+
 /// check out these tags section
 class CheckOutTags extends StatefulWidget {
   /// constructor
@@ -11,12 +12,14 @@ class CheckOutTags extends StatefulWidget {
     required final this.tagsToFollow,
     required final this.tagsBg,
     final Key? key,
-
-  }) : _width = width, super(key: key);
+  })  : _width = width,
+        super(key: key);
 
   final double _width;
+
   /// tags photos
   final List<Tag> tagsToFollow;
+
   /// map of bg colors of tags
   final Map<Tag, Color> tagsBg;
 
@@ -25,20 +28,20 @@ class CheckOutTags extends StatefulWidget {
 }
 
 class _CheckOutTagsState extends State<CheckOutTags> {
-  ScrollController? _controller;
-  List<Tag> _tagsToFollow=<Tag> [];
+  late ScrollController? _controller;
 
   @override
   void initState() {
-    _controller= ScrollController();
-    _tagsToFollow= widget.tagsToFollow;
+    _controller = ScrollController();
     super.initState();
   }
+
   @override
   void dispose() {
     _controller!.dispose();
     super.dispose();
   }
+
   @override
   Widget build(final BuildContext context) {
     return Padding(
@@ -49,8 +52,7 @@ class _CheckOutTagsState extends State<CheckOutTags> {
           /// title of the section
           const SizedBox(
             child: Padding(
-              padding:
-              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
                 "Check out these tags",
                 textScaleFactor: 1.4,
@@ -61,37 +63,37 @@ class _CheckOutTagsState extends State<CheckOutTags> {
               ),
             ),
           ),
+
           /// content of the section
           SizedBox(
             child:
-          (Provider.of<Tags>(context,listen: false).isLoaded==false&&
-              widget.tagsToFollow.isEmpty)?
-          const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child:  Row(
-                  children: widget.tagsToFollow.isNotEmpty?
-                  widget.tagsToFollow.map(
-                        (final Tag item) =>
-                        CheckOutTagComponent
-                          (width: widget._width, tag: item,
-                          color: widget.tagsBg[item]!,
-                          isFollowed: item.isFollowed!,
-                          key: Key(item.tagDescription!),
-                        ),)
-                      .toList()
-                      :<Widget>[Container()],
-                ),
-              ),
-            ),
+                (Provider.of<Tags>(context, listen: false).isLoaded == false &&
+                        widget.tagsToFollow.isEmpty)
+                    ? const Center(child: CircularProgressIndicator())
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Row(
+                            children: widget.tagsToFollow.isNotEmpty
+                                ? widget.tagsToFollow
+                                    .map(
+                                      (final Tag item) => CheckOutTagComponent(
+                                        width: widget._width,
+                                        tag: item,
+                                        color: widget.tagsBg[item]!,
+                                        isFollowed: item.isFollowed!,
+                                        key: Key(item.tagDescription!),
+                                      ),
+                                    )
+                                    .toList()
+                                : <Widget>[Container()],
+                          ),
+                        ),
+                      ),
           )
         ],
       ),
     );
   }
-
 }
-
-

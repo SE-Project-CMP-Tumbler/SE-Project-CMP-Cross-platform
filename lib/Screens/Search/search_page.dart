@@ -175,7 +175,6 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                           ),
                           // check out these blogs
                           CheckOutBlogs(
-                            width: _width,
                             blogs: checkOutBlogs,
                             blogsBg: blogsBgColors,
                           ),

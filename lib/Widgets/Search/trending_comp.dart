@@ -32,7 +32,7 @@ class TrendingComponent extends StatefulWidget {
   /// posts of each tag to display it under the tag title
   final List<PostModel> posts;
 
-  ///
+  /// List of Random Colors
   static const List<Color> colors = <Color>[
     Color(0xff7F00FF),
     Color(0xffFF7BF5),
@@ -51,15 +51,17 @@ class TrendingComponent extends StatefulWidget {
 
 class _TrendingComponentState extends State<TrendingComponent> {
   /// to indicate whether the user successfully followed this tag or not
-  bool _followed=false;
-  bool _proceedingFollowing=false;
+  bool _followed = false;
+  bool _proceedingFollowing = false;
+
   @override
   void initState() {
     setState(() {
-      _followed= widget.tag.isFollowed??false;
+      _followed = widget.tag.isFollowed ?? false;
     });
     super.initState();
   }
+
   @override
   Widget build(final BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
@@ -108,13 +110,17 @@ class _TrendingComponentState extends State<TrendingComponent> {
                           vertical: 8,
                         ),
                         child: GestureDetector(
-                          onTap: (){
-                            Navigator.push(context,
+                          onTap: () {
+                            Navigator.push(
+                              context,
                               MaterialPageRoute<TagPosts>(
-                                builder:
-                                    (final BuildContext context)
-                                => TagPosts(tag: widget.tag,bgColor:
-                                RandomColor().randomColor(),),),);
+                                builder: (final BuildContext context) =>
+                                    TagPosts(
+                                  tag: widget.tag,
+                                  bgColor: RandomColor().randomColor(),
+                                ),
+                              ),
+                            );
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,70 +154,71 @@ class _TrendingComponentState extends State<TrendingComponent> {
               Expanded(
                 flex: 2,
                 child: TextButton(
-                  onPressed: () async{
-                    if(mounted)
+                  onPressed: () async {
+                    if (mounted)
                       setState(() {
-                        _proceedingFollowing=true;
+                        _proceedingFollowing = true;
                       });
-                    if(!_followed)
-                    {
-                      if (widget.tag.tagDescription!=null) {
-                        final bool succeeded= await
-                        followTag(widget.tag.tagDescription!);
-                        if(succeeded) {
+                    if (!_followed) {
+                      if (widget.tag.tagDescription != null) {
+                        final bool succeeded =
+                            await followTag(widget.tag.tagDescription!);
+                        if (succeeded) {
                           showSnackBar(
                             context,
                             "Great!, you are now following "
                             "all about #${widget.tag.tagDescription}",
                           );
-                          if(mounted)
+                          if (mounted)
                             setState(() {
                               _followed = true;
                             });
-                        }
-                        else{
+                        } else {
                           showSnackBar(
-                              context, "OOPS, something went wrong 😢");
+                            context,
+                            "OOPS, something went wrong 😢",
+                          );
                         }
                       }
-                    }
-                    else{
-                      // ignore: invariant_booleans
-                      if (widget.tag.tagDescription!=null) {
-                        final bool succeeded= await
-                        unFollowTag(widget.tag.tagDescription!);
-                        if(succeeded) {
+                    } else {
+                      if (widget.tag.tagDescription != null) {
+                        final bool succeeded =
+                            await unFollowTag(widget.tag.tagDescription!);
+                        if (succeeded) {
                           showSnackBar(
                             context,
                             "Don't worry, u won't be"
                             " bothered by this tag again",
                           );
-                          if(mounted)
+                          if (mounted)
                             setState(() {
                               _followed = false;
-                            });}
-                        else{
+                            });
+                        } else {
                           showSnackBar(
-                              context, "OOPS, something went wrong 😢");
+                            context,
+                            "OOPS, something went wrong 😢",
+                          );
                         }
-                      }}
-                    if(mounted)
+                      }
+                    }
+                    if (mounted)
                       setState(() {
-                        _proceedingFollowing=false;
+                        _proceedingFollowing = false;
                       });
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child:_proceedingFollowing?
-                    const CircularProgressIndicator():
-                    Text(
-                      _followed?"Unfollow":"Follow",
-                      textScaleFactor: 1.1,
-                      style: TextStyle(
-                        color: _followed?Colors.grey:
-                        floatingButtonColor,
-                      ),
-                    ),
+                    child: _proceedingFollowing
+                        ? const CircularProgressIndicator()
+                        : Text(
+                            _followed ? "Unfollow" : "Follow",
+                            textScaleFactor: 1.1,
+                            style: TextStyle(
+                              color:
+                                  _followed ? Colors.grey : floatingButtonColor,
+                            ),
+                          ),
                   ),
                 ),
               )
@@ -232,13 +239,17 @@ class _TrendingComponentState extends State<TrendingComponent> {
                             Radius.circular(3),
                           ),
                           child: GestureDetector(
-                            onTap: (){
-                              Navigator.push(context,
+                            onTap: () {
+                              Navigator.push(
+                                context,
                                 MaterialPageRoute<TagPosts>(
-                                  builder:
-                                      (final BuildContext context)
-                                  => TagPosts(tag: widget.tag,bgColor:
-                                  RandomColor().randomColor(),),),);
+                                  builder: (final BuildContext context) =>
+                                      TagPosts(
+                                    tag: widget.tag,
+                                    bgColor: RandomColor().randomColor(),
+                                  ),
+                                ),
+                              );
                             },
                             child: Container(
                               width: _width / 4 + 10,

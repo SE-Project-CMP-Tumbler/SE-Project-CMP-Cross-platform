@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "package:tumbler/Widgets/Activity_Notifications/avatar_with_icon.dart";
 import "package:tumbler/Models/user.dart";
+import "package:tumbler/Widgets/Activity_Notifications/avatar_with_icon.dart";
 
 /// Widget that represent the new following notification in activity page
 class FollowNotificationWidget extends StatelessWidget {

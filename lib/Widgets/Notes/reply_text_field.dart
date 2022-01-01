@@ -1,11 +1,10 @@
 import "package:flutter/material.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
-import "package:tumbler/Screens/Home_Page/home_page.dart";
 
-///
+/// Widget for th Text Field in the Notes Page
 class ReplyTextField extends StatelessWidget {
-  ///
+  /// Constructor
   const ReplyTextField({
     required final this.replyController,
     required final this.postId,
@@ -13,13 +12,13 @@ class ReplyTextField extends StatelessWidget {
     final Key? key,
   }) : super(key: key);
 
-  ///
+  /// Controller of the Text Field
   final TextEditingController replyController;
 
-  ///
+  /// Post ID of the current Note Page have
   final String postId;
 
-  ///
+  /// Function to refresh the Notes count of the post
   final Function refresh;
 
   @override
@@ -55,7 +54,7 @@ class ReplyTextField extends StatelessWidget {
               } else {
                 await showToast(response["meta"]["msg"]);
               }
-                replyController.clear();
+              replyController.clear();
             }
           },
           child: Text(

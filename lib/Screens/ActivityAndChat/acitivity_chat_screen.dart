@@ -1,5 +1,3 @@
-// ignore_for_file: cascade_invocations
-
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
@@ -74,48 +72,48 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
         bigSack.add(
           (type == "ask")
               ? Ask(
-            dateTime: DateTime.parse(notification["timestamp"]),
-            quesiton: notification["target_question_summary"],
-            avatarUrl: notification["from_blog_avatar"],
-            userName: notification["from_blog_username"],
-          )
+                  dateTime: DateTime.parse(notification["timestamp"]),
+                  quesiton: notification["target_question_summary"],
+                  avatarUrl: notification["from_blog_avatar"],
+                  userName: notification["from_blog_username"],
+                )
               : (type == "reblog")
-              ? Reblog(
-            dateTime: DateTime.parse(notification["timestamp"]),
-            avatarUrl: notification["from_blog_avatar"],
-            userName: notification["from_blog_username"],
-            postID: notification["target_post_id"],
-          )
-              : (type == "follow")
-              ? Follow(
-            dateTime: DateTime.parse(notification["timestamp"]),
-            avatarUrl: notification["from_blog_avatar"],
-            userName: notification["from_blog_username"],
-          )
-              : (type == "like")
-              ? Like(
-            avatarUrl: notification["from_blog_avatar"],
-            dateTime: DateTime.parse(
-              notification["timestamp"],
-            ),
-            userName: notification["from_blog_username"],
-            postID: notification["target_post_id"],
-          )
-              : (type == "reply")
-              ? Reply(
-            avatarUrl: notification["from_blog_avatar"],
-            dateTime:
-            DateTime.parse(notification["timestamp"]),
-            userName: notification["from_blog_username"],
-            reply: notification["reply_summary"],
-            postID: notification["target_post_id"],
-          )
-              : Mention(
-            dateTime:
-            DateTime.parse(notification["timestamp"]),
-            avatarUrl: notification["from_blog_avatar"],
-            userName: notification["from_blog_username"],
-          ),
+                  ? Reblog(
+                      dateTime: DateTime.parse(notification["timestamp"]),
+                      avatarUrl: notification["from_blog_avatar"],
+                      userName: notification["from_blog_username"],
+                      postID: notification["target_post_id"],
+                    )
+                  : (type == "follow")
+                      ? Follow(
+                          dateTime: DateTime.parse(notification["timestamp"]),
+                          avatarUrl: notification["from_blog_avatar"],
+                          userName: notification["from_blog_username"],
+                        )
+                      : (type == "like")
+                          ? Like(
+                              avatarUrl: notification["from_blog_avatar"],
+                              dateTime: DateTime.parse(
+                                notification["timestamp"],
+                              ),
+                              userName: notification["from_blog_username"],
+                              postID: notification["target_post_id"],
+                            )
+                          : (type == "reply")
+                              ? Reply(
+                                  avatarUrl: notification["from_blog_avatar"],
+                                  dateTime:
+                                      DateTime.parse(notification["timestamp"]),
+                                  userName: notification["from_blog_username"],
+                                  reply: notification["reply_summary"],
+                                  postID: notification["target_post_id"],
+                                )
+                              : Mention(
+                                  dateTime:
+                                      DateTime.parse(notification["timestamp"]),
+                                  avatarUrl: notification["from_blog_avatar"],
+                                  userName: notification["from_blog_username"],
+                                ),
         );
       }
 
@@ -125,11 +123,11 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
       }
 
       bigSack.sort(
-            (final dynamic a, final dynamic b) => a.dateTime.compareTo(b.dateTime),
+        (final dynamic a, final dynamic b) => a.dateTime.compareTo(b.dateTime),
       );
 
       final Map<DateTime, List<dynamic>> notificationMap =
-      <DateTime, List<dynamic>>{};
+          <DateTime, List<dynamic>>{};
 
       for (int i = 0; i < bigSack.length; i++) {
         if (notificationMap[bigSack[i].dateTime] == null) {
@@ -140,7 +138,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
       }
 
       notificationMap.forEach(
-            (final dynamic k, final dynamic v) =>
+        (final dynamic k, final dynamic v) =>
             packets.add(TimePacket(packetTime: k, packet: v)),
       );
 
@@ -192,41 +190,41 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
   }
 
   TabBar get _tabBar => TabBar(
-    controller: tabController,
-    onTap: (final _) {
-      setState(() {
-        currTabIndex = tabController.index;
-      });
-    },
-    tabs: <Widget>[
-      SizedBox(
-        height: 40,
-        child: Center(
-          child: Text(
-            "Activity",
-            style: TextStyle(
-              color: (currTabIndex == ActivityOrChat.activity.index)
-                  ? Colors.blue
-                  : Colors.grey,
+        controller: tabController,
+        onTap: (final _) {
+          setState(() {
+            currTabIndex = tabController.index;
+          });
+        },
+        tabs: <Widget>[
+          SizedBox(
+            height: 40,
+            child: Center(
+              child: Text(
+                "Activity",
+                style: TextStyle(
+                  color: (currTabIndex == ActivityOrChat.activity.index)
+                      ? Colors.blue
+                      : Colors.grey,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-      SizedBox(
-        height: 40,
-        child: Center(
-          child: Text(
-            "Chat",
-            style: TextStyle(
-              color: (currTabIndex == ActivityOrChat.chat.index)
-                  ? Colors.blue
-                  : Colors.grey,
+          SizedBox(
+            height: 40,
+            child: Center(
+              child: Text(
+                "Chat",
+                style: TextStyle(
+                  color: (currTabIndex == ActivityOrChat.chat.index)
+                      ? Colors.blue
+                      : Colors.grey,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    ],
-  );
+        ],
+      );
 
   @override
   Widget build(final BuildContext context) {
@@ -261,40 +259,40 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
               onRefresh: getActivity,
               child: _isLoading
                   ? Center(
-                child: CircularProgressIndicator(
-                  valueColor: loadingSpinnerAnimationController.drive(
-                    ColorTween(
-                      begin: Colors.blueAccent,
-                      end: Colors.red,
-                    ),
-                  ),
-                ),
-              )
-                  : _error
-                  ? const ErrorImage(msg: "Something went wrong ")
-                  : _isEmpty
-                  ? const EmptyBoxImage(msg: "No notifications to show")
-                  : Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: ListView.builder(
-                        itemBuilder: (
-                            final BuildContext ctx,
-                            final int index,
-                            ) {
-                          return TimePacketContainer(
-                            packetTime: packets[index].packetTime,
-                            notificaitons: packets[index].packet,
-                          );
-                        },
-                        itemCount: packets.length,
+                      child: CircularProgressIndicator(
+                        valueColor: loadingSpinnerAnimationController.drive(
+                          ColorTween(
+                            begin: Colors.blueAccent,
+                            end: Colors.red,
+                          ),
+                        ),
                       ),
                     )
-                  ],
-                ),
-              ),
+                  : _error
+                      ? const ErrorImage(msg: "Something went wrong ")
+                      : _isEmpty
+                          ? const EmptyBoxImage(msg: "No notifications to show")
+                          : Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Column(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemBuilder: (
+                                        final BuildContext ctx,
+                                        final int index,
+                                      ) {
+                                        return TimePacketContainer(
+                                          packetTime: packets[index].packetTime,
+                                          notificaitons: packets[index].packet,
+                                        );
+                                      },
+                                      itemCount: packets.length,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
             ),
             const Center(
               child: ChatOutView(),

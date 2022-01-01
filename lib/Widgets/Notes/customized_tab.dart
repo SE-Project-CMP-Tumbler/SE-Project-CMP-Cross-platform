@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
@@ -15,23 +13,23 @@ class CustomizedTab extends StatelessWidget {
     final Key? key,
   }) : super(key: key);
 
-  ///
+  /// Number to Show in the Tab
   final int number;
 
-  ///
+  /// Icon to Show in the Tab
   final IconData iconType;
 
-  ///
+  /// Color of the Tab
   final Color color;
 
-  ///
+  /// Current Index chose
   final int? currIndex;
 
-  ///
+  /// The Index of this Tab
   final int myIndex;
 
-  ///
-  NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
+  /// Formatter for [number]
+  final NumberFormat numFormatter = NumberFormat.decimalPattern("en_us");
 
   @override
   Widget build(final BuildContext context) {

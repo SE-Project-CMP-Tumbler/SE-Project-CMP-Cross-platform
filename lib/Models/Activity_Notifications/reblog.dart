@@ -8,7 +8,6 @@ class Reblog {
     required final this.postID,
   });
 
-
   ///postID to reply on
   int postID;
 

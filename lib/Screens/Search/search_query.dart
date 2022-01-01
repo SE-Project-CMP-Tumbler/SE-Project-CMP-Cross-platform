@@ -409,7 +409,7 @@ class _SearchQueryState extends State<SearchQuery> {
                                                           .montserrat(
                                                         textStyle: TextStyle(
                                                           color:
-                                                          floatingButtonColor,
+                                                              floatingButtonColor,
                                                           fontWeight:
                                                               FontWeight.w300,
                                                         ),

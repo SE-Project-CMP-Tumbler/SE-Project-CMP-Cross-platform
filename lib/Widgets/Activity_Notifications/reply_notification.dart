@@ -31,8 +31,6 @@ class ReplyNotificationWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
-        // ignore: avoid_redundant_argument_values
-        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           AvatarWithIcon(
             avatarUrl: avatarUrl,

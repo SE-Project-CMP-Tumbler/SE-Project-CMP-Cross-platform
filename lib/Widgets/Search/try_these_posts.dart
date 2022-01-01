@@ -40,11 +40,13 @@ class _TryThesePostsState extends State<TryThesePosts> {
               ),
             ),
           ),
-          if (Provider.of<Tags>(context,listen: false).isLoaded==false&&
-              widget.randomPosts.isEmpty) const
-          Center(child: CircularProgressIndicator())
-          else Padding(
-            padding: EdgeInsets.all(kIsWeb ? 32 : 0),
+          if (Provider.of<Tags>(context, listen: false).isLoaded == false &&
+              widget.randomPosts.isEmpty)
+            const Center(child: CircularProgressIndicator())
+          else
+            Padding(
+              // ignore: prefer_const_constructors
+              padding: EdgeInsets.all(kIsWeb ? 32 : 0),
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(
                   Radius.circular(5),
@@ -58,45 +60,48 @@ class _TryThesePostsState extends State<TryThesePosts> {
                       crossAxisSpacing: kIsWeb ? 10 : 1,
                       mainAxisSpacing: kIsWeb ? 10 : 1,
                     ),
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: widget.randomPosts.length < 10 ?
-                  widget.randomPosts.length : 9,
-                  itemBuilder: (final BuildContext context, final int index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(context,
-                          MaterialPageRoute<RecommendedPosts>(
-                            builder: (final BuildContext context) =>
-                            const RecommendedPosts(),
-                          ),);
-                      },
-                      child: Container(
-                        color: Colors.white,
-                        child: Center(
-                          child: Html(
-                            data: widget.randomPosts[index].postBody,
-                            style: <String, Style>{
-                              for (final String tag in Html.tags)
-                                tag: Style(
-                                  fontSize: FontSize.xLarge,
-                                  backgroundColor: Colors.white,
-                                  margin: EdgeInsets.zero,
-                                  padding: tag == "h1"
-                                      ? const EdgeInsets.only(top: 8, left: 4)
-                                      : EdgeInsets.zero,
-                                ),
-                            },
-                            tagsList: Html.tags..remove("video"),
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: widget.randomPosts.length < 10
+                        ? widget.randomPosts.length
+                        : 9,
+                    itemBuilder: (final BuildContext context, final int index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<RecommendedPosts>(
+                              builder: (final BuildContext context) =>
+                                  const RecommendedPosts(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          color: Colors.white,
+                          child: Center(
+                            child: Html(
+                              data: widget.randomPosts[index].postBody,
+                              style: <String, Style>{
+                                for (final String tag in Html.tags)
+                                  tag: Style(
+                                    fontSize: FontSize.xLarge,
+                                    backgroundColor: Colors.white,
+                                    margin: EdgeInsets.zero,
+                                    padding: tag == "h1"
+                                        ? const EdgeInsets.only(top: 8, left: 4)
+                                        : EdgeInsets.zero,
+                                  ),
+                              },
+                              tagsList: Html.tags..remove("video"),
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-          )
+            )
         ],
       ),
     );

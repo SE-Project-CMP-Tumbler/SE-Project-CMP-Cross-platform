@@ -14,7 +14,10 @@ import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 
+/// List of the Recent Post of this Tag
 List<PostModel> recentPosts = <PostModel>[];
+
+/// List of the Top Post of this Tag
 List<PostModel> topPosts = <PostModel>[];
 
 /// for showing the posts (recent, tops) of a specific tag

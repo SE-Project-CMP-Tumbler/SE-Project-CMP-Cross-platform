@@ -1,5 +1,3 @@
-// ignore_for_file: cascade_invocations, prefer_final_fields
-
 import "dart:developer";
 
 import "package:flutter/material.dart";
@@ -13,18 +11,20 @@ import "package:tumbler/Models/http_requests_exceptions.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Widgets/Exceptions_UI/error_dialog.dart";
+
 /// to provide the tags to the search page
 
 class Tags with ChangeNotifier {
-  bool _isLoaded =false;
-  List<Tag> _followedTags = <Tag>[];
-  List<Blog> _checkOutBlogs=<Blog>[];
-  List<PostModel> _randomPosts=<PostModel>[];
-  List<Tag> _tagsToFollow=<Tag>[];
-  List<Tag> _trendingTags=<Tag>[];
-  Map<Blog,Color> _blogsBgColors=<Blog,Color>{};
-  Map<Tag,Color> _tagsBgColors=<Tag,Color>{};
-  Map<Tag, List<PostModel>> _tagsPosts=<Tag, List<PostModel>>{};
+  bool _isLoaded = false;
+  final List<Tag> _followedTags = <Tag>[];
+  List<Blog> _checkOutBlogs = <Blog>[];
+  List<PostModel> _randomPosts = <PostModel>[];
+  List<Tag> _tagsToFollow = <Tag>[];
+  List<Tag> _trendingTags = <Tag>[];
+  final Map<Blog, Color> _blogsBgColors = <Blog, Color>{};
+  final Map<Tag, Color> _tagsBgColors = <Tag, Color>{};
+  final Map<Tag, List<PostModel>> _tagsPosts = <Tag, List<PostModel>>{};
+
   /// Returns isLoaded
   bool get isLoaded {
     return _isLoaded;
@@ -49,36 +49,36 @@ class Tags with ChangeNotifier {
   List<Tag> get tagsToFollow {
     return <Tag>[..._tagsToFollow];
   }
+
   /// Returns all trending tags
   List<Tag> get trendingTags {
     return <Tag>[..._trendingTags];
   }
 
   /// Returns all blogs random bg colors
-  Map<Blog,Color>  get blogsBgColors {
-    return <Blog,Color>{..._blogsBgColors};
+  Map<Blog, Color> get blogsBgColors {
+    return <Blog, Color>{..._blogsBgColors};
   }
 
   /// Returns all tags random bg
-  Map<Tag,Color> get tagsBgColors {
-    return <Tag,Color>{..._tagsBgColors};
+  Map<Tag, Color> get tagsBgColors {
+    return <Tag, Color>{..._tagsBgColors};
   }
 
- /// Returns all followed tags
+  /// Returns all followed tags
   Map<Tag, List<PostModel>> get tagsPosts {
     return <Tag, List<PostModel>>{..._tagsPosts};
   }
 
-
   /// fetch tags through http get request.
 
   Future<void> fetchAndSetFollowedTags() async {
-
     /// clear all loaded post.
-    final Map<String, dynamic> encodedRes =  await Api().fetchTagsFollowed();
+    final Map<String, dynamic> encodedRes = await Api().fetchTagsFollowed();
+
     /// checking the status code of the received response.
-    if (int.tryParse(encodedRes["meta"]["status"])!=null&&
-        int.tryParse(encodedRes["meta"]["status"])!=200)
+    if (int.tryParse(encodedRes["meta"]["status"]) != null &&
+        int.tryParse(encodedRes["meta"]["status"]) != 200)
       throw HttpException(encodedRes["meta"]["msg"]);
     _followedTags.clear();
 
@@ -87,121 +87,117 @@ class Tags with ChangeNotifier {
     log(tagsList.toString());
 
     for (int i = 0; i < tagsList.length; i++) {
-
-      final Tag temp= Tag(
-        tagDescription:
-        tagsList[i]["tag_description"],
-        tagImgUrl:
-        tagsList[i]["tag_image"],
-        isFollowed:  tagsList[i]["followed"] as bool,
+      final Tag temp = Tag(
+        tagDescription: tagsList[i]["tag_description"],
+        tagImgUrl: tagsList[i]["tag_image"],
+        isFollowed: tagsList[i]["followed"] as bool,
         followersCount: tagsList[i]["followers_number"],
         postsCount: tagsList[i]["posts_count"],
-        );
-
+      );
 
       _followedTags.add(temp);
-
-
     }
 
     notifyListeners();
-
   }
 
   /// Responsible for reloading all explore screen results
-  Future<void> refreshSearchPage(final BuildContext context,)
-  async {
-    _isLoaded=false;
+  Future<void> refreshSearchPage(
+    final BuildContext context,
+  ) async {
+    _isLoaded = false;
     notifyListeners();
+
     /// get followed tags
-    // ignore: always_specify_types
     await fetchAndSetFollowedTags().catchError((final Object? error) {
-      showErrorDialog(context, "error from getting followed tags"
-          "\n${error.toString()}",);
+      showErrorDialog(
+        context,
+        "error from getting followed tags"
+        "\n${error.toString()}",
+      );
     });
+
     /// get random suggesting tags
     await getTagsToFollow().then((final List<Tag> value) {
-
-      _tagsToFollow= value;
-      for(int i =0; i<value.length; i++)
-      {
-
-        _tagsBgColors[value[i]]= RandomColor().randomColor();
-
+      _tagsToFollow = value;
+      for (int i = 0; i < value.length; i++) {
+        _tagsBgColors[value[i]] = RandomColor().randomColor();
       }
       log("try out these tags done");
       notifyListeners();
     }).catchError((final Object? error) {
-      showErrorDialog(context, "error on random suggesting tags\n"
-          "${error.toString()}",);
+      showErrorDialog(
+        context,
+        "error on random suggesting tags\n"
+        "${error.toString()}",
+      );
     });
+
     /// get random blogs
     await getRandomBlogs().then((final List<Blog> value) {
-        _checkOutBlogs.clear();
-        _checkOutBlogs= value;
-      for(int i =0; i<value.length; i++)
-      {
-        _blogsBgColors[value[i]]= RandomColor().randomColor();
+      _checkOutBlogs.clear();
+      _checkOutBlogs = value;
+      for (int i = 0; i < value.length; i++) {
+        _blogsBgColors[value[i]] = RandomColor().randomColor();
       }
       log("check out blogs done");
-        notifyListeners();
+      notifyListeners();
     }).catchError((final Object? error) {
       showErrorDialog(context, "error on check out blogs\n${error.toString()}");
     });
+
     /// get random posts "try these posts"
     await getRandomPosts().then((final List<PostModel> value) {
-        _randomPosts.clear();
-        _randomPosts= value;
+      _randomPosts.clear();
+      _randomPosts = value;
       log("try out these posts done");
-        notifyListeners();
+      notifyListeners();
     }).catchError((final Object? error) {
-      showErrorDialog(context,
-        "error on check out posts\n${error.toString()}",);
+      showErrorDialog(
+        context,
+        "error on check out posts\n${error.toString()}",
+      );
     });
 
     /// get trending tags
-    await getTrendingTagsToFollow().then((final List<Tag> value) async{
-        if(value.length<=9)
-        {
-          _trendingTags.clear();
-          _trendingTags= value;
+    await getTrendingTagsToFollow().then((final List<Tag> value) async {
+      if (value.length <= 9) {
+        _trendingTags.clear();
+        _trendingTags = value;
+        notifyListeners();
+      } else {
+        _trendingTags = <Tag>[];
+        for (int i = 0; i < 9; i++) {
+          _trendingTags.add(value[i]);
           notifyListeners();
         }
-        else {
-          _trendingTags=<Tag>[];
-          for (int i = 0; i < 9; i++) {
-            _trendingTags.add(value[i]);
-            notifyListeners();
-          }
-        }
+      }
       log("getting trending tags done");
-        notifyListeners();
+      notifyListeners();
+
       /// for each trending tag, get their posts
-      for (final Tag tTag in trendingTags)
-      {
-        await getTagPosts(tTag.tagDescription!).then(
-                (final List<PostModel> value) {
-             _tagsPosts[tTag]= value;
-             notifyListeners();
-                }
-        ).catchError((final Object? error) {
+      for (final Tag tTag in trendingTags) {
+        await getTagPosts(tTag.tagDescription!)
+            .then((final List<PostModel> value) {
+          _tagsPosts[tTag] = value;
+          notifyListeners();
+        }).catchError((final Object? error) {
           showErrorDialog(context, "from get tag posts \n${error.toString()}");
         });
-
       }
       log("getting tag posts done");
       notifyListeners();
     }).catchError((final Object? error) {
-      showErrorDialog(context,"from get trending tags \n${error.toString()}");
+      showErrorDialog(context, "from get trending tags \n${error.toString()}");
     });
 
-    _isLoaded=true;
+    _isLoaded = true;
     notifyListeners();
-
   }
+
   /// to reset all lists
-  void resetAll(){
-    _isLoaded =false;
+  void resetAll() {
+    _isLoaded = false;
     _followedTags.clear();
     _checkOutBlogs.clear();
     _randomPosts.clear();
