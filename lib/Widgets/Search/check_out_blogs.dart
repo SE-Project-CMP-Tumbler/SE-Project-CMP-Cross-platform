@@ -8,7 +8,8 @@ import "package:tumbler/Widgets/Search/check_out_blog.dart";
 /// check out blogs
 /// renders random blogs in the search page
 class CheckOutBlogs extends StatefulWidget {
-  /// constructor, takes the blogs list
+  /// constructor, takes the [Blog]s list with all its data,
+  /// and a list of their background colors.
   const CheckOutBlogs({
     required final this.blogs,
     required final this.blogsBg,

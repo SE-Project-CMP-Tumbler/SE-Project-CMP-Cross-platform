@@ -8,7 +8,8 @@ import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 
 /// blog component
 class CheckOutBlog extends StatefulWidget {
-  /// Constructor
+  /// Constructor: takes the [Blog] data, the random background color,
+  /// and a the width of the screen
   const CheckOutBlog({
     required final this.blog,
     required final this.bgColor,
