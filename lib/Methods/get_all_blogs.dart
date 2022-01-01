@@ -3,7 +3,6 @@ import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Search/search_page.dart";
-import "package:tumbler/Widgets/Search/check_out_blog.dart";
 
 /// Fill the [User] class with the required data
 /// this method calls the [Api] function [Api.getAllBlogs] to

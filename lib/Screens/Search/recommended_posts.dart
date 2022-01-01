@@ -44,7 +44,7 @@ class _RecommendedPostsState extends State<RecommendedPosts>
   /// i reached the end of the screen or not
   final ScrollController _scrollController = ScrollController();
 
-  // ignore: always_specify_types
+  // ignore:always_specify_types
   late Animation _colorTween;
   late AnimationController controller;
 
@@ -77,8 +77,7 @@ class _RecommendedPostsState extends State<RecommendedPosts>
     }
   }
 
-  // ignore: avoid_void_async
-  void getMoreRandomPosts() async {
+  Future<void> getMoreRandomPosts() async {
     if (reachedMax) {
       return;
     }

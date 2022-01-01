@@ -13,8 +13,10 @@ import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
+
 /// a global list of the tag recent posts to display in "Recent" tab
 List<PostModel> recentPosts = <PostModel>[];
+
 /// a global list of the tag top posts to display in "Top" tab
 List<PostModel> topPosts = <PostModel>[];
 
@@ -74,12 +76,6 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
   /// the current page of the followed tags
   int currentPageRecent = 1;
   ScrollController? _scrollController;
-
-  // ignore: unused_field
-  int _currentTab = 0;
-
-  // ignore: unused_field
-  final int _postsCount = 0;
 
   Future<void> getRecentTagPosts() async {
     setState(() {
@@ -146,7 +142,6 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
     });
   }
 
-  // ignore: avoid_void_async
   Future<void> fetchAllPosts() async {
     /// get recent posts of the tag
     final List<PostModel> tagPosts = await getTagPosts(
@@ -187,8 +182,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
     }
   }
 
-  // ignore: avoid_void_async
-  void getMoreTopTagPosts() async {
+  Future<void> getMoreTopTagPosts() async {
     if (reachedMaxTop) // nothing more to fetch
     {
       return;
@@ -230,8 +224,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
     });
   }
 
-  // ignore: avoid_void_async
-  void getMoreRecentTagPosts() async {
+  Future<void> getMoreRecentTagPosts() async {
     if (reachedMaxRecent) // nothing more to fetch
     {
       return;
@@ -272,7 +265,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
     });
   }
 
-  // ignore: always_specify_types
+  // ignore:always_specify_types
   late Animation _colorTween;
   late AnimationController controller;
 
@@ -343,7 +336,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
       length: _tabs.length,
       child: Scaffold(
         backgroundColor: widget.bgColor,
-        // ignore: always_specify_types
+        // ignore:always_specify_types
         body: NotificationListener(
           onNotification: (final Object? t) {
             if (t is ScrollNotification) {
@@ -541,7 +534,6 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
                                               }
                                             }
                                           } else {
-                                            // ignore: invariant_booleans
                                             if (widget.tag.tagDescription !=
                                                 null) {
                                               final bool succeeded =
@@ -672,9 +664,7 @@ class _TagPostsState extends State<TagPosts> with TickerProviderStateMixin {
                             ? Colors.black
                             : Colors.white,
                         onTap: (final int index) async {
-                          setState(() {
-                            _currentTab = index;
-                          });
+                          setState(() {});
                         },
                         // These are the widgets to put in each tab in the tab bar
                         tabs: _tabs

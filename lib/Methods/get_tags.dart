@@ -90,7 +90,6 @@ Future<List<PostModel>> getTagPosts(
   return tagPosts;
 }
 
-
 // Get all data of the [Tag] using its [tagDescription]
 /// this function calls the [Api.fetchTagsDetails]
 /// and returns its response

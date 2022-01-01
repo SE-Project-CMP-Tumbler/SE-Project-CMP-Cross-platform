@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_final_fields
-
 import "dart:math";
 
 import "package:flutter/material.dart";
@@ -31,10 +29,6 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
 
   /// true when posts are loading.
   bool _isLoading = false;
-
-  /// true when error occurred
-  // ignore: unused_field
-  bool _error = false;
 
   /// true when it's first time to load
   bool _firstTime = true;
@@ -70,8 +64,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     );
   }
 
-  // ignore: avoid_void_async
-  void getAllSections() async {
+  Future<void> getAllSections() async {
     setState(() {
       _isLoading = false;
     });

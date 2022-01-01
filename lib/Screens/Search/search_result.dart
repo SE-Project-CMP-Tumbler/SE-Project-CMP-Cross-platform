@@ -45,7 +45,6 @@ class _SearchResultState extends State<SearchResult>
   bool _isFirstTime = true;
 
   /// true when error occurred
-  // ignore: unused_field
   bool _error = false;
 
   /// true when no posts pages are left
@@ -572,13 +571,11 @@ class _SearchResultState extends State<SearchResult>
                                                   padding:
                                                       const EdgeInsets.all(8),
                                                   child: Column(
-                                                    crossAxisAlignment:
-                                                        // ignore: avoid_redundant_argument_values
-                                                        kIsWeb
-                                                            ? CrossAxisAlignment
-                                                                .center
-                                                            : CrossAxisAlignment
-                                                                .start,
+                                                    crossAxisAlignment: kIsWeb
+                                                        ? CrossAxisAlignment
+                                                            .center
+                                                        : CrossAxisAlignment
+                                                            .start,
                                                     children: <Widget>[
                                                       const Padding(
                                                         padding:
@@ -737,13 +734,11 @@ class _SearchResultState extends State<SearchResult>
                                                     padding:
                                                         const EdgeInsets.all(8),
                                                     child: Column(
-                                                      crossAxisAlignment:
-                                                          // ignore: avoid_redundant_argument_values
-                                                          kIsWeb
-                                                              ? CrossAxisAlignment
-                                                                  .center
-                                                              : CrossAxisAlignment
-                                                                  .start,
+                                                      crossAxisAlignment: kIsWeb
+                                                          ? CrossAxisAlignment
+                                                              .center
+                                                          : CrossAxisAlignment
+                                                              .start,
                                                       children: <Widget>[
                                                         const Padding(
                                                           padding:
@@ -1063,7 +1058,6 @@ class _SearchResultState extends State<SearchResult>
                                                                                               }
                                                                                             }
                                                                                           } else {
-                                                                                            // ignore: invariant_booleans
                                                                                             if (blog.blogId != null) {
                                                                                               final bool succeeded = await unFollowBlog(
                                                                                                 int.parse(blog.blogId!),

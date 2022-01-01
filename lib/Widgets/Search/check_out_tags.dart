@@ -30,8 +30,7 @@ class CheckOutTags extends StatefulWidget {
 }
 
 class _CheckOutTagsState extends State<CheckOutTags> {
-  ScrollController? _controller;
-  List<Tag> _tagsToFollow=<Tag> [];
+  late ScrollController? _controller;
 
   @override
   void initState() {

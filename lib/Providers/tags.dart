@@ -70,7 +70,6 @@ class Tags with ChangeNotifier {
     return <Tag, List<PostModel>>{..._tagsPosts};
   }
 
-
   /// fetch all followed [Tag]s through get_tags Methods.
   /// it sets the providers lists with the results and notify
   /// all widgets that are listening this list with the
@@ -111,9 +110,10 @@ class Tags with ChangeNotifier {
   /// all widgets that are listening to those lists with the
   /// changes, so that the widget rebuilds its parts that depends on
   /// theses providers without the need to refresh each time we enter the page
-  Future<void> refreshSearchPage(final BuildContext context,)
-  async {
-    _isLoaded=false;
+  Future<void> refreshSearchPage(
+    final BuildContext context,
+  ) async {
+    _isLoaded = false;
     notifyListeners();
 
     /// get followed tags
@@ -202,9 +202,10 @@ class Tags with ChangeNotifier {
     _isLoaded = true;
     notifyListeners();
   }
+
   /// to reset all lists when the [User] log out
-  void resetAll(){
-    _isLoaded =false;
+  void resetAll() {
+    _isLoaded = false;
     _followedTags.clear();
     _checkOutBlogs.clear();
     _randomPosts.clear();

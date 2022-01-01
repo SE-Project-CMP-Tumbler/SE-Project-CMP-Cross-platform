@@ -31,8 +31,10 @@ Future<List<String>> getAutoComplete(
 /// index 2: List of [Blog]s results
 /// if the response is 200, otherwise it returns a list of 3 empty list.
 /// and shows a toast with the error message
-Future<List<List<dynamic>>> getSearchResults(final String word,
-    {final int page = 1,}) async {
+Future<List<List<dynamic>>> getSearchResults(
+  final String word, {
+  final int page = 1,
+}) async {
   List<PostModel> postsResults = <PostModel>[];
   final List<Tag> tagsResults = <Tag>[];
   final List<Blog> blogResults = <Blog>[];

@@ -7,7 +7,7 @@ import "package:tumbler/Methods/follow_blog.dart";
 import "package:tumbler/Methods/follow_tags.dart";
 import "package:tumbler/Methods/get_all_blogs.dart";
 import "package:tumbler/Methods/get_tags.dart";
-import 'package:tumbler/Methods/random_posts.dart';
+import "package:tumbler/Methods/random_posts.dart";
 import "package:tumbler/Methods/search_utils.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/post_model.dart";

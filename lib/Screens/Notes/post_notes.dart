@@ -1,4 +1,3 @@
-// ignore_for_file: must_be_immutable, lines_longer_than_80_chars
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
@@ -24,13 +23,13 @@ enum blogsType {
 /// [NotesPage] is a class handles all stuff related to notes
 class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
-  NotesPage({
+  const NotesPage({
     required final this.postID,
     final Key? key,
   }) : super(key: key);
 
   /// Post ID
-  int postID = 0;
+  final int postID;
 
   @override
   _NotesPageState createState() => _NotesPageState();

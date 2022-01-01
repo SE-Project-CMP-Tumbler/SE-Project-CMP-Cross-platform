@@ -34,14 +34,6 @@ class _ManageTagsState extends State<ManageTags> with TickerProviderStateMixin {
   /// true when error occurred
   bool _error = false;
 
-  /// to indicate whether the user successfully followed this tag or not
-  // ignore: prefer_final_fields, unused_field
-  bool _followed = false;
-
-  /// to indicate a loading of an unfollow tag request
-  // ignore: unused_field, prefer_final_fields
-  bool _proceedingFollowing = false;
-
   /// to indicate if we reached the max page count or not
   bool reachedMax = false;
 
@@ -123,7 +115,7 @@ class _ManageTagsState extends State<ManageTags> with TickerProviderStateMixin {
   /// list of the tags that the user follows
   List<Tag> followedTags = <Tag>[];
 
-  // ignore: always_specify_types
+  // ignore:always_specify_types
   late Animation _colorTween;
 
   @override
@@ -297,18 +289,13 @@ class FollowedTagComponent extends StatefulWidget {
 
 class _FollowedTagComponentState extends State<FollowedTagComponent>
     with TickerProviderStateMixin {
-  /// true when error occurred
-  // ignore: prefer_final_fields, unused_field
-  bool _error = false;
-
   /// to indicate whether the user successfully followed this tag or not
   bool _followed = false;
 
   /// to indicate a loading of an unfollow tag request
   bool _proceedingFollowing = false;
 
-  // ignore: always_specify_types, unused_field
-  late Animation _colorTween;
+  // ignore:always_specify_types
   late AnimationController controller;
 
   @override
@@ -320,12 +307,6 @@ class _FollowedTagComponentState extends State<FollowedTagComponent>
       duration: const Duration(milliseconds: 300),
     );
     controller.repeat();
-    _colorTween = controller.drive(
-      ColorTween(
-        begin: Colors.deepPurpleAccent,
-        end: floatingButtonColor,
-      ),
-    );
   }
 
   @override
@@ -401,7 +382,6 @@ class _FollowedTagComponentState extends State<FollowedTagComponent>
               }
             }
           } else {
-            // ignore: invariant_booleans
             if (widget.followedTag.tagDescription != null) {
               final bool succeeded =
                   await unFollowTag(widget.followedTag.tagDescription!);

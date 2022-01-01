@@ -6,10 +6,11 @@ import "package:tumbler/Methods/api.dart";
 ///  means that the [User] successfully followed a [Tag],
 ///  otherwise, it returns false, meaning that the follow process
 ///  was unsuccessful
-Future<bool> followTag(final String tagDescription,) async
-{
-  bool successful=false;
-  final Map<String, dynamic> response= await Api().followTag(tagDescription);
+Future<bool> followTag(
+  final String tagDescription,
+) async {
+  bool successful = false;
+  final Map<String, dynamic> response = await Api().followTag(tagDescription);
   if (response["meta"]["status"] == "200") {
     successful = true;
   }
@@ -17,17 +18,17 @@ Future<bool> followTag(final String tagDescription,) async
   return successful;
 }
 
-
 /// Inorder to unfollow a specific [Tag] with [tagDescription]
 /// this function call the [Api] method [Api.unFollowTag]
 ///  and check the response status, if 200 it returns true,
 ///  means that the [User] successfully unfollow a [Tag],
 ///  otherwise, it returns false, meaning that the unfollow process
 ///  was unsuccessful
-Future<bool> unFollowTag(final String tagDescription,) async
-{
-  bool successful=false;
-  final Map<String, dynamic> response= await Api().unFollowTag(tagDescription);
+Future<bool> unFollowTag(
+  final String tagDescription,
+) async {
+  bool successful = false;
+  final Map<String, dynamic> response = await Api().unFollowTag(tagDescription);
 
   if (response["meta"]["status"] == "200") {
     successful = true;
