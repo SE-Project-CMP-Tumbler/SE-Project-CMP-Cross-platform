@@ -4,10 +4,27 @@ import "dart:io" as io;
 
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
+import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/blog_theme.dart";
+import "package:tumbler/Models/chat.dart";
+import "package:tumbler/Models/message.dart";
+import "package:tumbler/Models/notes.dart";
+import "package:tumbler/Models/post_model.dart";
+import "package:tumbler/Models/tag.dart";
 import "package:tumbler/Models/user.dart";
+import "package:tumbler/Screens/ActivityAndChat/acitivity_chat_screen.dart";
+import "package:tumbler/Screens/Home_Page/home_page.dart";
+import "package:tumbler/Screens/Profile/profile_page.dart";
+import "package:tumbler/Screens/Search/manage_tags.dart";
+import "package:tumbler/Screens/Search/recommended_posts.dart";
+import "package:tumbler/Screens/Search/search_page.dart";
+import "package:tumbler/Screens/Search/search_query.dart";
+import "package:tumbler/Screens/Search/search_result.dart";
+import "package:tumbler/Screens/Search/tag_posts.dart";
+import "package:tumbler/Screens/Settings/profile_settings.dart";
 
 /// Class [Api] is used for all GET, POST, PUT, Delete request from the backend.
+/// All of its methods returns the JsonDecoded response of the http request
 class Api {
   static const String _postmanMockHost = "http://f677-193-227-10-6.ngrok.io";
   static const String _autocompleteMock =
@@ -91,7 +108,7 @@ class Api {
     io.HttpHeaders.authorizationHeader: "Bearer " + User.accessToken,
   };
 
-  /// When an error occur with any api request
+  /// When an error occur with any [Api] request
   http.Response errorFunction(
     final Object? error,
     final StackTrace stackTrace,
@@ -103,11 +120,10 @@ class Api {
     }
   }
 
-  /// THIS WILL BE OVERRIDE WHILE DOING TESTING WITH A MOCK-CLIENT.
+  /// THIS WILL BE OVERRIDDEN WHILE DOING TESTING WITH A MOCK-CLIENT.
   http.Client client = http.Client();
 
-  /// Make GET Request to the API to get List of
-  /// Trending tags.
+  /// Make GET Request to the [Api] to get List of Trending [Tag]s.
   Future<Map<String, dynamic>> getTrendingTags() async {
     final http.Response response = await client
         .get(Uri.parse(_host + _getTrendingTags))
@@ -121,7 +137,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Make Post Request to the API to Sign Up
+  /// Make Post Request to the [Api] to Sign Up
   Future<Map<String, dynamic>> signUp(
     final String blogUsername,
     final String password,
@@ -149,7 +165,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// GET My followers
+  /// GET current [User] followers, to display it from [ProfileSettings] page
   Future<Map<String, dynamic>> getFollowers() async {
     final http.Response response = await client
         .get(
@@ -169,7 +185,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Make Post Request to the API to Sign Up with Google
+  /// Make Post Request to the [Api] to Sign Up with Google
   Future<Map<String, dynamic>> signUpWithGoogle(
     final String blogUsername,
     final String googleAccessToken,
@@ -195,7 +211,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Make Post Request to the API to Log In
+  /// Make Post Request to the [Api] to Log In
   Future<Map<String, dynamic>> logIn(
     final String email,
     final String password,
@@ -219,7 +235,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Make Post Request to the API to Log In With Google
+  /// Make Post Request to the [Api] to Log In With Google
   Future<Map<String, dynamic>> logInWithGoogle(
     final String googleAccessToken,
   ) async {
@@ -241,7 +257,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Make Post Request to the API to Send Forget Password Email.
+  /// Make Post Request to the [Api] to Send Forget Password Email.
   Future<Map<String, dynamic>> forgetPassword(final String email) async {
     final http.Response response = await client
         .post(
@@ -283,7 +299,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///get chats for that chats choose
+  ///Get [Chat]s for that  [Chat]s choose of this [blogId]
   Future<Map<String, dynamic>> getChats(final String blogId) async {
     final http.Response response = await client
         .post(
@@ -305,7 +321,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///get chat messages
+  /// Get chat [Message]s
   Future<Map<String, dynamic>> getMessages(final String roomId) async {
     final http.Response response = await client
         .post(
@@ -325,7 +341,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// send message
+  /// Send [Message]s to a specific [roomId]
+  /// with a message [text] and [photo]
   Future<Map<String, dynamic>> sendMessages(
     final String text,
     final String photo,
@@ -351,7 +368,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///get room id for chat
+  /// Get room id for chat, the http request body contains:
+  /// the [User] blogId, and the [toBlogId] that the user wants to chat with
   Future<Map<String, dynamic>> getRoomId(final String toBlogId) async {
     final http.Response response = await client
         .post(
@@ -372,7 +390,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Upload [image] to our server to get url of this image.
+  /// Upload [image] to our server to get url of this [image].
   Future<Map<String, dynamic>> uploadImage(final String image) async {
     final http.Response response = await client
         .post(
@@ -393,7 +411,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Upload [audio] to our server to get url of this audio.
+  /// Upload [audio] to our server to get url of this [audio].
   Future<Map<String, dynamic>> uploadAudio(final String audio) async {
     final http.Response response = await client
         .post(
@@ -414,7 +432,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Get all blogs of user
+  /// Get all personal [Blog]s of the current [User]
   Future<Map<String, dynamic>> getAllBlogs() async {
     final http.Response response = await client
         .get(
@@ -431,7 +449,13 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Upload HTML code of the post.
+  /// Upload HTML code of the [PostModel]
+  /// body of the HTML request:
+  /// takes [postBody] -> html of the body
+  /// [postStatus] to indicate the post status
+  /// [postType] to indicate the post type e.g, image
+  /// [postTime] the dateTime when the post was published
+  /// [blogId] the id of the blog that published this post
   Future<Map<String, dynamic>> addPost(
     final String postBody,
     final String postStatus,
@@ -460,7 +484,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Edit Post.
+  /// Edit [PostModel] with an id [postID]
   Future<Map<String, dynamic>> editPost(
     final String postID,
     final String postStatus,
@@ -487,7 +511,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Delete Post.
+  /// Delete [PostModel] with an id [postID]
   Future<Map<String, dynamic>> deletePost(
     final String postID,
   ) async {
@@ -506,7 +530,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Change status of Post.
+  /// Change status of [PostModel], if liked, commented on, etc.
   Future<Map<String, dynamic>> changePostStatus(
     final String postID,
     final String blogID,
@@ -533,7 +557,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// get Post.
+  /// Get the [PostModel] of a post with id [postID]
   Future<Map<String, dynamic>> getPost(
     final String postID,
   ) async {
@@ -552,7 +576,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// pin Post.
+  /// Pin a [PostModel].
   Future<Map<String, dynamic>> pinPost(
     final String postID,
     final String blogID,
@@ -576,7 +600,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// unpin Post.
+  /// Unpin a [PostModel].
   Future<Map<String, dynamic>> unPinPost(
     final String postID,
     final String blogID,
@@ -600,7 +624,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// GET Posts For the Home Page
+  /// GET [PostModel]s For the [HomePage]
   Future<Map<String, dynamic>> fetchHomePosts(final int page) async {
     final http.Response response = await client
         .get(
@@ -617,7 +641,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// GET Notes For the post with id [postID]
+  /// GET [Notes] For the [PostModel] with id [postID]
   Future<Map<String, dynamic>> getNotes(final String postID) async {
     final http.Response response = await client
         .get(
@@ -634,7 +658,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// GET getPostLikeStatus for a post with id [postID]
+  /// GET the status of liking a [PostModel] for an id [postID]
   Future<Map<String, dynamic>> getPostLikeStatus(final int postID) async {
     final http.Response response = await client
         .get(
@@ -657,7 +681,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// To make Like on Post
+  /// POST request to like a [PostModel] using its [postId]
   Future<Map<String, dynamic>> likePost(final int postId) async {
     final http.Response response = await client
         .post(
@@ -676,7 +700,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// To Make Unlike on post
+  /// DELETE request to unlike a [PostModel] using its [postId]
   Future<Map<String, dynamic>> unlikePost(final int postId) async {
     final http.Response response = await client
         .delete(
@@ -695,7 +719,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///Sends a post request to reply on a post.
+  /// Sends a post request to reply on a [PostModel] using its [postId]
+  /// takes the [text] of the comment
   Future<Map<String, dynamic>> replyOnPost(
     final String postId,
     final String text,
@@ -720,7 +745,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///Sends a post request to unfollow a blog.
+  /// Sends a post request to unfollow a [Blog]
   Future<Map<String, dynamic>> unfollowBlog(
     final String blogId,
   ) async {
@@ -741,7 +766,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  ///Get notifications for activity page.
+  /// Get notifications for [ActivityAndChatScreen]
   Future<Map<String, dynamic>> getActivityNotifications(
     final String blogId,
   ) async {
@@ -763,7 +788,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Upload HTML code of the reblog.
+  /// Upload HTML code of the [reblog].
   Future<Map<String, dynamic>> reblog(
     final String blogId,
     final String parentPostId,
@@ -791,8 +816,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// PUT request to change the current user Email
-  /// with [email]
+  /// PUT request to change the user [email]
+  /// with his [password] to confirm
   Future<Map<String, dynamic>> changeEmail(
     final String email,
     final String password,
@@ -817,8 +842,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// PUT request to change the current user Password
-  /// with [email]
+  /// PUT request to change the user's [currentPass]
+  /// takes [newPass] & [confirmPass] to be compared in the backend
   Future<Map<String, dynamic>> changePassword(
     final String currentPass,
     final String newPass,
@@ -845,7 +870,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Post request to log out
+  /// Post request to log the [User] out
   Future<Map<String, dynamic>> logOut() async {
     final http.Response response = await client
         .post(
@@ -863,8 +888,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// blogs
-  /// Make GET Request to the API to get List of all blogs (Profiles).
+  /// GET Request to the [Api] to get List of all personal [Blog]s (Profiles).
   Future<Map<String, dynamic>> getBlogs() async {
     final http.Response response = await http
         .get(
@@ -881,7 +905,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Post a new blog
+  /// Post request to create a new [Blog]
   Future<Map<String, dynamic>> postNewBlog(
     final String blogUserName,
   ) async {
@@ -904,7 +928,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the Information of a specific blog
+  /// Get the details of a specific [Blog] using [blogID]
   Future<Map<String, dynamic>> getBlogInformation(
     final String blogID,
   ) async {
@@ -926,7 +950,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the Theme of a specific blog
+  /// Get the Theme of a specific [Blog]
   Future<Map<String, dynamic>> getBlogTheme(
     final String blogID,
   ) async {
@@ -948,7 +972,9 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the Theme of a specific blog
+  /// Edits the [BlogTheme] of a specific [Blog],
+  /// takes the [BlogTheme] which contains the themes info, and the
+  /// [blogID] of that [Blog]
   Future<Map<String, dynamic>> setBlogTheme(
     final String blogID,
     final BlogTheme theme,
@@ -989,7 +1015,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the Settings of a specific blog
+  /// Get the Settings of a specific [Blog]
+  /// takes the [blogID] of the [Blog]
   Future<Map<String, dynamic>> getBlogSetting(
     final String blogID,
   ) async {
@@ -1011,7 +1038,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the info of a specific user
+  /// Get the info of a specific [User]
   Future<Map<String, dynamic>> getUserInfo(
     final String blogUsername,
   ) async {
@@ -1033,7 +1060,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the posts of a specific blog
+  /// to get the [PostModel]s of a specific [Blog]
   Future<Map<String, dynamic>> fetchSpecificBlogPost(
     final String blogID,
     final int page,
@@ -1055,7 +1082,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the Liked Posts of a My blog
+  /// Get the Liked [PostModel]s of the personal [Blog]
   Future<Map<String, dynamic>> fetchLikedPost(
     final String blogID,
     final int page,
@@ -1078,7 +1105,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the Following of a specific blog
+  /// Get the Followings of a specific [Blog]
   Future<Map<String, dynamic>> fetchFollowings(
     final String blogID,
     final int page,
@@ -1099,7 +1126,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to get the draft posts of a specific blog
+  /// to get the draft [PostModel]s of a specific [Blog]
   Future<Map<String, dynamic>> fetchDraftPost() async {
     final http.Response response = await client
         .get(
@@ -1119,7 +1146,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to follow specific blog
+  /// to follow specific [Blog], takes the [blogID]
+  /// of the blog we wants to follow
   Future<Map<String, dynamic>> followBlog(final int blogID) async {
     final http.Response response = await http
         .post(
@@ -1137,7 +1165,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to follow specific Tag
+  /// A post request to follow a [Tag]
+  /// [tag] is the tag description
   Future<Map<String, dynamic>> followTag(final String tag) async {
     final http.Response response = await http
         .post(
@@ -1155,7 +1184,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to unfollows specific tag
+  /// A delete request to unfollow [Tag]
   Future<Map<String, dynamic>> unFollowTag(
     final String tagDescription,
   ) async {
@@ -1178,7 +1207,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// to unfollow specific blog
+  /// A delete request to unfollow [Blog]
   Future<Map<String, dynamic>> unFollowBlog(final int blogID) async {
     final http.Response response = await http
         .delete(
@@ -1195,7 +1224,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// GET i follow a specific blog with blogID [blogID]
+  /// GET i follow a specific [Blog] with blogID [blogID]
   Future<Map<String, dynamic>> isMyFollowing(final int blogID) async {
     final http.Response response = await client
         .get(
@@ -1212,7 +1241,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// get posts of specific tag
+  /// Get the [PostModel]s of a specific [Tag] to display then in
+  /// [TagPosts] page
   Future<Map<String, dynamic>> fetchTagPosts(
     final String tagDescription, {
     final bool recent = true,
@@ -1240,7 +1270,11 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// fetching words for auto complete search text field
+  /// Fetching words for typing in [SearchQuery] page
+  /// it's called whenever the user types more than 2 letters
+  /// its logic from the back is that they store any word came from
+  /// the request of [fetchSearchResults] to their database and
+  /// send it in the response of the autocomplete.
   Future<Map<String, dynamic>> fetchAutoComplete(
     final String word,
   ) async {
@@ -1261,8 +1295,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// Tags requests
-  /// fetch all the tags that a specific blog follows
+  /// Get all [Tag]s that a specific [Blog] follows in order to display
+  /// it in [ManageTags] page and also in [SearchPage] "Explore Page"
   Future<Map<String, dynamic>> fetchTagsFollowed({final int page = 1}) async {
     final String host = _host;
     final http.Response response = await http
@@ -1280,7 +1314,9 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// get the details of a specific tag
+  /// Getting all the details of a specific [Tag] : posts count,
+  /// followers count, tag image, tag description and
+  /// if the current blog is following this tag or not.
   Future<Map<String, dynamic>> fetchTagsDetails(
     final String tagDescription,
   ) async {
@@ -1300,7 +1336,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// get "Check out these tags"
+  /// For fetching suggested tags to follow in [SearchPage] "explore"
   Future<Map<String, dynamic>> fetchCheckOutTags() async {
     final String host = _host;
     final http.Response response = await http
@@ -1315,12 +1351,10 @@ class Api {
         return http.Response(_weirdConnection, 502);
       },
     );
-    // print("check out tags");
-    // print(response.body);
     return jsonDecode(response.body);
   }
 
-  /// get "Check out these blogs"
+  /// For fetching suggested blogs to follow in [SearchPage] "explore"
   Future<Map<String, dynamic>> fetchCheckOutBlogs({
     final int page = 1,
   }) async {
@@ -1341,7 +1375,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// get random posts
+  /// Getting Random Posts, to display it in [RecommendedPosts] page,
+  /// that is entered from [SearchPage]
   Future<Map<String, dynamic>> fetchRandomPosts({
     final int page = 1,
   }) async {
@@ -1362,7 +1397,9 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// get trending tags to follow
+  /// Get trending tags to follow, will be displayed as
+  /// suggested tags in [SearchPage] "Explore section"
+  /// the response contains a single list of type [Tag]
   Future<Map<String, dynamic>> fetchTrendingTags() async {
     final String host = _host;
     final http.Response response = await http
@@ -1380,7 +1417,8 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// fetching words for search results
+  /// Fetching search query results for [SearchResult] page
+  /// the response contains 3 lists of types [PostModel], [Tag], [Blog]
   Future<Map<String, dynamic>> fetchSearchResults(
     final String word, {
     final int page = 1,
@@ -1403,7 +1441,7 @@ class Api {
     return jsonDecode(response.body);
   }
 
-  /// fetching words for Profile search results
+  /// Fetching search query results from searching in [ProfilePage]
   Future<Map<String, dynamic>> fetchSearchResultsProfile(
     final String word,
     final String blogID,

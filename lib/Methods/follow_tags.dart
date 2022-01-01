@@ -1,7 +1,11 @@
 import "package:tumbler/Methods/api.dart";
 
-/// inorder to follow a specific tag
-/// returns true only if the response is "ok", otherwise it returns false
+/// Inorder to follow a specific [Tag] with [tagDescription]
+/// this function call the [Api] method [Api.followTag]
+///  and check the response status, if 200 it returns true,
+///  means that the [User] successfully followed a [Tag],
+///  otherwise, it returns false, meaning that the follow process
+///  was unsuccessful
 Future<bool> followTag(final String tagDescription,) async
 {
   bool successful=false;
@@ -14,8 +18,12 @@ Future<bool> followTag(final String tagDescription,) async
 }
 
 
-/// inorder to unfollow a specific tag
-/// returns true only if the response is "ok", otherwise it returns false
+/// Inorder to unfollow a specific [Tag] with [tagDescription]
+/// this function call the [Api] method [Api.unFollowTag]
+///  and check the response status, if 200 it returns true,
+///  means that the [User] successfully unfollow a [Tag],
+///  otherwise, it returns false, meaning that the unfollow process
+///  was unsuccessful
 Future<bool> unFollowTag(final String tagDescription,) async
 {
   bool successful=false;

@@ -70,8 +70,12 @@ class Tags with ChangeNotifier {
   }
 
 
-  /// fetch tags through http get request.
-
+  /// fetch all followed [Tag]s through get_tags Methods.
+  /// it sets the providers lists with the results and notify
+  /// all widgets that are listening this list with the
+  /// changes, so that the widget rebuilds its parts that depends on
+  /// [followedTags] provider without the need to
+  /// refresh each time we enter the page
   Future<void> fetchAndSetFollowedTags() async {
 
     /// clear all loaded post.
@@ -108,7 +112,11 @@ class Tags with ChangeNotifier {
 
   }
 
-  /// Responsible for reloading all explore screen results
+  /// fetch all kinds of [Tag]s through get_tags Methods.
+  /// it sets the providers lists with the results and notify
+  /// all widgets that are listening to those lists with the
+  /// changes, so that the widget rebuilds its parts that depends on
+  /// theses providers without the need to refresh each time we enter the page
   Future<void> refreshSearchPage(final BuildContext context,)
   async {
     _isLoaded=false;
@@ -199,7 +207,7 @@ class Tags with ChangeNotifier {
     notifyListeners();
 
   }
-  /// to reset all lists
+  /// to reset all lists when the [User] log out
   void resetAll(){
     _isLoaded =false;
     _followedTags.clear();

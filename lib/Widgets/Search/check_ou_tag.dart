@@ -6,10 +6,12 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/urls.dart";
 import "package:tumbler/Methods/follow_tags.dart";
 import "package:tumbler/Models/tag.dart";
+import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Search/tag_posts.dart";
 /// for check out tags section
 class CheckOutTagComponent extends StatefulWidget {
-  ///
+  /// Constructor: takes the [Tag] data, the random background color,
+  /// and a boolean to indicate if the [User] follow this [Tag] or not
   const CheckOutTagComponent({
     required final double width,
     required final this.tag,

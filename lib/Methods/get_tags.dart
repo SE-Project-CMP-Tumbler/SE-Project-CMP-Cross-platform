@@ -1,12 +1,23 @@
 // ignore_for_file: cascade_invocations
 
-
+/// ## Tags Retrieving Methods
+/// to retrieve lists of all kinds of tags in the app
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/http_requests_exceptions.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
+import "package:tumbler/Screens/Search/manage_tags.dart";
+import "package:tumbler/Screens/Search/search_page.dart";
+import "package:tumbler/Screens/Search/tag_posts.dart";
+import "package:tumbler/Widgets/Search/check_out_tags.dart";
+import "package:tumbler/Widgets/Search/trendings.dart";
 
-/// to get the "tags" in "check out tags section
+/// Get the [Tag]s for [CheckOutTags] section in [SearchPage]
+/// this function calls the [Api.fetchCheckOutTags]
+/// to get that suggested [Tag]s
+/// it then parses the Json Decoded response into a list of [Tag]s
+/// if the status is "200" and returns that list, otherwise,
+/// it returns an empty list.
 Future<List<Tag>> getTagsToFollow() async {
   final List<Tag> checkoutTags = <Tag>[];
   final Map<String, dynamic> response = await Api().fetchCheckOutTags();
@@ -27,7 +38,12 @@ Future<List<Tag>> getTagsToFollow() async {
   return checkoutTags;
 }
 
-/// to get the "tags" in "check out tags section
+/// Get the [Tag]s for [Trending] section in [SearchPage]
+/// this function calls the [Api.fetchTrendingTags]
+/// to get that trending [Tag]s
+/// it then parses the Json Decoded response into a list of [Tag]s
+/// if the status is "200" it returns that list, otherwise,
+/// it returns an empty list.
 Future<List<Tag>> getTrendingTagsToFollow() async {
   final List<Tag> trendingTags = <Tag>[];
   final Map<String, dynamic> response = await Api().fetchTrendingTags();
@@ -50,7 +66,12 @@ Future<List<Tag>> getTrendingTagsToFollow() async {
   return trendingTags;
 }
 
-/// to get the "posts" of each tag
+/// Get the [PostModel]s of [TagPosts] page for each [tagDescription]
+/// this function calls the [Api.fetchTagPosts]
+/// to get that trending [PostModel]s
+/// it then parses the Json Decoded response into a list of [PostModel]s
+/// if the status is "200" it returns that list, otherwise,
+/// it returns an empty list.
 Future<List<PostModel>> getTagPosts(
   final String tagDescription, {
   final bool recent = true,
@@ -71,7 +92,11 @@ Future<List<PostModel>> getTagPosts(
   return tagPosts;
 }
 
-/// to get more details of each tag
+
+// Get all data of the [Tag] using its [tagDescription]
+/// this function calls the [Api.fetchTagsDetails]
+/// and returns its response
+/// "not used in the project"
 Future<Map<String, dynamic>> getTagDetails(
   final String tagDescription,
 ) async {
@@ -80,7 +105,12 @@ Future<Map<String, dynamic>> getTagDetails(
   return response;
 }
 
-/// to get all the tags followed by the user
+/// to get all the [Tag]s followed by the user to display them in
+/// [ManageTags] and [SearchPage]
+/// this function calls the [Api.fetchTagsFollowed]
+/// and parses its Json Decoded response to a list of [Tag]s
+/// followed by the current user, but if the response is not = 200
+/// it throws an exception with the response msg
 Future<List<Tag>> getUserFollowedTags({final int page = 1}) async {
   /// clear all loaded tags.
   final Map<String, dynamic> encodedRes = await Api().fetchTagsFollowed(

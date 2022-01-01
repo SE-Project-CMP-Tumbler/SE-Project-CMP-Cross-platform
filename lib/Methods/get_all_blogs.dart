@@ -2,9 +2,13 @@ import "package:tumbler/Constants/urls.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/user.dart";
+import "package:tumbler/Screens/Search/search_page.dart";
+import "package:tumbler/Widgets/Search/check_out_blog.dart";
 
-/// Fill the User model class with the
-/// user data
+/// Fill the [User] class with the required data
+/// this method calls the [Api] function [Api.getAllBlogs] to
+/// get all [Blog]s of the [User] with all their data, and then fills the [User]
+/// static class with these data
 Future<bool> fillUserBlogs() async {
   final Map<String, dynamic> response = await Api().getAllBlogs();
 
@@ -53,7 +57,12 @@ Future<bool> fillUserBlogs() async {
   }
 }
 
-/// to get the "blogs" in "check out blogs section
+/// Get the [Blog]s for [CheckOutBlogs] section in [SearchPage]
+/// this function calls the [Api.fetchCheckOutBlogs]
+/// to get that suggested [Blog]s
+/// it then parses the Json Decoded response into a list of [Blog]s
+/// if the status is "200" and returns that list, otherwise,
+/// it returns an empty list.
 Future<List<Blog>> getRandomBlogs({final int page = 1}) async {
   final List<Blog> checkoutBlogs = <Blog>[];
   final Map<String, dynamic> response =

@@ -4,7 +4,9 @@ import "package:tumbler/Models/blog.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/tag.dart";
 
-/// to get the "autocomplete words"
+/// to AutoComplete search, it calls [Api.fetchAutoComplete]
+/// and parses the returned response to a list of words if the the status of
+/// the response is 200, otherwise it returns an empty list.
 Future<List<String>> getAutoComplete(
   final String word,
 ) async {
@@ -22,7 +24,13 @@ Future<List<String>> getAutoComplete(
   return autoCompWords;
 }
 
-/// to get the "autocomplete words"
+/// to get search results, it calls [Api.fetchAutoComplete]
+/// and parses the returned response into a list of 3 lists
+/// index 0: List of [PostModel]s results
+/// index 1: List of [Tag]s results
+/// index 2: List of [Blog]s results
+/// if the response is 200, otherwise it returns a list of 3 empty list.
+/// and shows a toast with the error message
 Future<List<List<dynamic>>> getSearchResults(final String word,
     {final int page = 1,}) async {
   List<PostModel> postsResults = <PostModel>[];

@@ -14,7 +14,7 @@ import "package:tumbler/Screens/Profile/profile_page.dart";
 import "package:tumbler/Screens/Search/tag_posts.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
-
+/// a global list of the posts resulted from search
 List<PostModel> postsRes = <PostModel>[];
 
 /// for displaying results of the search query, (posts, tags, blogs)

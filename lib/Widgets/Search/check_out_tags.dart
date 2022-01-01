@@ -5,7 +5,9 @@ import "package:tumbler/Providers/tags.dart";
 import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 /// check out these tags section
 class CheckOutTags extends StatefulWidget {
-  /// constructor
+  /// Constructor: takes a list of suggested [Tag]s to follow
+  /// and a map of random background Color for each tag component
+  /// it also takes the width of the screen
   const CheckOutTags({
     required final double width,
     required final this.tagsToFollow,
@@ -25,6 +27,8 @@ class CheckOutTags extends StatefulWidget {
 }
 
 class _CheckOutTagsState extends State<CheckOutTags> {
+
+  // ignore: use_late_for_private_fields_and_variables
   ScrollController? _controller;
   List<Tag> _tagsToFollow=<Tag> [];
 

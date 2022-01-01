@@ -3,6 +3,8 @@ import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/post_model.dart";
 
 /// a function that fetch all random posts and return list of posts
+/// if the status is 200, otherwise, it returns an empty list
+/// and shows the error message
 Future<List<PostModel>> getRandomPosts({
   final int page = 1,
 }) async {
