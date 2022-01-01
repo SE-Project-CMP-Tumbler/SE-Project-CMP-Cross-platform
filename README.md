@@ -42,12 +42,17 @@ Tumbler is the coolest cloned version of <a href="https://www.tumblr.com/"> tumb
 <H1>
 <img src="https://raw.githubusercontent.com/seanprashad/slackmoji/master/emoji/blob/blob-b1nzy-gif.gif" alt="icons8-pacman-48" border="0" width=42px align="center"/> App Features
  </H1>
- 
+   
+
 <table>
 <tr>
  <td>
   <img src="https://c.tenor.com/Fipe91QSAegAAAAM/dedikodu-gossip.gif" width="500"/>
+  <img src="https://user-images.githubusercontent.com/56982963/147860640-b3cf13dd-bade-48d0-b8fe-9bdf69f629ff.gif" width="500"/>
+  <img src="https://user-images.githubusercontent.com/56982963/147860619-ca641445-fb80-4839-a0e9-6ecd650d7ce2.gif" width="500"/>
+
  </td>
+
  <td>
 <ul>
  <li> Ability to Sign up using email/Google</li>
@@ -67,6 +72,7 @@ Tumbler is the coolest cloned version of <a href="https://www.tumblr.com/"> tumb
 <li> Ability to change between blogs</li>
 <li> Ability to Share your Profile</li>
 <li> Ability to send a text message to others</li>
+
 <li> Ability to send a photo to others</li>
 <li> Ability to change your email</li>
 <li> Ability to change your password</li>
