@@ -10,6 +10,7 @@ import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
 List<Chat> chats = <Chat>[];
 
+/// Function to load all chat from [Api.getChats]
 Future<void> loadChats() async {
   // clear all loaded post.
   final Map<String, dynamic> response =
@@ -67,7 +68,7 @@ class _ChatOutViewState extends State<ChatOutView> {
   @override
   void initState() {
     super.initState();
-    loadChats().then((final res) {
+    loadChats().then((final dynamic res) {
       setState(() {});
     });
   }

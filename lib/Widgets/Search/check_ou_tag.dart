@@ -5,11 +5,13 @@ import "package:tumbler/Constants/colors.dart";
 import "package:tumbler/Constants/urls.dart";
 import "package:tumbler/Methods/follow_tags.dart";
 import "package:tumbler/Models/tag.dart";
+import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Search/tag_posts.dart";
 
 /// for check out tags section
 class CheckOutTagComponent extends StatefulWidget {
-  ///
+  /// Constructor: takes the [Tag] data, the random background color,
+  /// and a boolean to indicate if the [User] follow this [Tag] or not
   const CheckOutTagComponent({
     required final double width,
     required final this.tag,
@@ -197,7 +199,6 @@ class _CheckOutTagComponentState extends State<CheckOutTagComponent> {
                             }
                           }
                         } else {
-                          // ignore: invariant_booleans
                           if (widget.tag.tagDescription != null) {
                             final bool succeeded =
                                 await unFollowTag(widget.tag.tagDescription!);
@@ -270,10 +271,10 @@ void showSnackBar(final BuildContext context, final String msg) {
   scaffold.showSnackBar(
     SnackBar(
       content: Text(msg),
-      backgroundColor: navy,
+      backgroundColor: const Color(0xff2fea34),
       action: SnackBarAction(
         label: "Got it!",
-        textColor: floatingButtonColor,
+        textColor: navy,
         onPressed: scaffold.hideCurrentSnackBar,
       ),
     ),

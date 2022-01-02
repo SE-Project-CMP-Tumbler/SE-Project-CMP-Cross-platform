@@ -95,7 +95,8 @@ class ProfileSettings extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<MyFollowers>(
-                    builder: (final BuildContext context) => const MyFollowers(),
+                    builder: (final BuildContext context) =>
+                        const MyFollowers(),
                   ),
                 );
               },

@@ -1,4 +1,3 @@
-// ignore_for_file: must_be_immutable, lines_longer_than_80_chars
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
@@ -24,14 +23,13 @@ enum blogsType {
 /// [NotesPage] is a class handles all stuff related to notes
 class NotesPage extends StatefulWidget {
   /// Takes likeList, reblogList and repliesList
-  NotesPage({
+  const NotesPage({
     required final this.postID,
     final Key? key,
   }) : super(key: key);
 
   /// Post ID
-  int postID = 0;
-
+  final int postID;
 
   @override
   _NotesPageState createState() => _NotesPageState();
@@ -60,12 +58,10 @@ class _NotesPageState extends State<NotesPage>
   ///contains all likes without comments their details
   List<dynamic> reblogsWithOutCommentsList = <dynamic>[];
 
-
   Future<void> initialize() async {
     final Map<String, dynamic> receivedNotes =
         await Api().getNotes(widget.postID.toString());
 
-    print(receivedNotes);
     reblogsWithOutCommentsList.clear();
     reblogsWithCommentsList.clear();
     likesList.clear();
@@ -226,7 +222,8 @@ class _NotesPageState extends State<NotesPage>
                   const Spacer(),
                   ReplyTextField(
                     replyController: replyController,
-                    postId: widget.postID.toString(), refresh: refresh,
+                    postId: widget.postID.toString(),
+                    refresh: refresh,
                   )
                 ],
               )
@@ -247,12 +244,13 @@ class _NotesPageState extends State<NotesPage>
                             blogID: repliesList[index]["blog_id"].toString(),
                           );
                         },
-                        itemCount: repliesCount,
+                        itemCount: repliesList.length,
                       ),
                     ),
                     ReplyTextField(
                       replyController: replyController,
-                      postId: widget.postID.toString(), refresh: refresh,
+                      postId: widget.postID.toString(),
+                      refresh: refresh,
                     ),
                   ],
                 ),
@@ -382,7 +380,7 @@ class _NotesPageState extends State<NotesPage>
                       updateFollowStatusLocally: updateFollowStatusLocally,
                     );
                   },
-                  itemCount: likeCount,
+                  itemCount: likesList.length,
                 ),
               ),
           ],

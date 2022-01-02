@@ -30,8 +30,7 @@ class TimePacketContainer extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            // ignore: noop_primitive_operations
-            DateFormat.MMMMEEEEd().format(packetTime).toString(),
+            DateFormat.MMMMEEEEd().format(packetTime),
             style: const TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: 20,
@@ -50,11 +49,13 @@ class TimePacketContainer extends StatelessWidget {
                 ? LikeNotificationWidget(
                     avatarUrl: element.avatarUrl,
                     userName: element.userName,
+                    postID: element.postID,
                   )
                 : (element.type == "reblog")
                     ? ReblogNotificationWidget(
                         avatarUrl: element.avatarUrl,
                         userName: element.userName,
+                        postID: element.postID,
                       )
                     : (element.type == "mention")
                         ? MentionNotificationWidget(
@@ -77,6 +78,7 @@ class TimePacketContainer extends StatelessWidget {
                                         avatarUrl: element.avatarUrl,
                                         replyingUserName: element.userName,
                                         reply: element.reply,
+                                        postID: element.postID,
                                       )
                                     : const Placeholder();
           }).toList(),

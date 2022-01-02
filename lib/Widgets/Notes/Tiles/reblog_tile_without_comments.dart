@@ -1,12 +1,11 @@
-// ignore_for_file: public_member_api_docs
-
 import "package:flutter/material.dart";
-import 'package:tumbler/Screens/Profile/profile_page.dart';
+import "package:tumbler/Screens/Profile/profile_page.dart";
 
 import "Package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
+/// Widget of the Reblog without comment in the Notes
 class ReblogTileWithOutComments extends StatelessWidget {
-  ///
+  /// Constructor
   const ReblogTileWithOutComments({
     required final this.avatarUrl,
     required final this.userName,

@@ -8,16 +8,19 @@ import "package:tumbler/Widgets/Search/check_ou_tag.dart";
 
 /// blog component
 class CheckOutBlog extends StatefulWidget {
-  ///
-  // ignore: require_trailing_commas
+  /// Constructor: takes the [Blog] data, the random background color,
+  /// and a the width of the screen
   const CheckOutBlog({
     required final this.blog,
     required final this.bgColor,
     required final double width,
     final Key? key,
-  }) : _width = width, super(key: key);
+  })  : _width = width,
+        super(key: key);
+
   /// blog data
   final Blog blog;
+
   /// blog background color
   final Color bgColor;
   final double _width;
@@ -28,37 +31,40 @@ class CheckOutBlog extends StatefulWidget {
 
 class _CheckOutBlogState extends State<CheckOutBlog> {
   /// to indicate whether the user successfully followed this tag or not
-  bool _followed=false;
-
+  bool _followed = false;
 
   /// to indicate a loading of a post or delete tag request
-  bool _proceedingFollowing=false;
+  bool _proceedingFollowing = false;
+
   @override
   void initState() {
     setState(() {
-      _followed= widget.blog.isFollowed??false;
+      _followed = widget.blog.isFollowed ?? false;
     });
     super.initState();
   }
+
   @override
   Widget build(final BuildContext context) {
     return GestureDetector(
-      onTap: (){
-        Navigator.push(context,
-            MaterialPageRoute<ProfilePage>(
-            builder:
-            (final BuildContext context)
-        =>ProfilePage(blogID: widget.blog.blogId!, key: Key(widget.blog.blogId!)
-          ,),),);
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute<ProfilePage>(
+            builder: (final BuildContext context) => ProfilePage(
+              blogID: widget.blog.blogId!,
+              key: Key(widget.blog.blogId!),
+            ),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
-          color:widget.bgColor,
-          borderRadius:
-          const BorderRadius.all(Radius.circular(10)),
+          color: widget.bgColor,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
         ),
-        width:kIsWeb?200:((widget._width / 3) + 30),
-        height: kIsWeb?180:(widget._width / 3) + 50,
+        width: kIsWeb ? 200 : ((widget._width / 3) + 30),
+        height: kIsWeb ? 180 : (widget._width / 3) + 50,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +79,7 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
                       topRight: Radius.circular(10),
                     ),
                     child: Image.network(
-                      widget.blog.headerImage??"https://picsum.photos/200",
+                      widget.blog.headerImage ?? "https://picsum.photos/200",
                       width: widget._width,
                       height: 60,
                       fit: BoxFit.cover,
@@ -84,12 +90,12 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
                     left: 0,
                     right: 0,
                     child: Center(
-                      child:
-                      CircleAvatar(
+                      child: CircleAvatar(
                         backgroundColor: navy,
                         radius: 30,
-                        backgroundImage:  NetworkImage(
-                          widget.blog.avatarImageUrl ??"https://picsum.photos/200",
+                        backgroundImage: NetworkImage(
+                          widget.blog.avatarImageUrl ??
+                              "https://picsum.photos/200",
                         ),
                       ),
                     ),
@@ -99,21 +105,19 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
             ),
             Center(
               child: Padding(
-                padding: const
-                EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  widget.blog.username??"tumbler",
+                  widget.blog.username ?? "tumbler",
                   textScaleFactor: 1.1,
                   style: TextStyle(
-                    color: widget.bgColor
-                        .computeLuminance()>0.5
-                        ? Colors.black: Colors.white,
+                    color: widget.bgColor.computeLuminance() > 0.5
+                        ? Colors.black
+                        : Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ),
-
             Expanded(
               child: Center(
                 child: Padding(
@@ -123,85 +127,88 @@ class _CheckOutBlogState extends State<CheckOutBlog> {
                     bottom: 8,
                   ),
                   child: ElevatedButton(
-                    onPressed: ()async{
-                      if(mounted)
+                    onPressed: () async {
+                      if (mounted)
                         setState(() {
-                          _proceedingFollowing=true;
+                          _proceedingFollowing = true;
                         });
-                      if(!_followed)
-                      {
-                        if (widget.blog.blogId!=null) {
-                          final bool succeeded= await
-                          followBlog(int.parse(widget.blog.blogId!));
-                          if(succeeded) {
+                      if (!_followed) {
+                        if (widget.blog.blogId != null) {
+                          final bool succeeded =
+                              await followBlog(int.parse(widget.blog.blogId!));
+                          if (succeeded) {
                             showSnackBar(
                               context,
                               "Great!, you are now following "
                               "${widget.blog.blogTitle}",
                             );
-                            if(mounted)
+                            if (mounted)
                               setState(() {
                                 _followed = true;
                               });
-                          }
-                          else{
+                          } else {
                             showSnackBar(
-                                context, "OOPS, something went wrong 😢");
+                              context,
+                              "OOPS, something went wrong 😢",
+                            );
                           }
                         }
-                      }
-                      else{
-                        // ignore: invariant_booleans
-                        if (widget.blog.blogId!=null) {
-                          final bool succeeded= await
-                          unFollowBlog(int.parse(widget.blog.blogId!));
-                          if(succeeded) {
+                      } else {
+                        if (widget.blog.blogId != null) {
+                          final bool succeeded = await unFollowBlog(
+                            int.parse(widget.blog.blogId!),
+                          );
+                          if (succeeded) {
                             showSnackBar(
                               context,
                               "Don't worry, u won't be"
                               " bothered by this blog again",
                             );
-                            if(mounted)
+                            if (mounted)
                               setState(() {
                                 _followed = false;
-                              });}
-                          else{
+                              });
+                          } else {
                             showSnackBar(
-                                context, "OOPS, something went wrong 😢");
+                              context,
+                              "OOPS, something went wrong 😢",
+                            );
                           }
-                        }}
-                      if(mounted)
+                        }
+                      }
+                      if (mounted)
                         setState(() {
-                          _proceedingFollowing=false;
+                          _proceedingFollowing = false;
                         });
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                      //compute Luminance, if >0.4
-                      // then make it black,
-                      // else make it white
-                      MaterialStateProperty.all<Color>(
-                        _followed?(widget.bgColor.computeLuminance()>0.5?
-                        Colors.white:
-                        Colors.black):
-                        widget.bgColor.computeLuminance()>0.5?Colors.black:
-                        Colors.white,
+                          //compute Luminance, if >0.4
+                          // then make it black,
+                          // else make it white
+                          MaterialStateProperty.all<Color>(
+                        _followed
+                            ? (widget.bgColor.computeLuminance() > 0.5
+                                ? Colors.white
+                                : Colors.black)
+                            : widget.bgColor.computeLuminance() > 0.5
+                                ? Colors.black
+                                : Colors.white,
                       ),
-                      foregroundColor:
-                      MaterialStateProperty.all<Color>(
+                      foregroundColor: MaterialStateProperty.all<Color>(
                         widget.bgColor,
                       ),
                       fixedSize: MaterialStateProperty.all(
                         Size(widget._width, 35),
                       ),
-                      elevation:
-                      MaterialStateProperty.all(1),
+                      elevation: MaterialStateProperty.all(1),
                     ),
-                    child:  _proceedingFollowing?
-                    const CircularProgressIndicator():Text(
-                      _followed?"Unfollow":"Follow",
-                      textScaleFactor: 1.2,
-                    ),
+                    child: _proceedingFollowing
+                        ? const CircularProgressIndicator()
+                        : Text(
+                            _followed ? "Unfollow" : "Follow",
+                            textScaleFactor: 1.2,
+                          ),
                   ),
                 ),
               ),

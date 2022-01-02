@@ -1,14 +1,12 @@
-// ignore_for_file: cascade_invocations
-
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:tumbler/Methods/api.dart";
 import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/Activity_Notifications/ask.dart";
 import "package:tumbler/Models/Activity_Notifications/follow.dart";
+import "package:tumbler/Models/Activity_Notifications/like.dart";
 import "package:tumbler/Models/Activity_Notifications/mention.dart";
 import "package:tumbler/Models/Activity_Notifications/reblog.dart";
-import "package:tumbler/Models/Activity_Notifications/like.dart";
 import "package:tumbler/Models/Activity_Notifications/reply.dart";
 import "package:tumbler/Models/Activity_Notifications/time_packet.dart";
 import "package:tumbler/Models/user.dart";
@@ -84,6 +82,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
                       dateTime: DateTime.parse(notification["timestamp"]),
                       avatarUrl: notification["from_blog_avatar"],
                       userName: notification["from_blog_username"],
+                      postID: notification["target_post_id"],
                     )
                   : (type == "follow")
                       ? Follow(
@@ -98,6 +97,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
                                 notification["timestamp"],
                               ),
                               userName: notification["from_blog_username"],
+                              postID: notification["target_post_id"],
                             )
                           : (type == "reply")
                               ? Reply(
@@ -106,6 +106,7 @@ class _ActivityAndChatScreenState extends State<ActivityAndChatScreen>
                                       DateTime.parse(notification["timestamp"]),
                                   userName: notification["from_blog_username"],
                                   reply: notification["reply_summary"],
+                                  postID: notification["target_post_id"],
                                 )
                               : Mention(
                                   dateTime:

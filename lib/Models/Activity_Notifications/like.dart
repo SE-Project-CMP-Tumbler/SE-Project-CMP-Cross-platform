@@ -5,9 +5,13 @@ class Like {
     required final this.dateTime,
     required final this.avatarUrl,
     required final this.userName,
+    required final this.postID,
   });
 
-  /// holds the date the like happend
+  ///postID to reply on
+  int postID;
+
+  /// holds the date the like happened
   DateTime dateTime;
 
   /// holds the avatar url of the one liking the post

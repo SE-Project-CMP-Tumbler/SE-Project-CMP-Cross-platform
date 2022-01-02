@@ -1,4 +1,3 @@
-// ignore_for_file: lines_longer_than_80_chars
 import "dart:math" as math;
 
 import "package:flutter/material.dart";
@@ -14,7 +13,7 @@ import "package:tumbler/Models/blog_theme.dart";
 import "package:tumbler/Models/post_model.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Screens/Add_Post/add_new_post.dart";
-import 'package:tumbler/Screens/Chat/inside_chat.dart';
+import "package:tumbler/Screens/Chat/inside_chat.dart";
 import "package:tumbler/Screens/Profile/create_new_blog.dart";
 import "package:tumbler/Screens/Profile/profile_search.dart";
 import "package:tumbler/Screens/Search/search_page.dart";
@@ -411,7 +410,8 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                               child: PostOutView(
                                 post: postsTabPosts[index],
-                                index: index, page: 1,
+                                index: index,
+                                page: 1,
                               ),
                             );
                           },
@@ -719,16 +719,18 @@ class _ProfilePageState extends State<ProfilePage>
       } else if (itemSelected == "Unfollow") {
         final Map<String, dynamic> response =
             await Api().unFollowBlog(int.parse(widget.blogID));
-        if (response["meta"]["status"] == "200")
+        if (response["meta"]["status"] == "200") {
           await showToast("Unfollowed");
-        else
+          _personIconOptions[_personIconOptions.length] = "Follow";
+        } else
           await showToast(response["meta"]["msg"]);
       } else if (itemSelected == "Follow") {
         final Map<String, dynamic> response =
             await Api().followBlog(int.parse(widget.blogID));
-        if (response["meta"]["status"] == "200")
-          await showToast("Unfollowed");
-        else
+        if (response["meta"]["status"] == "200") {
+          await showToast("Followed");
+          _personIconOptions[_personIconOptions.length] = "Unfollow";
+        } else
           await showToast(response["meta"]["msg"]);
       }
     });
@@ -1373,6 +1375,7 @@ class _ProfilePageState extends State<ProfilePage>
                           onTap: changeHeaderPic,
                           child: Container(
                             height: 0.35 * _height,
+                            width: _width,
                             // Header image
                             decoration: BoxDecoration(
                               image: DecorationImage(

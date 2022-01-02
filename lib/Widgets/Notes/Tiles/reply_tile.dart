@@ -1,11 +1,10 @@
-// ignore_for_file: public_member_api_docs
-
 import "package:flutter/material.dart";
 import "package:tumbler/Widgets/Post/html_viewer.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
+/// Widget of Reply in Notes
 class ReplyTile extends StatelessWidget {
-  ///
+  /// Constructor
   const ReplyTile({
     required final this.avatarUrl,
     required final this.userName,

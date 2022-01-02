@@ -9,8 +9,8 @@ import "package:tumbler/Widgets/Exceptions_UI/empty_list_exception.dart";
 import "package:tumbler/Widgets/Exceptions_UI/generic_exception.dart";
 import "package:tumbler/Widgets/Post/post_overview.dart";
 
+/// List of Posts In the Result of the Search
 List<PostModel> profileSearchPosts = <PostModel>[];
-
 
 /// Page to show the Search in Profile page
 class ProfileSearchResult extends StatefulWidget {
@@ -37,7 +37,6 @@ class ProfileSearchResult extends StatefulWidget {
 
 class _ProfileSearchResultState extends State<ProfileSearchResult>
     with TickerProviderStateMixin {
-
   /// true when posts are loading.
   bool _isLoading = false;
 
@@ -206,7 +205,8 @@ class _ProfileSearchResultState extends State<ProfileSearchResult>
                                     ) {
                                       return PostOutView(
                                         post: profileSearchPosts[index],
-                                        index: index, page: 6,
+                                        index: index,
+                                        page: 6,
                                       );
                                     },
                                   ),

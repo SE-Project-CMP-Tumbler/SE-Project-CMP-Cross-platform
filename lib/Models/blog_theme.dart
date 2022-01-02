@@ -1,5 +1,6 @@
-// ignore_for_file: public_member_api_docs
+/// Model for the Blog Theme
 class BlogTheme {
+  /// Constructor
   BlogTheme({
     required this.themeID,
     required this.titleText,
@@ -15,19 +16,43 @@ class BlogTheme {
     required this.avatarShape,
   });
 
+  /// Theme ID
   String themeID;
+
+  /// Title of the Blog
   String titleText;
+
+  /// Color of the Text of the Title
   String titleColor;
+
+  /// Font of the Text of the Title
   String titleFont;
+
+  /// Weight of the Text of the Title
   String titleWeight;
+
+  /// Description of the Blog
   String description;
+
+  /// Background Color of the Blog
   String backgroundColor;
+
+  /// Accent Color of the Blog
   String accentColor;
+
+  /// Font of the Text of the Body
   String bodyFont;
+
+  /// URL of the Header Image of the Blog
   String headerImage;
+
+  /// URL of the Avatar of the Blog
   String avatarURL;
+
+  /// Shape of the Avater
   String avatarShape;
 
+  /// Constructor form the Json
   static BlogTheme fromJSON(final Map<String, dynamic> json) {
     return BlogTheme(
       themeID: json["response"]["theme-id"].toString(),

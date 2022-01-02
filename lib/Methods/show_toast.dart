@@ -3,7 +3,6 @@ import "package:fluttertoast/fluttertoast.dart";
 
 /// Show Toast message to the user
 Future<void> showToast(final String msg) async {
-  print(msg);
   await Fluttertoast.showToast(
     msg: msg,
     toastLength: Toast.LENGTH_SHORT,

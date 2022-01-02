@@ -1,11 +1,11 @@
 import "package:flutter/material.dart";
 
-///
+/// Widget appear if error happened
 class ErrorImage extends StatelessWidget {
-  ///
+  /// Constructor
   const ErrorImage({required final this.msg, final Key? key}) : super(key: key);
 
-  /// msg to show
+  /// Error Message to show
   final String msg;
 
   @override

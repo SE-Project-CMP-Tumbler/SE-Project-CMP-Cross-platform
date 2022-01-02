@@ -43,23 +43,25 @@ class _TrendingState extends State<Trending> {
               ),
             ),
           ),
-          if (Provider.of<Tags>(context,listen: false).isLoaded==false&&
-              widget.trendingTags.isEmpty)const Center(
-                child:
-          CircularProgressIndicator(),
-              ) else Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: widget.trendingTags
-                .map(
-                  (final Tag item) => TrendingComponent(
-                    key: Key(item.tagDescription!),
-                    tag: item,
-                    index: widget.trendingTags.indexOf(item),
-                    posts: widget.tagPosts[item] ?? <PostModel>[],
-                  ),
-                )
-                .toList(),
-          ),
+          if (Provider.of<Tags>(context, listen: false).isLoaded == false &&
+              widget.trendingTags.isEmpty)
+            const Center(
+              child: CircularProgressIndicator(),
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widget.trendingTags
+                  .map(
+                    (final Tag item) => TrendingComponent(
+                      key: Key(item.tagDescription!),
+                      tag: item,
+                      index: widget.trendingTags.indexOf(item),
+                      posts: widget.tagPosts[item] ?? <PostModel>[],
+                    ),
+                  )
+                  .toList(),
+            ),
         ],
       ),
     );

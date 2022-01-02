@@ -4,9 +4,9 @@ import "package:tumbler/Methods/show_toast.dart";
 import "package:tumbler/Models/user.dart";
 import "package:tumbler/Widgets/Post/post_personal_avatar.dart";
 
-// ignore: public_member_api_docs
+/// Widget of the Like Tile in Notes
 class LikeTile extends StatefulWidget {
-  ///
+  /// Constructor
   const LikeTile({
     required final this.userName,
     required final this.blogTitle,
@@ -49,8 +49,6 @@ class _LikeTileState extends State<LikeTile> {
   @override
   void initState() {
     setState(() {
-      print(
-          "the blogId is ${widget.blogID} and like status is ${widget.followStatus} ");
       _followStatus = widget.followStatus;
     });
     super.initState();
@@ -61,8 +59,6 @@ class _LikeTileState extends State<LikeTile> {
     return Padding(
       padding: const EdgeInsets.all(4),
       child: Row(
-        // ignore: avoid_redundant_argument_values
-        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           PersonAvatar(
             avatarPhotoLink: widget.blogAvatar,

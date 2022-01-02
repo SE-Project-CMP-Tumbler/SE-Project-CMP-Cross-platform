@@ -8,7 +8,9 @@ import "package:tumbler/Screens/Search/search_query.dart";
 ///  the randomly changed background and the search bar
 class SearchHeader extends StatelessWidget {
   /// constructor
-  /// takes the back ground and the state variable (isExpanded)
+  /// takes the random background image url
+  /// and the state variable (isExpanded) to indicate
+  /// if the user scrolled the page or not
   const SearchHeader({
     required final double height,
     required final double width,

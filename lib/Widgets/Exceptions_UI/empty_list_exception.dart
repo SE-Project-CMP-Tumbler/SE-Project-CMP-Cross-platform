@@ -1,12 +1,12 @@
 import "package:flutter/material.dart";
 
-///
+/// Widget For Errors
 class EmptyBoxImage extends StatelessWidget {
-  ///
+  /// Constructor
   const EmptyBoxImage({required final this.msg, final Key? key})
       : super(key: key);
 
-  /// msg to show
+  /// Error Message to show
   final String msg;
 
   @override

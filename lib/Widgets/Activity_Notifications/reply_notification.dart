@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:tumbler/Screens/Notes/post_notes.dart";
 import "package:tumbler/Widgets/Activity_Notifications/avatar_with_icon.dart";
 
 ///Widget that represent the reply notification showing up in the activity page
@@ -9,8 +10,12 @@ class ReplyNotificationWidget extends StatelessWidget {
     required final this.avatarUrl,
     required final this.replyingUserName,
     required final this.reply,
+    required final this.postID,
     final Key? key,
   }) : super(key: key);
+
+  /// postID to reply on
+  final int postID;
 
   ///avatar photo url of who replied on a post
   final String avatarUrl;
@@ -26,8 +31,6 @@ class ReplyNotificationWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
-        // ignore: avoid_redundant_argument_values
-        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           AvatarWithIcon(
             avatarUrl: avatarUrl,
@@ -77,7 +80,15 @@ class ReplyNotificationWidget extends StatelessWidget {
             ),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute<NotesPage>(
+                  builder: (final BuildContext context) => NotesPage(
+                    postID: postID,
+                  ),
+                ),
+              );
+            },
             child: const Text(
               "Reply",
               style: TextStyle(

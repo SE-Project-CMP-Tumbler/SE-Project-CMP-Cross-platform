@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "package:tumbler/Widgets/Activity_Notifications/avatar_with_icon.dart";
 import "package:tumbler/Models/user.dart";
+import "package:tumbler/Widgets/Activity_Notifications/avatar_with_icon.dart";
 
 ///Widget that represents the mention notification showing up in the activity
 ///page
@@ -23,8 +23,6 @@ class MentionNotificationWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
-        // ignore: avoid_redundant_argument_values
-        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           AvatarWithIcon(
             avatarUrl: avatarUrl,

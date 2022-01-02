@@ -1,3 +1,4 @@
+// ignore: implementation_imports
 import "package:csslib/src/messages.dart";
 import "package:flutter/material.dart";
 import "package:flutter_html/flutter_html.dart";
@@ -31,7 +32,6 @@ class _HtmlViewState extends State<HtmlView> {
 
   Future<void> initialize() async {
     data = await extractMentionsTags(widget.htmlData);
-    setState(() {});
   }
 
   @override
