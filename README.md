@@ -44,7 +44,8 @@ Tumbler is the coolest cloned version of <a href="https://www.tumblr.com/"> tumb
  </H1>
    
 
-<table>
+<table style="table-layout: fixed;
+    width: 300px;">
 <tr>
 <td>
  Intro Screen
