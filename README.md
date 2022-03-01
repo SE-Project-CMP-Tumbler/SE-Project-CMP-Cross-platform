@@ -229,7 +229,7 @@ https://user-images.githubusercontent.com/56982963/156160420-21d30827-c2b9-4d6a-
   <td>
   
 
-<img src="https://user-images.githubusercontent.com/56982963/156161069-0036210d-4d50-41ed-a108-879d247b9444.jpg" alt="icons8-pacman-48" border="0" width=280px align="center"/>
+<img src="https://user-images.githubusercontent.com/56982963/156161069-0036210d-4d50-41ed-a108-879d247b9444.jpg" alt="icons8-pacman-48" width =250px align="center"/>
 
 
   
