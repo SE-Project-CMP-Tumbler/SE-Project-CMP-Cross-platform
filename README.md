@@ -40,60 +40,200 @@ Tumbler is the coolest cloned version of <a href="https://www.tumblr.com/"> tumb
   </table >
 </div>
 <H1>
-<img src="https://raw.githubusercontent.com/seanprashad/slackmoji/master/emoji/blob/blob-b1nzy-gif.gif" alt="icons8-pacman-48" border="0" width=42px align="center"/> App Features
+<img src="https://raw.githubusercontent.com/seanprashad/slackmoji/master/emoji/blob/blob-b1nzy-gif.gif" alt="icons8-pacman-48" border="0" width=42px align="center"/> App Demo
  </H1>
    
 
 <table>
 <tr>
+<td>
+ Intro Screen
+ </td>
  <td>
-  <img src="https://user-images.githubusercontent.com/56982963/147860640-b3cf13dd-bade-48d0-b8fe-9bdf69f629ff.gif" width="280"/>
-  <img src="https://user-images.githubusercontent.com/56982963/147860619-ca641445-fb80-4839-a0e9-6ecd650d7ce2.gif" width="280"/>
-  <img src="https://c.tenor.com/Fipe91QSAegAAAAM/dedikodu-gossip.gif" width="250"/>
+  Intro Carousel
+ </td>
+ <td>
+  Login
+ </td>
+</tr>
+
+ <tr>
+
+ <td>
+
+https://user-images.githubusercontent.com/56982963/156159605-12d21fc0-4799-4fb2-b300-becc83a23f64.mp4
+
+
+ </td>
+ <td>
+  
+
+
+
+https://user-images.githubusercontent.com/56982963/156159957-89b0d535-e4d5-4f76-90ff-55b7f22d9134.mp4
+
+
+
+ </td>
+ <td>
+  
+
+https://user-images.githubusercontent.com/56982963/156159786-54d485a3-5f3f-4579-888b-d7796d45cae5.mp4
+
+
+ </td>
+</tr>
+ 
+ <tr>
+<td>
+ Dashboard
+ </td>
+ <td>
+  Create Posts
+ </td>
+ <td>
+  Posts options
+ </td>
+ 
+</tr>
+ 
+ <tr>
+<td>
+ 
+
+https://user-images.githubusercontent.com/56982963/156159994-45d32657-05f7-4a1d-a1e7-684155505427.mp4
+
+
+ 
+ </td>
+ <td>
+  
+  
+  
+
+https://user-images.githubusercontent.com/56982963/156160053-e308f3fe-db0f-4373-85d6-6756e386061b.mp4
+
+
+  
+  
+ </td>
+ <td>
+  
+  
+  https://user-images.githubusercontent.com/56982963/156160096-0ec37d40-9774-47c0-9f6a-eb6a1c6cb8ce.mp4
+
+  
+  
+  
+ </td>
+ 
+</tr>
+ 
+ <tr>
+
+ <td>
+  Explore
+ </td>
+ <td>
+  Search
+ </td>
+ <td>
+  Tags
+ </td>
+</tr>
+ 
+ <tr>
+
+ <td>
+  
+  
+  
+https://user-images.githubusercontent.com/56982963/156160188-120fb9c6-6708-46fa-ae96-295c624426c2.mp4
+
+ 
+  
+  
+  </td>
+
+ <td>
+  
+  
+
+https://user-images.githubusercontent.com/56982963/156160236-101da0c3-33b0-4f72-b657-c92bd9c89064.mp4
+
+
+  
+ </td>
+ <td>
+  
+
+
+https://user-images.githubusercontent.com/56982963/156160307-f99a689e-0e78-4796-9d1e-e8ab8b278f01.mp4
+
+
+  
+ </td>
+</tr>
+ 
+  <tr>
+
+ <td>
+  
+  
+  Chat
+ 
+   </td>
+   
+ <td>
+  
+  
+  Profile
+ 
+   
+   </td>
+ <td>
+ 
+ error page
+ 
+   </td>
+</tr>
+ 
+ <tr>
+
+ <td>
+
+  
+  
+
+https://user-images.githubusercontent.com/56982963/156160388-85a9c569-a3b9-4d86-bf81-2dd009a94b95.mp4
+
+
+  
+  
  </td>
 
  <td>
-<ul>
- <li> Ability to Sign up using email/Google</li>
-<li> Ability to Log in with email/Google</li>
-<li> Ability to Add post (published, private, draft)</li>
-<li> Ability to like/comment on a post</li>
-<li> Ability to reblog without adding Comments</li>
-<li> Ability to reblog with adding Comments</li>
-<li> Ability to Follow others</li>
-<li> Ability to edit your post</li>
-<li> Ability to delete your post</li>
-<li> Ability to pin your post</li>
-<li> Ability to change the status of your post</li>
-<li> Ability to Change Profile/Header Pictures</li>
-<li> Ability to change the theme of your blog</li>
-<li> Ability to create a new blog</li>
-<li> Ability to change between blogs</li>
-<li> Ability to Share your Profile</li>
-<li> Ability to send a text message to others</li>
 
-<li> Ability to send a photo to others</li>
-<li> Ability to change your email</li>
-<li> Ability to change your password</li>
-<li> Ability to show/edit/delete/post your drafts</li>
-<li> Ability to get posts you add</li>
-<li> Ability to get posts you liked</li>
-<li> Ability to get following/followers</li>
-<li> Ability to see notes of any post</li>
-<li> Ability to see your activity</li>
-<li> Ability to search for a post/tag/blog</li>
-<li> Ability to search in profile</li>
-<li> Ability to manage your tags</li>
-<li> Ability to show the user random posts/tags/blogs</li>
-<li> Ability to trending posts/tags</li>
-<li> Ability to follow tags</li>
-<li> ALL the Previous with any of the user blogs</li>
-</ul>
-<img width="1000" height="0">
-</td>
+
+
+
+https://user-images.githubusercontent.com/56982963/156160420-21d30827-c2b9-4d6a-abc0-eed3cca48cca.mp4
+
+
+  
+  
+  
+ </td>
  
-</tr>
+  <td>
+  
 
+<img src="https://user-images.githubusercontent.com/56982963/156161069-0036210d-4d50-41ed-a108-879d247b9444.jpg" alt="icons8-pacman-48" border="0" width=280px align="center"/>
+
+
+  
+ </td>
+</tr>
 </table>
  <H1>
 <img src="https://raw.githubusercontent.com/seanprashad/slackmoji/master/emoji/blob/blob-bongo-gif.gif" alt="icons8-pacman-48" border="0" width=42px align="center"/> software used
