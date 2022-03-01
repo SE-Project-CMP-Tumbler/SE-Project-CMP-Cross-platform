@@ -201,7 +201,7 @@ https://user-images.githubusercontent.com/56982963/156160307-f99a689e-0e78-4796-
  
  <tr>
 
- <td>
+ <td width=300px>
 
   
   
@@ -213,7 +213,7 @@ https://user-images.githubusercontent.com/56982963/156160388-85a9c569-a3b9-4d86-
   
  </td>
 
- <td>
+ <td width=300px>
 
 
 
@@ -226,10 +226,11 @@ https://user-images.githubusercontent.com/56982963/156160420-21d30827-c2b9-4d6a-
   
  </td>
  
-  <td>
+  <td width=300px>
   
 
-<img src="https://user-images.githubusercontent.com/56982963/156161069-0036210d-4d50-41ed-a108-879d247b9444.jpg" alt="icons8-pacman-48" width =250px align="center"/>
+
+![error_page](https://user-images.githubusercontent.com/56982963/156162998-d56a7e71-29f9-4da9-b4e5-073d43136c86.jpg)
 
 
   
